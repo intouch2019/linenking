@@ -1,0 +1,6 @@
+alter table it_sp_purchasereturns CHANGE item_code item_code VARCHAR(50) NULL DEFAULT NULL;
+alter table it_sp_purchasereturns add date DATETIME NOT NULL AFTER item_qty; 
+
+
+alter table it_sp_salesreturns  CHANGE item_code item_code VARCHAR(50) NULL DEFAULT NULL; 
+alter table it_sp_salesreturns add date DATETIME NOT NULL AFTER item_qty;

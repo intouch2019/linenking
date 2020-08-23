@@ -1,0 +1,459 @@
+Imports System.Data.OleDb
+Imports System.Console
+Imports System.Net
+Imports System.Text
+Imports System.Collections.Specialized
+
+Module Module1
+
+    Dim cn As OleDbConnection = Nothing
+    Dim cmd As OleDbCommand = Nothing
+    Dim drMain As OleDbDataReader = Nothing
+    Dim drSub As OleDbDataReader = Nothing
+    Dim dr As OleDbDataReader = Nothing
+    Dim cmd2 As OleDbCommand
+    Dim dr2 As OleDbDataReader
+    Dim SEPARATOR_FIELD As String = "<>"
+    Dim SEPARATOR_RECORD As String = "||"
+    Dim ConnectString As String = ""
+    Dim NumRecordsPerBatch As Integer = 0
+    Dim GoodsBatch As Integer = 0
+    Dim InvoicesBatch As Integer = 0
+    Dim PurchaseReturnsBatch As Integer = 0
+    Dim SalesReturnsBatch As Integer = 0
+    Dim username As String
+    Dim password As String
+
+    Sub Main()
+        Dim cmdArgs As String() = Environment.GetCommandLineArgs()
+        If (cmdArgs.Length <> 3) Then
+            Console.WriteLine("Arguments: INI-File 1(Challans)|2(GoodsReceipt)|3(PurchaseReturns)|4(SalesReturns)|5(InvoiceReturns)")
+            Return
+        End If
+        Dim iniFile As String = Environment.GetCommandLineArgs().ElementAt(1)
+        Dim syncType As String = Environment.GetCommandLineArgs().ElementAt(2)
+        Dim iniProps As NameValueCollection = ReadIniFile(iniFile)
+
+        ConnectString = iniProps.Get("DBConnectString")
+        If (IsEmpty(ConnectString)) Then
+            Console.WriteLine("INI ERROR:Missing DBConnectString")
+            Return
+        End If
+        Dim numrecs As String = iniProps.Get("NumRecordsPerBatch")
+        If (Not Integer.TryParse(numrecs, NumRecordsPerBatch)) Then
+            Console.WriteLine("INI ERROR:Missing NumRecordsPerBatch")
+            Return
+        End If
+        numrecs = iniProps.Get("InvoicesBatch")
+        If (Not Integer.TryParse(numrecs, InvoicesBatch)) Then
+            Console.WriteLine("INI ERROR:Missing InvoicesBatch")
+            Return
+        End If
+        numrecs = iniProps.Get("GoodsBatch")
+        If (Not Integer.TryParse(numrecs, GoodsBatch)) Then
+            Console.WriteLine("INI ERROR:Missing GoodsBatch")
+            Return
+        End If
+        numrecs = iniProps.Get("PurchaseReturnsBatch")
+        If (Not Integer.TryParse(numrecs, PurchaseReturnsBatch)) Then
+            Console.WriteLine("INI ERROR:Missing PurchaseReturnsBatch")
+            Return
+        End If
+        numrecs = iniProps.Get("SalesReturnsBatch")
+        If (Not Integer.TryParse(numrecs, SalesReturnsBatch)) Then
+            Console.WriteLine("INI ERROR:Missing SalesReturnsBatch")
+            Return
+        End If
+
+        username = iniProps.Get("Username")
+        If (IsEmpty(username)) Then
+            WriteToEventLog("INI ERROR:Missing Username")
+            Return
+        End If
+        password = iniProps.Get("Password")
+        If (IsEmpty(password)) Then
+            WriteToEventLog("INI ERROR:Missing Password")
+            Return
+        End If
+
+        password = RijndaelSimple.Decrypt(password, username)
+
+        Dim params As New NameValueCollection()
+        params.Add("syncType", syncType)
+        'Dim response As String = "date:2011-06-01 12:31:00"
+        Dim last_doc_no As String
+        Dim response As String = serverUpload("lastDocNo.php", params)
+        Console.WriteLine("lastDocNo=" + response)
+        If (response.Length < 1) Then
+            Console.WriteLine("LimelightSync error1 no response")
+            Return
+        ElseIf (response.Substring(0, 2) = "0:") Then
+            Dim last_nos As String = response.Substring(2)
+            Dim arr As String() = last_nos.Split(",")
+            last_doc_no = "'" + arr(0) + "'"
+        Else
+            Console.WriteLine("LimelightSync error2:" + response)
+            Return
+        End If
+
+        If (syncType = "2") Then
+            SyncGoodsReceipt(last_doc_no)
+        ElseIf (syncType = "3") Then
+            SyncPurchaseReturns(last_doc_no)
+        ElseIf (syncType = "4") Then
+            SyncSalesReturns(last_doc_no)
+        ElseIf (syncType = "5") Then
+            SyncInvoices(last_doc_no)
+        Else
+            Console.WriteLine("LimelightSync error3: Incorrect syncType=" + syncType)
+            Return
+        End If
+    End Sub
+
+    Function SyncGoodsReceipt(ByVal last_doc_no)
+        Console.WriteLine("Get GoodsReceipt since::" + last_doc_no)
+        Try
+            Dim numRecs As Integer = GoodsBatch
+            cn = New OleDbConnection(ConnectString)
+            cn.Open()
+
+            Dim querystr As String = "SET NOCOUNT ON select top " + numRecs.ToString + " gih_doc_no, gih_ref_no from goods_receipt_hdr where gih_org_cd = '002' and gih_doc_no > " + last_doc_no + " order by gih_doc_no asc"
+            Console.WriteLine(querystr)
+            Dim loopOk As Boolean = True
+            cmd = New OleDbCommand(querystr, cn)
+            drMain = cmd.ExecuteReader
+            While (loopOk And drMain.Read())
+                Dim gih_doc_no As String = drMain("gih_doc_no")
+                Dim gih_ref_no As String = drMain("gih_ref_no")
+                Dim batchRecords = gih_doc_no + SEPARATOR_FIELD + gih_ref_no + SEPARATOR_RECORD
+
+                Dim querystr2 As String = "SET NOCOUNT ON select g.gid_doc_no, g.gid_itm_cd, b.bicf_bar_code, i.itm_name, g.gid_accepted_qty, g.gid_cost_price, g.gid_psh_dt, i.itm_attr01 as ctg_id, i.itm_attr03 as style_id, i.itm_attr09 as size_id, i.itm_attr10 as design_id, a1.anm_desc as ctg, a3.anm_desc as style, a9.anm_desc as size, a10.anm_desc as design_no from goods_receipt_DTL g, item_mst i, attribute_nesting_mst a1, attribute_nesting_mst a3, attribute_nesting_mst a9, attribute_nesting_mst a10, bar_item_code b where g.gid_doc_no = '" + gih_doc_no + "' and g.gid_itm_cd = i.itm_cd and a1.anm_attr = 'ATTR1' and i.itm_attr01 = a1.anm_attr_cd and a3.anm_attr = 'ATTR3' and i.itm_attr03 = a3.anm_attr_cd and a9.anm_attr = 'ATTR9' and i.itm_attr09 = a9.anm_attr_cd and a10.anm_attr = 'ATTR10' and i.itm_attr10 = a10.anm_attr_cd and i.itm_cd = b.bicf_item_code and b.bicf_bar_code like '890%'"
+
+                cmd2 = New OleDbCommand(queryStr2, cn)
+                drSub = cmd2.ExecuteReader
+                Dim count As Integer = 0
+                While (drSub.Read())
+                    Dim gid_itm_cd As String = drSub("gid_itm_cd")
+                    Dim bicf_bar_code As String = drSub("bicf_bar_code")
+                    Dim gid_accepted_qty As String = drSub("gid_accepted_qty")
+
+                    batchRecords += gid_itm_cd + SEPARATOR_FIELD + bicf_bar_code + SEPARATOR_FIELD + gid_accepted_qty + SEPARATOR_RECORD
+                    count = count + 1
+                End While
+                If (count = 0) Then
+                    batchRecords += "0" + SEPARATOR_FIELD + "0" + SEPARATOR_FIELD + "0" + SEPARATOR_RECORD
+                End If
+
+                Console.WriteLine("Record=" + batchRecords)
+                Dim params As New NameValueCollection()
+                params.Add("records", batchRecords)
+                Dim response As String = serverUpload("saveGoodsIn.php", params)
+                Console.WriteLine(response)
+                If (response.StartsWith("Success")) Then
+                    ' continue
+                Else
+                    loopOk = False
+                End If
+
+                If (drSub IsNot Nothing) Then
+                    drSub.Close()
+                End If
+
+            End While
+
+        Catch ex As Exception
+            Console.WriteLine(ex.ToString)
+        End Try
+        If (drMain IsNot Nothing) Then
+            drMain.Close()
+        End If
+        If (cn IsNot Nothing) Then
+            cn.Close()
+        End If
+        Return Nothing
+    End Function
+
+    Function SyncPurchaseReturns(ByVal last_doc_no)
+        Console.WriteLine("Get PurchaseReturns since:" + last_doc_no)
+        Try
+            Dim numRecs As Integer = PurchaseReturnsBatch
+            cn = New OleDbConnection(ConnectString)
+            cn.Open()
+
+            Dim querystr As String = "SET NOCOUNT ON select top " + numRecs.ToString + " grh_doc_no from purchase_return_hdr where grh_org_cd = '002' and grh_doc_no > " + last_doc_no + " order by grh_doc_no asc"
+            Console.WriteLine(querystr)
+            Dim loopOk As Boolean = True
+            cmd = New OleDbCommand(querystr, cn)
+            drMain = cmd.ExecuteReader
+            While (loopOk And drMain.Read())
+                Dim batchRecords = ""
+
+                Dim grh_doc_no As String = drMain("grh_doc_no")
+
+                Dim querystr2 As String = "SET NOCOUNT ON select p.grd_doc_no, p.grd_itm_cd, p.grd_rejected_qty, b.bicf_bar_code FROM PURCHASE_RETURN_DTL p, bar_item_code b where p.grd_doc_no = '" + grh_doc_no + "' and p.grd_itm_cd = b.bicf_item_code and b.bicf_bar_code like '890%'"
+
+                cmd2 = New OleDbCommand(querystr2, cn)
+                drSub = cmd2.ExecuteReader
+                Dim count As Integer = 0
+                While (drSub.Read())
+                    Dim itm_cd As String = drSub("grd_itm_cd")
+                    Dim bicf_bar_code As String = drSub("bicf_bar_code")
+                    Dim rejected_qty As String = drSub("grd_rejected_qty").ToString
+
+                    batchRecords += grh_doc_no + SEPARATOR_FIELD + itm_cd + SEPARATOR_FIELD + bicf_bar_code + SEPARATOR_FIELD + rejected_qty + SEPARATOR_RECORD
+                    count = count + 1
+                End While
+                If (count = 0) Then
+                    batchRecords += grh_doc_no + SEPARATOR_FIELD + "0" + SEPARATOR_FIELD + "0" + SEPARATOR_FIELD + "0" + SEPARATOR_RECORD
+                End If
+
+                Console.WriteLine("Record=" + batchRecords)
+                Dim params As New NameValueCollection()
+                params.Add("records", batchRecords)
+                Dim response As String = serverUpload("savePurchaseReturns.php", params)
+                Console.WriteLine(response)
+                If (response.StartsWith("Success")) Then
+                    ' continue
+                Else
+                    loopOk = False
+                End If
+
+                If (drSub IsNot Nothing) Then
+                    drSub.Close()
+                End If
+
+            End While
+
+        Catch ex As Exception
+            Console.WriteLine(ex.ToString)
+        End Try
+        If (drMain IsNot Nothing) Then
+            drMain.Close()
+        End If
+        If (cn IsNot Nothing) Then
+            cn.Close()
+        End If
+        Return Nothing
+    End Function
+
+    Function SyncSalesReturns(ByVal last_doc_no)
+        Console.WriteLine("Get SalesReturns since:" + last_doc_no)
+        Try
+            Dim numRecs As Integer = SalesReturnsBatch
+            cn = New OleDbConnection(ConnectString)
+            cn.Open()
+
+            Dim querystr As String = "SET NOCOUNT ON select top " + numRecs.ToString + " sirh_doc_no from sales_invoice_return_hdr where sirh_org_cd = '002' and sirh_doc_no > " + last_doc_no + " order by sirh_doc_no asc"
+
+            Console.WriteLine(querystr)
+            Dim loopOk As Boolean = True
+            cmd = New OleDbCommand(querystr, cn)
+            drMain = cmd.ExecuteReader
+            While (loopOk And drMain.Read())
+                Dim batchRecords = ""
+
+                Dim sirh_doc_no As String = drMain("sirh_doc_no")
+
+                Dim querystr2 As String = "SET NOCOUNT ON select s.sird_doc_no, s.sird_itm_cd, s.sird_ret_qty, b.bicf_bar_code from SALES_INVOICE_RETURN_DTL s, bar_item_code b where s.sird_doc_no = '" + sirh_doc_no + "' and s.sird_itm_cd = b.bicf_item_code and b.bicf_bar_code like '890%'"
+
+                cmd2 = New OleDbCommand(querystr2, cn)
+                drSub = cmd2.ExecuteReader
+                Dim count As Integer = 0
+                While (drSub.Read())
+                    Dim itm_cd As String = drSub("sird_itm_cd")
+                    Dim bicf_bar_code As String = drSub("bicf_bar_code")
+                    Dim ret_qty As String = drSub("sird_ret_qty").ToString
+
+                    batchRecords += sirh_doc_no + SEPARATOR_FIELD + itm_cd + SEPARATOR_FIELD + bicf_bar_code + SEPARATOR_FIELD + ret_qty + SEPARATOR_RECORD
+                    count = count + 1
+                End While
+                If (count = 0) Then
+                    batchRecords += sirh_doc_no + SEPARATOR_FIELD + "0" + SEPARATOR_FIELD + "0" + SEPARATOR_FIELD + "0" + SEPARATOR_RECORD
+                End If
+
+                Console.WriteLine("Record=" + batchRecords)
+                Dim params As New NameValueCollection()
+                params.Add("records", batchRecords)
+                Dim response As String = serverUpload("saveSalesReturns.php", params)
+                Console.WriteLine(response)
+                If (response.StartsWith("Success")) Then
+                    ' continue
+                Else
+                    loopOk = False
+                End If
+
+                If (drSub IsNot Nothing) Then
+                    drSub.Close()
+                End If
+
+            End While
+
+        Catch ex As Exception
+            Console.WriteLine(ex.ToString)
+        End Try
+        If (drMain IsNot Nothing) Then
+            drMain.Close()
+        End If
+        If (cn IsNot Nothing) Then
+            cn.Close()
+        End If
+        Return Nothing
+    End Function
+
+    Function SyncInvoices(ByVal last_doc_no)
+        Console.WriteLine("SyncInvoices since:" + last_doc_no)
+        Try
+            Dim numRecs As Integer = InvoicesBatch
+            cn = New OleDbConnection(ConnectString)
+            cn.Open()
+
+            Dim querystr As String = "SET NOCOUNT ON select top " + numRecs.ToString + " * from sales_invoice_hdr where sih_org_cd = '002' and sih_cust_cd = '1001000000000091' and sih_inv_no > " + last_doc_no + " order by sih_inv_no"
+            Console.WriteLine(querystr)
+            Dim loopOk As Boolean = True
+            cmd = New OleDbCommand(querystr, cn)
+            drMain = cmd.ExecuteReader
+            While (loopOk And drMain.Read())
+                Dim sih_inv_no As String = drMain("sih_inv_no")
+                Dim sih_inv_dt As String = drMain("sih_inv_dt").ToString
+                Dim sih_inv_type As String = drMain("sih_inv_type")
+                Dim sih_cust_cd As String = drMain("sih_cust_cd")
+                Dim sih_tot_amt As String = drMain("sih_tot_amt").ToString
+                Dim sih_tot_qty As String = drMain("sih_tot_qty").ToString
+                Dim sih_po_number As String
+                sih_po_number = ""
+                Dim batchRecords = sih_inv_no + SEPARATOR_FIELD + sih_inv_dt + SEPARATOR_FIELD + sih_inv_type + SEPARATOR_FIELD + sih_cust_cd + SEPARATOR_FIELD + sih_tot_amt + SEPARATOR_FIELD + sih_tot_qty + SEPARATOR_FIELD + sih_po_number + SEPARATOR_RECORD
+
+                Dim queryStr2 As String = "SET NOCOUNT ON select i.sid_item_cd, b.bicf_bar_code, i.sid_inv_qty, i.sid_inv_price from sales_invoice_dtl i, bar_item_code b where i.sid_inv_no='" + sih_inv_no + "' and i.sid_item_cd = b.bicf_item_code and bicf_bar_code like '890%'"
+                cmd2 = New OleDbCommand(queryStr2, cn)
+                drSub = cmd2.ExecuteReader
+                Dim count As Integer = 0
+                While (drSub.Read())
+                    Dim sid_item_cd As String = drSub("sid_item_cd")
+                    Dim sid_bar_code As String = drSub("bicf_bar_code")
+                    Dim sid_inv_price As String = drSub("sid_inv_price").ToString
+                    Dim sid_inv_qty As String = drSub("sid_inv_qty").ToString
+                    batchRecords += sid_item_cd + SEPARATOR_FIELD + sid_bar_code + SEPARATOR_FIELD + sid_inv_price + SEPARATOR_FIELD + sid_inv_qty + SEPARATOR_RECORD
+                    count = count + 1
+                End While
+
+                Console.WriteLine("Record=" + batchRecords)
+                Dim params As New NameValueCollection()
+                params.Add("records", batchRecords)
+                Dim response As String = serverUpload("saveInvoices.php", params)
+                Console.WriteLine(response)
+                If (response.StartsWith("Success")) Then
+                    ' continue
+                Else
+                    loopOk = False
+                End If
+
+                If (drSub IsNot Nothing) Then
+                    drSub.Close()
+                End If
+
+            End While
+
+        Catch ex As Exception
+            Console.WriteLine(ex.ToString)
+        End Try
+        If (drMain IsNot Nothing) Then
+            drMain.Close()
+        End If
+        If (cn IsNot Nothing) Then
+            cn.Close()
+        End If
+        Return Nothing
+    End Function
+
+    Function ReadIniFile(ByVal iniFile As String) As NameValueCollection
+        Dim lines As String() = System.IO.File.ReadAllLines(iniFile).ToArray()
+        Dim line As String
+        Dim tokens As String()
+        Dim namevals As New NameValueCollection()
+        For Each line In lines
+            tokens = line.Split(New Char() {"="c}, 2)
+            namevals.Add(tokens(0), tokens(1))
+            Console.WriteLine(tokens(0) + "=" + tokens(1))
+        Next line
+        Return namevals
+    End Function
+
+    Function GetDate(ByVal dt As DateTime) As String
+        Return dt.Date.ToString("yyyy-MM-dd")
+    End Function
+
+    Function GetTime(ByVal dt As DateTime) As String
+        Return dt.TimeOfDay.ToString
+    End Function
+
+    Private Function serverUpload(ByVal subUrl As String, ByVal params As NameValueCollection)
+        Dim webClient As New WebClient()
+        Dim url As String = "http://limelight.intouchrewards.com/obsync/"
+
+        url = UrlAppend(url, subUrl)
+
+        Try
+            Dim myCache As New CredentialCache()
+            myCache.Add(New Uri(url), "Digest", New NetworkCredential(username, password))
+
+            webClient.Credentials = myCache
+            Dim responseArray As Byte() = webClient.UploadValues(url, params)
+            Dim responseString As String = Encoding.ASCII.GetString(responseArray)
+            serverUpload = responseString
+        Catch ex As Exception
+            serverUpload = ex.Message()
+        End Try
+    End Function
+
+    Private Function UrlAppend(ByVal url, ByVal suburl) As String
+        If (url.EndsWith("/")) Then
+            ' Do nothing
+        Else
+            url = url + "/"
+        End If
+        Return url + suburl
+    End Function
+
+    Private Function IsEmpty(ByVal textVal As String)
+        If (textVal Is Nothing Or Trim(textVal) = "") Then
+            IsEmpty = True
+        Else
+            IsEmpty = False
+        End If
+    End Function
+
+    Public Function WriteToEventLog(ByVal entry As String, _
+                    Optional ByVal appName As String = "Intouch", _
+                    Optional ByVal eventType As  _
+                    EventLogEntryType = EventLogEntryType.Information, _
+                    Optional ByVal logName As String = "Application") As Boolean
+
+        Dim objEventLog As New EventLog
+
+        If (True) Then
+            Console.WriteLine(entry)
+            Return True
+        End If
+        Try
+            'Register the Application as an Event Source
+            If Not EventLog.SourceExists(appName) Then
+                EventLog.CreateEventSource(appName, logName)
+            End If
+
+            'log the entry
+            objEventLog.Source = appName
+            objEventLog.WriteEntry(entry, eventType)
+
+            Return True
+
+        Catch Ex As Exception
+
+            Console.WriteLine(Ex.ToString)
+            Return False
+
+        End Try
+
+    End Function
+
+
+End Module

@@ -1,0 +1,61 @@
+<?php
+require_once "../../it_config.php";
+require_once "lib/db/DBConn.php";
+require_once("session_check.php");
+require_once "lib/core/Constants.php";
+
+extract($_POST);
+try {
+    $db = new DBConn();
+    $user = getCurrUser();
+
+    $items = array();
+    $itmcnt = 0;
+    if ($user->usertype != UserType::Admin && $user->usertype != UserType::CKAdmin && $user->usertype != UserType::Dispatcher) {
+        echo json_encode(array("error" => "1", "message" => "Insufficent Privileges"));
+        exit;
+    } else {
+       $query = "Select oi.item_id as item_id,oi.barcode as barcode,sum(oi.quantity) as qty from it_orders o,it_order_items oi where o.id = oi.order_id and o.store_id = oi.store_id and o.store_id = $sid and o.ck_order_id is null group by oi.item_id";
+       $objs = $db->fetchObjectArray($query);
+
+        foreach ($objs as $obj) {
+            $itemid = $obj->item_id;
+            $qty = $obj->qty;
+            if (!isset($items[$itemid]))
+                $items[$itemid] = 0;
+            if ($qty > 0) {
+                $items[$itemid] += $qty;
+                $itmcnt++;
+            }
+        }
+
+        $num_item_codes = 0;
+        $ordered_qty = 0;
+        $avail_qty = 0;
+
+        foreach ($items as $itemid => $qty) {
+            $item_id = $itemid;
+            if ($qty <= 0) {
+                continue;
+            }
+            $num_item_codes++;
+            $ordered_qty += $qty;
+            $dbobj = $db->fetchObject("select i.ctg_id, i.curr_qty from it_items i, it_ck_designs d where i.id=$item_id and i.ctg_id = d.ctg_id and i.design_no = d.design_no and d.active=1 and i.curr_qty > 0");
+            if (!$dbobj) {
+                continue;
+            }
+            $avail_qty += $dbobj->curr_qty;
+        }
+
+        $lastrecord = $db->fetchObject("select * from it_orders where store_id = $sid order by id desc limit 1");
+
+        echo json_encode(array("error" => "0",
+            "num_item" => $num_item_codes,
+            "orderqty" => $ordered_qty,
+            "availstock" => $avail_qty,
+            "lasttime" => $lastrecord->createtime)
+        );
+    }
+} catch (Exception $xcp) {
+    echo json_encode(array("error" => "1", "message" => "Exception:" . $xcp->getMessage()));
+}

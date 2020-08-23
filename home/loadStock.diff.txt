@@ -1,0 +1,185 @@
+8a9
+> $commit=true;
+11,65c12
+< $g_ctg_ids = array(
+< "SHIRT" => "001",
+< "TROUSER" => "002",
+< "JEANS" => "003",
+< "T-SHIRT" => "004",
+< "SOCKS" => "006",
+< "Formal Shirt" => "007",
+< "Casual Shirt" => "008",
+< "Handkerchiefs" => "014",
+< "PRO-WASH SHIRT" => "016",
+< "SLIM SHIRT" => "017",
+< "SHORT SHIRT" => "018",
+< "NON-PLEAT" => "019",
+< "SL" => "022",
+< "SM" => "023",
+< "FF" => "024",
+< "FH" => "025",
+< "SEMI FORMAL" => "030",
+< "SEMI FORMAL SHIRT" => "030",
+< "SLIM FORMAL" => "031",
+< );
+< 
+< $g_style_ids = array(
+< "FULL - SH" => "001",
+< "HALF - SH" => "002",
+< "NA" => "003",
+< "PLEAT - TR" => "004",
+< "NON-PLEAT - TR" => "005",
+< "COMFORT FIT - JN" => "006",
+< "Non-pleat" => "007",
+< "FS" => "008",
+< "HS" => "009",
+< "Pleated" => "010",
+< "NON PLEATED" => "011",
+< "NON PLEATE" => "012",
+< "Comfort" => "013",
+< "BOOT CUT" => "015",
+< "NON-PLEATE" => "017",
+< "CH" => "021",
+< "SL" => "022",
+< "SM" => "023",
+< "FF" => "024",
+< "FH" => "025",
+< "HT" => "026",
+< "SF" => "027",
+< "SH" => "028",
+< "NP" => "029",
+< "PD" => "030",
+< "PE" => "031",
+< "PL" => "032",
+< "RH" => "033",
+< "CF" => "034",
+< "PP" => "037",
+< "NP/PL" => "038",
+< );
+---
+> $db=new DBConn();
+67,106c14,32
+< $g_size_ids = array(
+< "39 CM" => "001",
+< "40 CM" => "002",
+< "42 CM" => "003",
+< "44 CM" => "004",
+< "36 IN" => "005",
+< "38 IN" => "006",
+< "40 IN" => "007",
+< "42 IN" => "008",
+< "30 IN" => "009",
+< "32 IN" => "010",
+< "34 IN" => "011",
+< "28 IN" => "013",
+< "NA" => "014",
+< "34" => "015",
+< "38" => "016",
+< "32" => "017",
+< "30" => "018",
+< "36" => "019",
+< "M" => "020",
+< "XL" => "021",
+< "L" => "022",
+< "XXL" => "023",
+< "40" => "024",
+< "42" => "025",
+< "44" => "026",
+< "28" => "027",
+< "39" => "028",
+< "10" => "030",
+< "2" => "031",
+< "28 / 71" => "032",
+< "30 / 76" => "033",
+< "32 / 81" => "034",
+< "34 / 86" => "035",
+< "36 / 91" => "036",
+< "38 / 97" => "037",
+< "40 / 102" => "038",
+< "42 / 107" => "039",
+< "44 / 112" => "040",
+< );
+---
+> $objs = $db->fetchObjectArray("select * from it_categories");
+> foreach ($objs as $obj) { $g_ctg_ids[strtoupper($obj->name)] = $obj->id; }
+> $objs = $db->fetchObjectArray("select * from it_styles");
+> foreach ($objs as $obj) { $g_style_ids[strtoupper($obj->name)] = $obj->id; }
+> $objs = $db->fetchObjectArray("select * from it_sizes");
+> foreach ($objs as $obj) { $g_size_ids[strtoupper($obj->name)] = $obj->id; }
+> $g_size_ids['30']=20;
+> $g_size_ids['32']=21;
+> $g_size_ids['34']=22;
+> $g_size_group["36"]="17,23";
+> $g_size_group["36/91"]="17,23";
+> $g_size_group["38"]="18,24";
+> $g_size_group["38/97"]="18,24";
+> $g_size_group["40"]="14,25";
+> $g_size_group["40/102"]="14,25";
+> $g_size_group["42"]="15,26";
+> $g_size_group["42/107"]="15,26";
+> $g_size_group["44"]="16,27";
+> $g_size_group["44/112"]="16,27";
+108d33
+< $db=new DBConn();
+112c37,38
+< $db->execUpdate("update it_ck_items set curr_qty = 0, updatetime=now()");
+---
+> if ($commit) $db->execUpdate("update it_items set curr_qty = 0, updatetime=now()");
+> $error="Error:";
+131,134c57,59
+< $ctg_id = isset($g_ctg_ids[$ctg_name]) ? $g_ctg_ids[$ctg_name] : false;
+< $style_id = isset($g_style_ids[$style_name]) ? $g_style_ids[$style_name] : false;
+< $size_id = isset($g_size_ids[$size_name]) ? $g_size_ids[$size_name] : false;
+< $error="Error:";
+---
+> $ctg_id = isset($g_ctg_ids[strtoupper($ctg_name)]) ? $g_ctg_ids[strtoupper($ctg_name)] : false;
+> $style_id = isset($g_style_ids[strtoupper($style_name)]) ? $g_style_ids[strtoupper($style_name)] : false;
+> $size_id = isset($g_size_ids[strtoupper($size_name)]) ? $g_size_ids[strtoupper($size_name)] : false;
+135a61
+> 	$design_no = $db->safe($design_no);
+137,146c63,64
+< 	$item_code=$db->safe($item_code);
+< 	$ctg_id=$db->safe($ctg_id);
+< 	$ctg_name=$db->safe($ctg_name);
+< 	$style_id=$db->safe($style_id);
+< 	$style_name=$db->safe($style_name);
+< 	$size_id=$db->safe($size_id);
+< 	$size_name=$db->safe($size_name);
+< 	$design_no=$db->safe($design_no);
+< 	$prod_type=$db->safe($prod_type);
+< 	$item = $db->fetchObject("select * from it_ck_items where item_code=$item_code");
+---
+> //	$item = $db->fetchObject("select * from it_items where ctg_id=$ctg_id and MRP=$mrp and design_no=$design_no and style_id=$style_id and size_id=$size_id");
+> 	$item = $db->fetchObject("select * from it_items where barcode='$item_code'");
+148c66,67
+< 		$db->execUpdate("update it_ck_items set curr_qty=$curr_qty, updatetime=now() where id=$item->id");
+---
+> 		if ($commit) $db->execUpdate("update it_items set curr_qty=$curr_qty, updatetime=now() where id=$item->id");
+> 		$tot_qty += $curr_qty;
+150,154c69,73
+< 		$db->execInsert("insert into it_ck_items set item_code=$item_code, mrp=$mrp, ctg_id=$ctg_id, ctg_name=$ctg_name, style_id=$style_id, style_name=$style_name, size_id=$size_id, size_name=$size_name, design_no=$design_no, curr_qty=$curr_qty");
+< 	}
+< 	$obj = $db->fetchObject("select * from it_ck_designs where ctg_id=$ctg_id and design_no=$design_no");
+< 	if ($obj) {
+< 		$db->execUpdate("update it_ck_designs set prod_type=$prod_type, updatetime=now() where id=$obj->id");
+---
+> 		$size_group = isset($g_size_group[$size_name]) ? $g_size_group[$size_name] : false;
+> 		$item = $db->fetchObject("select * from it_items where ctg_id=$ctg_id and MRP=$mrp and design_no=$design_no and style_id=$style_id and size_id in ($size_group)");
+> 		if ($item) {
+> 			if ($commit) $db->execUpdate("update it_items set curr_qty=$curr_qty, updatetime=now() where id=$item->id");
+> 			$tot_qty += $curr_qty;
+156c75,77
+< 		$db->execUpdate("insert into it_ck_designs set design_no=$design_no, ctg_id=$ctg_id, prod_type=$prod_type");
+---
+> 			$skip_qty += $curr_qty;
+> 			$error .= "Item not found:$rowno::$item_code,$mrp,$ctg_name:$ctg_id,$style_name:$style_id,$size_name:$size_id,$design_no,$prod_type,$curr_qty\n<br />";
+> 		}
+158,159d78
+< //	print "\r$rowno";
+< 	$tot_qty += $curr_qty;
+162c81
+< 	$error += "Skipping Row No:$rowno::($ctg_id,$style_id,$size_id)$item_code,$mrp,$ctg_name,$style_name,$size_name,$design_no,$prod_type,$curr_qty\n<br />";
+---
+> 	$error .= "Skipping Row No:$rowno::$item_code,$mrp,$ctg_name,$style_name,$size_name,$design_no,$prod_type,$curr_qty\n<br />";
+170a90
+> print "Total Qty=$tot_qty, Skipped Qty=$skip_qty\n<br />";

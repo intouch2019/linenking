@@ -1,0 +1,50 @@
+<?php
+require_once ("lib/db/DBConn.php");
+class cls_header {
+
+	public function __construct() {
+	}
+
+	public function pageHeader($renderObj) {
+		$currUser = getCurrUser();
+                $viewcart="";
+                $countdesigns="";
+                $totqt="";
+                $totprice="";
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<base href="<?php echo $renderObj->baseUrl(); ?>"></base>
+<meta content="index,follow" name="robots" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title><?php echo $renderObj->pageTitle(); ?></title>
+<meta content="<?php echo $renderObj->pageKeywords(); ?>" name="keywords" />
+<meta content="<?php echo $renderObj->pageDescription(); ?>" name="description" />
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+<link rel="icon" href="favicon.ico" type="image/x-icon" />
+<link rel="stylesheet" type="text/css" href="fluid960gs/css/reset.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="fluid960gs/css/text.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="fluid960gs/css/grid.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="fluid960gs/css/layout.css" media="screen" />
+
+<link rel="stylesheet" type="text/css" href="fluid960gs/css/nav.css" media="screen" />
+<!--[if IE 6]><link rel="stylesheet" type="text/css" href="fluid960gs/css/ie6.css" media="screen" /><![endif]-->
+<!--[if IE 7]><link rel="stylesheet" type="text/css" href="fluid960gs/css/ie.css" media="screen" /><![endif]-->
+<script type="text/javascript" src="fluid960gs/js/jquery-1.4.2.min.js"></script>
+<link rel="stylesheet" type="text/css" href="css/intouch.css" media="screen" />
+<?php echo $renderObj->extraHeaders(); ?>
+</head>
+<body>
+<div id="content" class="container_12" style="background-color:#EEEEEE">
+	<div class="grid_12" style="height:150px;background-color:#0d0d0d;background-image:url(images/limelight-header.jpg);background-repeat:no-repeat">
+	<div class="grid_8" style="font-size:32px;font-weight:bold;color:#eeeeee;text-align:right;margin:50px 0px 0px 0px;">Corporate Portal</div>
+<?php if (getCurrUser()) { ?>
+	<div class="grid_4 loggeduser"><?php echo getCurrUser()->name; ?> [ <a href="logout.php">Logout</a> ]</div>
+<?php } ?>
+        </div>
+	<div class="grid_12">&nbsp;</div>
+<?php
+	}
+}

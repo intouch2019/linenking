@@ -1,0 +1,12 @@
+//Following code show's the usage of html2dfp.
+
+$printhtml = '<table>
+		<tr>
+		<td>Html2PDF</td>
+		</tr>
+	      </table>';
+
+$filename="abc";
+$html2pdf = new HTML2PDF('P', 'A4', 'en');
+$html2pdf->writeHTML($printhtml);
+$html2pdf->Output("../pofiles/$filename.pdf", "F");

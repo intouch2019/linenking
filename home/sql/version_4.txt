@@ -1,0 +1,5 @@
+insert into it_pages set id = 86 ,pagecode = 'productgraph', pagename = 'Product Analysis' , pageuri = 'admin/graph/products', menuhead = 'Graphical Reports' , sequence = 11 , submenu_seq = 4;
+
+insert into it_user_pages set user_id = 67 , page_id = 86;
+insert into it_user_pages set user_id = 68 , page_id = 86;
+

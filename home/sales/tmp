@@ -1,0 +1,63 @@
+<script type="text/javascript">
+
+	function checkEnter(e) {
+		if(e.keyCode==13 || e.keyCode==9) {
+			document.addpoints.submit();
+			return true;
+				++numProducts;
+			var newli;
+			newli = '<INPUT checked NAME="options" TYPE="CHECKBOX" VALUE="'+document.addpoints.product_ID.value+'">'+document.addpoints.product.value+'<BR>';
+			newli = '<li class="form"><span class="check"><span class="name">'+document.addpoints.product.value+'</span><input name="product'+numProducts+'" type="checkbox" /></span></li>';
+				var old = document.getElementById("product_list").innerHTML;
+				document.getElementById("product_list").innerHTML=old+newli;
+				document.addpoints.product.value="";
+				return false;
+		}
+		return true;
+	}
+</script>
+<?php
+require_once("lib/codes/clsCodes.php");
+
+$currStore = getCurrStore();
+if (!$currStore) {
+	// donot show checkin form if not logged in
+} else {
+$msgClass="success";
+$statusMsg="";
+if (isset($_SESSION['form_response'])) {
+list($isError, $statusMsg) = explode(",", $_SESSION['form_response'], 2);
+if ($isError) { $msgClass="error"; }
+}
+//print $statusMsg;
+
+?>
+<div id="content">
+	<span class="formtitle">Credit Points</span>
+	<ul class="pageitem">
+<form method="post" name="addpoints" action="postAddpoints.php">
+
+<li class="menu" style="height:80px;"><span class="fieldlabel">InTouch Number (or Phone Number):</span><input post="1" class="eform" name="intouchno" type="text" value="<?php echo $_SESSION['form_intouchno'] ?>" /></li>
+	
+<li class="menu" style="height:80px;"><span class="fieldlabel">Bill Number:</span><input post="1" class="eform" name="billno" type="text" value="<?php echo $_SESSION['form_billno'] ?>" /></li>
+<li class="menu" style="height:80px;"><span class="fieldlabel">Bill Amount:</span><input post="1" class="eform" name="billamt" type="text" value="<?php echo $_SESSION['form_billamt'] ?>" /></li>
+
+<!--
+<li class="menu" style="height:80px;"><span class="fieldlabel">What did the customer buy?:</span><input post="1" class="eform" name="product" id="product" type="text" onkeypress="return checkEnter(event)" onkeyup="ajax_showOptions(this,'getStationsByLetters',event)" /></li>
+-->
+<li class="menu" style="height:80px;"><span class="fieldlabel">What did the customer buy?:&nbsp;&nbsp;&nbsp;</span><br /><textarea style="margin:5px 0px 0px 20px;" class="eform" rows=1 cols=37 id="product" name="product" onkeypress="return checkEnter(event)" onkeyup="ajax_showOptions(this,'getStationsByLetters',event)"></textarea>
+<input type="hidden" id="product_hidden" name="product_ID"><!-- THE ID OF the station will be inserted into this hidden input -->
+</li>
+
+<div id="product_list">
+</div>
+<li class="textbox"><span class="<?php echo $msgClass ?>" id="cif_status"><?php echo $statusMsg ?></span></li>
+<?php
+print $form_buttons;
+?>
+</form>
+	</ul>
+</div> <!-- end div=content -->
+<?php
+}
+?>

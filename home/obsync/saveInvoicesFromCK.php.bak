@@ -1,0 +1,113 @@
+<?php
+require_once "../../it_config.php";
+require_once "lib/logger/clsLogger.php";
+require_once "lib/db/DBConn.php";
+
+extract($_POST);
+$logger = new clsLogger();
+if(!isset($records) || trim($records) == ""){
+	$logger->logError("Missing parameter [records]:".print_r($_POST, true));
+	print "1::Missing parameter [records]";
+	return;
+}
+$logger->logInfo("InvoiceFromCK:$records");
+//$records="13140316<>0<>1392025375000<>502.0<>1.0<>171.6<>23.92<>Manager<==>62<==>0010010010001<>SHIRT<>650.0<>1.0<>650.0<++><==>AT002001|||||";
+//$records="131400002<>0<>1392637255000<>4973.0<>7.0<>83<>1,2,3,<>1841.84<>236.808<>Manager<==>83<==>0010010010001<>SHIRT<>650.0<>2.0<>1300.0<++>0010020016578<>TROUSER<>498.0<>1.0<>498.0<++>0010020019830<>TROUSER<>1295.0<>3.0<>3885.0<++>0010020028493<>TROUSER<>895.0<>1.0<>895.0<++><==>|||||";
+$records=urldecode($records);
+try {
+    $db = new DBConn();
+    $arr = explode("|||||",$records);
+          
+    foreach ($arr as $record) {
+            $invoice_id=false; 
+            $store_id="";
+            $tot_qty=0;
+            $tot_amt=0;
+            $items=array(); 
+            if (trim($record) == "") { continue; }
+            $invRecord = explode("<==>", $record);
+            if (count($invRecord) == 0) { continue; }
+            $invHeader = $invRecord[0];
+            $invfields = explode("<>",$invHeader);
+            if ($invfields) {
+                    $invoice_no = $db->safe($invfields[0]);
+                    $exists = $db->fetchObject("select * from it_invoices where invoice_no=$invoice_no");
+                    if ($exists) break; // stop if invoice_no already exists
+                    $invoice_type = $db->safe($invfields[1]);
+//                    $invoice_dt = $db->safe($invfields[2]);
+                    $dt = $invfields[2];
+                    $dt /= 1000;
+                    $invoice_dt = $db->safe(date("Y-m-d H:i:s", $dt));
+                    $invoice_amt = floatval($invfields[3]);		
+                    $invoice_qty = intval($invfields[4]);
+                    $inv_store_id = $invfields[5];
+                    $challan_count = $db->safe($invfields[6]);
+                    $challans = $db->safe($invfields[7]);
+                    $challan_nos = $challan_count."<>".$challans;
+                    //challan =>9
+                    $query = "insert into it_invoices set invoice_no=$invoice_no, invoice_dt=$invoice_dt, invoice_type=$invoice_type, invoice_amt=$invoice_amt, invoice_qty=$invoice_qty,store_id = $inv_store_id ,challan_nos = $challan_nos ";
+                    $invoice_id = $db->execInsert($query);
+                    if (!$invoice_id) { break; }
+            } 
+            $store_id = $invRecord[1];
+            $query = " update it_invoices set store_id = $store_id where id = $invoice_id ";
+            $db->execUpdate($query);
+            $itemlines = explode("<++>", $invRecord[2]);
+           
+            foreach ($itemlines as $currlineitem) {
+                        $currlineitem=trim($currlineitem);
+                        if ($currlineitem == "") { continue; }
+                        $fields = explode("<>", $currlineitem );
+                        $ck_code = $db->safe($fields[0]);
+    //		$sp_code = $db->safe($fields[1]);
+                        $price = floatval($fields[2]);
+                        $quantity = intval($fields[3]);
+                        $tot_qty += $quantity;
+                        $tot_amt += ($price * $quantity);
+                        $query = "insert into it_invoice_items set invoice_id=$invoice_id, item_code=$ck_code,  price=$price, quantity=$quantity";
+                       $inserted = $db->execInsert($query);
+//                        if (!$inserted) { break; }
+                        $items[$ck_code] = $quantity;
+           }
+           $pickingId = $invRecord[3];
+           
+           // stock balance code below
+           if(trim($pickingId) != ""){
+               $query = "select order_nos from it_ck_pickgroup where id = $pickingId";
+               $orderObj = $db->fetchObject($query);    
+               //$order_nos = explode(",", $orders);
+               $order_nos = explode(",", $orderObj->order_nos);
+                foreach($order_nos as $o_no){ // adding orderred qty to it_items
+                    $orderNo = $db->safe($o_no);
+                    $query = "select * from it_ck_orders where order_no = $orderNo ";
+                    $obj = $db->fetchObject($query);
+                    $query1 = "select * from it_ck_orderitems where order_id = $obj->id and store_id = $store_id ";
+                    $orderItemsObj = $db->fetchObjectArray($query1);
+                    foreach($orderItemsObj as $orderItem){
+                        $query2 = "update it_items set curr_qty = curr_qty + $orderItem->order_qty where id = $orderItem->item_id ";
+                        $db->execUpdate($query2);
+                    }
+                }
+           }
+//           print_r($items);
+           foreach($items as $key => $value){  // sub inv_items qty from it_items
+              // $barcode = $db->safe($key);
+               $query3 = " update it_items set curr_qty = curr_qty - $value where barcode = $key ";
+//              print($query3);
+               $db->execUpdate("update it_items set curr_qty = curr_qty - $value where barcode = $key");
+//                 print($query3);
+               
+           }
+           unset($items);
+           if ($invoice_id) {
+            $db->execUpdate("update it_invoices set invoice_amt=$invoice_amt, invoice_qty=$invoice_qty where id=$invoice_id");
+           }
+    }
+    
+//    $db->closeConnection();
+    print "0::Success";
+} catch (Exception $ex) {
+	print "1::Error-".$ex->getMessage();
+}
+//}
+?>

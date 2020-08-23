@@ -1,0 +1,140 @@
+Script started on Wed Jun 30 19:23:04 2010
+debian:/var/www/intouchrewards.com/www/store/loaddata# php jl  addCustomers.php jll pune jlpune-custlist-2.csv 
+jlpune, 9881717030, Deepika Ghodke, deepikaghodke@gmail.com - 0,Customer successfully added.
+jlpune, 9823572842, Dr nayanne Prakan,  - 0,Customer successfully added.
+jlpune, 9890777456, Dr.jj Kohuyu, jjotirmayi10@yahoo.in - 0,Customer successfully added.
+jlpune, , Sanjeev Honmore, shonmore@gmail.com - Skipping...
+jlpune, 9765557169, Swapil Gadkar, swapilgadkar@hotmail.com - 0,Customer successfully added.
+jlpune, 9881122326, Nilesh B,  - 0,Customer successfully added.
+jlpune, 9545180302, Aryan Imami, hashmatshehyada@yahoo.com - 0,Customer successfully added.
+jlpune, 8087849725, Rajan , rajan06908@gmail.com - 0,Customer successfully added.
+jlpune, , Sumana, adhikarisumana@yahoo.com - Skipping...
+jlpune, 9890729436, Anshia Dagur, anshia-d@yahoo.com - 0,Customer successfully added.
+jlpune, 9960645119, Hitesh , hiteshkw2002@gmail.com - 0,Customer successfully added.
+jlpune, 9822781045, Manisha, rakshemanisha@yahoo.com - 0,Customer successfully added.
+jlpune, 9921970226, Praveen saini, pravins1@rediffmail.com - 0,Customer successfully added.
+jlpune, 9923113923, Hemashu, narsana.hemanshu@gmail.com - 0,Customer successfully added.
+jlpune, 9822433065, Ashish,  - 0,Customer successfully added.
+jlpune, 9860097170, Dr. heena shaikh,  - 0,Customer successfully added.
+jlpune, 9860427624, Vijay,  - 0,Customer successfully added.
+jlpune, 9960688745, Arjun,  - 0,Customer successfully added.
+jlpune, 9923669608, Ranu, ranu.priya@gmail.com - 0,Customer successfully added.
+jlpune, 9764157953, Sunita,  - 0,Customer successfully added.
+jlpune, 8055212151, Gaurav,  - 0,Customer successfully added.
+jlpune, 9823146680, Dr.sameer shinde,  - 0,Customer successfully added.
+jlpune, 9823311611, Raj R,  - 0,Customer successfully added.
+jlpune, 9763166113, Dr.sameena, drsameenas361@gmail.com - 0,Customer successfully added.
+jlpune, 9823063577, Joyce,  - 0,Customer successfully added.
+jlpune, 9764062777, Shweta,  - 0,Customer successfully added.
+jlpune, 9158880614, Supriya,  - 0,Customer successfully added.
+jlpune, 9673468904, Sarfaraz khan,  - 0,Customer successfully added.
+jlpune, , P. Vimal, p.vimal.kumar@gmail.com - Skipping...
+jlpune, 9325441404, Surandra khurana,  - 0,Customer successfully added.
+jlpune, 9096966964, Rishi singh, rishi.rajawat@gmail.com - 0,Customer successfully added.
+jlpune, , siddarth khanna, sidhr.2010@gmail.com - Skipping...
+jlpune, 9820995029, Apurva shah, apurvashah@gmail.com - 0,Customer successfully added.
+jlpune, 9823628457, Gaurav shankar, gaurav.shankar@gmail.com - 0,Customer successfully added.
+jlpune, 9561918233, Sapna bhanadari,  - 0,Customer successfully added.
+jlpune, 9890532081, Monica wali, monica.wali@gmail.com - 0,Customer successfully added.
+jlpune, 9920404981, Amarjit singh,  - 0,Customer successfully added.
+jlpune, 9890763294, Abhishek rishra,  - 0,Customer successfully added.
+jlpune, 9893036999, Prashant pali, p.pali@rediffmail.com - 0,Customer successfully added.
+jlpune, 9921103322, Rudhreesh kapur, rudhreesh@gmail.com - 0,Customer successfully added.
+jlpune, 9604448073, Vishal ,  - 0,Customer successfully added.
+jlpune, 9923006047, Yashari gupta,  - 0,Customer successfully added.
+jlpune, 9923064415, Sagar kalkade, sagarkalkade@gmail.com - 0,Customer successfully added.
+jlpune, 9668893600, Avi,  - 0,Customer successfully added.
+jlpune, 9689914010, Hemant deshtan,  - 0,Customer successfully added.
+jlpune, 9967656348, Mayauh varu, mayanh.varu@hotmail.com - 0,Customer successfully added.
+jlpune, 9960863613, Sonam Sangoram, ssonum.s@gamil.com - 0,Customer successfully added.
+jlpune, 9822944550, Rushank kshirsagar, rushankk@gmail.com - 0,Customer successfully added.
+jlpune, 26160728, Ashok shah,  - 1,Invalid phone number:26160728
+jlpune, 9011063632, Girish prasad, kritichawala@gmail.com - 0,Customer successfully added.
+jlpune, 9767314131, Chef kishi,  - 0,Customer successfully added.
+jlpune, 9922754965, Sharon,  - 0,Customer successfully added.
+jlpune, 9423505951, Sajita hiralal, sajitarox@yahoo.in - 0,Customer successfully added.
+jlpune, 9890522525, Amit chawan,  - 0,Customer successfully added.
+jlpune, 9960638367, Amit chaurasia,  - 0,Customer successfully added.
+jlpune, 9823584835, Mayur chawan, mayur.chawan@gmail.com - 0,Customer successfully added.
+jlpune, 9226162024, Raju lakhati,  - 0,Customer successfully added.
+jlpune, , Mangesh pundulik, mangeshpundalik@yahoo.in - Skipping...
+jlpune, 9764351911, Thomas,  - 0,Customer successfully added.
+jlpune, 9960640034, Rakesh parange,  - 0,Customer successfully added.
+jlpune, 9921089658, Marjaria,  - 0,Customer successfully added.
+jlpune, 9970175404, Vikran choudhary, vikrantchoudhary@gmail.com - 0,Customer successfully added.
+jlpune, , Naina pillay, sabaalie@yahoo.in - Skipping...
+jlpune, 9822210166, Pradeep,  - 0,Customer successfully added.
+jlpune, 9822062589, Santosh,  - 0,Customer successfully added.
+jlpune, 9423069824, Dr. Shrinivas kolod, drkolod@aol.comm - 0,Customer successfully added.
+jlpune, 26119061, Swelha srinivasan, swe.srini@gmail.com - 1,Invalid phone number:26119061
+jlpune, 9922222482, Abdul mateen,  - 0,Customer successfully added.
+jlpune, 9561304230, Anuradha shinde, nakshtra.anu@gmail.com - 0,Customer successfully added.
+jlpune, 9923466257, Jaison varghese,  - 0,Customer successfully added.
+jlpune, 9765813422, Akshay,  - 0,Customer successfully added.
+jlpune, 9960884280, Dr.Manoj pawar,  - 0,Customer successfully added.
+jlpune, 9970279218, Sarang k,  - 0,Customer successfully added.
+jlpune, 9096387622, Amar kulkarni, amar.kulkarni@gmail.com - 0,Customer successfully added.
+jlpune, 9763107366, Vinod,  - 0,Customer successfully added.
+jlpune, 9420546912, Rahul,  - 0,Customer successfully added.
+jlpune, 9423244969, Mrs.S.N balli,  - 0,Customer successfully added.
+jlpune, 9657311518, Archana L,  - 0,Customer successfully added.
+jlpune, 9890443218, Alexander petrikat,  - 0,Customer successfully added.
+jlpune, 9970739582, Gudas,  - 0,Customer successfully added.
+jlpune, , Deepa annie, anniezac.dupa@gmail.com - Skipping...
+jlpune, 40026886, Nawab shaikh,  - 1,Invalid phone number:40026886
+jlpune, 9545046046, Reni,  - 0,Customer successfully added.
+jlpune, 9823098053, Mariam dawala,  - 0,Customer successfully added.
+jlpune, 9552591419, Prashant  , p.lali@rediffmail.com - 0,Customer successfully added.
+jlpune, 9833512014, Priya parekh,  - 0,Customer successfully added.
+jlpune, 9860268698, Mrs.S.H.Pathak, shonal.p1@gmail.com - 0,Customer successfully added.
+jlpune, 9763279868, Parthasingh Raigur, bittoo99@gmail.com - 0,Customer successfully added.
+jlpune, 9561624550, Rachana shah, sadhi72@gmail.com - 0,Customer successfully added.
+jlpune, , Neha chandan, nehachandan@gmail.com - Skipping...
+jlpune, 9922894765, Aziz,  - 0,Customer successfully added.
+jlpune, 65233745, Sharda,  - 1,Invalid phone number:65233745
+jlpune, 9820442456, Malvikaa mauhatta, malvikaa.mauhatta@gmail.com - 0,Customer successfully added.
+jlpune, 9011058555, Hiten shah,  - 0,Customer successfully added.
+jlpune, 9970523386, Daina normha,  - 0,Customer successfully added.
+jlpune, 9960366624, Bibhudutta,  - 0,Customer successfully added.
+jlpune, 27496197, Ramesh kawade, ramesh-kawade@rediffmail.com - 1,Invalid phone number:27496197
+jlpune, 9823233694, Chenthil R,  - 1,This customer is already a fan
+jlpune, 97150-2786867, Fatema Shabbir,  - 1,Invalid phone number:971502786867
+jlpune, , Saumya,  - Skipping...
+jlpune, 9021167309, Ravindra,  - 0,Customer successfully added.
+jlpune, 963001070, Hemant L,  - 1,Invalid phone number:963001070
+jlpune, 9657080732, Dinson Thomas, dinsonthomas@gmail.com - 0,Customer successfully added.
+jlpune, 9967005729, Sanjay,  - 0,Customer successfully added.
+jlpune, 9970721156, Binnoy,  - 0,Customer successfully added.
+jlpune, 9049456699, Roma, roma_mangwani@yahoo.com - 0,Customer successfully added.
+jlpune, 9860437111, Abhay Parashar, ab8u1960@yahoo.co.in - 0,Customer successfully added.
+jlpune, 9890590797, Alisha Ghodiya, alisha9@gmail.com - 0,Customer successfully added.
+jlpune, , Ms Balli, sangita.bali@gmail.com - Skipping...
+jlpune, 9890554222, Clustar Jog,  - 0,Customer successfully added.
+jlpune, , Rajni dhere,  - Skipping...
+jlpune, 9830533009, Niraj Sharma, niraj.sharma@seri.com - 0,Customer successfully added.
+jlpune, 9303264193, Mugdha Chandal, mugdhachandal@gmail.com - 0,Customer successfully added.
+jlpune, 9503608400, Kiran Patil,  - 0,Customer successfully added.
+jlpune, 9920978164, Nandana Murthy, chefnandana@yahoo.in - 0,Customer successfully added.
+jlpune, 9881718447, Siddarth Deshmukh, sid.deshmukh@gmail.com - 0,Customer successfully added.
+jlpune, 9049982007, Dr kajal A kale, kalekajal@hotmail.com - 0,Customer successfully added.
+jlpune, 9766655090, Vishal Gorai, vishal.gorai@rediffmail.com - 1,This customer is already a fan
+jlpune, , Nrip Nihalani, n.nihalani@plus91.in - Skipping...
+jlpune, 9970278001, Alkesh Sanghani, s_alkesh@hotmail.com - 0,Customer successfully added.
+jlpune, 9970963360, Valid miakhel, deejayroxx@yahoo.com - 0,Customer successfully added.
+jlpune, , Gupta C A, kamath-pune@yahoo.com - Skipping...
+jlpune, , Joseph George,  - Skipping...
+jlpune, 9881198916, Aatish Ganoo, aatish1679@yahoo.com - 0,Customer successfully added.
+jlpune, 9822266410, Amol Ovhal,  - 0,Customer successfully added.
+jlpune, 9890777456, Dr. JJ Kulkar, jyotiramayil@yahoo.com - 1,This customer is already a fan
+jlpune, 9823572842, Dr. Narayan Parkan,  - 1,This customer is already a fan
+jlpune, , Sanjeev Umre, shmore@gmail.com - Skipping...
+jlpune, 9765557169, Swapnil Gadekar, Swapnilgadekar@hotmail.com - 1,This customer is already a fan
+jlpune, 9881122326, Nilesh B Jadhav, nilesh_jadhav@satyam.com - 1,This customer is already a fan
+jlpune, 9146035866, Rajesh Mishra, punejuicelounge@gmail.com - 0,Customer successfully added.
+jlpune, 9890284437, Wadhwani,  - 0,Customer successfully added.
+jlpune, 2027172021, Aniti Salunkhe, annya-rox@yahoo.com - 0,Customer successfully added.
+jlpune, 9850992863, Madhura Agate,  - 0,Customer successfully added.
+debian:/var/www/intouchrewards.com/www/store/loaddata# exit
+exit
+
+Script done on Wed Jun 30 19:23:58 2010

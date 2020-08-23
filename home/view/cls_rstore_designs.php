@@ -1,0 +1,419 @@
+<?php
+require_once "view/cls_renderer.php";
+require_once "lib/db/DBConn.php";
+require_once "session_check.php";
+require_once "lib/orders/clsOrders.php";
+require_once "lib/items/clsItems.php";
+
+class cls_rstore_designs extends cls_renderer {
+
+    var $params;
+    var $currStore;
+    var $ctg;
+    var $result;
+    var $des_code="";
+    var $MRP;
+    var $size;
+    var $size_group;
+    var $brand="";
+
+    function __construct($params=null) {
+        $this->currStore = getCurrUser();
+        $this->params = $params;
+        if (isset($params['ctg']))
+            { $this->ctg = $params['ctg']; }
+        else 
+            { $this->ctg = null; }
+        if (isset($params['dno']))
+            $this->des_code = $params['dno'];
+        if (isset($params['mrp']))
+            $this->MRP = $params['mrp'];
+        if (isset($params['size']))
+            $this->size = $params['size'];
+        if (isset($params['brand']))
+            $this->brand = $params['brand'];
+    }
+
+    function extraHeaders() {
+        if (!$this->currStore) {
+            ?>
+<h2>Session Expired</h2>
+Your session has expired. Click <a href="">here</a> to login.
+            <?php
+            return;
+        }
+        ?>
+<script type="text/javascript" src="js/expand.js"></script>
+<link rel="stylesheet" type="text/css" href="css/dark-glass/sidebar.css'" />
+<script type="text/javascript" src="js/sidebar/jquery.sidebar.js"></script>
+<link rel="stylesheet" href="css/prettyPhoto.css" type="text/css" media="screen" title="prettyPhoto main stylesheet" charset="utf-8" />
+<script src="js/prettyPhoto/jquery.prettyPhoto.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+    <!--//--><![CDATA[//><!--
+    $(function() {
+        //accodian dropdown
+        // --- Using the default options:
+        //$("h2.expand").toggler();
+        // --- Other options:
+        //$("h2.expand").toggler({method: "toggle", speed: "slow"});
+        //$("h2.expand").toggler({method: "toggle"});
+        //$("h2.expand").toggler({speed: "fast"});
+        //$("h2.expand").toggler({method: "fadeToggle"});
+        $("h2.expand").toggler({method: "slideFadeToggle"});
+        $("#content").expandAll({trigger: "h2.expand"});
+	$("#srch").keyup(function(event){
+		if(event.keyCode == 13){
+			$("#searchBtn").click();
+		}
+	});  
+        //pretty photo pop up
+	$("a[rel^='prettyPhoto']").prettyPhoto({animation_speed:'fast',slideshow:3000, hideflash: true});
+        
+        //brand setting
+        $("input:checkbox[name=brand]").click(function(){
+            var array = new Array();
+            $("input:checkbox[name=brand]:checked").each(function()
+            {
+                array.push($(this).val())
+            });
+            var len = array.length;
+            if (len == 1) {
+                var brand = array[0];
+                window.location.href="rstore/designs/brand="+brand+"/ctg=<?php echo $this->ctg; ?>";
+            } else {
+                window.location.href="rstore/designs/ctg=<?php echo $this->ctg; ?>";
+            }
+        });
+    //--><!]]>
+        //sidebar
+        $("ul#demo_menu1").sidebar({
+            width : 160,
+            height : 110,
+            injectWidth : 50,
+            events:{
+                item : {
+                    enter : function(){
+                        $(this).find("a").animate({color:"red"}, 250);
+                    },
+                    leave : function(){
+                        $(this).find("a").animate({color:"white"}, 250);
+                    }
+                }
+            }
+        });
+    });
+
+    function addToCart(theForm) {
+        var formName = theForm.name;
+        var arr = formName.split("_");
+        var form_id = arr[1];
+        var params = $(theForm).serialize();
+        //alert(params);
+        var ajaxUrl = "ajax/setOrder.php?"+params;
+        $.getJSON(ajaxUrl, function(data){
+//alert(data.error+":"+data.message+":"+data.cartinfo+":"+data.totqt+":"+data.totmrp);
+            if (data.error == "0") {
+                $("#status_"+form_id).removeClass().addClass("success");
+            } else {
+                $("#status_"+form_id).removeClass().addClass("error");
+            }
+
+            $("#status_"+form_id).html(data.message);
+            $("#carttop").html(data.cartinfo);
+            if (data.totqt) {
+                $("#side_qty").html("QTY: "+data.totqt);
+                $("#side_price").html("AMT: "+data.totmrp);
+            }
+        });
+
+        return false;
+    }
+    
+    function setMRP(dropdown)
+    {
+        var idx = dropdown.selectedIndex;
+        var value = dropdown.options[idx].value;
+        window.location.href="rstore/designs/brand=<?php echo $this->brand; ?>/ctg=<?php echo $this->ctg; ?>/mrp="+value;
+    }
+
+    function setSize(dropdown)
+    {
+        var idx = dropdown.selectedIndex;
+        var value = dropdown.options[idx].value;
+//        var mrp1 = $("#setprice").val();
+//        alert(mrp1);
+//        var mrp = $('#setprice option').attr('selected', 'selected');
+        var mrp = document.getElementById("setprice").value;
+//        console.log(mrp);
+        //alert(mrp);
+        var mrpclause = "";
+        if(mrp != null && mrp != 'undefined' && mrp != '0'){
+            mrpclause = "/mrp="+mrp;
+        }
+       
+        window.location.href="rstore/designs/brand=<?php echo $this->brand; ?>/ctg=<?php echo $this->ctg; ?>/size="+value+mrpclause;
+    }
+
+    function search()
+    {
+        var des_code=document.getElementById("srch").value;
+        var ajaxUrl ="ajax/getRDesign.php?ctg_id=<?php echo $this->ctg; ?>"
+        ajaxUrl += "&design_no=" + des_code;
+        if (des_code)
+        {$.getJSON(ajaxUrl, function(data){
+                if (data.error == "0")
+                { window.location.href = data.redirect; }
+                else
+                { alert(data.message); }
+            });
+        }
+        else
+        { alert ("Please enter a design code"); }
+    }
+
+</script>
+    <?php
+    }
+
+    //extra-headers close
+
+    public function pageContent() {
+        $menuitem = "r_".$this->ctg;
+        include "sidemenu.".$this->currStore->usertype.".php";
+        ?>
+
+<div class="grid_10">
+     <!--select s1.*,s2.name from it_ck_sizes s1,it_sizes s2, it_items i  where s1.size_id = s2.id and s2.id = i.size_id and i.ctg_id = s1.ctg_id and i.mrp =  650 and s1.ctg_id='10' group by s2.id order by s1.sequence-->
+            <?php
+           // include "cartinfo.php";
+            $db = new DBConn();
+            $clsItems = new clsItems();
+            $storeid = getCurrUserId();
+            if(isset($this->MRP) && trim($this->MRP) != ""){
+                $mTab =  " , it_items i ";
+                $mrpClause = " and s2.id = i.size_id and i.ctg_id = s1.ctg_id and i.mrp = $this->MRP group by s2.id ";
+                $styleClause = " and s2.id = i.style_id and i.ctg_id = s1.ctg_id and i.mrp = $this->MRP group by s2.id ";
+                $sizeClause = " and s2.id = i.size_id and i.ctg_id = s1.ctg_id and i.mrp = $this->MRP group by s2.id ";
+            }else{
+                $mTab = "";
+                $mrpClause = "";
+                $styleClause = "";
+                $sizeClause = "";
+            }
+            $category = $clsItems->getCategoryNameFromId($this->ctg);
+            $ctg_id = $db->safe($this->ctg);
+            //hardcoded zinon n linon values for queries zinon = 6 / linon = 5; 
+//            if ($this->brand!="") { 
+//                if ($this->brand == "z") $brandquery = " and i.brand_id='6' " ;
+//                else $brandquery = " and i.brand_id='5' ";
+//            } else {
+//                $brandquery = "";
+//            }
+	   // $query = "select i.MRP, sum(i.curr_qty) as tot_qty from it_items i,it_ck_designs d where i.ctg_id=$ctg_id  and i.ctg_id=d.ctg_id and i.design_no=d.design_no and d.active=1 and i.barcode like '89%' group by i.MRP having tot_qty > 0"; //$brandquery
+            $query = "select i.MRP, sum(i.curr_qty) as tot_qty from it_items i,it_ck_designs d where i.ctg_id=$ctg_id  and i.ctg_id=d.ctg_id and i.design_no=d.design_no and i.is_design_mrp_active=1 and i.barcode like '89%' group by i.MRP having tot_qty > 0"; //$brandquery  
+//            print "<br> PRICE QRY : $query <br>";
+            $allprices = $db->fetchObjectArray($query);
+            ?>
+    <div class="grid_3">&nbsp;</div>
+    <div class="grid_5">
+        <fieldset class="login">
+            <legend><?php echo $category->name; ?></legend>
+            <?php 
+                $query = "select distinct(i.brand_id),b.name as brand from it_items i,it_brands b where i.ctg_id='$this->ctg' and i.brand_id=b.id group by brand_id";
+                $allbrands = $db->fetchObjectArray($query);
+                
+            ?>
+            <!--<p class="notice">Select by MRP or Search by Design Number</p>-->
+            <?php //if ($this->ctg!=14) { /* Skip Tie's */ ?>
+<!--            <p>
+                <label>Select Brand:</label>
+                <?php //foreach //($allbrands as $brand) { ?>
+                <input type="checkbox" name="brand" id="brand" value="<?php //if ($brand->brand=="Linon") echo "l"; else echo "z";?>" <?php //if ($this->brand=="") echo "checked"; else if ($this->brand=="l" && $brand->brand=="Linon") echo "checked"; else if ($this->brand=="z" && $brand->brand=="Zinon") echo "checked"; else echo ""; ?>  style="width:10%; margin-top:5px;"/><lab style="margin-bottom:-20px; text-transform: uppercase;"><?php //echo $brand->brand; ?></lab>-->
+                <?php //} ?>
+            <!--</p>-->
+            <?php //} ?>
+            <p>
+                <label>Select MRP: </label>
+    
+                <select class="setprice" name ="setprice" id = "setprice" style="width:160px" onchange="setMRP(this);">
+                    <option value=0 selected="selected">Select Price</option>
+            <?php
+                            foreach ($allprices as $price) {
+                                $selected = "";
+				if ($price->tot_qty <= 0) { continue; }
+                                if ($price->MRP == $this->MRP) {
+                                    $selected = "selected";
+                                }
+                                ?>
+                    <option value="<?php echo $price->MRP; ?>" <?php echo $selected; ?>><?php echo "Rs. $price->MRP [$price->tot_qty units]"; ?></option>
+                            <?php
+                            }
+                            ?>
+                </select>
+            </p>            
+            <p>
+                <label>OR / AND Select Size: </label>
+   
+                <select class="setprice" name ="setsize" style="width:160px" onchange="setSize(this);">
+                    <option value=0 selected="selected">Select Size</option>
+            <?php
+              $q = "select s1.*,s2.name from it_ck_sizes s1,it_sizes s2  $mTab where s1.size_id = s2.id and s1.ctg_id=$ctg_id  $mrpClause order by s1.sequence";
+//              print "<br> QRY $q <br>";
+			$objs = $db->fetchObjectArray($q);
+                            foreach ($objs as $obj) {
+                                $selected = "";
+                                if ($obj->size_id == $this->size) {
+					$selected = "selected";
+                                }
+                                 if(isset($this->MRP) && trim($this->MRP) != ""){ $mStr = " and i.MRP = $this->MRP"; }else{ $mStr = "";}
+	    			$obj2 = $db->fetchObject("select sum(i.curr_qty) as tot_qty from it_items i,it_ck_designs d where i.ctg_id=$ctg_id  and i.ctg_id=d.ctg_id and i.design_no=d.design_no and i.is_design_mrp_active=1 and i.size_id='$obj->size_id' $mStr having tot_qty >0"); //$brandquery
+	    			$query = "select sum(i.curr_qty) as tot_qty from it_items i,it_ck_designs d where i.ctg_id=$ctg_id  and i.ctg_id=d.ctg_id and i.design_no=d.design_no and i.is_design_mrp_active=1 and i.size_id='$obj->size_id' $mStr  having tot_qty >0";
+				$units = 0;
+				if ($obj2 && $obj2->tot_qty) { $units = $obj2->tot_qty; }
+                                ?>
+                    <option value="<?php echo $obj->size_id; ?>" <?php echo $selected; ?>><?php echo "$obj->name [$units units]"; ?></option>
+                            <?php
+                            }
+                            ?>
+                </select>   
+            </p>
+            <br>
+            <p>
+                <label>OR by Design Number: </label>
+                <input type="text" id="srch" style="width:170px;" name="srch" value="<?php echo $this->des_code; ?>" >
+                <button id="searchBtn" onclick="search()">Search</button>
+            </p>
+        </fieldset>
+    </div>
+            <?php
+            // choose high and low prices from filter table for each design category.
+            $code = $db->safe($this->des_code);
+            if ($this->des_code) {
+//                echo "select i.id,i.MRP,i.brand_id,br.name as brandname, i.prod_type_id, pt.name as prodtype, i.material_id, mt.name as material,  d.image,d.design_no,sum(i.curr_qty) as tot_qty from it_items i,it_ck_designs d,it_brands br,it_prod_types pt,it_materials mt  where i.design_no=$code and d.active=1 and i.design_no=d.design_no and i.ctg_id=$ctg_id and i.brand_id=br.id and i.prod_type_id=pt.id and i.material_id=mt.id  and i.ctg_id=d.ctg_id group by i.design_no,MRP";
+                $allDesigns = $db->fetchObjectArray("select i.id,i.MRP,i.brand_id,br.name as brandname, i.prod_type_id, pt.name as prodtype, i.material_id, mt.name as material,  d.image,d.design_no,sum(i.curr_qty) as tot_qty from it_items i,it_ck_designs d,it_brands br,it_prod_types pt,it_materials mt  where i.design_no=$code and i.is_design_mrp_active=1 and i.design_no=d.design_no and i.ctg_id=$ctg_id and i.curr_qty > 0 and i.barcode like '89%' and i.brand_id=br.id and i.prod_type_id=pt.id and i.material_id=mt.id  and i.ctg_id=d.ctg_id group by i.design_no,MRP"); //i.fabric_type_id, ft.name as fabric,and i.fabric_type_id=ft.id ,it_fabric_types ft $brandquery
+            } else if ($this->MRP && $this->ctg) {
+                //$time1=0;
+                $query = "Select i.id,i.MRP,i.brand_id,br.name as brandname,i.prod_type_id,pt.name as prodtype,i.material_id,mt.name as material,d.image,d.design_no,sum(i.curr_qty) as tot_qty from it_items i,it_ck_designs d,it_brands br,it_prod_types pt,it_materials mt where i.ctg_id=$ctg_id and i.MRP=$this->MRP and i.curr_qty > 0 and i.brand_id=br.id and i.prod_type_id=pt.id and i.material_id=mt.id  and i.ctg_id=d.ctg_id and i.design_no=d.design_no and i.is_design_mrp_active=1 and i.barcode like '89%' group by i.design_no having tot_qty > 0 order by tot_qty"; //i.fabric_type_id,ft.name as fabric,,it_fabric_types ft$brandquery and i.fabric_type_id=ft.id
+                //$time1= microtime(true);
+                $allDesigns = $db->fetchObjectArray($query);
+                //$time2= microtime(true);
+                //print $query."  2";
+            } else if ($this->size && $this->ctg) {
+                if(isset($this->MRP) && trim($this->MRP)!=""){
+                    $mClause = " and i.MRP = $this->MRP ";
+                }else{
+                    $mClause = "";
+                }
+                $query = "Select i.id,i.MRP,i.brand_id,br.name as brandname,i.prod_type_id,pt.name as prodtype,i.material_id,mt.name as material,d.image,d.design_no,sum(i.curr_qty) as tot_qty from it_items i,it_ck_designs d,it_brands br,it_prod_types pt,it_materials mt where i.ctg_id=$ctg_id and i.size_id=$this->size  and i.brand_id=br.id and i.prod_type_id=pt.id and i.material_id=mt.id  and i.ctg_id=d.ctg_id and i.design_no=d.design_no and i.is_design_mrp_active=1 and i.curr_qty > 0  and i.barcode like '89%' $mClause group by i.design_no,i.MRP having tot_qty > 0 order by tot_qty, MRP"; //i.fabric_type_id,ft.name as fabric,$brandquery ,it_fabric_types ft and i.fabric_type_id=ft.id
+                $allDesigns = $db->fetchObjectArray($query);
+//                print $query."  3";
+            } else {
+                $allDesigns = array();
+            }
+//            print $query;
+            $row_no = 0;
+//            $styleClause = " and s2.id = i.style_id and i.ctg_id = s1.ctg_id and i.mrp = $this->MRP group by s2.id ";
+            $sqry = "select s1.style_id,s2.name as style_name from it_ck_styles s1,it_styles s2 $mTab where s1.ctg_id=$ctg_id and s2.is_active = 1 and s1.style_id=s2.id $styleClause order by s1.sequence"; 
+//            print "<br> Style query: ".$sqry." <br/>";
+            $styleobj = $db->fetchObjectArray($sqry);
+//            echo "<br/>select s1.style_id,s2.name as style_name from it_ck_styles s1,it_styles s2 where s1.ctg_id=$ctg_id and s2.is_active = 1 and s1.style_id=s2.id order by s1.sequence<br/>";
+            $no_styles = count($styleobj);
+//            print_r($styleobj);
+//            $sizeClause = " and s2.id = i.size_id and i.ctg_id = s1.ctg_id and i.mrp = $this->MRP group by s2.id ";
+            $szqry = "select s1.size_id, s2.name as size_name from it_ck_sizes s1,it_sizes s2 $mTab where s1.ctg_id=$ctg_id and s1.size_id=s2.id $sizeClause order by s1.sequence";
+//            print "<br>Size Query: $szqry <br/>";
+            $sizeobj = $db->fetchObjectArray($szqry);
+//            echo "<br/>select s1.size_id, s2.name as size_name from it_ck_sizes s1,it_sizes s2 where s1.ctg_id=$ctg_id and s1.size_id=s2.id order by s1.sequence<br/>";
+//            print_r($sizeobj);
+            $no_sizes = count($sizeobj);
+            foreach ($allDesigns as $design) {
+                $row_no++;
+                $design_no = $db->safe($design->design_no);
+                $divid = "accordion-" . $row_no;
+                ?>
+    <div class="clear"></div>
+    <div class="box">
+        <h2 class="expand">Design No: <?php echo $design->design_no." | Brand: $design->brandname"." | Material: $design->material"." | "; if ($design->prodtype) { echo " [ Production Type: ".$design->prodtype." ]"; } echo " [ MRP: ".$design->MRP." ] [ Total Qty: $design->tot_qty ]"; ?></h2>  <!--  Fabric Type: $design->fabric-->
+        <div class="collapse" id="<?php echo $divid; ?>">
+            <form name="order_<?php echo $row_no; ?>" method="post" action="" onsubmit="addToCart(this); return false;">                
+                <input type="hidden" name="mrp" value="<?php echo $design->MRP; ?>" />
+                <input type="hidden" name="design_no" value="<?php echo $design->design_no; ?>"/>
+                <div class="grid_2" id="imagebackground">
+                
+                <a href="<?php echo $this->designImageUrl($design->image); ?>" rel="prettyPhoto"><img id="orderimage" align="left" src="<?php echo $this->designImageUrl($design->image); ?>" width="130" /></a>
+                </div>
+                <div class="block grid_10" style="width:78%;">
+                    <table>
+                        <thead>
+                            <tr><th></th>
+                                            <?php
+                                            $width = intval(100/($no_sizes+1));
+                                            for ($i = 0; $i < $no_sizes; $i++) {
+                                                print '<th style="text-align:left;" width="'.$width.'%">';
+                                                echo $sizeobj[$i]->size_name;
+                                                print "</th>";  //print sizes
+                                            }
+                                            ?>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                        <?php
+                                        //for each unique style print style
+                                        for ($k = 0; $k < $no_styles; $k++) {
+                                        //print style names
+                                            print "<tr id='styles::".$design->id."::".$styleobj[$k]->style_id."'><th>";
+                                            echo $styleobj[$k]->style_name;
+                                            print"</th>";
+                                            //store style id in $stylecod
+                                            $stylcod = $styleobj[$k]->style_id;
+                                            for ($i = 0; $i < $no_sizes; $i++) {
+                                                ?><td><?php
+                                                        //to get the quantity and stock id of specific item
+                                                        $sizeid = $sizeobj[$i]->size_id;
+							$query = "select id,sum(curr_qty) as qty from it_items where design_no = $design_no and MRP=$design->MRP and ctg_id=$ctg_id and style_id = '$stylcod' and size_id = '$sizeid' and curr_qty > 0 and barcode like '89%' order by curr_qty desc";                                                       
+//                                                        echo "<br/>$query<br/>";
+                                                        $getitm = $db->fetchObject($query);
+                                                        //check to see if specific item exists in order, if exist -> stores qty in order_qty  
+                                                        if ($getitm) {
+//                                                            $query = "select sum(order_qty) as order_qty from it_ck_orderitems where order_id=$cart->id and store_id=$storeid and item_id=$getitm->id";
+//                                                           echo $query;
+//                                                                $exist = $db->fetchObject($query);
+                                                            if ($getitm->id) { $id = $getitm->id; } else { $id="0"; }
+                                                            if ($getitm->qty) { $qty=$getitm->qty; } else { $qty="0"; }
+                                                            ?><input type='text' style='width: 30px;' name="item_<?php echo $id."_".$qty; ?>" <?php
+//                                                                if ($exist) {
+                                                                    print "value='";
+//                                                                    echo $exist->order_qty;
+                                                                    echo $getitm->qty;
+                                                                    print "'";
+//                                                                }
+                                                                    ?> readonly />
+                                                            <!--<br>[--> <?php // echo $getitm->qty; ?> <!--] --><?php
+                                                        }
+                                                ?></td><?php
+                                            }
+                                            print "</tr>";
+                                        }
+                                        ?>
+                        </tbody>
+                    </table>
+                    <div id="status_<?php echo $row_no; ?>"></div>
+<!--                    <input class="blueglassbutton" type="submit" value="ADD TO CART"/>
+                    <input class="blueglassbutton" type="reset" value="RESET"/>-->
+                </div> <!-- end class=grid_10 -->
+                 &nbsp;&nbsp;<input type ="radio" name="ddesign" id="ddesign" style="width:5%"  value="0">Core
+                 &nbsp;&nbsp;<input type ="radio" name="ddesign" id="ddesign" style="width:5%" value="1">Non-Core
+            </form>
+            <br>
+        </div> <!-- end class="block" -->
+    </div> <!-- end class="box" -->
+    
+    <div class="clear"></div>
+            <?php
+                }
+            ?>
+</div>
+    <?php
+    }
+}
+?>

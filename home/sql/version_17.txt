@@ -1,0 +1,1 @@
+ALTER TABLE  it_server_changes  ADD  data_id BIGINT( 20 ) NULL DEFAULT NULL AFTER  store_id;

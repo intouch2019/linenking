@@ -1,0 +1,55 @@
+﻿textarea.eform {
+color:#505050;
+font-weight:bold;
+font-size:22px;
+margin:auto;
+margin-top:10px;
+display:block;
+position:relative;
+width:90%
+}
+
+input.eform {
+color:#505050;
+font-weight:bold;
+font-size:22px;
+margin:auto;
+margin-top:10px;
+display:block;
+position:relative;
+width:90%
+}
+
+.eform{
+height:37px!important;
+position:relative;
+overflow:hidden
+}
+
+.status {
+clear:both;
+background:#f0f0f0;
+color:#256;
+font-size:10px;
+font-style:italic;
+margin-top:3px;
+}
+
+.error {
+color:#f87217;
+font-size:14px;
+font-weight:bold;
+}
+
+.success {
+color:#449e1e;
+font-size:14px;
+font-weight:bold;
+}
+
+.commentimg {
+float:left;
+margin-bottom:5px;
+margin-right:5px;
+height:36px;
+}

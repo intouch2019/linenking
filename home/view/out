@@ -1,0 +1,94 @@
+274a275,276
+>         //date,store,billno,transaction,itemctg,designno,itemmrp,barcode,linediscountper,linediscountval,ticketdiscountper,
+>                 //ticketdiscountval, totaldiscount, tax, brand, category, style, size, fabric, material, prodtgype, manuf.
+302a305,306
+>             //echo $queryfields;
+>             // transaction type by oi.quantity < or > 0. 
+305a310
+>             //echo $query;
+307,311d311
+<         } else if ($this->gen==1) {
+<             $tableheaders = "Date:Bill No:Bill Quantity:Bill Amount:Tax:Bill Discount Value:Bill Discount %:Voucher";
+<             $query2 = "select DATE_FORMAT(o.bill_datetime,'%d/%m/%Y') as bill_datetime,o.bill_no,o.quantity,o.amount,o.tax,o.discount_val,o.discount_pct,o.voucher_amt from it_orders o where o.store_id=$this->storeidreport $dQuery group by o.bill_no order by bill_datetime";
+<             $result = $db->execQuery($query2);
+<         }
+316d315
+<         <table width="100%"  style="overflow:auto;" >
+318,319c317
+<     if (isset($result)) { 
+<         $fp = fopen('tmp/StoreSales.csv', 'w');
+---
+>             $fp = fopen('/tmp/StoreSales.csv', 'w');
+321d318
+<             $trow = array(); $tcell = array(); 
+322a320,321
+>             <table width="100%"  style="overflow:auto;" >
+>             <?php $trow = array(); $tcell = array(); ?>
+341c340,341
+<                 $tcell = null; ?>
+---
+>                 $tcell = null;
+> ?>
+351d350
+<                            //$trow[] = $tcell;
+353c352
+<                        // } ?>
+---
+> ?>
+355c354
+<             <?php } fclose($fp); ?>
+---
+>             <?php } fclose($fp); //$_SESSION['tdata'] = $trow; ?>
+358,359c357,380
+< <?php       } else {
+<                 echo "<br/>Unable to create file. Contact Intouch.";
+---
+> <? } ?>
+>          <?php } else if ($this->gen==1) {
+>              //(Date/Bill no/Bill quantity/Bill amount/Tax/Bill discount value/Bill discount %//Voucher)
+>             $tableheaders = "Date:Bill No:Bill Quantity:Bill Amount:Tax:Bill Discount Value:Bill Discount %:Voucher";
+>             $query2 = "select DATE_FORMAT(o.bill_datetime,'%d/%m/%Y') as bill_datetime,o.bill_no,o.quantity,o.amount,o.tax,o.discount_val,o.discount_pct,o.voucher_amt from it_orders o where o.store_id=$this->storeidreport $dQuery group by o.bill_no order by bill_datetime";
+>             $result = $db->execQuery($query2);
+>             ?>
+>             <br/><div style='margin-left:40px; padding-left:15px; height:24px;width:130px;border: solid gray 1px;background:#F5F5F5;padding-top:4px;'>
+>             <a href='tmp/StoreSales.csv' title='Export table to csv'><img src='images/excel.png' width='20' hspace='3' style='margin-bottom:-6px;' /> Export To Excel</a>
+>             </div><br />
+> <?php
+>             $fp = fopen('/tmp/StoreSales.csv', 'w');
+>             if ($fp) {
+> ?>
+>             <table width="100%"  style="overflow:auto;" >
+>             <?php $trow = array(); $tcell = array(); ?>
+>                 <thead>
+>                 <tr>
+>                     <?php
+>                         $headerarr = explode(":", $tableheaders); 
+>                         foreach ($headerarr as $harr) {
+>                             if ($harr != "") {
+>                                 $tcell[] .= $harr;
+>                                 echo "<th>$harr</th>";
+361a383
+>                         fputcsv($fp, $tcell,',',chr(0));
+362a385,406
+>                 </tr>
+>                 </thead>
+>                 <tbody>
+>             <?php while ($reportrows = $result->fetch_object()) {
+>                     $tcell = null; ?>
+>                     <tr>
+>                         <?php 
+>                            foreach ($reportrows as $field => $value) {
+>                                if ($field=="tax") {
+>                                    $value = sprintf('%.2f',$value);
+>                                } 
+>                                $tcell[] .= $value;
+>                                echo "<td>$value</td>";
+>                            }
+>                            fputcsv($fp, $tcell,',',chr(0));
+>                         ?>
+>                     </tr>
+>             <?php } fclose($fp); ?>
+>                 </tbody>
+>             </table>
+> <?php } ?>
+>          <?php } ?>

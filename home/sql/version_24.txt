@@ -1,0 +1,15 @@
+alter table it_ck_pickgroup add pickingComplete_time timestamp null  default null after picking_time;
+
+CREATE TABLE IF NOT EXISTS `it_smsserve` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `incomingid` bigint(20) DEFAULT NULL,
+  `status` tinyint(4) NOT NULL DEFAULT '0',
+  `phoneno` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
+  `message` text COLLATE utf8_unicode_ci NOT NULL,
+  `storeid` bigint(20) DEFAULT NULL,
+  `createtime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatetime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`id`),
+  KEY `status` (`status`),
+  KEY `storeid` (`storeid`)
+);

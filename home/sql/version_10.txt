@@ -1,0 +1,23 @@
+CREATE TABLE IF NOT EXISTS it_current_stock(
+  id bigint(20) NOT NULL AUTO_INCREMENT,
+  barcode varchar(30) NOT NULL,
+  store_id bigint(20) NOT NULL,
+  quantity int(11) NOT NULL,
+  sync_id bigint(20) DEFAULT NULL,
+  createtime datetime NOT NULL,
+  updatetime timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `barcode` (`barcode`,`store_id`,`sync_id`)
+);
+
+CREATE TABLE IF NOT EXISTS  it_server_changes(
+  id  bigint(20) NOT NULL AUTO_INCREMENT,
+  type int(11) NOT NULL,
+  changedata text NOT NULL,
+  store_id bigint(20) DEFAULT NULL,
+  createtime timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updatetime timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (id)
+); 
+
+ALTER TABLE  it_codes ADD  server_change_id BIGINT( 20 ) NULL DEFAULT NULL AFTER  usertype;

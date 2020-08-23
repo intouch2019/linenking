@@ -1,0 +1,756 @@
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: Where name LIKE '%asdf%' 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories Where name LIKE '%asdf%'  LIMIT 0, 25
+	
+
+Invs query: Where name LIKE '%shirt%' 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories Where name LIKE '%shirt%'  LIMIT 0, 25
+	
+
+Invs query: Where name LIKE '%shirt%' 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories Where name LIKE '%shirt%'  LIMIT 0, 25
+	
+
+Invs query: Where name LIKE '%shirt%' 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories Where name LIKE '%shirt%'  LIMIT 0, 10
+	
+
+Invs query: Where name LIKE '%shirt%' 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories Where name LIKE '%shirt%'  LIMIT 0, 50
+	
+
+Invs query: Where name LIKE '%shirt%' 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories Where name LIKE '%shirt%'  LIMIT 0, 25
+	
+
+Invs query: Where name LIKE '%shirt%' 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories Where name LIKE '%shirt%'  LIMIT 0, 10
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 10
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 50
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: Where name LIKE '%mayu%' 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories Where name LIKE '%mayu%'  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: Where name LIKE '%b;%' 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories Where name LIKE '%b;%'  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 25, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 25, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 25, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 25, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 25, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 25, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 25, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: Where name LIKE '%slim formal%' 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories Where name LIKE '%slim formal%'  LIMIT 0, 25
+	
+
+Invs query: Where name LIKE '%slim%' 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories Where name LIKE '%slim%'  LIMIT 0, 25
+	
+
+Invs query: Where name LIKE '%semi%' 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories Where name LIKE '%semi%'  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 50
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 50
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 25, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 50
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 50
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 25, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 25, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 100
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 50
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 25, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 25, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 25, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 25, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 25, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 25, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 25, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 50
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 50
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 50
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 50
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 50
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 50
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 100
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: Where name LIKE '%soc%' 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories Where name LIKE '%soc%'  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: Where name LIKE '%soc%' 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories Where name LIKE '%soc%'  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 25, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 50
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 100
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 25, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 25
+	
+
+Invs query: 
+
+Invs query: 
+            select SQL_CALC_FOUND_ROWS  id,name,active from it_categories  LIMIT 0, 100
+	

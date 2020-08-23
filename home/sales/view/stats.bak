@@ -1,0 +1,108 @@
+<?php
+require_once "view/cls_renderer.php";
+require_once "lib/core/SimpleDateTime.class.php";
+require_once "lib/db/DBConn.php";
+
+class cls_stats_daily extends cls_renderer {
+
+	var $params;
+	var $currStore;
+	var $firstDate, $minDays, $rangeMin, $rangeMax;
+
+	function __construct($params=null) {
+		$this->currStore = getCurrStore();
+		$this->params = $params;
+		if (!$this->currStore) { return; }
+		$this->db = new DBConn();
+		$storeid = $this->currStore->id;
+		$query = "select min(date(bill_datetime)) as mindate, to_days(min(date(bill_datetime))) as mindays, to_days(max(date(bill_datetime))) as maxdays from it_orders where storeid=$storeid and status>0 and inactive=0";
+		$obj = $this->db->fetchObject($query);
+		$sd = new SimpleDateTime();
+		$this->firstDate = $sd->parseDate("Y-m-d", $obj->mindate);
+		$minDays = intVal($obj->mindays);
+		$maxDays = intVal($obj->maxdays);
+		$this->minDays = $minDays;
+		$this->rangeMin = 0;
+		$this->rangeMax = $maxDays-$minDays;
+	}
+
+	function extraHeaders() {
+if (!$this->currStore) { return; }
+?>
+
+<link rel="stylesheet" href="../jqueryui/themes/base/jquery.ui.all.css">
+<script src="../jqueryui/js/jquery-1.4.2.min.js"></script>
+<script src="../jqueryui/ui/jquery.ui.core.js"></script>
+<script src="../jqueryui/ui/jquery.ui.widget.js"></script>
+<script src="../jqueryui/ui/jquery.ui.mouse.js"></script>
+<script src="../jqueryui/ui/jquery.ui.slider.js"></script>
+<script src="../js/common.js"></script>
+<script src="../js/jsDate.js"></script>
+<style>
+	#demo-frame > div.demo { padding: 10px !important; };
+</style>
+<script>
+var firstDate = new Date(<?php echo $this->firstDate->getTime(); ?>);
+var firstCDate = new CDate(firstDate);
+
+function showRange(d1, d2) {
+date1 = DateAdd("d", d1, firstDate);
+date2 = DateAdd("d", d2, firstDate);
+return date1 + " - " + date2;
+}
+
+$(function() {
+	$( "#slider-range" ).slider({
+		range: true,
+		min: <?php echo $this->rangeMin; ?>,
+		max: <?php echo $this->rangeMax; ?>,
+		values: [ <?php echo $this->rangeMin; ?>, <?php echo $this->rangeMax; ?> ],
+		slide: function( event, ui ) {
+			$( "#amount" ).html(showRange(ui.values[0], ui.values[1]));
+//			$( "#amount" ).html( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
+		}
+	});
+//	$( "#amount" ).html( "$" + $( "#slider-range" ).slider( "values", 0 ) +
+//		" - $" + $( "#slider-range" ).slider( "values", 1 ) );
+	$( "#amount" ).html(showRange($( "#slider-range" ).slider( "values", 0 ), $( "#slider-range" ).slider( "values", 1 ) ));
+});
+</script>
+
+<script type="text/javascript" src="../ofc/js/swfobject.js"></script>
+<script type="text/javascript">
+function loadChart(divName, url) {
+encodedUrl = urlencode(url);
+swfobject.embedSWF(
+  "../ofc/open-flash-chart.swf", divName, "650", "300",
+  "9.0.0", "expressInstall.swf",
+  {"data-file":encodedUrl}
+  );
+}
+loadChart("my_chart","chartdata/daily_avg_order.php");
+</script>
+<?php
+	}
+
+	public function pageContent() {
+if (!$this->currStore) { return; }
+$menuitem="daily";
+include "storemenu.php";
+?>
+</div> <!-- div=colOne -->
+<div id="colTwo">
+		<h2>Daily Stats</h2>
+<div style="clear:both;padding:5px;border:3px solid #a0a0a0;;width:100%;margin-bottom:10px;">
+<label for="amount">Date range:</label>
+<span id="amount" style="color:#f6931f; font-weight:bold;"></span>
+
+<div id="slider-range"></div>
+<input type="button" onclick='loadChart("my_chart", "chartdata/daily_avg_order.php");' value="Submit" />
+</div>
+
+<div id="my_chart"></div>
+<?php
+	} // pageContent()
+
+}
+
+?>

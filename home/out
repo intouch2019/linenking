@@ -1,0 +1,116 @@
+Only in view/: a
+Only in patch1/view/: cls_admin_adddesign.php
+Only in patch1/view/: cls_admin_designline.php
+Only in patch1/view/: cls_admin_featureddesign.php
+Only in patch1/view/: cls_admin_orders_active.php
+Only in patch1/view/: cls_admin_orders_packing.php
+Only in patch1/view/: cls_admin_previewfeatured.php
+Only in view/: cls_admin_stock_upload.php
+Only in patch1/view/: cls_admin_stores_add.php
+Only in patch1/view/: cls_admin_stores_disablelogins.php
+Only in patch1/view/: cls_admin_stores_disable.php
+Only in patch1/view/: cls_admin_stores_edit.php
+Only in patch1/view/: cls_admin_stores.php
+diff -b -r patch1/view//cls_admin_users_add.php view//cls_admin_users_add.php
+13a14
+> 
+30c31
+<         if (value == null) {
+---
+>         if (value == <?php echo UserType::NoLogin; ?>) {
+65d65
+<         
+Only in view/: cls_admin_users_delete.php
+Only in view/: cls_admin_users_edit.php
+diff -b -r patch1/view//cls_admin_users.php view//cls_admin_users.php
+52c52
+<             $objs = $db->fetchObjectArray("select id, usertype, code, store_name, date(createtime) as createdate from it_codes where inactive=0 and usertype not in (".UserType::Admin.",'4') order by usertype");
+---
+>             $objs = $db->fetchObjectArray("select id, usertype, username, date(createtime) as createdate, name as display_name from it_users where inactive=0 and usertype not in (".UserType::Admin.") order by usertype");
+70,71c70,71
+<                 <td><?php echo $obj->code; ?></td>
+<                 <td><?php echo $obj->store_name; ?></td>
+---
+>                 <td><?php echo $obj->username; ?></td>
+>                 <td><?php echo $obj->display_name; ?></td>
+Only in view/: cls_barcode_attributes.php
+Only in view/: cls_barcode_batches.php
+Only in view/: cls_barcode_batch.php
+Only in view/: cls_barcode_newbatch.php
+Only in view/: cls_barcode_search.php
+Only in view/: cls_ck_invoice.php
+Only in view/: cls_ck_invoices.php
+Only in patch1/view/: cls_designs_list.php
+Only in patch1/view/: cls_designs_search.php
+Only in patch1/view/: cls_dispatch_edittransport.php
+Only in patch1/view/: cls_dispatch_orders_active.php
+Only in patch1/view/: cls_dispatch_orders_packing.php
+Only in patch1/view/: cls_dispatch_shipped.php
+Only in patch1/view/: cls_dispatch_vieworder.php
+Only in view/: cls_footer.php
+diff -b -r patch1/view//cls_header.php view//cls_header.php
+31d30
+< <link rel="stylesheet" type="text/css" href="css/newtheme.css" media="screen" />
+41,44c40,41
+< <div id="topcolor" class="container_12"></div>
+< <div id="limelight" class="container_12"></div>
+< <div id="content" class="container_12" style="position: inherit; background-color:#EEEEEE">
+< 	<div class="grid_12" id="banner" style="">
+---
+> <div id="content" class="container_12" style="background-color:#EEEEEE">
+> 	<div class="grid_12" style="height:150px;background-color:#0d0d0d;background-image:url(images/limelight-header.jpg);background-repeat:no-repeat">
+47c44
+< 	<div class="grid_4 loggeduser"><?php echo getCurrUser()->code; ?> [ <a href="logout.php">Logout</a> ]</div>
+---
+> 	<div class="grid_4 loggeduser"><?php echo getCurrUser()->name; ?> [ <a href="logout.php">Logout</a> ]</div>
+Only in view/: cls_home_login.php
+Only in view/: cls_home.php
+Only in view/: cls_inward_gateentry.php
+Only in view/: cls_inward_home.php
+Only in view/: cls_inward_workorder_add.php
+Only in view/: cls_inward_workorder_edit.php
+Only in view/: cls_loginsdisabled.php
+Only in patch1/view/: cls_orders_shipped.php
+Only in view/: cls_po_create.php
+Only in view/: cls_po_edititems.php
+Only in view/: cls_po_home.php
+Only in view/: cls_poline_delete.php
+Only in view/: cls_po_publish.php
+Only in view/: cls_po_view.php
+Only in view/: cls_renderer.php
+Only in patch1/view/: cls_report_accounts.php
+Only in patch1/view/: cls_report_designs.php
+Only in patch1/view/: cls_report_dispatcher.php
+Only in patch1/view/: cls_report_ordersize.php
+Only in patch1/view/: cls_report_picker.php
+Only in view/: cls_sales_overview.php
+Only in view/: cls_sp_invoice.php
+Only in view/: cls_sp_invoices.php
+Only in patch1/view/: cls_store_checkout.php
+Only in patch1/view/: cls_store_designsckserver.php
+Only in patch1/view/: cls_store_designs.php
+Only in patch1/view/: cls_store_featured.php
+Only in patch1/view/: cls_store_orders_active.php
+Only in patch1/view/: cls_store_orders_packing.php
+Only in patch1/view/: cls_store_orders_shipped.php
+Only in patch1/view/: cls_store_viewcart.php
+Only in patch1/view/: cls_store_vieworder.php
+Only in view/: cls_suppliers_add.php
+Only in view/: cls_suppliers_delete.php
+Only in view/: cls_suppliers_edit.php
+Only in view/: cls_suppliers.php
+Only in view/: cls_timeout.php
+Only in view/: cls_transporters_add.php
+Only in view/: cls_transporters_delete.php
+Only in view/: cls_transporters_edit.php
+Only in view/: cls_transporters.php
+Only in view/: cls_unauthorized.php
+diff -b -r patch1/view//cls_user_settings.php view//cls_user_settings.php
+37c37
+<             $userInfo=$db->fetchObject("select * from it_codes where id=$this->userid");
+---
+>             $userInfo=$db->fetchObject("select * from it_users where id=$this->userid");
+50c50
+<                             <?php echo $userInfo->code; ?>
+---
+>                             <?php echo $userInfo->username; ?>
