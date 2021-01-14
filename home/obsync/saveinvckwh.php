@@ -76,6 +76,8 @@ try {
                     $cgst_total = $invfields[20];
                     $sgst_total = $invfields[21];
                     $igst_total = $invfields[22];
+                    $net_amount = $invfields[23];
+                    $tcs75 = $invfields[24];
                     
                     $iClause = "";
                     if(trim($rate_subtotal)!=""){ $iClause .= " , rate_subtotal = $rate_subtotal "; }
@@ -84,6 +86,10 @@ try {
                     if(trim($cgst_total)!=""){ $iClause .= " , cgst_total = $cgst_total "; }
                     if(trim($sgst_total)!=""){ $iClause .= " , sgst_total = $sgst_total "; }
                     if(trim($igst_total)!=""){ $iClause .= " , igst_total = $igst_total "; }
+                    if(trim($net_amount)!=""){ $iClause .= " , net_amount = $net_amount "; }
+                    if(trim($tcs75)!=""){ $iClause .= " , tcs_0075pct = $tcs75 "; }
+                    if(trim($transport_dtl)!=""){ $iClause .= " , transportdtl   = $transport_dtl "; }
+                    if(trim($remarks)!=""){ $iClause .= " , transportdtl_remark   = $remarks "; } 
                         
                     $sqlquery = "update it_invoices set invoice_text = $invoice_text , invoice_amt =  $invoice_amt , store_id=$store_id,"
                             . "invoice_qty = $invoice_qty , total_mrp = $total_mrp , updatetime = now() $iClause where id = $exists->id ";
@@ -281,6 +287,8 @@ try {
                     $cgst_total = $invfields[20];
                     $sgst_total = $invfields[21];
                     $igst_total = $invfields[22];
+                    $net_amount = $invfields[23];
+                    $tcs75 = $invfields[24];
                     
                     $iClause = "";
                     if(trim($rate_subtotal)!=""){ $iClause .= " , rate_subtotal = $rate_subtotal "; }
@@ -289,6 +297,10 @@ try {
                     if(trim($cgst_total)!=""){ $iClause .= " , cgst_total = $cgst_total "; }
                     if(trim($sgst_total)!=""){ $iClause .= " , sgst_total = $sgst_total "; }
                     if(trim($igst_total)!=""){ $iClause .= " , igst_total = $igst_total "; }
+                    if(trim($net_amount)!=""){ $iClause .= " , net_amount = $net_amount "; }
+                    if(trim($tcs75)!=""){ $iClause .= " , tcs_0075pct = $tcs75 "; }
+                    if(trim($transport_dtl)!=""){ $iClause .= " , transportdtl   = $transport_dtl "; }
+                    if(trim($remarks)!=""){ $iClause .= " , transportdtl_remark   = $remarks "; } 
                     
                     //$query = "insert into it_invoices set invoice_no=$invoice_no, invoice_dt=$invoice_dt, invoice_type=$invoice_type, invoice_amt=$invoice_amt, invoice_qty=$invoice_qty";
                     $query = "insert into it_invoices set invoice_text = $invoice_text,invoice_no=$invoice_no,"

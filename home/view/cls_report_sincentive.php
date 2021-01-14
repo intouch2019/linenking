@@ -15,9 +15,12 @@ class cls_report_sincentive extends cls_renderer{
         var $itemctg; var $itemmrp; 
         var $scode; var $totqty;
         var $amt;
-                
+                  var $incentive;
+                     var $bill_no;
         var $storeloggedin = -1;
-        var $fields = array();
+        var $fields = array(); 
+          var $atv;
+        var $upt;
        
         function __construct($params=null) {
  //parent::__construct(array(UserType::Admin, UserType::CKAdmin,  UserType::Manager));                
@@ -29,10 +32,15 @@ class cls_report_sincentive extends cls_renderer{
                 if (isset($params['salesmainid'])) { $this->fields['salesmainid']=$params['salesmainid']; $this->salesmainid = $params['salesmainid']; } else $this->fields['salesmainid']="-";                                                            
                 if (isset($params['totqty'])) { $this->fields['totqty']=$params['totqty']; $this->totqty = $params['totqty']; } else $this->fields['totqty']="0";                                
                 if (isset($params['amt'])) { $this->fields['amt']=$params['amt']; $this->amt = $params['amt']; } else $this->fields['amt']="0";
+                if (isset($params['atv'])) { $this->fields['atv']=$params['atv']; $this->atv = $params['atv']; } else $this->fields['atv']="0";
+                if (isset($params['upt'])) { $this->fields['upt']=$params['upt']; $this->upt = $params['upt']; } else $this->fields['upt']="0";
+                
                 if (isset($params['billno'])) { $this->fields['billno']=$params['billno']; $this->billno = $params['billno']; } else $this->fields['billno']="0";
                 if (isset($params['nettotal'])) { $this->fields['nettotal']=$params['nettotal']; $this->nettotal = $params['nettotal']; } else $this->fields['nettotal']="0";
                 if (isset($params['returntotal'])) { $this->fields['returntotal']=$params['returntotal']; $this->returntotal = $params['returntotal']; } else $this->fields['returntotal']="0";
                 if (isset($params['incentive'])) { $this->fields['incentive']=$params['incentive']; $this->incentive = $params['incentive']; } else $this->fields['incentive']="0";
+                 if (isset($params['bill_no'])) { $this->fields['bill_no']=$params['bill_no']; $this->bill_no = $params['bill_no']; } else $this->fields['bill_no']="-";
+               
                 if (isset($params['ctg'])) { $this->fields['ctg']=$params['ctg']; $this->ctg = $params['ctg']; } else $this->fields['ctg']="0";
                 
                  
@@ -88,7 +96,7 @@ var storeloggedin = '<?php echo $this->storeloggedin; ?>';
 		closeOnSelect:true,
 		onOpen: function() { isOpen=true; },
 		onClose: function() { isOpen=false; },
-		onChange: function() {
+		onChange: function() { 
 		if (isOpen) { return; }
 		var dtrange = $("#dateselect").val();
 		$.ajax({
@@ -128,7 +136,7 @@ function moveToRightOrLeft(side){
   var listLeft=document.getElementById('selectLeft');
   var listRight=document.getElementById('selectRight');
 
-  if(side==1){
+  if(side==1){ 
     if(listLeft.options.length==0){
     alert('You have already moved all fields to Right');
     return false;
@@ -172,7 +180,7 @@ function move(listBoxTo,optionValue,optionDisplayText){
 <link rel="stylesheet" href="css/bigbox.css" type="text/css" />
         
         <?php
-        }
+        } 
 
         public function pageContent() {
             //$currUser = getCurrUser();
@@ -258,6 +266,7 @@ foreach ($objs as $obj) {
 <!--                                          <option value="itemctg">Item Category</option>
                                           <option value="itemmrp">Item MRP</option>                                              -->
                                     <option value="ctg" selected >Category</option>
+                                      <option value="bill_no" >Bill No</option> 
                                     </select>
                                 </label></td>
                                 <td colspan="1" rowspan="3" style="vertical-align:middle;">
@@ -274,7 +283,9 @@ foreach ($objs as $obj) {
                                             <option value="salesmainid" >Salesman Id</option>
                                              <option value="incentive" >Incentive</option> 
                                               <option value="totqty"  >Sale Quantity</option>
-                                             <!--<option value="amt" >Net Sale </option>-->
+                                             <option value="amt" >Net Sale </option>
+                                               <option value="atv" >ATV</option>
+                                              <option value="upt" >UPT</option>
                                         </select>
                                     </td>
                                 </tr>
@@ -347,7 +358,16 @@ foreach ($objs as $obj) {
                         //return_total
                         //  if ($field=="returntotal") {$tableheaders.="Return Value:"; $queryfields .= "round(sum(s.return_total),2) as returntotal ,";} 
                        // if ($field=="amt") {$tableheaders.="Net Sale :"; $queryfields .= "round(sum(s.incentive_amount),2) as isamt ,";}                                                                       
-                         if ($field=="incentive") {$tableheaders.="Incentive :"; $queryfields .= " round(sum(s.incentive_amount),2) as Incentive ,";}                                                                       
+                         //if ($field=="amt") {$tableheaders.="Net Sale :"; $queryfields .= "round(sum(s.incentive_amount),2) as isamt ,";}                                                                       
+                        if ($field=="amt") {$tableheaders.="Net Sale :"; $queryfields .= "round(sum(s.net_total),2) as isamt ,";}                                                                       
+                        if ($field=="atv") {$tableheaders.="ATV:"; $queryfields .= "round(((sum(s.net_total))/count(DISTINCT s.bill_no)),2) as atv  ,";}                                                                       
+                        if ($field=="upt") {$tableheaders.="UPT:"; $queryfields .= "round(((sum(s.qty))/count(DISTINCT s.bill_no)) ,2) as upt  ,";}                                                                       
+                         
+                       // if ($field=="incentive") {$tableheaders.="Incentive :"; $queryfields .= " round(sum(s.incentive_amount),2) as Incentive ,";}   //22092020                                                                    
+                          // if ($field=="incentive") {$tableheaders.="Incentive :"; $queryfields .= " round(sum(s.incentive_amount),2)*.01 as Incentive ,";}                                                                       
+                           if ($field=="incentive") {$tableheaders.="Incentive :"; $queryfields .= " round(sum(s.net_total),2)*.01 as Incentive ,";}                                                                       
+                       
+                         if ($field=="bill_no") {$tableheaders.="Bill No :"; $queryfields .= " s.bill_no as billno ,";$group_by[] = "s.bill_no";}                                                                       
                         
                         
                         //incentive

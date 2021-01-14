@@ -229,6 +229,100 @@ class cls_store_ratio extends cls_renderer {
             }
             
             
+            
+function designratioreset(store_id,cat_id,design_id,design_no,user_id)
+{
+    var reset=confirm("Are you sure want to reset all ratios to 1 of design no '"+design_no+"'");
+    
+   if(reset==true)
+   {
+    var ratio_type = $("#sel_ratio_type").val();
+//  
+               $.ajax({
+			type: "POST",
+                        dataType: "json",
+			url: "ajax/setDesignratioDefault.php",
+			data: "sid="+store_id+"&cat_id="+cat_id+"&design_id="+design_id+"&r_type="+ratio_type+"&user_id="+user_id+"&design_no="+design_no,
+                        success:function(data)
+                        {
+                            if(data.error==0)
+                          {
+                            alert(data.message);
+//                            alert("success");
+                          
+                               window.location.href = "store/ratio/sid=" + store_id + "/rtype=" + ratio_type +"/cat=" + cat_id;
+                           }  
+                          
+                        }
+                            
+                            
+                        
+                                
+		});
+            }
+//    alert("done");
+    
+}
+
+
+function masteratioreset(store_id,cat_id,cat_name,user_id)
+{
+    var reset=confirm("Are you sure want to reset all ratios to 1 of category '"+cat_name+"'");
+    
+   if(reset==true)
+   {
+           var ratio_type = $("#sel_ratio_type").val();
+            window.location.href="formpost/setMasterRatio.php?sid="+store_id+"&cat_id="+cat_id+"&r_type="+ratio_type+"&user_id="+user_id+"&cat_name="+cat_name;
+           
+   
+//  
+//               $.ajax({
+//			type: "POST",
+//                        dataType: "json",
+//			url: "ajax/setMasterRatio.php",
+//			data: "sid="+store_id+"&cat_id="+cat_id+"&r_type="+ratio_type+"&user_id="+user_id+"&cat_name="+cat_name,
+//                        success:function(data)
+//                        {
+//                            if(data.error==0)
+//                          {
+//                            alert(data.message);
+////                            alert("success");
+//                          
+//                               window.location.href = "store/ratio/sid=" + store_id + "/rtype=" + ratio_type +"/cat=" + cat_id;
+//                           }  
+//                          
+//                        }
+//                            
+//                            
+//                        
+//                                
+//		});
+            }
+    
+}
+
+
+     function editDesignRatio(theForm) {
+                var formName = theForm.name;
+                var arr = formName.split("_");
+                var form_id = arr[1];
+                var params = $(theForm).serialize();
+//                alert(params);
+                var ajaxUrl = "ajax/editDesignRatio.php?" + params;
+                $.getJSON(ajaxUrl, function (data) {
+//                    alert(data.message);
+                    if (data.error == "0") {
+                        $("#status_" + form_id).removeClass().addClass("success");
+                    } else {
+                        $("#status_" + form_id).removeClass().addClass("error");
+                    }
+                    $("#status_" + form_id).html(data.message);
+                    
+                });
+
+                return false;
+            }
+            
             function fetchRatiosCsv(){ // for users other than dealer
                var storeid = $("#sel_store").val();
                window.location.href = "formpost/getRatioDetailsCSV.php?store_id="+storeid;
@@ -265,12 +359,26 @@ class cls_store_ratio extends cls_renderer {
             <div class="grid_3">&nbsp;
                 <p id="dwnCSV" name="dwnCSV" style="visibility:hidden">
                 <?php if($this->currUser->usertype != UserType::Dealer){ ?>
-                <input type = "button" name="rDwn" id="rDwn" value="Download Ratios Csv" onclick="javascript:fetchRatiosCsv();"/>
+                <input class="blueglassbutton" type = "button" name="rDwn" id="rDwn" value="Download Ratios Csv" onclick="javascript:fetchRatiosCsv();"/>
                 <?php } ?>
                 <p>
                 <?php if($this->currUser->usertype == UserType::Dealer){ ?>
-                    <input type = "button" name="rDwn" id="rDwn" value="Download Ratios Csv" onclick="javascript:fetchDistRatiosCsv(<?php echo $this->currUser->id ; ?>);"/>
-                <?php } ?>    
+                    <input class="blueglassbutton" type = "button" name="rDwn" id="rDwn" value="Download Ratios Csv" onclick="javascript:fetchDistRatiosCsv(<?php echo $this->currUser->id ; ?>);"/>
+                <?php } ?>   
+                    
+                    <p>
+                    <?php  if ($this->cat !=null && $this->rtype==RatioType::Base) { 
+//            $this->cat = $params['cat']; 
+            $query = "select c.name from it_categories c where c.id=$this->cat ";
+                $obj = $db->fetchObject($query);
+                if (isset($obj)) {
+                    $cat_name = $obj->name;
+                }
+            
+            ?>
+                    <button class="blueglassbutton" onclick="masteratioreset(<?php echo "'".$this->sid."','".$this->cat."','".$cat_name."','".$this->currUser->id."'";?>)"> Master Reset</button>
+                              
+      <?php  } ?>
                     
             </div>
             <div class="grid_5">
@@ -580,11 +688,27 @@ class cls_store_ratio extends cls_renderer {
           <!------------------------All without Exception end here----------------------------------->
                    <?php 
                       $row_no = 1;
-                     $dquery = "select s.id,s.store_id,s.ctg_id,ctg.name as ctgname,ctg.active,s.design_id,c.design_no,s.style_id,s.size_id,s.mrp,s.ratio_type,s.ratio,s.is_exceptional,s.is_exceptional_active,s.createtime from it_store_ratios s , it_ck_designs c , it_categories ctg where c.id = s.design_id and  s.store_id = $this->sid and  s.ctg_id = $this->cat and s.ratio_type = $this->rtype group by s.ctg_id,s.design_id";
+                     $dquery = "select s.id,s.store_id,s.ctg_id,ctg.name as ctgname,ctg.active,s.design_id,c.design_no,s.style_id,s.size_id,s.mrp,s.ratio_type,s.ratio,s.is_exceptional,s.is_exceptional_active,s.createtime,c.image from it_store_ratios s , it_ck_designs c , it_categories ctg where c.id = s.design_id and  s.store_id = $this->sid and  s.ctg_id = $this->cat and s.ratio_type = $this->rtype group by s.ctg_id,s.design_id";
                      $dObjs = $db->fetchObjectArray($dquery);
                      
                      foreach($dObjs as $dobj){ 
                                if(isset($dobj) && !empty($dobj) && $dobj != null){
+                                   
+                                   $setratio=1;
+                                   
+                                   $sr_query="select ratio from it_store_ratios where store_id = $this->sid and ctg_id = $this->cat and "
+                                . "ratio_type = ".RatioType::Base." and "
+                                . "design_id = $dobj->design_id";
+                                   $srObjs = $db->fetchObjectArray($sr_query);
+                     
+                     foreach($srObjs as $sobj){ 
+                         if($sobj->ratio !=1){
+                            $setratio=0; 
+                         }
+                     }
+                                   if($setratio==0){
+                                   
+                                   
                                    $row_no++;
                                    $divid = "accordion-" . $row_no;
 //                                   $cat_name = $dobj->ctgname;
@@ -599,20 +723,23 @@ class cls_store_ratio extends cls_renderer {
                             <?php // } else { ?>
                               <!--  <a href="" rel="prettyPhoto"><img class="grid_2" align="left" src="<?php // echo CdnUrl('images/stock/nophoto.jpeg'); ?>" width="170" /></a>-->
                             <?php // } ?>
-
+                           <table><tr><td width="20%">
+                            <div class="grid_2" id="imagebackground">
+                                <a href="<?php echo $this->designImageUrl($dobj->image); ?>" rel="prettyPhoto"><img id="orderimage" align="left" src="<?php echo $this->designImageUrl($dobj->image); ?>" width="130" /></a>
+                            </div></td><td width="80%">
                             <div class="block grid_10">
-                               
-                                <input type="hidden"  name="designid[<?php echo $dobj->design_id; ?>][category]" value="<?php echo $dobj->ctg_id; ?>" />
-                                    <input type="hidden" id="desno" name="designid" value="<?php // echo $this->design_id; ?>" />
+                                <form method="post" name="sbratio_<?php echo $row_no; ?>" action="" onsubmit="editDesignRatio(this); return false;">
+            
+                                   <input type="hidden" id="ctgid" name="category" value="<?php echo $this->cat; ?>" />
+                                   
                                     <?php if ($this->currUser->usertype == UserType::Dealer) { ?>
-                                <input type="hidden"  name="designid[<?php echo $dobj->design_id; ?>][sid]" value="<?php echo $this->currUser->id; ?>" />
+                                        <input type="hidden" id="sid" name="sid" value="<?php echo $this->currUser->id; ?>" />
                                     <?php } else { ?>
-                                        <input type="hidden"  name="designid[<?php echo $dobj->design_id; ?>][sid]" value="<?php echo $dobj->store_id; ?>" />
+                                        <input type="hidden" id="sid" name="sid" value="<?php echo $this->sid; ?>" />
                                     <?php } ?>
-                                    <input type="hidden"  name="designid[<?php echo $dobj->design_id; ?>][rtype]" value="<?php echo $dobj->ratio_type; ?>" />
-                                    <input type="hidden"  name="designid[<?php echo $dobj->design_id; ?>][userid]" value="<?php echo $this->currUser->id; ?>" />
-                                    <input type="hidden" id="mrp" name="mrp" value="<?php //echo $mrp; ?>" />
-                                    <input type="hidden" name="designid[<?php echo $dobj->design_id; ?>][designid]" value="<?php echo $dobj->design_id; ?>"/>
+                                    <input type="hidden" id="rtype" name="rtype" value="<?php echo $this->rtype; ?>" />
+                                    <input type="hidden" id="userid" name="userid" value="<?php echo $this->currUser->id; ?>" />
+                                     <input type="hidden" id="desno" name="designids" value="<?php echo $dobj->design_id; ?>" />
                                     <table>
                                         <?php                                        
                                         $styleobj = $db->fetchObjectArray("select s1.style_id,s2.name as style_name from it_ck_styles s1,it_styles s2 where s1.ctg_id=$dobj->ctg_id and s1.style_id=s2.id  and s2.is_active = 1 order by s1.sequence");
@@ -654,7 +781,8 @@ class cls_store_ratio extends cls_renderer {
                                                     $getratio = $db->fetchObject($query);
                                                    if(isset($getratio)){$gid = $getratio->id; }else{ $gid=0;}
                                                     ?><td>
-                                                        <input type="text" name="designid[<?php echo $dobj->design_id ;?>][item][item_<?php echo $gid; ?>_<?php echo $stylcod; ?>_<?php echo $sizeid ; ?>]"  id="designid[<?php echo $dobj->design_id ;?>][item][item_<?php echo $gid; ?>_<?php echo $stylcod; ?>_<?php echo $sizeid ; ?>]" style="width:40%" value="<?php if(isset($getratio)){ echo $getratio->ratio; }?>" readonly >
+                                                        <input type="text" id="<?php echo $row_no.$styleobj[$k]->style_id . "_" . $sizeobj[$i]->size_id; ?>" name="<?php echo "item_".$styleobj[$k]->style_id . "_" . $sizeobj[$i]->size_id; ?>" style="width:40%" value="<?php if(isset($getratio)){ echo $getratio->ratio; }   ?>" pattern= "[0-9]+" title="ONLY NUMBER" >
+                                                    
                                                     </td><?php
                                                    
                                                 }
@@ -665,13 +793,16 @@ class cls_store_ratio extends cls_renderer {
                                     </table><Br>
                                     <span id="statusMsg" class="<?php echo $formResult->cssClass; ?>" style="display:<?php echo $formResult->showhide; ?>;"><?php echo $formResult->status; ?></span>
                                   <!--  <input type="button" value="Save" style="float:right;" onclick="javascript:saveDivSpc">-->
-                               
-                            </div> <!-- end class=grid_10--> <div class="clear"></div>                                                   
-                   
+                               <input class="blueglassbutton" type="reset" value="Rset to 1" style="float:right;" onclick="designratioreset(<?php echo "'".$dobj->store_id."','".$dobj->ctg_id."','".$dobj->design_id."','".$dobj->design_no."','".$this->currUser->id."'";?>)">
+                                    <input class="blueglassbutton" type="submit" value="Save" style="float:right;">
+                                </form>
+                            </div> <!-- end class=grid_10--> <div class="clear"></div>   
+                             <div id="status_<?php echo $row_no; ?>"></div>
+                         </td></tr></table>
                         </div> <!-- end class="collapse"--> 
                     </div><!--  end class="block" -->
                        
-                     <?php } } ?>
+                     <?php } } } ?>
                 </div>
                 <div class="clear"></div>
              

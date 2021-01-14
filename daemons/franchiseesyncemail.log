@@ -1,0 +1,8 @@
+<!--#!/usr/bin/php -q-->
+<br>PHP Deprecated:  Function set_magic_quotes_runtime() is deprecated in /var/www/html/linenking/home/lib/email/class.phpmailer.php on line 1471
+
+Deprecated: Function set_magic_quotes_runtime() is deprecated in /var/www/html/linenking/home/lib/email/class.phpmailer.php on line 1471
+PHP Deprecated:  Function set_magic_quotes_runtime() is deprecated in /var/www/html/linenking/home/lib/email/class.phpmailer.php on line 1475
+
+Deprecated: Function set_magic_quotes_runtime() is deprecated in /var/www/html/linenking/home/lib/email/class.phpmailer.php on line 1475
+<br>EMAIL SENT RESP:0

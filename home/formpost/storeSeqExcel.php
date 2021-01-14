@@ -39,7 +39,7 @@ try{
     $colCount=0;
     $rowCount=2;
     
-    $query="select c.* from it_codes c where usertype = ".UserType::Dealer." and inactive = 0 ";//group by inv.distid , td.id,mate.id,cate.id,ttkitem.id  order by inv.distid "; //$categroupBy
+    $query="select c.id,c.store_name,c.sequence from it_codes c where c.usertype = ".UserType::Dealer." and c.is_closed = 0 ";//group by inv.distid , td.id,mate.id,cate.id,ttkitem.id  order by inv.distid "; //$categroupBy
     //error_log("\nSalesOvr Exl TAB 1:".$query."\n",3,"tmp.txt");
     //$objs = $db->fetchObjectArray($query);
      $objs = $db->getConnection()->query($query);

@@ -7,13 +7,15 @@ require_once "lib/core/strutil.php";
 require_once 'lib/users/clsUsers.php';
 require_once "lib/logger/clsLogger.php";
 require_once "lib/grnPDFClass/GeneratePDF.php";
+require_once "lib/orders/clsOrders.php";
 
 extract($_POST);
 //print_r($_POST);
 
 
 $db = new DBConn();
- $clsLogger = new clsLogger();
+$clsLogger = new clsLogger();
+$clsOrders = new clsOrders();
  
 $place_ord = isset($_POST['stand_ord']) ? $_POST['stand_ord'] : false;
 
@@ -250,7 +252,7 @@ try{
     }// all design loop ends here
 
     
-     $cnt=0;
+    $cnt=0;
        //code added for store order placing   
     if(trim($place_ord)==1){ 
         //step 1  : create a store sequence wise sorted arr
@@ -274,6 +276,93 @@ try{
         
         //foreach($store_orders as $store_id => $order_id){
         foreach($seq_sorted_arr as $store_id => $order_id){
+            
+                    $cartinfo = $clsOrders->getCartInfo($store_id);
+                    $min_stock=0;
+                    $store_stock=0;
+                    $curr_stock_val =0;
+                    $intransit_stock_value_new=0;
+                    $picking_complete_amt=0;
+                    $picking_amt=0;
+                    $active_amt=0;
+                    $total_orderamt_pickcomplete=0;
+                    $difference=0;
+                    $is_inactive=0;
+                    $order_tot_val=0;
+                    $db = new DBConn();
+                    $msl = $db->fetchObject("select * from it_codes where id = $store_id ");
+                     $db->closeConnection();
+                    if(isset($msl) && trim($msl->min_stock_level)!=""){
+                        //step 1: fetch current order's tot val
+                    $db = new DBConn();
+                    $order_val = $db->fetchObject("select sum(order_qty * MRP) as tot_amt from it_ck_orderitems where order_id=$order_id ");
+                    $db->closeConnection();
+                    if(isset($order_val) && trim($order_val->tot_amt) !=""){ $order_tot_val = $order_val->tot_amt; }else{ $order_tot_val = 0; }
+                    //step 2: fetch store current stock value
+                    $db = new DBConn();
+                    $store_stock = $db->fetchObject("select sum(c.quantity * i.MRP) as curr_stock_value from it_current_stock c , it_items i where c.store_id = $store_id  and c.barcode = i.barcode");
+                    $db->closeConnection();
+                    if(isset($store_stock) && trim($store_stock->curr_stock_value) !=""){ $curr_stock_val = $store_stock->curr_stock_value; }else{ $curr_stock_val = 0; }
+                    //step 3: fetch store's stock in transit
+                  
+                    $db = new DBConn();
+                    $stock_intransit_new = $db->fetchObject("select sum(i.MRP*oi.quantity) as intransit_stock_value_new from it_sp_invoices o , it_sp_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6 ) and o.store_id =$store_id  and o.is_procsdForRetail = 0 and oi.barcode = i.barcode");
+                    $db->closeConnection();
+
+                   
+                    if(isset($stock_intransit_new) && trim($stock_intransit_new->intransit_stock_value_new) !=""){
+                        $intransit_stock_value_new = $stock_intransit_new->intransit_stock_value_new; 
+                        
+                    }else{
+                        $intransit_stock_value_new = 0;
+                    }
+
+                     
+                    //step: check active ammount from order
+                    $db = new DBConn();
+                    $active_amount = $db->fetchObject("select sum(order_amount) as active_amount from it_ck_orders where status=1 and store_id=$store_id");
+                    $db->closeConnection();
+                    if(isset($active_amount) && trim($active_amount->active_amount)!=""){
+                        $active_amt=$active_amount->active_amount;
+                    }
+                    else{
+                        $active_amt=0;
+                    }
+
+
+
+                    //step: check picking ammount from order
+                    $db = new DBConn();
+                    $picking_amount = $db->fetchObject("select sum(order_amount) as picking_amount  from it_ck_orders where status=2 and store_id=$store_id");
+                    $db->closeConnection();
+                    if(isset($picking_amount) && trim($picking_amount->picking_amount)!=""){
+                        $picking_amt=$picking_amount->picking_amount;
+                    }
+                    else{
+                        $picking_amt=0;
+                    }
+                      //step: check picking complete  ammount from order
+
+                    $db = new DBConn();
+                    $picking_complete_amount = $db->fetchObject("select sum(order_amount) as picking_complete_amount  from it_ck_orders where status=5 and store_id=$store_id");
+                    $db->closeConnection();
+                    if(isset($picking_complete_amount) && trim($picking_complete_amount->picking_complete_amount)!=""){
+                        $picking_complete_amt=$picking_complete_amount->picking_complete_amount;
+                    }
+                    else{
+                        $picking_complete_amt=0;
+                    }
+                    
+                    if(isset($msl))
+                    { 
+                        $min_stock=$msl->min_stock_level;
+
+                    }
+                    $total_orderamt_pickcomplete=$active_amt+$picking_amt+$picking_complete_amt+$order_tot_val;
+                
+                if($curr_stock_val+$cartinfo->amount+$intransit_stock_value_new+$total_orderamt_pickcomplete>=$min_stock)
+                {
+            
                  $query = "select sum(oi.order_qty) as tot_qty, sum(oi.order_qty * oi.MRP) as tot_amt, count(distinct(oi.design_no)) as num_designs from it_ck_orderitems oi, it_items i where oi.order_id=$order_id and oi.item_id = i.id and i.ctg_id != 21";
 //               print "<br> FINAL ITM UPDATE SEL: $query <br>";                 
                  $orderobj = $db->fetchObject($query);
@@ -296,7 +385,61 @@ try{
 
                  }
                  $cnt++;
+                $dt = $activedt_new;
+                
+              }else{
+                   $query = "select sum(oi.order_qty) as tot_qty, sum(oi.order_qty * oi.MRP) as tot_amt, count(distinct(oi.design_no)) as num_designs from it_ck_orderitems oi, it_items i where oi.order_id=$order_id and oi.item_id = i.id and i.ctg_id != 21";
+//               print "<br> FINAL ITM UPDATE SEL: $query <br>";                 
+                 $orderobj = $db->fetchObject($query);
+//               print_r($orderobj);
+                 
+                 //below code created random active time
+                 $date = new DateTime($dt);
+                 $date->add(new DateInterval('P0Y0M0DT0H0M'.mt_rand(1,5).'S'));
+                 $activedt_new = $date->format('Y-m-d H:i:s');
+                 
+                 if ($orderobj && $orderobj->tot_qty && $orderobj->tot_amt && $orderobj->num_designs) {
+                     $query="update it_ck_orders set order_qty=$orderobj->tot_qty, order_amount=$orderobj->tot_amt, num_designs=$orderobj->num_designs ,  active_time = '$activedt_new' where id=$order_id";
+//                   print "<br> UPDATE PROPER: $query";
+                     $db->execUpdate($query);
+
+                 } else {
+                     $query="update it_ck_orders set order_qty=0, order_amount=0, num_designs=$orderobj->num_designs  , active_time = '$activedt_new' where id=$order_id and store_id=$store_id";
+//                           print "<br> UPDATE IM PROPER: $query";
+                     $db->execUpdate($query);
+
+                 }
+                 //cancel this order 
+                 cancelOrder($order_id);
+                  
+              }
+                 
+             }else{
+                  $query = "select sum(oi.order_qty) as tot_qty, sum(oi.order_qty * oi.MRP) as tot_amt, count(distinct(oi.design_no)) as num_designs from it_ck_orderitems oi, it_items i where oi.order_id=$order_id and oi.item_id = i.id and i.ctg_id != 21";
+//               print "<br> FINAL ITM UPDATE SEL: $query <br>";                 
+                 $orderobj = $db->fetchObject($query);
+//               print_r($orderobj);
+                 
+                 //below code created random active time
+                 $date = new DateTime($dt);
+                 $date->add(new DateInterval('P0Y0M0DT0H0M'.mt_rand(1,5).'S'));
+                 $activedt_new = $date->format('Y-m-d H:i:s');
+                 
+                 if ($orderobj && $orderobj->tot_qty && $orderobj->tot_amt && $orderobj->num_designs) {
+                     $query="update it_ck_orders set order_qty=$orderobj->tot_qty, order_amount=$orderobj->tot_amt, num_designs=$orderobj->num_designs , status=" . OrderStatus::Active . " , active_time = '$activedt_new' where id=$order_id";
+//                   print "<br> UPDATE PROPER: $query";
+                     $db->execUpdate($query);
+
+                 } else {
+                     $query="update it_ck_orders set order_qty=0, order_amount=0, num_designs=$orderobj->num_designs  , active_time = '$activedt_new' where id=$order_id and store_id=$store_id";
+//                           print "<br> UPDATE IM PROPER: $query";
+                     $db->execUpdate($query);
+
+                 }
+                 $cnt++;
                  $dt = $activedt_new;
+                 
+             }
          }
         $success .= ". \nTotal $cnt new order(s) created";                   
         unset($store_orders);                       
@@ -347,8 +490,39 @@ exit;
 //print "<br>SUCCESS MSG: ".$success;
 
 
+function cancelOrder($order_id){
+        $db = new DBConn();
+        $clsLogger = new clsLogger();
+   
+        $updates=array();
+        $count=0;
+        $objs = $db->fetchObjectArray("select * from it_ck_orderitems where order_id = $order_id");
+        foreach ($objs as $oi) {
+//        $query = "select * from it_ck_items where ctg_id='$oi->ctg_id' and style_id='$oi->style_id' and size_id='$oi->size_id' and design_no='$oi->design_no' and MRP=$oi->MRP";
+        $query = "select * from it_items where id = $oi->item_id ";
+        $obj = $db->fetchObject($query);
+            if (!$obj) {
+            continue;
+            }
+            if (!isset($updates[$obj->id])) { $updates[$obj->id] = 0; }
+            $updates[$obj->id] += $oi->order_qty;
+            $count++;
+            }
+//            print "Update items\n";
+            foreach ($updates as $itemid => $quantity) {
+                    $query = "update it_items set curr_qty = curr_qty + $quantity where id=$itemid";
 
-
+                    //--> code to log it_items update track
+                    $ipaddr =  $_SERVER['REMOTE_ADDR'];
+                    $pg_name = __FILE__;                
+                    $clsLogger->logInfo($query,false, $pg_name,$ipaddr);
+                    //--> log code ends here
+                    $db->execUpdate($query);
+            }
+            $query = "update it_ck_orders set status=".OrderStatus::Cancelled." where id=$order_id";
+            $db->execUpdate($query);
+            $db->closeConnection();      
+}
 
 
 

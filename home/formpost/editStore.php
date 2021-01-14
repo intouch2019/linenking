@@ -45,7 +45,7 @@
 //    
    
   
-    if ($store->usertype == UserType::Admin || $store->usertype == UserType::CKAdmin) {
+    if ($store->usertype == UserType::Admin || $store->usertype == UserType::CKAdmin ||$store->id==128) {
     $newcashval=0.0;
     $newnonclaim=0.0;
    // $delerDisc=0.0; /////hiiiii  
@@ -162,7 +162,7 @@ if ($old_disc != $effecteddisc) {
     //        $tallyname = $db->safe($tally);
             //$zipcode = isset($zip) ? $db->safe(trim($zip)) : false;
             
-            if ($store->usertype == UserType::Admin || $store->usertype == UserType::CKAdmin) {
+            if ($store->usertype == UserType::Admin || $store->usertype == UserType::CKAdmin ||$store->id==128) {
             $discquery = "";
             if(isset($adddisc) && trim($adddisc) != ""){ $discquery .= " , additional_discount = $adddisc " ; }
             if(isset($transport) && trim($transport) != ""){ $discquery .= " , transport = $transport " ; }
@@ -189,7 +189,7 @@ if ($old_disc != $effecteddisc) {
             
             
             $sClause="";
-            if($store->usertype==UserType::Admin || $store->usertype==UserType::CKAdmin){
+            if($store->usertype==UserType::Admin || $store->usertype==UserType::CKAdmin ||$store->id==128){
                 //add msl permission to=>it-admin,koushik,kunal
                 if(trim($msl)!=""){ $sClause .= ", min_stock_level =".doubleval($msl); }
                 if(trim($maxsl)!=""){ $sClause .= ", max_stock_level =".doubleval($maxsl); }
@@ -214,7 +214,7 @@ if ($old_disc != $effecteddisc) {
                 $addquery .= " , status = $status";
             }
                     
-         if ($store->usertype == UserType::Admin || $store->usertype == UserType::CKAdmin) {
+         if ($store->usertype == UserType::Admin || $store->usertype == UserType::CKAdmin ||$store->id==128) {
         
         
         if (isset($claimed) && trim($claimed) != "") {  ///////////////////////$claimed  //$cashes

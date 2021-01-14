@@ -32,6 +32,7 @@ class cls_report_ssales extends cls_renderer{
         var $state;
         var $region;
         var $status;
+        var $salesmancode;
         function __construct($params=null) {
 //		parent::__construct(array(UserType::Admin, UserType::CKAdmin, UserType::Manager));
                 ini_set('max_execution_time', 300);
@@ -89,7 +90,8 @@ class cls_report_ssales extends cls_renderer{
                 if (isset($params['state'])) { $this->fields['state']=$params['state']; $this->state = $params['state']; } else $this->fields['state']="0";
                 if (isset($params['region'])) { $this->fields['region']=$params['region']; $this->region = $params['region']; } else $this->fields['region']="0";
                 if (isset($params['status'])) { $this->fields['status']=$params['status']; $this->status = $params['status']; } else $this->fields['status']="0";
-        
+                if (isset($params['salesmancode'])) { $this->fields['salesmancode']=$params['salesmancode']; $this->salesmancode = $params['salesmancode']; } else $this->fields['salesmancode']="-";
+                
         }
 
 	function extraHeaders() {
@@ -338,6 +340,7 @@ foreach ($objs as $obj) {
                                           <option value="date" selected>Date</option>
                                         <option value="billno" selected>Bill no</option>
                                         <option value="billtype" selected>Bill Type</option>
+                                             <option value="salesmancode" selected>Salesman ID</option>
 <!--                                        <option value="itemvalue">Sold Price</option>-->
                                         <option value="month">Month</option>
                                         <!--<option value="cust">Customer Info</option>-->
@@ -465,7 +468,8 @@ foreach ($objs as $obj) {
                         if ($field=="state") {$tableheaders.="state:"; $queryfields .= "s.state,";$group_by[] = "s.state"; $total_td .= "<td></td>";}
                         if ($field=="region") {$tableheaders.="region:"; $queryfields .= "r.region,";$group_by[] = "r.region"; $total_td .= "<td></td>";}
                         if ($field=="status") {$tableheaders.="Status:"; $queryfields .= "c.status,";$group_by[] = "c.status"; $total_td .= "<td></td>";}
-                                                  
+                        if ($field=="salesmancode") {$tableheaders.="Salesman Id:";  $queryfields .= "o.salesman_code,"; $group_by[] = "o.salesman_code"; $total_td .= "<td></td>";}
+                                         
                         }
                 }
             }
@@ -611,6 +615,17 @@ foreach ($objs as $obj) {
                            $t_str = $statusname;
                        }
                        $value = $t_str;
+                   }
+                   else if($field == "salesman_code"){
+                       $salesman_code="";
+                       if ($value=="" || $value==null) {
+                            $salesman_code = "-";
+                            
+                       }else{
+                           $salesman_code = $value;
+                       }
+                       //$t_str = $mfg_by[$value];
+                       $value = $salesman_code;
                    }
                    $tcell[] .= trim($value);
                    if($write_htm){

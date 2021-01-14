@@ -1,4 +1,5 @@
 <?php
+
 require_once("../../it_config.php");
 require_once("session_check.php");
 require_once "lib/db/DBConn.php";
@@ -7,39 +8,36 @@ require_once "Classes/PHPExcel.php";
 require_once 'Classes/PHPExcel/Writer/Excel2007.php';
 
 
-    //$cnt=0;
-    //$dealersList = array();
-    $table = "it_codes";
-    $db = new DBConn();
-    //$query = "select id,store_name,tally_name,IF(is_autorefill = 1, 'Yes', 'No') AS is_autorefill, IF(is_closed = 1, 'Yes', 'No') AS is_closed,IF(sbstock_active = 1, 'Yes', 'No') AS Standing_Base_Stock,owner,address,city,zipcode,phone,phone2,email,email2,vat,store_number,pancard_no,min_stock_level,server_change_id,createtime as Store_Create_Time, IF(inactive = 1, 'Yes', 'No') AS inactive,gstin_no from $table where usertype=4 order by createtime";
-    $query = "select c.id,c.store_name,c.is_natch_required,c.tally_name,IF(c.is_autorefill = 1, 'Yes', 'No') AS is_autorefill, IF(c.is_closed = 1, 'Yes', 'No') AS is_closed,IF(c.sbstock_active = 1, 'Yes', 'No') AS Standing_Base_Stock,c.owner,c.address,c.city,c.zipcode,c.phone,c.phone2,c.email,c.email2,c.vat,c.store_number,c.pancard_no,c.min_stock_level,c.server_change_id,c.createtime as Store_Create_Time, IF(c.inactive = 1, 'Yes', 'No') AS inactive,c.gstin_no,sd.dealer_discount as Dealer_Discount from $table c,it_ck_storediscount sd where usertype=4 and is_closed=0 and c.id=sd.store_id order by createtime";
-    $alldealersobj = $db->fetchObjectArray($query);
-    //print_r($alldealersobj);
-    //return;
-    //$db->closeConnection();
-    $objPHPExcel = new PHPExcel();        
-    if(!empty($alldealersobj)) {
-       $fpath = createexcel($alldealersobj, $objPHPExcel);             
-       unset($dealersList);          
-    }
-    
-    
-    
-    function createexcel($alldealersobj, $objPHPExcel){
-    
-    $sheetIndex=0;
+//$cnt=0;
+//$dealersList = array();
+$table = "it_codes";
+$db = new DBConn();
+//$query = "select id,store_name,tally_name,IF(is_autorefill = 1, 'Yes', 'No') AS is_autorefill, IF(is_closed = 1, 'Yes', 'No') AS is_closed,IF(sbstock_active = 1, 'Yes', 'No') AS Standing_Base_Stock,owner,address,city,zipcode,phone,phone2,email,email2,vat,store_number,pancard_no,min_stock_level,server_change_id,createtime as Store_Create_Time, IF(inactive = 1, 'Yes', 'No') AS inactive,gstin_no from $table where usertype=4 order by createtime";
+$query = "select c.id,c.store_name,c.is_natch_required,c.tally_name,IF(c.is_autorefill = 1, 'Yes', 'No') AS is_autorefill, IF(c.is_closed = 1, 'Yes', 'No') AS is_closed,IF(c.sbstock_active = 1, 'Yes', 'No') AS Standing_Base_Stock,c.owner,c.address,c.city,c.zipcode,c.phone,c.phone2,c.email,c.email2,c.vat,c.store_number,c.pancard_no,c.min_stock_level,c.max_stock_level,c.server_change_id,c.createtime as Store_Create_Time, IF(c.inactive = 1, 'Yes', 'No') AS inactive,c.gstin_no,sd.dealer_discount as Dealer_Discount,(select state from states where id=c.state_id)as state,(select region from region where id=c.region_id) as region ,c.status,c.area,c.location,c.distance,IF(c.is_claim = 1, 'Yes', 'No') as is_claim,IF(c.is_cash = 1, 'Yes', 'No') as is_cash,IF(c.tax_type=1, 'Within Maharashtra','Outside Maharashtra')as tax_type,IF(c.mask_margin=1, 'Regular','55% margin')as mask_margin,c.store_type from $table c,it_ck_storediscount sd where usertype=4 and is_closed=0 and c.id=sd.store_id order by createtime";
+$alldealersobj = $db->fetchObjectArray($query);
+//print_r($alldealersobj);
+//return;
+//$db->closeConnection();
+$objPHPExcel = new PHPExcel();
+if (!empty($alldealersobj)) {
+    $fpath = createexcel($alldealersobj, $objPHPExcel);
+    unset($dealersList);
+}
+
+function createexcel($alldealersobj, $objPHPExcel) {
+
+    $sheetIndex = 0;
     // Create new PHPExcel object
-    
     // Create a first sheet
     $objPHPExcel->setActiveSheetIndex($sheetIndex);
     $objPHPExcel->getActiveSheet()->setTitle('Franchisees below MSL');
     $objPHPExcel->getActiveSheet()->setCellValue('A1', 'Id');
-    $objPHPExcel->getActiveSheet()->setCellValue('B1', 'Store Number');        
+    $objPHPExcel->getActiveSheet()->setCellValue('B1', 'Store Number');
     $objPHPExcel->getActiveSheet()->setCellValue('C1', 'Store Name');
     $objPHPExcel->getActiveSheet()->setCellValue('D1', 'Tally Name');
     $objPHPExcel->getActiveSheet()->setCellValue('E1', 'Is_Autorefill');
     $objPHPExcel->getActiveSheet()->setCellValue('F1', 'Is_Closed');
-    $objPHPExcel->getActiveSheet()->setCellValue('G1', 'Standing_Base_Stock');    
+    $objPHPExcel->getActiveSheet()->setCellValue('G1', 'Standing_Base_Stock');
     $objPHPExcel->getActiveSheet()->setCellValue('H1', 'Owner');
     $objPHPExcel->getActiveSheet()->setCellValue('I1', 'Address');
     $objPHPExcel->getActiveSheet()->setCellValue('J1', 'City');
@@ -51,12 +49,27 @@ require_once 'Classes/PHPExcel/Writer/Excel2007.php';
     $objPHPExcel->getActiveSheet()->setCellValue('P1', 'Vat');
     $objPHPExcel->getActiveSheet()->setCellValue('Q1', 'GSTIN No');
     $objPHPExcel->getActiveSheet()->setCellValue('R1', 'Dealer Discount');
-    $objPHPExcel->getActiveSheet()->setCellValue('S1', 'Pancard No'); 
+    $objPHPExcel->getActiveSheet()->setCellValue('S1', 'Pancard No');
     $objPHPExcel->getActiveSheet()->setCellValue('T1', 'Min Stock Level');
-    $objPHPExcel->getActiveSheet()->setCellValue('U1', 'Server Change Id');
-    $objPHPExcel->getActiveSheet()->setCellValue('V1', 'Store CreateTime');
-    $objPHPExcel->getActiveSheet()->setCellValue('W1', 'Inactive');
-    $objPHPExcel->getActiveSheet()->setCellValue('X1', 'IS Nach Store');
+    $objPHPExcel->getActiveSheet()->setCellValue('U1', 'Max Stock Level');
+    $objPHPExcel->getActiveSheet()->setCellValue('V1', 'Server Change Id');
+    $objPHPExcel->getActiveSheet()->setCellValue('W1', 'Store CreateTime');
+    $objPHPExcel->getActiveSheet()->setCellValue('X1', 'Inactive');
+    $objPHPExcel->getActiveSheet()->setCellValue('Y1', 'IS Nach Store');
+
+    $objPHPExcel->getActiveSheet()->setCellValue('Z1', 'State');
+    $objPHPExcel->getActiveSheet()->setCellValue('AA1', 'Region');
+    $objPHPExcel->getActiveSheet()->setCellValue('AB1', 'Status');
+    $objPHPExcel->getActiveSheet()->setCellValue('AC1', 'Area');
+    $objPHPExcel->getActiveSheet()->setCellValue('AD1', 'Location');
+    $objPHPExcel->getActiveSheet()->setCellValue('AE1', 'Distance');
+    $objPHPExcel->getActiveSheet()->setCellValue('AF1', 'Non Claim');
+    $objPHPExcel->getActiveSheet()->setCellValue('AG1', 'Cash');
+    $objPHPExcel->getActiveSheet()->setCellValue('AH1', 'Store Type');
+    $objPHPExcel->getActiveSheet()->setCellValue('AI1', 'Tax Type');
+    $objPHPExcel->getActiveSheet()->setCellValue('AJ1', 'Margin For Mask');
+
+
 
     $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
     $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(20);
@@ -81,32 +94,44 @@ require_once 'Classes/PHPExcel/Writer/Excel2007.php';
     $objPHPExcel->getActiveSheet()->getColumnDimension('U')->setWidth(20);
     $objPHPExcel->getActiveSheet()->getColumnDimension('V')->setWidth(20);
     $objPHPExcel->getActiveSheet()->getColumnDimension('W')->setWidth(20);
-    $objPHPExcel->getActiveSheet()->getColumnDimension('W')->setWidth(20);
-    
-    $colCount=0;
-    $rowCount=2;
-    
+    $objPHPExcel->getActiveSheet()->getColumnDimension('X')->setWidth(20);
+    $objPHPExcel->getActiveSheet()->getColumnDimension('Y')->setWidth(20);
+
+    $objPHPExcel->getActiveSheet()->getColumnDimension('Z')->setWidth(20);
+    $objPHPExcel->getActiveSheet()->getColumnDimension('AA')->setWidth(20);
+    $objPHPExcel->getActiveSheet()->getColumnDimension('AB')->setWidth(20);
+    $objPHPExcel->getActiveSheet()->getColumnDimension('AC')->setWidth(20);
+    $objPHPExcel->getActiveSheet()->getColumnDimension('AD')->setWidth(20);
+    $objPHPExcel->getActiveSheet()->getColumnDimension('AE')->setWidth(20);
+    $objPHPExcel->getActiveSheet()->getColumnDimension('AF')->setWidth(20);
+    $objPHPExcel->getActiveSheet()->getColumnDimension('AG')->setWidth(20);
+    $objPHPExcel->getActiveSheet()->getColumnDimension('AH')->setWidth(20);
+    $objPHPExcel->getActiveSheet()->getColumnDimension('AI')->setWidth(20);
+    $objPHPExcel->getActiveSheet()->getColumnDimension('AJ')->setWidth(20);
+
+
+
+    $colCount = 0;
+    $rowCount = 2;
+
     //foreach ($alldealersobj as $key => $value){
-    foreach ($alldealersobj as $dealer){
-        
-  /*      print_r($dealer);
-        return;*/
-        
-        $diff=0;
+    foreach ($alldealersobj as $dealer) {
+
+        /*      print_r($dealer);
+          return; */
+
+        $diff = 0;
         //$arr = explode("::",$value);
         $id = trim($dealer->id);
         $store_name = trim($dealer->store_name);
-        $tally_name = trim($dealer->tally_name) ;
+        $tally_name = trim($dealer->tally_name);
         $is_autorefill = trim($dealer->is_autorefill);
-        $is_natch=trim($dealer->is_natch_required);
-        $is_natch_required="";
-        if($is_natch==0)
-        {
-            $is_natch_required="No";
-        }
-        else
-        {
-            $is_natch_required="Yes";
+        $is_natch = trim($dealer->is_natch_required);
+        $is_natch_required = "";
+        if ($is_natch == 0) {
+            $is_natch_required = "No";
+        } else {
+            $is_natch_required = "Yes";
         }
         $is_closed = trim($dealer->is_closed);
         $Standing_Base_Stock = trim($dealer->Standing_Base_Stock);
@@ -114,7 +139,7 @@ require_once 'Classes/PHPExcel/Writer/Excel2007.php';
         $address = trim($dealer->address);
         $city = trim($dealer->city);
         $zipcode = trim($dealer->zipcode);
-        $phone= trim($dealer->phone);
+        $phone = trim($dealer->phone);
         $phone2 = trim($dealer->phone2);
         $email = trim($dealer->email);
         $email2 = trim($dealer->email2);
@@ -122,46 +147,97 @@ require_once 'Classes/PHPExcel/Writer/Excel2007.php';
         $store_number = trim($dealer->store_number);
         $pancard_no = trim($dealer->pancard_no);
         $min_stock_level = trim($dealer->min_stock_level);
+        $max_stock_level = trim($dealer->max_stock_level);
         $server_change_id = trim($dealer->server_change_id);
         $Store_Create_Time = trim($dealer->Store_Create_Time);
         $inactive = trim($dealer->inactive);
-	$gstin_no = trim($dealer->gstin_no);
+        $gstin_no = trim($dealer->gstin_no);
         $dealer_disc = trim($dealer->Dealer_Discount);
-       
-        
+
+
+        $state = trim($dealer->state);
+        $region = trim($dealer->region);
+
+        $statusid = trim($dealer->status);
+        $statusname = StoreStatus::getName($statusid);
+        $status = "";
+        if ($statusname == 'Unknown') {
+            $status = "";
+        } else {
+            $status = $statusname;
+        }
+        $area = trim($dealer->area);
+        $location = trim($dealer->location);
+        $distance = trim($dealer->distance);
+        $is_claim = trim($dealer->is_claim);
+        $is_cash = trim($dealer->is_cash);
+
+
+
+        $storetypeid = trim($dealer->store_type);
+        $storetypename = StoreType::getName($storetypeid);
+        $storetype = "";
+        if ($storetypename == 'Undefine') {
+            $storetype = "";
+        } else {
+            $storetype = $storetypename;
+        }
+        $tax_type = trim($dealer->tax_type);
+        $mask_margin = trim($dealer->mask_margin);
+
+
+
+
         //$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, $rowCount, $key);
         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, $rowCount, $id);
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(1, $rowCount, $store_number); 
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(1, $rowCount, $store_number);
         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(2, $rowCount, $store_name);
         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(3, $rowCount, $tally_name);
         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(4, $rowCount, $is_autorefill);
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(5, $rowCount, $is_closed);        
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(6, $rowCount, $Standing_Base_Stock);        
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(7, $rowCount, $owner); 
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(8, $rowCount, $address);        
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(9, $rowCount, $city );        
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(10, $rowCount, $zipcode);        
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(11, $rowCount, $phone);        
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(12, $rowCount, $phone2);        
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(13, $rowCount, $email); 
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(14, $rowCount, $email2);        
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(15, $rowCount, $vat); 
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(5, $rowCount, $is_closed);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(6, $rowCount, $Standing_Base_Stock);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(7, $rowCount, $owner);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(8, $rowCount, $address);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(9, $rowCount, $city);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(10, $rowCount, $zipcode);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(11, $rowCount, $phone);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(12, $rowCount, $phone2);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(13, $rowCount, $email);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(14, $rowCount, $email2);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(15, $rowCount, $vat);
         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(16, $rowCount, $gstin_no);
         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(17, $rowCount, $dealer_disc);
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(18, $rowCount, $pancard_no);        
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(18, $rowCount, $pancard_no);
         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(19, $rowCount, $min_stock_level);
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(20, $rowCount, $server_change_id);        
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(21, $rowCount, $Store_Create_Time);        
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(22, $rowCount, $inactive);
-        
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(23, $rowCount, $is_natch_required);
-        
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(20, $rowCount, $max_stock_level);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(21, $rowCount, $server_change_id);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(22, $rowCount, $Store_Create_Time);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(23, $rowCount, $inactive);
+
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(24, $rowCount, $is_natch_required);
+
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(25, $rowCount, $state);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(26, $rowCount, $region);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(27, $rowCount, $status);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(28, $rowCount, $area);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(29, $rowCount, $location);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(30, $rowCount, $distance);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(31, $rowCount, $is_claim);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(32, $rowCount, $is_cash);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(33, $rowCount, $storetype);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(34, $rowCount, $tax_type);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(35, $rowCount, $mask_margin);
+
+
+
         $rowCount++;
-    }}
+    }
+}
+
 //echo "Row Count=======>".$rowCount."\n";
-$filename = "StoreDetail_".date('Y-m-d H:i:s').".xls";     
+$filename = "StoreDetail_" . date('Y-m-d H:i:s') . ".xls";
 header('Content-Type: application/vnd.ms-excel');
-header('Content-Disposition: attachment;filename='.$filename);
+header('Content-Disposition: attachment;filename=' . $filename);
 header('Cache-Control: max-age=0');
 $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
-$objWriter->save('php://output'); 
+$objWriter->save('php://output');

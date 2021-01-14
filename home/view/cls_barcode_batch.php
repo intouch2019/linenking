@@ -87,13 +87,22 @@ class cls_barcode_batch extends cls_renderer{
 <?php
 $pack_dt = $this->getFieldValue('pack_dt');
 if (!$pack_dt) $pack_dt = strtoupper(date("M Y"));
+$line = $this->getFieldValue('line');
 ?>
 <?php
 $material = $this->getFieldValue('material');
 ?>
-Pack Dt: <input type="text" name="pack_dt" style="width:80px;" value="<?php echo $pack_dt; ?>" /><br />
+Pack Dt: <input type="text" name="pack_dt" style="width:80px;" value="<?php echo $pack_dt; ?>" /><br /><br />
 Material: <input type="text" name="material" style="width:80px;" value="<?php echo $material; ?>" /><br />
 <input type="hidden" name="batch_id" value="<?php echo $this->batch->id; ?>" />
+</br>
+
+<label>Select Barcode Line</label></br>
+<input type="radio" name="line" value="1" <?php if ($line == 1) { ?>checked <?php } ?> required/>Single Line
+<input type="radio" name="line" value="2" <?php if ($line == 2) { ?>checked <?php } ?> required />Double Line
+</br>
+</br>
+
 <input name="submitPrint" type="submit" value="Print" />
 <?php if ($formResult) { ?>
 <p>

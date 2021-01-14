@@ -399,7 +399,7 @@ if(discval>0){
                                 <?php }
                                 
                                 
-                                elseif($this->currStore->usertype == UserType::Admin ) {
+                                elseif($this->currStore->usertype == UserType::Admin ||$this->currStore->id==128) {
                                     
                                      $query ="select * from it_dealer_discount order by discount asc";     
                                         $obj_deler_disc = $db->fetchObjectArray($query);
@@ -469,7 +469,7 @@ if(discval>0){
                 
                 
                 
-                               <?php if ($this->currStore->usertype == UserType::CKAdmin || $this->currStore->usertype == UserType::Admin ) { ?>
+                               <?php if ($this->currStore->usertype == UserType::CKAdmin || $this->currStore->usertype == UserType::Admin ||$this->currStore->id==128 ) { ?>
                             <p class="grid_1">
                                 <label>Cash:</label>
                                 <input type="checkbox"  name="cashes" id="<?php echo $store->is_cash;?>" value="1" <?php if ($store->is_cash=="1") echo "checked"; ?> onclick="isCheckedById();"/>
@@ -492,7 +492,7 @@ if(discval>0){
                             <?php }  ?>
                 
                 
-                    <?php if ($this->currStore->usertype==UserType::Admin || $this->currStore->usertype==UserType::CKAdmin) { ?>
+                    <?php if ($this->currStore->usertype==UserType::Admin || $this->currStore->usertype==UserType::CKAdmin ||$this->currStore->id==128) { ?>
                     <p class="grid_12">
                         <label>Minimum Stock Level: </label><br>
                         <input type="text" name="msl" style='width:30%' value="<?php echo $this->getFieldValue('msl',$store->min_stock_level); ?>">

@@ -25,7 +25,7 @@ class GeneratePDF {
         if(!empty($item_ids_arr)){
             $itemids = implode(",", $item_ids_arr);
             //$query = "select c.name as ctg_name, i.design_no, i.mrp, cd.image as image_name,cd.extension , cdp.cdesp from it_items i  left join it_grn_ctg_desp cdp on i.ctg_id = cdp.ctg_id and i.design_id = cdp.design_id, it_categories c , it_ck_designs cd where i.ctg_id = c.id and c.id = cd.ctg_id and i.design_id = cd.id and i.id in ( $itemids ) group by i.ctg_id,i.design_id,i.mrp ";
-            $query = "select c.name as ctg_name,c.sequence, i.design_no, i.mrp, cd.image as image_name,cd.extension , cdp.cdesp,i.ctg_id from it_items i  left join it_grn_ctg_desp cdp on i.ctg_id = cdp.ctg_id and i.design_id = cdp.design_id, it_categories c , it_ck_designs cd where i.ctg_id = c.id and c.id = cd.ctg_id and i.design_id = cd.id and i.id in ( $itemids ) group by i.ctg_id,i.design_id,i.mrp order by c.sequence";
+            $query = "select c.name as ctg_name,c.sequence, i.design_no, i.mrp, cd.image as image_name,cd.extension , cdp.cdesp,i.ctg_id,i.prod_type_id  from it_items i  left join it_grn_ctg_desp cdp on i.ctg_id = cdp.ctg_id and i.design_id = cdp.design_id, it_categories c , it_ck_designs cd where i.ctg_id = c.id and c.id = cd.ctg_id and i.design_id = cd.id and i.id in ( $itemids ) group by i.ctg_id,i.design_id,i.mrp order by c.sequence";
 //            print $query;
             $all_items = $db->fetchObjectArray($query);
 //            $db->closeConnection();
@@ -39,18 +39,31 @@ class GeneratePDF {
                  $avl = $db->fetchObject($avl_query);
                 if(isset($avl) && $avl->total_available >25){
                 $count++;
-                $icnt = $icnt + 1;
-                if($icnt > 3){
+            
+                if($icnt > 2){
                     $icnt=0;
                      $pdf->AddPage();
                      $y = 0;
                 }
-                
+                    $icnt = $icnt + 1;
                 $category_name = $item->ctg_name;
                 $item_mrp = $item->mrp;
                 $design_no = $item->design_no;
                 $image = $item->image_name;
-
+                
+                
+                $productionid = $item->prod_type_id;
+                $productName="-";
+                if(isset($productionid)){
+                     $prodnameQuery="select name from it_prod_types where id=$productionid";
+                     $prodName = $db->fetchObject($prodnameQuery);
+                         if(isset($prodName)){
+                     
+                         $productName=$prodName->name;
+                         
+                         }
+                }
+                
                 $pdf->SetFont('Arial', 'B', 16);
                 $pdf->ln();
                 $pdf->ln();
@@ -77,6 +90,9 @@ class GeneratePDF {
                     $pdf->CellFitScale(0,10,$ctxt,0,1,'',0);
                     $pdf->Ln();  
                 }
+                $pdf->Ln();
+                $pdf->cell(50);
+                $pdf->Cell(40, 10, "Production Type: ".$productName);
                 $pdf->Ln();
                 $pdf->Ln();
                 $pdf->Ln();
