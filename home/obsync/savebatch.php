@@ -506,7 +506,7 @@ foreach ($arr as $orderinfo) {
                         $payment_name = $currpaymentline->m_sName;
                         $payment_amt = $currpaymentline->m_dTicket;
 //                        $payment_msg = $currpaymentline->m_returnMessage;
-                        if($payment_name == 'magcard'){
+                        if($payment_name == 'magcard' || $payment_name == 'upi'){
                            $payment_msg = $currpaymentline->m_transactionID;   
                         }else{
                            $payment_msg = $currpaymentline->m_returnMessage;
@@ -718,7 +718,7 @@ foreach ($arr as $orderinfo) {
                     $payment_name = $currpaymentline->m_sName;
                     $payment_amt = $currpaymentline->m_dTicket;
                     //$payment_msg = $currpaymentline->m_returnMessage;
-                    if($payment_name == 'magcard'){
+                    if($payment_name == 'magcard' || $payment_name == 'upi'){
                            $payment_msg = $currpaymentline->m_transactionID;   
                         }else{
                            $payment_msg = $currpaymentline->m_returnMessage;
@@ -875,7 +875,7 @@ foreach ($arr as $orderinfo) {
                     $payment_name = $currpaymentline->m_sName;
                     $payment_amt = $currpaymentline->m_dTicket;
                     //$payment_msg = $currpaymentline->m_returnMessage;
-                    if($payment_name == 'magcard'){
+                    if($payment_name == 'magcard' || $payment_name == 'upi'){
                            $payment_msg = $currpaymentline->m_transactionID;   
                         }else{
                            $payment_msg = $currpaymentline->m_returnMessage;
@@ -1076,7 +1076,7 @@ function reSaveCancelBill2($order_id,$bill_type,$store_id,$tobj){
         $payment_name = $currpaymentline->m_sName;
         $payment_amt = $currpaymentline->m_dTicket;
        // $payment_msg = $currpaymentline->m_returnMessage;
-                        if($payment_name == 'magcard'){
+                        if($payment_name == 'magcard' || $payment_name == 'upi'){
                            $payment_msg = $currpaymentline->m_transactionID;   
                         }else{
                            $payment_msg = $currpaymentline->m_returnMessage;
