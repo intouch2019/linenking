@@ -42,11 +42,26 @@ try {
                     } 
                     
                     
+                    
                     if(!$margin && trim($margin) == "" ){ 
                         $errors['margin'] = "Please select margin";                        
                     }else{
                         $addquery .= " ,margin=$margin ";
                     }
+                    
+                    if (isset($othercat)) {
+                        $addquery .= " , setotheractive = $othercat ";
+                    } else {
+                        $errors['otr'] = "Please  Set For Other";
+                    }
+
+                    if (isset($accesorycat)) {
+                        $addquery .= " , setaccesories = $accesorycat ";
+                    } else {
+                        $errors['acr'] = "Please  Set For Accesories";
+                    }
+            
+            
                 }
                 if(count($errors) == 0){
                     $avalue=$db->safe($avalue);
@@ -72,8 +87,13 @@ try {
                                 //}
                              }
                                 if($atype == "categories"){
-                                     createCatalogPg($inserted);
-                                     createReleasedCatalogPg($inserted);
+                                     if ($othercat == "0" && $accesorycat == "0") {
+                                        createCatalogPg($inserted);
+                                        createReleasedCatalogPg($inserted);
+                                    }
+//                        
+//                                     createCatalogPg($inserted);
+//                                     createReleasedCatalogPg($inserted);
                                  }
                             }
                             $success = "$avalue has been added";
@@ -107,7 +127,12 @@ function createCatalogPg($inserted){
     //fetch details of last catlog pg added
     $qry = "select * from it_pages where menuhead = 'Catalog' and sequence != 0 order by id desc limit 1";
     $catlogdb = $db->fetchObject($qry);
-    $submenu_seq = $catlogdb->submenu_seq + 1;
+    $qry3 = "select max(submenu_seq) as subsequence_num from it_pages where menuhead='Catalog' and sequence!=0 and pagecode not in('other_cat','Accessories');";
+    $subsequence = $db->fetchObject($qry3);
+    //$submenu_seq = $catlogdb->submenu_seq + 1;
+    
+
+    $submenu_seq = $subsequence->subsequence_num + 1;
     $cquery = "insert into it_pages set pagecode = '$catedb->id',pagename='$catedb->name',pageuri='store/designs/ctg=$catedb->id',menuhead='Catalog',sequence=$catlogdb->sequence,submenu_seq = $submenu_seq";
    
     $pg_id = $db->execInsert($cquery);
@@ -130,7 +155,7 @@ function createReleasedCatalogPg($inserted){
     $cquery = "insert into it_pages set pagecode = 'r_$catedb->id',pagename='$catedb->name',pageuri='rstore/designs/ctg=$catedb->id',menuhead='Released Catalog',sequence=$catlogdb->sequence,submenu_seq = $submenu_seq";
     $pg_id = $db->execInsert($cquery);
     if($pg_id){
-        dealerPgAccess($pg_id);
+      //  dealerPgAccess($pg_id);
     }
     
 }
