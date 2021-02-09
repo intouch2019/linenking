@@ -35,6 +35,7 @@ try{
             
             $tot_stk_val = $store_stock_val + $intransit_stock_val;
             if($tot_stk_val < $dealerobj->min_stock_level){
+                   $diff = $dealerobj->min_stock_level - $tot_stk_val;
                 $dealersList[$dealerobj->id] = $dealerobj->store_name."::".$store_stock_val."::".$intransit_stock_val."::".$tot_stk_val."::".$dealerobj->min_stock_level;
             }
             
@@ -64,6 +65,7 @@ function createexcel($dealersList){
     $objPHPExcel->getActiveSheet()->setCellValue('D1', 'Store Stock in Transit');
     $objPHPExcel->getActiveSheet()->setCellValue('E1', 'Store Total Stock');    
     $objPHPExcel->getActiveSheet()->setCellValue('F1', 'Store Minimum Stock Level');
+    $objPHPExcel->getActiveSheet()->setCellValue('G1', 'Difference');
         
     $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
     $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(20);
@@ -71,7 +73,7 @@ function createexcel($dealersList){
     $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(20);
     $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(20);
     $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(20);
-    
+      $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(20);
     
     $styleArray = array(
         'font'  => array(
@@ -111,14 +113,14 @@ function createexcel($dealersList){
     $objPHPExcel->getActiveSheet()->getStyle('D1')->applyFromArray($styleArray);
     $objPHPExcel->getActiveSheet()->getStyle('E1')->applyFromArray($styleArray);
     $objPHPExcel->getActiveSheet()->getStyle('F1')->applyFromArray($styleArray);
-    
+     $objPHPExcel->getActiveSheet()->getStyle('G1')->applyFromArray($styleArray);
     $objPHPExcel->getActiveSheet()->getStyle('A')->applyFromArray($cellstyleArray);
     $objPHPExcel->getActiveSheet()->getStyle('B')->applyFromArray($cellstyleArray);
     $objPHPExcel->getActiveSheet()->getStyle('C')->applyFromArray($cellstyleArray);
     $objPHPExcel->getActiveSheet()->getStyle('D')->applyFromArray($cellstyleArray);
     $objPHPExcel->getActiveSheet()->getStyle('E')->applyFromArray($cellstyleArray);
     $objPHPExcel->getActiveSheet()->getStyle('F')->applyFromArray($cellstyleArray);
-    
+     $objPHPExcel->getActiveSheet()->getStyle('G')->applyFromArray($cellstyleArray);
     $colCount=0;
     $rowCount=3;
     
@@ -126,6 +128,7 @@ function createexcel($dealersList){
         $arr = explode("::",$value);
         $store_name = trim($arr[0]);$curr_stock = trim($arr[1]) ; $stock_intransit = trim($arr[2]);
         $tot_stk = trim($arr[3]);$msl = trim($arr[4]); 
+         $diff = trim($arr[5]);
         
         
         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, $rowCount, $key);
@@ -134,6 +137,7 @@ function createexcel($dealersList){
         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(3, $rowCount, $stock_intransit);
         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(4, $rowCount, $tot_stk);        
         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(5, $rowCount, $msl);        
+          $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(6, $rowCount, $diff);   
         $rowCount++;
     }    
     
