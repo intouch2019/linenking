@@ -38,7 +38,7 @@ $name = "SaleBack_PurchaseVoucher_" . $dt1 . "_" . $dt2 . ".xml";
 $query = "select i.*,(select region from region where id=c.region_id)as region_name FROM it_saleback_invoices i,it_codes c  WHERE i.store_id=c.id and  i.invoice_type = 7 and i.invoice_dt >= '2018-01-01 00:00:00' and i.procsd_date >= $startdate  "
         . "and i.procsd_date <= $enddate and is_procsdForRetail=1 order by invoice_no";
 //error_log("\nSaleXML".$query,3,"tmp.txt");
-//print $query;
+//print $query;//
 
 $objs = $db->fetchObjectArray($query);
 if ($objs) {

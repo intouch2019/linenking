@@ -26,3 +26,5 @@ patches/
 aws/
 backup/
 logs/
+*.pdf
+*.PDF
