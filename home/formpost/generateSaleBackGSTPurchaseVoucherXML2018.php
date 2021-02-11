@@ -7,13 +7,12 @@ require_once "lib/core/Constants.php";
 require_once "lib/core/strutil.php";
 require_once 'lib/users/clsUsers.php';
 
-//here sales@ is total_mrp
 
 
 extract($_GET);
 $db = new DBConn();
-$startdate = $db->safe(yymmdd($d1));
-$enddate = $db->safe(yymmdd($d2));
+$startdate = $db->safe(yymmdd($d1)." 00:00:00");
+$enddate = $db->safe(yymmdd($d2)." 23:59:59");
 $user = getCurrUser();
 $userpage = new clsUsers();
 $pagecode = $db->safe($_SESSION['pagecode']);
@@ -36,8 +35,8 @@ $dt1 = str_replace("-", "", $d1);
 $dt2 = str_replace("-", "", $d2);
 $name = "SaleBack_PurchaseVoucher_" . $dt1 . "_" . $dt2 . ".xml";
 
-$query = "select i.*,(select region from region where id=c.region_id)as region_name FROM it_saleback_invoices i,it_codes c  WHERE i.store_id=c.id and  i.invoice_type = 7 and i.invoice_dt >= '2018-01-01 00:00:00' and date(i.invoice_dt) >= $startdate  "
-        . "and date(i.invoice_dt) <= $enddate and is_procsdForRetail=1 order by invoice_no";
+$query = "select i.*,(select region from region where id=c.region_id)as region_name FROM it_saleback_invoices i,it_codes c  WHERE i.store_id=c.id and  i.invoice_type = 7 and i.invoice_dt >= '2018-01-01 00:00:00' and i.procsd_date >= $startdate  "
+        . "and i.procsd_date <= $enddate and is_procsdForRetail=1 order by invoice_no";
 //error_log("\nSaleXML".$query,3,"tmp.txt");
 //print $query;
 
@@ -149,7 +148,7 @@ if ($objs) {
             $addresslist = $voucher->addChild("ADDRESS.LIST");
             $replaceaddr = str_replace("&", "and", $storedetail->address);
             $addresslist->addChild("ADDRESS", $replaceaddr);
-            $dt = date('Y-m-d', strtotime($obj->invoice_dt));
+            $dt = date('Y-m-d', strtotime($obj->procsd_date));
             $invdate = preg_replace("/[^0-9]+/", "", $dt);
             $voucher->addChild("DATE", $invdate);
             $voucher->addChild("STATENAME", $state->state);
