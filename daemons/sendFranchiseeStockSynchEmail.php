@@ -32,6 +32,9 @@ try {
             $synchdate = $cobj->createtime;
             $diffdate = floor((strtotime($serverdate) - strtotime($synchdate)) / (60 * 60 * 24));
             if ($diffdate > 2) {
+                
+		$query2 = "select pingtime from it_store_pingtime where store_id= $dealerobj->id ";
+     		 $cobj2 = $db->fetchObject($query2);
                 //checking updatetime from it_current stock table if diffencce is geather than 2 i.e not Synch within 2 days to portal
                 $query1 = "select updatetime from it_current_stock where store_id = $dealerobj->id order by updatetime desc limit 1 ";
                 $cobj1 = $db->fetchObject($query1);
@@ -46,10 +49,10 @@ try {
                         $showdate = $synchdateUpdate;
                     }
                     if ($showdiff > 2) {
-                        $dealersList[$dealerobj->id] = $dealerobj->store_name . "::" . $showdate . "::" . $serverdate . "::" . "Store Stock was Synced Before $showdiff Days ";
+                        $dealersList[$dealerobj->id] = $dealerobj->store_name . "::" . $showdate . "::" . $serverdate . "::" . "Store Stock was Synced Before $showdiff Days "."::".$cobj2->pingtime;
                     }
                 }else{
-                    $dealersList[$dealerobj->id] = $dealerobj->store_name . "::" . $synchdate . "::" . $serverdate . "::" . "Store Stock was Synced Before $diffdate Days ";
+                    $dealersList[$dealerobj->id] = $dealerobj->store_name . "::" . $synchdate . "::" . $serverdate . "::" . "Store Stock was Synced Before $diffdate Days "."::".$cobj2->pingtime;
                 }
             }
 //            echo 'serverdate'.$serverdate;
@@ -86,6 +89,7 @@ function createexcel($dealersList) {
 //    $objPHPExcel->getActiveSheet()->setCellValue('C1', 'Store Current Stock');
     $objPHPExcel->getActiveSheet()->setCellValue('D1', 'Current Date');
     $objPHPExcel->getActiveSheet()->setCellValue('E1', 'Status');
+        $objPHPExcel->getActiveSheet()->setCellValue('F1', 'Ping Time');
 //    $objPHPExcel->getActiveSheet()->setCellValue('F1', 'Store Minimum Stock Level');
 //        
     $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
@@ -93,7 +97,7 @@ function createexcel($dealersList) {
     $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(20);
     $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(20);
     $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(35);
-//    $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(20);
+    $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(20);
 
 
     $styleArray = array(
@@ -132,14 +136,14 @@ function createexcel($dealersList) {
     $objPHPExcel->getActiveSheet()->getStyle('C1')->applyFromArray($styleArray);
     $objPHPExcel->getActiveSheet()->getStyle('D1')->applyFromArray($styleArray);
     $objPHPExcel->getActiveSheet()->getStyle('E1')->applyFromArray($styleArray);
-//    $objPHPExcel->getActiveSheet()->getStyle('F1')->applyFromArray($styleArray);
+    $objPHPExcel->getActiveSheet()->getStyle('F1')->applyFromArray($styleArray);
 //    
     $objPHPExcel->getActiveSheet()->getStyle('A')->applyFromArray($cellstyleArray);
     $objPHPExcel->getActiveSheet()->getStyle('B')->applyFromArray($cellstyleArray);
     $objPHPExcel->getActiveSheet()->getStyle('C')->applyFromArray($cellstyleArray);
     $objPHPExcel->getActiveSheet()->getStyle('D')->applyFromArray($cellstyleArray);
     $objPHPExcel->getActiveSheet()->getStyle('E')->applyFromArray($cellstyleArray);
-//    $objPHPExcel->getActiveSheet()->getStyle('F')->applyFromArray($cellstyleArray);
+    $objPHPExcel->getActiveSheet()->getStyle('F')->applyFromArray($cellstyleArray);
 //    
 //    $colCount = 0;
     $rowCount = 3;
@@ -151,13 +155,14 @@ function createexcel($dealersList) {
         $serverdate = trim($arr[2]);
         $status = trim($arr[3]);
         //$msl = trim($arr[4]); 
-
+            $pingtime= trim($arr[4]);
 
         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, $rowCount, $key);
         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(1, $rowCount, $store_name);
         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(2, $rowCount, $synchdateUpdate);
         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(3, $rowCount, $serverdate);
         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(4, $rowCount, $status);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(5, $rowCount, $pingtime);
 //        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(5, $rowCount, $msl);        
         $rowCount++;
     }
@@ -199,12 +204,13 @@ function sendEmail($fpath) {
 //                }                
 //            }
 //        }
-//        array_push($toArray, 'rghule@intouchrewards.com');
+        
         array_push($toArray, 'koushik.marathe@kinglifestyle.com');
         array_push($toArray, 'kunal.marathe@kinglifestyle.com');
         array_push($toArray, 'harshada.marathe@kinglifestyle.com');
         array_push($toArray, 'rohan.phalke@kinglifestyle.com');
         array_push($toArray, 'prashant.mane@kinglifestyle.com');
+        array_push($toArray, 'rghule@intouchrewards.com');
         
         if (!empty($toArray)) {
             print "<br>";
@@ -242,12 +248,13 @@ function sendEmail2() {
 //            }
 //        }
     
-//        array_push($toArray, 'rghule@intouchrewards.com');
+        
         array_push($toArray, 'koushik.marathe@kinglifestyle.com');
         array_push($toArray, 'kunal.marathe@kinglifestyle.com');
         array_push($toArray, 'harshada.marathe@kinglifestyle.com');
         array_push($toArray, 'rohan.phalke@kinglifestyle.com');
         array_push($toArray, 'prashant.mane@kinglifestyle.com');
+        array_push($toArray, 'rghule@intouchrewards.com');
         
     
         if (!empty($toArray)) {
