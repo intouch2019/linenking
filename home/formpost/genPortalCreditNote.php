@@ -61,7 +61,34 @@ if(isset($store) && $store !="" && isset($user_id) && $user_id !="")
 //        echo "</br>".$insert_id;
         $update_query="update it_portalinv_items_creditnote set  is_proccessed=1 ,invoice_id=$insert_id where is_proccessed=0 and store_id=$store";
         $db->execUpdate($update_query);
-        $db->execUpdate("update DGcreditnote_no set cn_no=$credit_num");
+                if($insert_id){
+        $db->execUpdate("update dgcreditnote_no set cn_no=$credit_num");
+        
+        $records = $credit_num . "<>1";
+//        $db = new DBConn();
+//        $url = "http://localhost/cottonking/home/sendCN/sendDefCNnumber.php";
+       //   $url = "http://192.168.0.38/ck_new_y/home/sendCN/sendDefCNnumber.php";
+       
+          
+        $url = "http://cottonking.intouchrewards.com/sendCN/sendDefCNnumber.php";
+          
+        $fields = array('records' => urlencode($records));
+        $fields_string = "";
+        foreach ($fields as $key => $value) {
+            $fields_string .= $key . '=' . $value . '&';
+        }
+        rtrim($fields_string, '&');
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, count($fields));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $fields_string);
+
+        $outputresult = curl_exec($ch);
+        $info = curl_getinfo($ch);
+        curl_close($ch);
+                }
         
         $_SESSION['form_success'] ="Credit note '$credit_no' crated for $storename";
         

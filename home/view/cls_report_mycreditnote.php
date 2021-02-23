@@ -11,6 +11,7 @@ class cls_report_mycreditnote extends cls_renderer {
     var $startdated;
     var $enddate;
     var $yeartpess;
+    var $id;
     function __construct($params=null) {
         $this->currStore = getCurrUser();
         $this->params = $params;
@@ -24,7 +25,14 @@ class cls_report_mycreditnote extends cls_renderer {
                 if($params && isset($params['yeartpes'])){
                     $this->yeartpess = $params['yeartpes'];
                 }
-
+ 
+         if (isset($_SESSION['id'])) {
+             $this->id = $_SESSION['id']; 
+             
+         }
+               else { $this->id = "3"; 
+               
+               }
                 
     }
     function extraHeaders() {
@@ -55,6 +63,35 @@ class cls_report_mycreditnote extends cls_renderer {
 
 <script type="text/javascript">
 
+$(function(){
+
+                    $("#cn").change(function () {
+                        var id= $("#cn").val();
+                        
+                        $.ajax({
+                                url: "savesession.php?name=id&value="+id,
+                                success: function(data) {
+                                        //window.location.reload();
+                                         window.location.href = "report/mycreditnote";
+                                }
+                        });
+
+                    });
+                    $("#cn1").change(function () {
+                        var id= $("#cn1").val();
+
+                        $.ajax({
+                                url: "savesession.php?name=id&value="+id,
+                                success: function(data) {
+                                        
+                                        //window.location.reload();
+                                         window.location.href = "report/mycreditnote";
+                                }
+                        });
+                    });
+        });
+        
+        
 function setyear(){
     
      var yr= $( "#yrtype" ).val();
@@ -117,6 +154,11 @@ function yrlablehide(){
        <fieldset class="login">
             <legend>My CreditNote</legend>
             <br>
+                          <div class="grid_12">  
+                               <input type="radio" id="cn" name="cn" value="1" <?php if ($this->id == 1) { ?>checked <?php } ?>>Turnover And Discount Scheme Credit note  &nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;  &nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;  &nbsp; 
+<input type="radio" id="cn1" name="cn" value="2" <?php if ($this->id == 2) { ?>checked <?php } ?>>Defective Garment Credit Note
+            </div>
             <div class="grid_12"> 
             <div class="grid_6">  <b>Select Year:</b>
             <br/>
@@ -149,7 +191,7 @@ function yrlablehide(){
             <br/>
             <br/>
 <?php 
-if($this->startdated!=null && $this->enddate!=null){?>
+if($this->startdated!=null && $this->enddate!=null && $this->id==1){?>
 <?php 
       $db = new DBConn();
       $cn_number = array();
@@ -233,7 +275,86 @@ unset($cn_number);
                 </table>
             </div>
 
-<?php }?>
+<?php }  elseif ($this->startdated != null && $this->enddate != null && $this->id==2) {?>
+            
+            <?php
+            $db = new DBConn();
+            $dcn_number = array();
+
+            $def_cn = $db->fetchObjectArray("select invoice_no from it_portalinv_creditnote where store_id=$store_id and createtime >='$this->startdated 00:00:00'  and createtime <= '$this->enddate 23:59:59'  order by createtime desc");
+//print_r($def_cn);
+            if(isset($def_cn)){
+            foreach ($def_cn as $d_no) {
+                array_push($dcn_number, "$d_no->invoice_no");
+            }
+            rsort($dcn_number);
+            
+            
+            ?>
+                    <div id="accordion">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Sr no</th>
+                                        <th>CreditNote.No</th>
+                                        <th>Generate Date </th>
+                                        <th>Amount</th> 
+                                        <!--<th>Remark</th>-->  
+                                        <th>Download Defected </br>Garment CreditNote</th>
+                                    </tr>
+                                </thead>
+
+
+            <?php
+            $srno2 = 1;
+            foreach ($dcn_number as $key => $value) {
+                ?>
+                <?php
+                $defectedgarment_query = "select * from it_portalinv_creditnote where invoice_no='$value' and store_id=$store_id";
+//               print $defectedgarment_query;
+               
+                $dfcn = $db->fetchObject($defectedgarment_query);
+                $totalval=0;
+                if($dfcn->igst_total!=0){
+                $totalval=$dfcn->rate_subtotal+$dfcn->cgst_total+$dfcn->cgst_total;
+                }else{
+                      $totalval=$dfcn->rate_subtotal+$dfcn->igst_total;
+                }
+                if (isset($dfcn)) {
+                    ?>
+
+                                        <tr>
+                                            <td><?php echo $srno2; ?></td>
+                                            <td><?php echo  $dfcn-> invoice_no; ?></td>
+                                            <td><?php echo mmddyy($dfcn->createtime); ?></td>
+                                            <td><?php echo $totalval; ?></td>
+                                        
+                                            <td><a href="formpost/generateStoreDGpdfs.php?invid=<?php echo $dfcn->id; ?>"><button>Download</button></a></td>
+                                        </tr>
+
+
+                <?php } ?>
+                              
+
+                <?php
+                $srno2++;
+            }
+            unset($dcn_number);
+            ?>
+                            </table>
+                        </div>
+                    
+                    
+                    
+                    
+                    
+            
+            
+                       <?php
+                            }
+    }
+                            
+               ?>
     </div>
   </fieldset>
 </div>

@@ -156,8 +156,8 @@ class cls_report_creditnotetd extends cls_renderer {
         <h2>Credit Note</h2><br>
 
 <div style="margin-top: 0px; margin-right: 0px; margin-bottom: 0px; margin-left: 0px; position: static; overflow:auto; ">
-    <input type="radio" id="cn" name="cn" value="1" onchange="reload()">Turn Over Discount
-    <input type="radio" id="cn1" name="cn" value="2" onchange="reload()">Discount Scheme
+    <input type="radio" id="cn" name="cn" value="1" <?php if ($this->id == 1) { ?>checked <?php } ?> onchange="reload()">Turn Over Discount
+    <input type="radio" id="cn1" name="cn" value="2" <?php if ($this->id == 2) { ?>checked <?php } ?> onchange="reload()">Discount Scheme
     <lable id="cntype"><lable>
             
     <br/>
@@ -264,7 +264,12 @@ class cls_report_creditnotetd extends cls_renderer {
                                 <td>$order->ref_no</td>
                                 <td>$strhsn</td>";
                         
-                            $date = mmddyy($order->to_datetime); $table .= "<td>$date</td>"; 
+//                            $date = mmddyy($order->to_datetime);
+//                            $date = mmddyy($order->createtime);
+                                  $date = mmddyy($order->createtime); 
+                            $date2=explode(" ",$date);
+                            $table .= "<td>$date2[0]</td>"; 
+                            $table .= "<td>$date</td>"; 
                             $table .= "<td>$order->gst_net</td>";                                                      
                             if($order->igst_paid!=0) 
                                {
