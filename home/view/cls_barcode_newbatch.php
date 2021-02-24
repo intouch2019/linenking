@@ -71,7 +71,17 @@ function enterPressed() {
     }
 }
 
-
+function check_mrpCAP()
+            {
+             var mrp = $("#mrp").val(); 
+//             alert(mrp);
+             if(mrp >5000)
+             {
+                 alert("Please Check MRP Value for Selected Design");
+                 $("#mrp").val(""); 
+             }
+             
+            }
 
  function reseteWorkOrderData()
             {
@@ -203,7 +213,7 @@ foreach ($objs as $obj) {
                 Design No*:<br /><input type="text" name="design_no" style="width:100%;height:23px;font-size:14px;" value="<?php if(isset($this->data)){ $design=explode(':',$data1[2]); echo $design[1];} else {echo $this->getFieldValue('design_no');}?>"/>
 		</div>
 		<div class="grid_1">
-                MRP*:<br /><input type="text" name="mrp" style="width:100%;height:23px;font-size:14px;" value="<?php if(isset($this->data)){ $mrp=explode(':',$data1[3]); echo $mrp[1];} else { echo $this->getFieldValue('mrp');}?>"/>
+                    MRP*:<br /><input type="text" id="mrp" name="mrp" style="width:100%;height:23px;font-size:14px;" value="<?php if(isset($this->data)){ $mrp=explode(':',$data1[3]); echo $mrp[1];} else { echo $this->getFieldValue('mrp');}?>" onchange="check_mrpCAP()"/>
 		</div>
 		<div class="grid_1">
                 Units*:<br /><input type="text" name="num_units" style="width:100%;height:23px;font-size:14px;" <?php if(isset($this->data)){?> value="1"<?php }else { ?>value="<?php echo $this->getFieldValue('num_units');}?>"/>
