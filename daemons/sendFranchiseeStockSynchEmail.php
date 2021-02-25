@@ -21,7 +21,7 @@ try {
     $cnt = 0;
     $dealersList = array();
     
-    $alldealersobj = $db->fetchObjectArray("select id,store_name from it_codes where usertype = " . UserType::Dealer . " and is_closed = 0 and id not in (98,164,367,436) order by id "); //and inactive = 0
+    $alldealersobj = $db->fetchObjectArray("select id,store_name from it_codes where usertype = " . UserType::Dealer . " and is_closed = 0 and id not in (70) order by id "); //and inactive = 0
     
     foreach ($alldealersobj as $dealerobj) {
 
