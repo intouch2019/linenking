@@ -18,8 +18,8 @@ $ipaddr="";
  
 try { 
  
- //rg testing
- $dbProperties = new dbProperties();
+    //rg testing
+    $dbProperties = new dbProperties();
     if($dbProperties->getBoolean(Properties::DisableUserLogins)){
         print_r("All Stores are Disabled.");
         exit();
