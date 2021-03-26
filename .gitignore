@@ -29,3 +29,5 @@ logs/
 *.pdf
 *.PDF
 cheques/
+creditnote/
+pdf_files/
