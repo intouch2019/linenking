@@ -388,7 +388,14 @@ if(discval>0){
                         <label id="t_tally">Distance </label>
                         <input type="text" name="distance" value="<?php echo $this->getFieldValue('distance',$store->distance);?>">
                     </p> 
-                    
+                     <p class="grid_12">
+                                <label id="upi_id">Upi ID </label>
+                                <input type="text" name="upi_id" value="<?php echo $this->getFieldValue('upi_id', $store->upi_id); ?>">
+                            </p> 
+                            <p class="grid_12">
+                                <label id="upi_name">Upi Name </label>
+                                <input type="text" name="upi_name" value="<?php echo $this->getFieldValue('upi_name', $store->upi_name); ?>">
+                            </p>
 
                     
                     
