@@ -15,7 +15,7 @@ class cls_admin_stores_edit extends cls_renderer {
         
                
           if (isset($params['state_id'])) {
-            $this->state_id = $params['state_id']; //   var $state_id;//
+            $this->state_id = $params['state_id']; //   var $state_id;// //
         }
         
         

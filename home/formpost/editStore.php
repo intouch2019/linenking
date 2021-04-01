@@ -34,7 +34,7 @@ $store_check = $db->fetchObject($storees);
 //           $errors['storec']="Please insert discount value numeric only e.g. 21"; 
 //        }
 //
-//        $query="select * from it_ck_storediscount where store_id = $storeid ";
+//        $query="select * from it_ck_storediscount where store_id = $storeid ";//
 //        $obj = $db->fetchObject($query);
 //        $old_disc=$obj->dealer_discount;
 //        //print "Disc:$old_disc";

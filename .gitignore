@@ -28,3 +28,7 @@ backup/
 logs/
 *.pdf
 *.PDF
+cheques/
+creditnote/
+pdf_files/
+home/cheques/
