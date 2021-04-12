@@ -235,7 +235,7 @@ if($this->startdated!=null && $this->enddate!=null && $this->id==1){?>
     $srno=1;
     foreach ($cn_number as $key => $value) { ?>
                               <?php
-    $tdcn_query="select cn_no, createtime,gst_total as ammount,remark from it_creditnote_td where cn_no=$value and store_id=$store_id";
+    $tdcn_query="select cn_no, createtime,to_datetime,gst_total as ammount,remark from it_creditnote_td where cn_no=$value and store_id=$store_id";
     $tdcn= $db->fetchObject($tdcn_query);
     $dscn_query="select cn_no, createtime, taxable_amt as ammount,ds_remark from it_creditnote_ds where cn_no=$value and store_id=$store_id";
     $dscn= $db->fetchObject($dscn_query);
