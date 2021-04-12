@@ -81,8 +81,8 @@ if($page){
                             $voucher->addAttribute("VCHTYPE", "Credit Note GST");
                             $voucher->addAttribute("ACTION", "Create");
                             $voucher->addAttribute("OBJVIEW", "Accounting Voucher View");                                                        
-//                            $dt = date('Y-m-d',strtotime($obj->to_datetime));
-                            $dt = date('Y-m-d',strtotime($obj->createtime));
+                            $dt = date('Y-m-d',strtotime($obj->to_datetime));
+//                            $dt = date('Y-m-d',strtotime($obj->createtime));
                             $dt1=date('Y-m-d',strtotime($obj->ref_date));
                                $invdate = preg_replace("/[^0-9]+/", "", $dt);
                                $refdate = preg_replace("/[^0-9]+/", "", $dt1);
