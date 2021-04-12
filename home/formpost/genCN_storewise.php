@@ -126,7 +126,7 @@ $html .= "<tr><td colspan=2 ><span style=\"font-size:18px; padding:12px 0 0px 0\
 $html .= "<tr><th colspan=2 align=\"center\"><span style=\"font-size:18px; padding:12px 0 0px 0\">Credit Note</span></th></tr>";
 $html .= "<tr><td><span style=\"font-size:18px; padding:12px 0 0px 0\">No.:CN$sr_no</span></td>"
         . "<td align=\"right\"><span style=\"font-size:18px; padding:12px 0 0px 0\">Dated
-                     :" . date_format($new_setdate2, 'jS F Y') . "</span></td>"
+                     :" . date_format($dated1, 'jS F Y') . "</span></td>"
         . "</tr>";
 $html .= "<tr><td colspan=2><span style=\"font-size:18px; padding:12px 0 0px 0\">Ref. : $ref_inv dt. " . date_format($newdate, 'jS F Y') . "</span></td>"
         . ""

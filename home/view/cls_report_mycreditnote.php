@@ -205,7 +205,7 @@ if($this->startdated!=null && $this->enddate!=null && $this->id==1){?>
       }
 //      print_r($cn_number);
       //$current_tdcn = $db->fetchObjectArray("select cn_no from  it_creditnote_td where store_id=$store_id  and createtime between '$this->startdated' and '$this->enddate' order by createtime desc");
-      $current_tdcn = $db->fetchObjectArray("select cn_no from  it_creditnote_td where store_id=$store_id  and createtime >= '$this->startdated' and date(createtime) <= '$this->enddate' order by createtime desc");
+      $current_tdcn = $db->fetchObjectArray("select cn_no from  it_creditnote_td where store_id=$store_id  and to_datetime >= '$this->startdated' and date(to_datetime) <= '$this->enddate' order by createtime desc");
 
 //     echo "select * from  it_creditnote_td where store_id=$store_id  and createtime between '$startdated' and '$enddate' order by createtime desc";
       foreach ($current_tdcn as $tdcn_no) {
@@ -244,7 +244,7 @@ if($this->startdated!=null && $this->enddate!=null && $this->id==1){?>
                                 <tr>
                                 <td><?php echo $srno; ?></td>
                                 <td><?php echo 'CN-'.$tdcn->cn_no; ?></td>
-                                <td><?php echo mmddyy($tdcn->createtime); ?></td>
+                                <td><?php echo mmddyy($tdcn->to_datetime); ?></td>
                                 <td><?php echo $tdcn->ammount; ?></td>
                                 <td><?php echo $tdcn->remark; ?></td>
                                 <td><a href="formpost/storewiseTdCn.php?cn_no=<?php echo $tdcn->cn_no;?>"><button>Download</button></a></td>

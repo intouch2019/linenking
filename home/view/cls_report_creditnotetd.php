@@ -264,9 +264,9 @@ class cls_report_creditnotetd extends cls_renderer {
                                 <td>$order->ref_no</td>
                                 <td>$strhsn</td>";
                         
-//                            $date = mmddyy($order->to_datetime);
+                            $date = mmddyy($order->to_datetime);
 //                            $date = mmddyy($order->createtime);
-                                  $date = mmddyy($order->createtime); 
+                                  // $date = mmddyy($order->createtime); 
                             $date2=explode(" ",$date);
                             $table .= "<td>$date2[0]</td>"; 
                             $table .= "<td>$date</td>"; 
