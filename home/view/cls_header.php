@@ -48,6 +48,40 @@ class cls_header {
 <?php } ?>
         </div>
 	<div class="grid_12">&nbsp;</div>
+<div style="padding-left: 250px;">  <?php
+                        $this->storeinfo = getCurrUser();
+                        $dbProperties = new dbProperties();
+
+                        $path_array = array();
+                        $cls_name = "cls_" . join("_", $path_array);
+                        if (($dbProperties->getBoolean(Properties::DisableUserLogins) && isset($this->storeinfo->usertype) && $this->storeinfo->usertype == 4)) {
+//                            print_r($this->storeinfo);
+                            ?><div class="grid_9">
+
+                                <div class="error" style="font-size:1.6em; color:red">Your portal is disabled.
+
+            <?php if (isset($this->storeinfo) && trim($this->storeinfo->disablelogins_reason) != "") {
+                ?>
+                                        <br>Reason is : <?php echo $this->storeinfo->disablelogins_reason; ?>
+
+            <?php }
+            ?> 
+                                        <br>Please <a href="<?php echo DEF_SITEURL; ?>home/login">TRY AGAIN</a> later. Thank you for your patience.</div>
+
+                                            </div><?php
+                                        } elseif (isset($this->storeinfo->inactive) && $this->storeinfo->inactive == 1 && isset($this->storeinfo->usertype) && $this->storeinfo->usertype == 4) {
+//                                            print_r($this->storeinfo);
+                                            ?><div class="grid_9">
+                                                <div class="error" style="font-size:1.6em; color:red">Your portal is disabled.
+                                                    <br>Reason is :<?php echo $this->storeinfo->inactivating_reason; ?> 
+                                                        <br>Please <a href="<?php echo DEF_SITEURL; ?>home/login">TRY AGAIN</a> later. Thank you for your patience.</div>
+                                                            </div><?php
+                                            }
+                                            ?>
+                                                        </div>
+                                                        <div class="grid_12">&nbsp;</div>
+
+                               
 <?php
 	}
 }

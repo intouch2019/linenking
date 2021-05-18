@@ -80,6 +80,12 @@ class cls_admin_autorefill extends cls_renderer {
                                 <option value="0">Select</option>
                                 <?php
                                // $query = "Select c.store_name,ar.store_id, sum(ar.quantity) as qty from it_codes c,it_orders ar where c.id=ar.store_id and ar.ck_order_id is null group by c.id";
+
+
+				 $dbProperties = new dbProperties();
+                                                                 
+                                if(!$dbProperties->getBoolean(Properties::DisableUserLogins)){
+                                
                                 
                                 $storeid_query="select usertype from it_codes where id=".$this->store_id."";
                                 $objs_store = $db->fetchObjectArray($storeid_query);
@@ -102,7 +108,7 @@ class cls_admin_autorefill extends cls_renderer {
                                 foreach ($objs as $obj) {
                                     ?>  
                                     <option value="<?php echo $obj->store_id ?>"<?php echo $selected; ?>><?php echo $obj->store_name . " [" . $obj->qty . "]"; ?></option>
-        <?php } ?>
+        <?php }} ?>
                             </select>
                         </div>
                         <div id="dis" name="dis"></div>

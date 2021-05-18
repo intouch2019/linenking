@@ -41,13 +41,13 @@ class UriHandler {
 				header("Location: ".DEF_SITEURL."timeout");
 				exit;
 			}
-			if ($cls_name != "cls_loginsdisabled" && $currUser && $currUser->usertype == UserType::Dealer) {
-				$dbProperties = new dbProperties();
-				if ($dbProperties->getBoolean(Properties::DisableUserLogins)) {
-					header("Location: ".DEF_SITEURL."loginsdisabled");
-					exit;
-				}
-			}
+			//if ($cls_name != "cls_loginsdisabled" && $currUser && $currUser->usertype == UserType::Dealer) {
+//				$dbProperties = new dbProperties();
+//				if ($dbProperties->getBoolean(Properties::DisableUserLogins)) {
+//					header("Location: ".DEF_SITEURL."loginsdisabled");
+//					exit;
+//				}
+//			}
                         // check if the current user has access to this page
                         /*
                          * $page = select * from it_pages where pageuri = $uri

@@ -513,11 +513,20 @@ Your session has expired. Click <a href="">here</a> to login.
                     </table>
                     <div id="status_<?php echo $row_no; ?>"></div>
                       <?php
-            if ($this->currStore->inactive == 1) { 
-                ?> <input class="blueglassbutton" type="button" value="ADD TO CART" onclick="add_toCart()"/>  
-            <?php } else { ?>
-                    <input class="blueglassbutton" type="submit" value="ADD TO CART"/><?php }?>
-                    <input class="blueglassbutton" type="reset" value="RESET"/>
+                   $this->storeinfo = getCurrUser();
+          
+            $dbProperties = new dbProperties();
+            if ((($dbProperties->getBoolean(Properties::DisableUserLogins)) && isset($this->storeinfo->usertype) && $this->storeinfo->usertype == 4)||((isset($this->storeinfo->inactive) && $this->storeinfo->inactive == 1 && isset($this->storeinfo->usertype) && $this->storeinfo->usertype == 4))) {
+                          ?> <input class="blueglassbutton" type="reset" value="RESET"/>
+                                   
+
+                                    
+            <?php } else { ?> <input class="blueglassbutton" type="submit" value="ADD TO CART" onclick="add_toCart()"/>  <input class="blueglassbutton" type="reset" value="RESET"/>
+                              
+            
+                                  <?php 
+                                    
+            } ?>
                 </div> <!-- end class=grid_10 -->
             </form>
             <br>

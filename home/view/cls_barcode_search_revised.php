@@ -56,7 +56,7 @@ class cls_barcode_search_revised extends cls_renderer{
             $formResult = $this->getFormResult();
              if ($this->currUser->inactive == 1) {
             $reason = "You can not place Order Because, ".$currUser->inactivating_reason;
-            echo "<script> alert('$reason');</script>";
+           // echo "<script> alert('$reason');</script>";
         }
             
 ?>
