@@ -90,7 +90,10 @@ $is_tyson=false;
                     $cgst_total = $invfields[20];
                     $sgst_total = $invfields[21];
                     $igst_total = $invfields[22];
-                    $round_off = $invfields[23];                    
+                    $round_off = $invfields[23];     
+                    $irn=$invfields[24]; 
+                    $ack_no=$invfields[25]; 
+                    $ack_date=$invfields[26];                    
                     
                     $iClause = "";
                     if(trim($rate_subtotal)!=""){ $iClause .= " , rate_subtotal = $rate_subtotal "; }
@@ -99,7 +102,10 @@ $is_tyson=false;
                     if(trim($cgst_total)!=""){ $iClause .= " , cgst_total = $cgst_total "; }
                     if(trim($sgst_total)!=""){ $iClause .= " , sgst_total = $sgst_total "; }
                     if(trim($igst_total)!=""){ $iClause .= " , igst_total = $igst_total "; }
-                    if(trim($round_off)!=""){ $iClause .= " , round_off = $round_off "; }                    
+                    if(trim($round_off)!=""){ $iClause .= " , round_off = $round_off "; }     
+                     if(trim($round_off)!=""){ $iClause .= " , irn_no = '$irn' "; }   
+                      if(trim($round_off)!=""){ $iClause .= " , ack_no ='$ack_no' "; }   
+                       if(trim($round_off)!=""){ $iClause .= " , ack_date = '$ack_date' "; }                   
                    
                     //if any of the value is blank;
                     //print("\ninv_dt:".trim($invoice_dt)."\ninv_amt:".trim($invoice_amt)."\ninv_qty:".trim($invoice_qty)."\ntotal_mrp:".trim($total_mrp)."\ndisc1:".trim($discount_1)."\ndisc2:".trim($discount_2)."\ntax:".trim($tax)."\npayment:".trim($payment)."\ntax_type:".trim($tax_type)."\ntax_per:".trim($tax_percent)."\n");
