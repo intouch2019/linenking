@@ -37,25 +37,27 @@ class cls_report_purchaseReturn extends cls_renderer{
 		$this->userid = $this->currUser->id;
                 if (isset($_SESSION['account_dtrange'])) { $this->dtrange = $_SESSION['account_dtrange']; }
                 else { $this->dtrange = date("d-m-Y"); }
+                if (isset($params['id'])) { $this->fields['id']=$params['id']; $this->store = $params['id']; } else $this->fields['id']="0";
+                  
                 if (isset($params['date'])) { $this->fields['date']=$params['date']; $this->date = $params['date']; } else $this->fields['date']="0";
                 if (isset($params['store'])) { $this->fields['store']=$params['store']; $this->store = $params['store']; } else $this->fields['store']="0";
-                if (isset($params['billno'])) { $this->fields['billno']=$params['billno']; $this->billno = $params['billno']; } else $this->fields['billno']="0";
-                if (isset($params['view'])) { $this->fields['view']=$params['view']; $this->view = $params['view']; } else $this->fields['view']="0";
+//                if (isset($params['billno'])) { $this->fields['billno']=$params['billno']; $this->billno = $params['billno']; } else $this->fields['billno']="0";
+//                if (isset($params['view'])) { $this->fields['view']=$params['view']; $this->view = $params['view']; } else $this->fields['view']="0";
                 if (isset($params['total_quantity'])) { $this->fields['total_quantity']=$params['total_quantity']; $this->total_quantity = $params['total_quantity']; } else $this->fields['total_quantity']="0";
-                if (isset($params['designno'])) { $this->fields['designno']=$params['designno']; $this->designno = $params['designno']; } else $this->fields['designno']="0";
-                if (isset($params['totalvalue'])) { $this->fields['totalvalue']=$params['totalvalue']; $this->totalvalue = $params['totalvalue']; } else $this->fields['totalvalue']="0";               
-                if (isset($params['shwdetails'])) { $this->fields['shwdetails']=$params['shwdetails']; $this->shwdetails = $params['shwdetails']; } else $this->fields['shwdetails']="0";
+//                if (isset($params['designno'])) { $this->fields['designno']=$params['designno']; $this->designno = $params['designno']; } else $this->fields['designno']="0";
+//                if (isset($params['totalvalue'])) { $this->fields['totalvalue']=$params['totalvalue']; $this->totalvalue = $params['totalvalue']; } else $this->fields['totalvalue']="0";               
+//                if (isset($params['shwdetails'])) { $this->fields['shwdetails']=$params['shwdetails']; $this->shwdetails = $params['shwdetails']; } else $this->fields['shwdetails']="0";
                 if (isset($params['mrpval'])) { $this->fields['mrpval']=$params['mrpval']; $this->mrpval = $params['mrpval']; } else $this->fields['mrpval']="0";
-                
-              
-          if (isset($params['total_mrp'])) { $this->fields['total_mrp']=$params['total_mrp']; $this->total_mrp = $params['total_mrp']; } else $this->fields['total_mrp']="0";
-                
-                
+                if (isset($params['total_mrp'])) { $this->fields['total_mrp']=$params['total_mrp']; $this->total_mrp = $params['total_mrp']; } else $this->fields['total_mrp']="0";
                 if (isset($params['inid'])) { $this->fields['inid']=$params['inid']; $this->inid = $params['inid']; } else $this->fields['inid']="0";
                 if (isset($params['gen'])) $this->gen = $params['gen']; else $this->gen="0";
                 if (isset($params['str'])) $this->storeidreport = $params['str']; else $this->storeidreport=null;
                 if(isset($params['a'])){ $this->a=$params['a'];}
+                
+                
+                
                 if($this->currUser->usertype==UserType::Dealer){ 
+                   
                     $this->storeidreport = $this->currUser->id;
                     $this->storeloggedin = 1;                    
                 }
@@ -63,23 +65,23 @@ class cls_report_purchaseReturn extends cls_renderer{
 
 	function extraHeaders() {
         ?>
-<script type="text/javascript" src="<?php CdnUrl('jqueryui/js/jquery-ui-1.7.1.custom.min.js'); ?>"></script>
-<script type="text/javascript" src="<?php CdnUrl('js/daterangepicker.jQuery.js'); ?>"></script>
-<link rel="stylesheet" href="<?php CdnUrl('css/ui.daterangepicker.css'); ?>" type="text/css" />
-<link rel="stylesheet" href="<?php CdnUrl('css/redmond/jquery-ui-1.7.1.custom.css'); ?>" type="text/css" title="ui-theme" />
+
+<script type="text/javascript" src="jqueryui/js/jquery-ui-1.7.1.custom.min.js"></script>
+<script type="text/javascript" src="js/daterangepicker.jQuery.js"></script>
+<link rel="stylesheet" href="css/ui.daterangepicker.css" type="text/css" />
+<link rel="stylesheet" href="css/redmond/jquery-ui-1.7.1.custom.css" type="text/css" title="ui-theme" />
+
 
 
  <style type="text/css" title="currentStyle">
     @import "js/datatables/media/css/demo_page.css";
     @import "js/datatables/media/css/demo_table.css";
 </style>
-
-<script src="<?php CdnUrl('js/datatables/media/js/jquery.dataTables.min.js');?>"></script>
+<script src="js/datatables/media/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="js/chosen/chosen.css" />
+<script type="text/javascript" src="js/ajax.js"></script>
+<script type="text/javascript" src="js/ajax-dynamic-list.js">
     
-
-<link rel="stylesheet" href="<?php CdnUrl('js/chosen/chosen.css'); ?>" />
-<script type="text/javascript" src="<?php CdnUrl('js/ajax.js'); ?>"></script>
-<script type="text/javascript" src="<?php CdnUrl('js/ajax-dynamic-list.js'); ?>">
 	/************************************************************************************************************
 	(C) www.dhtmlgoodies.com, April 2006
 	
@@ -136,16 +138,18 @@ class cls_report_purchaseReturn extends cls_renderer{
   }
 }
 
-function move(listBoxTo,optionValue,optionDisplayText){ 
+function move(listBoxTo,optionValue,optionDisplayText){  
   var newOption = document.createElement("option"); 
   newOption.value = optionValue; 
   newOption.text = optionDisplayText;   
   newOption.selected = true;
-  listBoxTo.add(newOption, null); 
+  listBoxTo.add(newOption, null);  
   return true; 
 } 
 </script>
-<link rel="stylesheet" href="<?php CdnUrl('css/bigbox.css'); ?>" type="text/css" />
+
+<link rel="stylesheet" href="css/bigbox.css" type="text/css" />
+
         
         <?php
         }
@@ -184,7 +188,7 @@ function move(listBoxTo,optionValue,optionDisplayText){
                              }else{ $defaultSel = ""; } ?>
                 <option value="-1" <?php echo $defaultSel;?>>All Stores</option> 
 <?php
-$objs = $db->fetchObjectArray("select * from it_codes where usertype=4 order by store_name");
+$objs = $db->fetchObjectArray("select * from it_codes where usertype=4 and composite_billing_opted =1 order by store_name");
 print_r($objs);
 if($this->storeidreport == "-1"){
     $storeid = array(); 
@@ -200,8 +204,7 @@ if($this->storeidreport == "-1"){
 }else{
   $storeid = explode(",",$this->storeidreport);  
 }
-//print_r($allst);//
-//print_r($storeid);
+
 foreach ($objs as $obj) {        
 	$selected="";
 //	if (isset($this->storeidreport) && $obj->id==$this->storeidreport) { $selected = "selected"; }
@@ -242,11 +245,10 @@ foreach ($objs as $obj) {
                                 <tr>
                                 <td rowspan="3" colspan="2" align="right"><label>
                                     <select name="selectLeft" size="10" width="100%" style="width:200px;" id="selectLeft"> 
-                                        <option value="inid">Invoice Id</option> 
+                                      <option value="id">Id</option>
+                                        <option value="inid">Return No</option> 
                                         <option value="store">Store Name</option> 
-                                        <option value="billno">Invoice No</option>
-                                     
-                                         
+                                        
                                           <option value="total_mrp">Mrp Total</option>
                                         <option value="mrpval">Invoice Amount</option>
                                         <option value="total_quantity">Quantity</option>
@@ -304,18 +306,18 @@ foreach ($objs as $obj) {
 	if (count($dtarr) == 1) {
 		list($dd,$mm,$yy) = explode("-",$dtarr[0]);
 		$sdate = "$yy-$mm-$dd";		
-                $dQuery = " and i.invoice_dt >= '$sdate 00:00:00' and i.invoice_dt <= '$sdate 23:59:59' ";
+                $dQuery = " and i.date >= '$sdate 00:00:00' and i.date <= '$sdate 23:59:59' ";
 	} else if (count($dtarr) == 2) {
 		list($dd,$mm,$yy) = explode("-",$dtarr[0]);
 		$sdate = "$yy-$mm-$dd";
 		list($dd,$mm,$yy) = explode("-",$dtarr[1]);
 		$edate = "$yy-$mm-$dd";		
-                    $dQuery = " and i.invoice_dt >= '$sdate 00:00:00' and i.invoice_dt <= '$edate 23:59:59' ";
+                    $dQuery = " and i.date >= '$sdate 00:00:00' and i.date <= '$edate 23:59:59' ";
 	} else {
 		$dQuery = "";
 	}
         
-        //echo $dQuery;
+       
         if ($this->gen!=1) {
                         $totTotalValue=0;$totAmt="";
             $newfname = "PurchaseReturnReports_".$sdate."_".$edate.".csv";           
@@ -323,12 +325,14 @@ foreach ($objs as $obj) {
             for ($x=1;$x<24;$x++) {
                 foreach ($this->fields as $field => $seq) {
                     if ($seq==$x) {
-                        if ($field=="date") {$tableheaders.="Date:"; $queryfields .= " i.invoice_dt as date,"; $group_by[] = "i.invoice_dt"; $total_td .= "<td></td>";} // DATE_FORMAT(o.bill_datetime,'%d/%m/%Y')
-                        if ($field=="billno") {$tableheaders.="Invoice No:";  $queryfields .= "i.invoice_no as invno,"; $group_by[] = "i.invoice_no"; $total_td .= "<td></td>";}
-                        if ($field=="inid") {$tableheaders.="Invoice Id:"; $queryfields .= "i.id as ids,";;$group_by[] = "i.id";}
-                        if ($field=="store") {$tableheaders.="Store Name:"; $queryfields .= "c.store_name as stores,";$group_by[] = "i.store_name"; $total_td .= "<td></td>";}
-                        if ($field=="total_quantity") {$tableheaders.="Quantity:"; $queryfields .= "i.invoice_qty as quantity,";$group_by[] = "i.invoice_qty"; $total_td .= "<td></td>";}
-                        if ($field=="mrpval") {$tableheaders.="Invoice Ammount:"; $queryfields .= "i.invoice_amt as invamt,";}
+                        if ($field=="id") {$tableheaders.="Id:"; $queryfields .= " i.id as id,"; $group_by[] = "i.id"; $total_td .= "<td></td>";} 
+                                                                    
+                        if ($field=="date") {$tableheaders.="Date:"; $queryfields .= " i.date as date,"; $group_by[] = "i.date"; $total_td .= "<td></td>";} // DATE_FORMAT(o.bill_datetime,'%d/%m/%Y')
+                        //if ($field=="billno") {$tableheaders.="Invoice No:";  $queryfields .= "i.invoice_no as invno,"; $group_by[] = "i.invoice_no"; $total_td .= "<td></td>";}
+                        if ($field=="inid") {$tableheaders.="Return No:"; $queryfields .= "i.return_no as rid,";;$group_by[] = "i.return_no";}
+                        if ($field=="store") {$tableheaders.="Store Name:"; $queryfields .= "c.store_name as stores,";$group_by[] = "i.store_id"; $total_td .= "<td></td>";}
+                        if ($field=="total_quantity") {$tableheaders.="Quantity:"; $queryfields .= "i.quantity as quantity,";$group_by[] = "i.quantity"; $total_td .= "<td></td>";}
+                        if ($field=="mrpval") {$tableheaders.="Invoice Amount:"; $queryfields .= "i.amount as invamt,";}
                         if($field=="total_mrp"){$tableheaders.="Total MRP:"; $queryfields.="i.total_mrp as mrp,";}
     
                     }
@@ -355,13 +359,13 @@ foreach ($objs as $obj) {
             }
             
             $query = "select $queryfields";
-         //   $query .= " from it_saleback_invoices o,it_saleback_invoice_items oi, it_items i, it_codes c,it_categories ics where $storeClause $dQuery and oi.invoice_id=o.id and i.barcode = oi.item_code and  o.store_id = c.id and i.ctg_id=ics.id".$gClause;
-         
-      $query.=" from it_codes c,it_invoices_creditnote i where $storeClause $dQuery and c.id=i.store_id and i.invoice_type in(5) and i.createtime > '2019-04-01 00:00:00' ".$gClause;
-         //  print $query; //and c.id in ( $storeClause)
+            //   $query .= " from it_saleback_invoices o,it_saleback_invoice_items oi, it_items i, it_codes c,it_categories ics where $storeClause $dQuery and oi.invoice_id=o.id and i.barcode = oi.item_code and  o.store_id = c.id and i.ctg_id=ics.id".$gClause;
+        
+      $query.=" from it_codes c,it_store_returns i where $storeClause $dQuery and c.id=i.store_id  and i.createtime > '2019-04-01 00:00:00' ".$gClause;
+         //print $query; //and c.id in ( $storeClause)
 	    //error_log("1:$query\n",3, "../ajax/tmp.txt");
             $result = $db->execQuery($query);
-            
+          
             
         } else if ($this->gen==1) {
 
@@ -369,7 +373,7 @@ foreach ($objs as $obj) {
      
 ?>
         <br /><div id="dwnloadbtn" style='margin-left:40px; padding-left:15px; height:24px;width:130px;border: solid gray 1px;background:#F5F5F5;padding-top:4px;'>
-            <a href='<?php echo "tmp/store_purchasereturn.php?output=$newfname" ;?>' title='Export table to CSV'><img src="<?php CdnUrl('images/excel.png'); ?>" width='20' hspace='3' style='margin-bottom:-6px;' /> Export To Excel</a>
+            <a href='<?php echo "tmp/store_purchasereturn.php?output=$newfname" ;?>' title='Export table to CSV'><img src="images/excel.png" width='20' hspace='3' style='margin-bottom:-6px;' /> Export To Excel</a>
         </div><br />
         
 <?php 
@@ -414,7 +418,10 @@ foreach ($objs as $obj) {
                 fwrite($fp2,"<tr>");
                } 
                 foreach ($reportrows as $field => $value) {
-                   if ($field=="tax") {
+                  
+                     if($field=="invamt"){
+                        $value=sprintf('%.2f',$value);
+                    }else if ($field=="tax") {
                        $value = sprintf('%.2f',$value);
                    } else if($field == "date"){                                              
                        $t_str = ddmmyy2($value);
@@ -436,10 +443,10 @@ foreach ($objs as $obj) {
                    // print_r($reportrows);
                    //print_r($reportrows);
                
-                  //  $invid  = $reportrows->ids;
+                    $invid  = $reportrows->id;
                     //print $invid;style="color: #cc0000"
                     
-                 // fwrite($fp2,"<td><a href='ck/sbinvoice/id=$invid 'style='color:#cc0000'  >Show Details</a></td>");
+                  fwrite($fp2,"<td><a href='lk/prinvoices/id=$invid 'style='color:#cc0000'  >Show Details</a></td>");
                  fwrite($fp2,"</tr>");
                 }
                 
@@ -466,7 +473,8 @@ foreach ($objs as $obj) {
     </div>
     <?php } ?>
 </div>
-<script src="<?php CdnUrl('js/chosen/chosen.jquery.js'); ?>" type="text/javascript"></script>
+
+<script src="js/chosen/chosen.jquery.js"  type="text/javascript"></script>
 <script type="text/javascript"> </script>
 <script type="text/javascript">
 var storeid = '<?php echo $this->storeidreport; ?>';  
@@ -525,7 +533,7 @@ var storeloggedin = '<?php echo $this->storeloggedin; ?>';
       //alert("1: "+storeid);
       
       function showInvoiceDetails( invid){
-    window.location.href = "ck/sbinvoice/id="+invid;
+  // window.location.href = "lk/sbinvoice/id="+invid;
     
     
 }
