@@ -245,7 +245,7 @@ foreach ($objs as $obj) {
                                 <tr>
                                 <td rowspan="3" colspan="2" align="right"><label>
                                     <select name="selectLeft" size="10" width="100%" style="width:200px;" id="selectLeft"> 
-                                      <option value="id">Id</option>
+                                        
                                         <option value="inid">Return No</option> 
                                         <option value="store">Store Name</option> 
                                         
@@ -269,6 +269,7 @@ foreach ($objs as $obj) {
                                 </td>
                                     <td rowspan="3" colspan="2" align="left">
                                         <select name="selectRight" multiple size="10" style="width:200px;" id="selectRight">
+                                            <option  value="id">Id</option>
 <!--                                            <option value="shwdetails">Show details</option>-->
      <!--                                        <option value="shwdetails">Item Quantity</option>                                       -->
 <!--                                        <option value="totalvalue">Total Value</option>-->
