@@ -151,7 +151,7 @@ Your session has expired. Click <a href="">here</a> to login.
     function add_toCart()
             {
                 var reason='<?php echo $this->reason; ?>';
-                alert(reason);
+               // alert(reason);
             }
     function setMRP(dropdown)
     {
@@ -521,7 +521,7 @@ Your session has expired. Click <a href="">here</a> to login.
                                    
 
                                     
-            <?php } else { ?> <input class="blueglassbutton" type="submit" value="ADD TO CART" onclick="add_toCart()"/>  <input class="blueglassbutton" type="reset" value="RESET"/>
+            <?php } else { ?> <input class="blueglassbutton" type="submit" value="ADD TO CART" />  <input class="blueglassbutton" type="reset" value="RESET"/>
                               
             
                                   <?php 
