@@ -105,6 +105,9 @@ class changeType{
     const saleback = 24;
     const incentive=30;
     const puchasereturn=23;
+    const wip_stock=31;
+    const crditPoints = 32;
+    const removeCrditPoints = 33;
     
     
     public static function getAll(){
@@ -130,7 +133,10 @@ class changeType{
             changeType::mrptaxes => 'MRP Taxes',
             changeType::updateinvoice => 'Update Invoice',
             changeType::saleback => "Sale Back",
-             changeType::puchasereturn=>"Purchase Return"
+            changeType::puchasereturn=>"Purchase Return",
+            changeType::wip_stock => "Stock From WIP",
+            changeType::crditPoints => "Credit Point Sync",
+            changeType::removeCrditPoints => "Remove Credit Point Sync"
         );
     }
     
