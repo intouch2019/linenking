@@ -229,7 +229,7 @@ class cls_viewedit_creditpoint extends cls_renderer {
                     
                    
                     
-                    if($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::CKAdmin) {
+                    if($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::CKAdmin || $this->currStore->usertype == UserType::Manager || $this->currStore->usertype == UserType::Accounts || $this->currStore->usertype == UserType::BHMAcountant) {
                     ?>
                                 <option value="-1" <?php echo $defaultSel; ?>>All Stores</option> 
 
@@ -242,7 +242,7 @@ class cls_viewedit_creditpoint extends cls_renderer {
 
                                 <?php
                                 
-                                if($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::CKAdmin ) {
+                                 if($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::CKAdmin || $this->currStore->usertype == UserType::Manager || $this->currStore->usertype == UserType::Accounts || $this->currStore->usertype == UserType::BHMAcountant) {
                                 $objs = $db->fetchObjectArray("select * from it_codes where usertype=4 and is_closed=0 order by store_name");
                                 }else{
                                    $objs = $db->fetchObjectArray("select * from it_codes where id=".$this->currStore->id ); 
