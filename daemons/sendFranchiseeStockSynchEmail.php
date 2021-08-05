@@ -210,7 +210,7 @@ function sendEmail($fpath) {
         array_push($toArray, 'harshada.marathe@kinglifestyle.com');
         array_push($toArray, 'rohan.phalke@kinglifestyle.com');
         array_push($toArray, 'prashant.mane@kinglifestyle.com');
-        array_push($toArray, 'rghule@intouchrewards.com');
+//        array_push($toArray, 'rghule@intouchrewards.com');
         
         if (!empty($toArray)) {
             print "<br>";
@@ -254,7 +254,7 @@ function sendEmail2() {
         array_push($toArray, 'harshada.marathe@kinglifestyle.com');
         array_push($toArray, 'rohan.phalke@kinglifestyle.com');
         array_push($toArray, 'prashant.mane@kinglifestyle.com');
-        array_push($toArray, 'rghule@intouchrewards.com');
+//        array_push($toArray, 'rghule@intouchrewards.com');
         
     
         if (!empty($toArray)) {
