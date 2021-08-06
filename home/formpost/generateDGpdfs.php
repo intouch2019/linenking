@@ -24,7 +24,8 @@ $invno=0;
 $invid=$_GET["invid"]; 
 
  
-     
+	
+            
  
 
 if(isset($invid) && trim($invid)!="" && trim($invid) != "-1"){
@@ -36,7 +37,7 @@ $query="select cn.* ,if(isnull((select store_name from it_codes where id=cn.crea
 //print "Query".$query;exit(); 
 $objs=$db->fetchObjectArray($query);
 //print_r($objs);
-///
+//
 //
 if(!$objs)
 {
@@ -61,19 +62,32 @@ $invno=$obj->invoice_no;
     $cntnew++;
 $outputheader="";
 $outputheaderforitems="";
+$irn="";
+$AckDate="";
+$AckNo="";
+$Qr_Image="";
+$irncn_query="select irn,AckDate,AckNo,Qr_Image from  it_irncreditnote where CreditNote_ID=$invid";
+$irn_obj= $db->fetchObject($irncn_query);
+if(isset($irn_obj))
+{
+$irn=$irn_obj->irn;
+$AckDate=$irn_obj->AckDate;
+$AckNo=$irn_obj->AckNo;
+$Qr_Image=$irn_obj->Qr_Image;  
+}
 
 
 $outputheader .=  "<br/><table width=\"95%\" border=\"1px\" align=\"center\">";
-$outputheader .=  "<tr><th align='center' colspan=2><div style=\"font-size:18px; padding:12px 0 0px 0\">CREDIT NOTE</div></th></tr>
+$outputheader .=  "<tr><th align='center' colspan=3><div style=\"font-size:18px; padding:12px 0 0px 0\">CREDIT NOTE</div></th></tr>
 ";
 $outputheader .="<tr><th align=\"left\"><div style=\"font-size:16px; padding:12px 0 0px 0\">&nbsp;CREDIT NOTE.: $obj->invoice_no</div></th>"
     . "<th align=\"left\"><div style=\"font-size:16px; padding:12px 0 0px 0\">&nbsp;Date:".yymmdd($obj->approve_dt)."</div></th>"
+        . "<th align=\"left\"><div style=\"font-size:16px; padding:12px 0 0px 0\">ACK Date : ".$AckDate."</div></th>"
        ."</tr>";
 $storeid=$obj->store_id;
 $query1="select  c.store_name,c.gstin_no,c.pancard_no,c.address,c.city,c.zipcode,c.phone,sd.dealer_discount from it_codes c ,it_ck_storediscount sd where c.id=sd.store_id and c.id=$storeid";
 $storeobj=$db->fetchObject($query1);
 //print "$query1";
-//print exit;
 if(!isset($storeobj->store_name))
 {
     //$output="";
@@ -89,6 +103,9 @@ MIDC, Baramati- 413133, Dist. Pune(Maharashtra)<br/>
 Phone : 02112-244120/21<br/>
 Customer Care-Ph. : 020-25431266/67<br/>
 Email : info@cottonking.com</div></td>"
+        ."<td align=\"center\" width=\"50.5%\"><div style=\"font-size:12px;padding:4px\">"
+        . "<img src=\"../images/QR_code/".$Qr_Image."\" width=\"160px\" height=\"150px\"></td>"
+        
        ."</tr>";
 
 
@@ -99,6 +116,7 @@ Email : info@cottonking.com</div></td>"
 
 $outputheader .="<tr><td align=\"left\" width=\"54.5%\"><div style=\"font-size:12px;padding:3px\">GSTIN NO :&nbsp;&nbsp;$storeobj->gstin_no</div></td>"
     . "<td align=\"left\" width=\"50.5%\"><div style=\"font-size:12px;padding:3px\">GSTIN NO :&nbsp;&nbsp;27AAACC7418H1ZQ</div></td>"
+        . "<td align=\"left\" width=\"50.5%\"><div style=\"font-size:12px;padding:3px\">ACK NO : ".$AckNo."</div></td>"
        ."</tr>";
 
 $outputheader .="<tr><td align=\"left\" width=\"54.5%\"><div style=\"font-size:12px;padding:3px\">PAN NO :&nbsp;&nbsp;$storeobj->pancard_no</div></td>"
@@ -134,7 +152,7 @@ $outputheaderforitems.="<table width=\"95%\" border=\"1px\" align=\"center\"><th
 
 
 //$itemslevelquery="select sum(quantity) as qty,price,discount_val,rate,sum(price) as totmrp,sum(discount_val) as totdisc,sum(taxable_value) as tottaxable,sum(cgst) as gst1,sum(sgst) as gst2,sum(igst) as gst3,tax_rate,item_code from it_invoice_items where invoice_id=$obj->id group by rate order by rate desc";
-$itemslevelquery="select i.desc_defects as dsc,c.it_hsncode as hsn,i.price as price,i.quantity as qty,i.price*i.quantity as  totmrp,i.discount_val as totdisc,i.disc_peritem,i.rate,i.taxable_value as tottaxable,i.tax_rate,i.cgst as gst1,i.sgst as gst2,i.igst as gst3 from it_portalinv_items_creditnote i,it_categories c where i.ctg_id=c.id and invoice_id=$obj->id";
+$itemslevelquery="select i.desc_defects as dsc,c.it_hsncode as hsn,c.name as ctg_name,i.price as price,i.quantity as qty,i.price*i.quantity as  totmrp,i.discount_val as totdisc,i.disc_peritem,i.rate,i.taxable_value as tottaxable,i.tax_rate,i.cgst as gst1,i.sgst as gst2,i.igst as gst3 from it_portalinv_items_creditnote i,it_categories c where i.ctg_id=c.id and invoice_id=$obj->id";
 
 //print "$itemslevelquery";
 //exit();
@@ -161,7 +179,7 @@ if($cntnew!=1)
 }
 
 $output.=$outputheader.$outputheaderforitems;
-$myCount=22;
+$myCount=20;
 $totalLinesCount=count($itemsbyrate);
 
 foreach($itemsbyrate as $itembyrate)
@@ -174,7 +192,7 @@ foreach($itemsbyrate as $itembyrate)
     //$hsn=$db->fetchObject($hsnquery);
     
     $output .=  "<tbody><tr><td align=\"center\" width=\"4%\"> <div style=\"font-size:10px;padding:4px 0 0px 0\">$i</div></td>"
-            . "<td align=\"left\" width=\"10%\"> <div style=\"font-size:10px;padding:4px 0 0px 4px\">$itembyrate->dsc</div></td>"
+            . "<td align=\"left\" width=\"10%\"> <div style=\"font-size:10px;padding:4px 0 0px 4px\">".$itembyrate->ctg_name."(".$itembyrate->dsc.")</div></td>"
             . "<td align=\"center\" width=\"6%\"><div style=\"font-size:10px;padding:4px 4px 0px 0\">$itembyrate->hsn</div></td>"
             . "<td align=\"center\" width=\"5%\"><div style=\"font-size:10px;padding:4px 4px 0px 0\">$itembyrate->qty</div></td>"
             . "<td align=\"center\" width=\"7%\"><div style=\"font-size:10px;padding:4px 4px 0px 0\">$itembyrate->price</div></td>"
@@ -265,7 +283,7 @@ foreach($itemsbyrate as $itembyrate)
                         //printHtml+="<table width=\"95%\" align=\"center\" border=\"1px\">";                                
                         //count = count-5;
                        //$totalLinesCount=$totalLinesCount-10;
-                        $myCount+=22;
+                        $myCount+=20;
                        // tktlinecount+=24;
                        // print "mycount:$myCount";
                        }
@@ -273,7 +291,7 @@ foreach($itemsbyrate as $itembyrate)
                      
                      
                      
-                     if($count==$totalLinesCount && ($totalLinesCount > ($myCount-12)) && $totalLinesCount >=  ($myCount-22) ){
+                     if($count==$totalLinesCount && ($totalLinesCount > ($myCount-12)) && $totalLinesCount >=  ($myCount-20) ){
                          
                      if($totalLinesCount>10){
                         $output .= "</table>";
@@ -284,7 +302,7 @@ foreach($itemsbyrate as $itembyrate)
                         
                     $ct = $myCount;
                     //print "ct>>$ct";
-                    while ($ct < ($myCount+22-18)) {
+                    while ($ct < ($myCount+20-18)) {
                         //print "inside while";
                         $output .= "<tr>"
                                 . "<td align=\"left\" width=\"4%\"><div style=\"padding:4px 0 0px 0\">&nbsp;</div></td>"
@@ -326,7 +344,7 @@ foreach($itemsbyrate as $itembyrate)
                         $ct++;
                     }
                  } 
-                }else if($count==$totalLinesCount && $totalLinesCount < ($myCount-12) && $totalLinesCount >  ($myCount-22) ){
+                }else if($count==$totalLinesCount && $totalLinesCount < ($myCount-12) && $totalLinesCount >  ($myCount-20) ){
                     if($totalLinesCount<10){ 
                     $ct = $count;
                     while ($ct < ($myCount-12)) {
@@ -433,6 +451,10 @@ $output.= ""
         . "<td width=\"54.5%\">"//new code
         . "<table border=\"1px\">"
         . "<tr>"
+        . "<td class=\"tdborder\" width=\"34%\" align=\"left\"><div style=\"font-size:10px;padding:4px 0 0px 4px\">IRN No:</div></td>"
+        . "<td class=\"tdborder\" width=\"71%\" align=\"left\"><div style=\"font-size:10px;padding:4px 0 0px 0\">".$irn."</div></td>"
+        . "</tr>"
+        . "<tr>"
         . "<td class=\"tdborder\" width=\"34%\" align=\"left\"><div style=\"font-size:10px;padding:4px 0 0px 4px\">Total Invoice Value (In Figure):</div></td>"
         . "<td class=\"tdborder\" width=\"71%\" align=\"left\"><div style=\"font-size:10px;padding:4px 0 0px 0\">".round($obj->invoice_amt,2)."</div></td>"
         . "</tr>"
@@ -447,6 +469,10 @@ $output.= ""
         . "<tr>"
         . "<td class=\"tdborder\" width=\"34%\" align=\"left\"><div style=\"font-size:10px;padding:4px 0 0px 4px\">Total TAX Value (In Words)</div></td>"
         . "<td class=\"tdborder\" width=\"71%\" align=\"left\"><div style=\"font-size:10px;padding:4px 0 0px 0\">$taxamtwords</div></td>"
+        . "</tr>"
+        . "<tr>"
+        . "<td class=\"tdborder\" width=\"34%\" align=\"left\"><div style=\"font-size:10px;padding:4px 0 0px 4px\"></div></td>"
+        . "<td class=\"tdborder\" width=\"71%\" align=\"left\"><div style=\"font-size:10px;padding:4px 0 0px 0\"></div></td>"
         . "</tr>"
         ."</table>"
         . "</td>"
@@ -534,17 +560,17 @@ $output.= ""
         . "</table>"
         . "</td>"
         . ""
-         . "<tr></tr><tr><td  colspan=2 width=\"50%\" align=\"left\"><div style=\"font-size:10px;padding:4px 0 0px 0\"><b>Created By:</b>$obj->createdby </br><b>Approve By:</b>$obj->approveby</div></td>"
+         . "<tr></tr><tr><td   width=\"50%\" align=\"left\"><div style=\"font-size:10px;padding:4px 0 0px 0\"><b>Created By:</b>$obj->createdby</div></td><td   width=\"50%\" align=\"left\"><div style=\"font-size:10px;padding:4px 0 0px 0\"><b>Approve By:</b>$obj->approveby</div></td>"
         .  "</tr>"
-//        . "<tr><td colspan=2  width=\"50%\" align=\"left\"><div style=\"font-size:10px;padding:4px 0 0px 0\"><b>Approve By:</b>$obj->approveby</div></td>"
-//        .  "</tr>"
+        . "<tr><td colspan=2  width=\"50%\" align=\"left\"><div style=\"font-size:10px;padding:4px 0 0px 0\"><b>Remark : Defective Garment Credit Note</div></td>"
+        .  "</tr>"
         . "</tr>"
         . "</table>";
         
 }
 
 $output."</body></html>";
-//echo "$output";//exit();
+//echo "$output"; exit();
 $myFile = '../DGCreditnote/TestDGCreditnote.html'; // or .php   
 $fh = fopen($myFile, 'w'); // or die("error");  
 $stringData = "your html code php code goes here";   
@@ -557,19 +583,25 @@ fclose($fh);
 
 ////print "$cmd";
 //       
+
        if(isset($invno) && trim($invno)!="" && trim($invno) != "-1")
        {
+//           $fname="D:/Xampp/htdocs/ck_new_y/home/DGCreditnote/DGCreditnote-".$invno.".pdf";
+//           $location="D:/Xampp/htdocs/ck_new_y/home/DGCreditnote/DGCreditnote-".$invno.".pdf";
            $fname="../DGCreditnote/DGCreditnote-".$invno.".pdf";
            $location="../DGCreditnote/DGCreditnote-".$invno.".pdf";
        }
         
 //$cmd = "pisa -s /var/www/html/linenking/home/tmp/TestInvoice.html ".$location;
+//$cmd = "pisa -s D:/Xampp/htdocs/ck_new_y/home/DGCreditnote/TestDGCreditnote.html ".$location;
 $cmd = "pisa -s ../DGCreditnote/TestDGCreditnote.html ".$location;
+//echo $cmd;
+//exit();
 $result = shell_exec($cmd);
 
 if (count($errors) > 0) {
 	$_SESSION['form_errors'] = $errors;
-	$redirect = "report/defectedgarmentcreditnote";
+	$redirect = "report/creditnote/prdg";
         session_write_close();
         header("Location: ".DEF_SITEURL.$redirect);
         exit;

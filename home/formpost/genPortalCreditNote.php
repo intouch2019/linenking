@@ -14,20 +14,22 @@ try
    $success="";
 if(isset($store) && $store !="" && isset($user_id) && $user_id !="")
 {
-    echo "storeid=".$store." user=".$user_id;
+//    echo "storeid=".$store." user=".$user_id;
    $item_exist=$db->fetchObject("select id from it_portalinv_items_creditnote where is_proccessed=0 and store_id=$store");
     if(isset($item_exist) && ! empty($item_exist) && $item_exist != null)
      {
         
-        $credit_no="CNLK-";
-        $credit_num=0;
-       $creditno=$db->fetchObject("select cn_no from creditnote_no where active=0"); 
-      
-       if(isset($creditno) && ! empty($creditno) && $creditno != null)
-       {
-           $credit_no .=$creditno->cn_no;
-           $db->execUpdate("update creditnote_no set active=1");
-           $credit_num=$creditno->cn_no+1;
+//        $credit_no="CNLK-";
+//        $credit_num=0;
+//       $creditno=$db->fetchObject("select cn_no from creditnote_no where active=0"); 
+//      
+//       if(isset($creditno) && ! empty($creditno) && $creditno != null)
+//       {
+//           $credit_no .=$creditno->cn_no;
+//           $db->execUpdate("update creditnote_no set active=1");
+//           $credit_num=$creditno->cn_no+1;
+           
+           $credit_no="-";
         
 //        $credit_no="DCN-";
 //        $credit_num=0;
@@ -73,7 +75,7 @@ if(isset($store) && $store !="" && isset($user_id) && $user_id !="")
         $update_query="update it_portalinv_items_creditnote set  is_proccessed=1 ,invoice_id=$insert_id where is_proccessed=0 and store_id=$store";
         $db->execUpdate($update_query);
                 if($insert_id){
-                    $db->execUpdate("update creditnote_no set cn_no=$credit_num");  
+//                    $db->execUpdate("update creditnote_no set cn_no=$credit_num");  
 //        $db->execUpdate("update dgcreditnote_no set cn_no=$credit_num");
         
 //        $records = $credit_num . "<>1";
@@ -103,10 +105,10 @@ if(isset($store) && $store !="" && isset($user_id) && $user_id !="")
                 }
         
         $_SESSION['form_success'] ="Credit note '$credit_no' crated for $storename";
-           $db->execUpdate("update creditnote_no set active=0"); 
-     }  else {
-           $errors['CnNum_error'] = "Credit Note Number used in another credit note,so please try after some time"; 
-       }
+//           $db->execUpdate("update creditnote_no set active=0"); 
+//     }  else {
+//           $errors['CnNum_error'] = "Credit Note Number used in another credit note,so please try after some time"; 
+//       }
         
      
     }
