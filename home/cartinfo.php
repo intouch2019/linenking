@@ -2,6 +2,10 @@
 require_once "lib/core/Constants.php";
 require_once "lib/orders/clsOrders.php";
 
+require_once "view/cls_renderer.php";
+require_once "lib/db/DBConn.php";
+require_once "session_check.php";
+require_once "lib/items/clsItems.php";
 
 $store_id=getCurrUserId();
 $clsOrders = new clsOrders();
@@ -174,9 +178,14 @@ if ($cartinfo->quantity > 0 && strpos($currUri,"/store/checkout") !== false){
       $fncall ="onclick=show(".$order_tot_val.",".$min_stock.",".$difference.",".$cart->id.");";
       $linkName="Place Order"; 
   }
-    
-    
+  
+  
 }
+
+      $this->storeinfo = getCurrUser();
+        $dbProperties = new dbProperties();
+//        echo $this->storeinfo->inactive;
+    
 ?>
 
 
@@ -184,12 +193,18 @@ if ($cartinfo->quantity > 0 && strpos($currUri,"/store/checkout") !== false){
 	<h3>
 	<div style="float:left" id="carttop"><?php echo $cartinfoStr; ?></div>
 <?php if ($link) { ?>
-	<div style="float:right;margin-top:-5px;"><img src="images/cart.png" style="vertical-align:bottom;"/>&nbsp;
+	<div style="float:right;margin-top:-5px;">
+                         
+            <?php if (isset($this->storeinfo->inactive) && $this->storeinfo->inactive == 0 && isset($this->storeinfo->usertype) && $this->storeinfo->usertype == 4) {
+             if (($dbProperties->getBoolean(Properties::DisableUserLogins) == 0) && isset($this->storeinfo->usertype) && $this->storeinfo->usertype == 4) { ?>
+             
+            <img src="images/cart.png" style="vertical-align:bottom;"/>&nbsp;
             <?php  if ($link!="ajax/finalOrder.php"){?>
             <a <?php echo $fncall; ?> href="<?php echo $link; ?>"><button><?php echo $linkName; ?></button></a>
             <?php  }else{ ?>            
             <input type="button" value="<?php echo $linkName; ?>"  onclick="show1();">
-            <?php  } ?>
+            <?php  } 
+              }} ?>
         </div>
         <ul id="demo_menu1" >
 <?php if ($cartinfo->order_no) { ?>
@@ -197,6 +212,10 @@ if ($cartinfo->quantity > 0 && strpos($currUri,"/store/checkout") !== false){
 <?php } ?>
             <div id="side_qty">QTY: <?php echo $cartinfo->quantity; ?></div>
             <div id="side_price">AMT: <?php echo $cartinfo->amount; ?></div>
+            
+             <?php if (isset($this->storeinfo->inactive) && $this->storeinfo->inactive == 0 && isset($this->storeinfo->usertype) && $this->storeinfo->usertype == 4) {
+             if (($dbProperties->getBoolean(Properties::DisableUserLogins) == 0) && isset($this->storeinfo->usertype) && $this->storeinfo->usertype == 4) { ?>
+
             <li>
               <?php  if ($link!="ajax/finalOrder.php"){?>
             <a <?php echo $fncall; ?> href="<?php echo $link; ?>" onclick="show1();"><button><?php echo $linkName; ?></button></a>
@@ -208,6 +227,7 @@ if ($cartinfo->quantity > 0 && strpos($currUri,"/store/checkout") !== false){
             
             -->
             </li>
+            <?php }} ?>
         </ul>
 <?php } ?>
 	</h3>
