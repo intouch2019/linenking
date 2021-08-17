@@ -157,16 +157,20 @@ function createexcel($dealersList){
      $filename=basename($fpath);
      $db = new DBconn();
      $emailHelper = new EmailHelper();
-     $qry = "select * from it_codes where usertype = ".UserType::CKAdmin." and id in (68,129,130)" ; 
+     $qry = "select email from it_codes where usertype = ".UserType::CKAdmin." and id in (68,129,130)" ; 
      $aobjs = $db->fetchObjectArray($qry);
      // sends email to koushik,kunal
      if($aobjs){
         $toArray = array();
         foreach($aobjs as $aobj){ 
             $emails = explode(",",$aobj->email);
-            foreach($emails as $email){ array_push($toArray, $email);}
-              
+            foreach($emails as $email){ array_push($toArray, $email);}              
         }
+        array_push($toArray, 'samir.joshi@kinglifestyle.com');
+        array_push($toArray, 'rohan.phalke@kinglifestyle.com');
+        array_push($toArray, 'prashant.mane@kinglifestyle.com');
+        
+        
         if(!empty($toArray)){                                   
             print "<br>";
             //print_r($toArray);
