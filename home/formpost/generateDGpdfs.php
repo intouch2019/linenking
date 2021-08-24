@@ -100,7 +100,7 @@ $outputheader .="<tr><td align=\"left\" width=\"54.5%\"><div style=\"font-size:1
 <b>Fashionking Brands Pvt. Ltd.</b><br/>
 Plot No. 21,22,23 Hi-Tech Textile Park,<br/>
 MIDC, Baramati- 413133, Dist. Pune(Maharashtra)<br/>
-Phone : 02112-244120/21<br/>
+Phone : 02112-244121<br/>
 Customer Care-Ph. : 020-25431266/67<br/>
 Email : info@cottonking.com</div></td>"
         ."<td align=\"center\" width=\"50.5%\"><div style=\"font-size:12px;padding:4px\">"

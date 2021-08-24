@@ -101,7 +101,7 @@ $outputheader .="<tr><td align=\"left\" width=\"55%\"><div style=\"font-size:12p
 <b>Fashionking Brands Pvt. Ltd. (erstwhile Cottonking Pvt. Ltd.)</b><br/>
 Plot No. 21,22,23 Hi-Tech Textile Park,<br/>
 MIDC, Baramati, Dist. Pune- 413133<br/>
-Phone : 02112-244120/21</div></td>"
+Phone : 02112-244121</div></td>"
        ."</tr>";
 
 

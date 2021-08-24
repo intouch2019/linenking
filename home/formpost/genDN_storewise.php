@@ -180,7 +180,7 @@ if(isset($pdfobj)){
                     
             $html .= '<br/>Plot No.21,22,23 <br/>Hi-Tech Textile Park,'
                     .'<br/> MIDC, Baramati, Dist. Pune- 413133'
-                    .'<br/>Phone : 02112-244120/21'
+                    .'<br/>Phone : 02112-244121'
                     .'</td>'
                     .'</tr>'
                     //.'</table>'
