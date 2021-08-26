@@ -26,7 +26,8 @@ try {
     }
     
     //step 1 : check if for that store sbstock feature is enabled
-     $query = "select c.id,c.sbstock_active,c.autorefil_dttm,c.store_name as store,sum(o.quantity) as qty from it_codes c,it_orders o where c.is_autorefill=1 and c.inactive = 0  and c.is_closed = 0 and c.id=o.store_id and o.ck_order_id is null and o.quantity > 0 and o.bill_datetime >= case when ISNULL(c.autorefil_dttm) then o.bill_datetime else c.autorefil_dttm end group by o.store_id order by sum(o.quantity) desc";
+//     $query = "select c.id,c.sbstock_active,c.autorefil_dttm,c.store_name as store,sum(o.quantity) as qty from it_codes c,it_orders o where c.is_autorefill=1 and c.inactive = 0  and c.is_closed = 0 and c.id=o.store_id and o.ck_order_id is null and o.quantity > 0 and o.bill_datetime >= case when ISNULL(c.autorefil_dttm) then o.bill_datetime else c.autorefil_dttm end group by o.store_id order by sum(o.quantity) desc";
+     $query = "select c.id,c.sbstock_active,c.autorefil_dttm,c.store_name as store,sum(o.quantity) as qty from it_codes c,it_orders o where c.is_autorefill=1 and c.inactive = 0  and c.is_closed = 0 and c.id=o.store_id and o.ck_order_id is null and o.quantity > 0 and o.bill_datetime >= case when ISNULL(c.autorefil_dttm) then o.bill_datetime else c.autorefil_dttm end group by o.store_id order by c.sequence";
       $objs = $db->fetchObjectArray($query); 
         foreach ($objs as $storeobj) 
           { 
