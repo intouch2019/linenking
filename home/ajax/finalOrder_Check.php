@@ -7,7 +7,7 @@ require_once "lib/logger/clsLogger.php";
 
 $db=new DBConn();
 
-$str = getCurrUser();
+//$str = getCurrUser();
 $store_id = getCurrUserId();       
        
 $clsOrders = new clsOrders();
@@ -19,8 +19,9 @@ $cart = $clsOrders->getCartt($store_id);
 //$redirect="store/orders/active";
 $cnt=0;
 if ($cart) {   
-$query="select * from it_ck_orderitems where order_id=$cart->id";
-$orderitems=$db->fetchObjectArray("select * from it_ck_orderitems where order_id=$cart->id");
+//$query="select * from it_ck_orderitems where order_id=$cart->id";
+//$orderitems=$db->fetchObjectArray("select * from it_ck_orderitems where order_id=$cart->id");
+$orderitems=$db->fetchObjectArray("select id,item_id,order_qty,store_id from it_ck_orderitems where order_id=$cart->id");
 if (count($orderitems) == 0) { 
    // print "Failed - no orderitems found [$query]"; 
     print "1";
@@ -32,7 +33,8 @@ $design_no1="";
 $design_no="";
 foreach ($orderitems as $ord)
     {
-    $query11="select * from it_items where curr_qty>=$ord->order_qty and id=$ord->item_id and ctg_id!=29";
+//    $query11="select * from it_items where curr_qty>=$ord->order_qty and id=$ord->item_id and ctg_id!=29";
+    $query11="select id,curr_qty,ctg_id from it_items where curr_qty>=$ord->order_qty and id=$ord->item_id and ctg_id!=29";
         // print $query;
         //error_log("\n|JSON it_items:$query11 ",3,"tmp.txt");
     $chk=$db->fetchObject($query11);
@@ -86,8 +88,9 @@ $design_no1=substr($design_no, 0, -1);
 //error_log("\n|JSON design no:$design_no1 ",3,"tmp.txt"); ///var/www/tyzer_new_y/home/ajax/tmp.txt 
 //error_log("\n|JSON count is:$cnt ",3,"tmp.txt"); ///var/www/tyzer_new_y/home/ajax/tmp.txt 
    
-$orderitems_check=$db->fetchObjectArray("select * from it_ck_orderitems where order_id=$cart->id");
-$query_check="select * from it_ck_orderitems where order_id=$cart->id";
+//$orderitems_check=$db->fetchObjectArray("select * from it_ck_orderitems where order_id=$cart->id");
+$orderitems_check=$db->fetchObjectArray("select order_qty,item_id from it_ck_orderitems where order_id=$cart->id");
+//$query_check="select * from it_ck_orderitems where order_id=$cart->id";
 if (count($orderitems_check) == 0) {
     //print "Failed - no orderitems found [$query]"; return; 
     //print "Failed - no orderitems found,Your order are not process because  Following Designs are Dropped  Before Confirming the Orders [$design_no"; 

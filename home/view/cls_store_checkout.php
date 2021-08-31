@@ -157,7 +157,8 @@ function show1(){
             $allDesigns = $db->fetchObjectArray($query);
 
             $code =$db->safe($this->currStore->code);
-            $storeDetails=$db->fetchObject("select * from it_codes where code=$code");
+//            $storeDetails=$db->fetchObject("select * from it_codes where code=$code");
+            $storeDetails=$db->fetchObject("select store_name,address,city,owner,phone,email,vat from it_codes where code=$code");
             if ($storeDetails) {
             include "cartinfo.php";
             }
@@ -262,7 +263,8 @@ function show1(){
     <?php
              }
             }
-            $others = $db->fetchObjectArray("select * from it_ck_orderitems o, it_items i where o.item_id = i.id and i.ctg_id=29 and o.store_id=$store_id and o.order_id=$cart->id order by i.design_no"); 
+//            $others = $db->fetchObjectArray("select * from it_ck_orderitems o, it_items i where o.item_id = i.id and i.ctg_id=29 and o.store_id=$store_id and o.order_id=$cart->id order by i.design_no");
+            $others = $db->fetchObjectArray("select i.design_no,o.order_qty,o.remarks from it_ck_orderitems o, it_items i where o.item_id = i.id and i.ctg_id=29 and o.store_id=$store_id and o.order_id=$cart->id order by i.design_no");
            if (count($others)>0) {
              $topinfo = $db->fetchObject ("select sum(o.order_qty) as tot_qty, sum(o.order_qty * o.mrp) as tot_mrp from it_ck_orderitems o, it_items i where o.item_id = i.id and i.ctg_id=29 and o.order_id=$cart->id");
             ?>

@@ -1,11 +1,11 @@
 <?php
-require_once "lib/core/Constants.php";
+//require_once "lib/core/Constants.php";
 require_once "lib/orders/clsOrders.php";
 
-require_once "view/cls_renderer.php";
+//require_once "view/cls_renderer.php";
 require_once "lib/db/DBConn.php";
 require_once "session_check.php";
-require_once "lib/items/clsItems.php";
+//require_once "lib/items/clsItems.php";
 
 $store_id=getCurrUserId();
 $clsOrders = new clsOrders();
@@ -35,7 +35,8 @@ $intransit_stock_value_new=0;
 $mslflag = 0;$fncall="";$expctd_order_val=0;$order_tot_val=0;
 //before placing order do MSL chk if the MSL is set against the store
 $db = new DBConn();
-$msl = $db->fetchObject("select * from it_codes where id = $store_id ");
+//$msl = $db->fetchObject("select * from it_codes where id = $store_id ");
+$msl = $db->fetchObject("select min_stock_level,max_stock_level,inactive from it_codes where id = $store_id ");
 //print_r($msl);
 $db->closeConnection();
 if(isset($msl) && trim($msl->min_stock_level)!=""){
@@ -218,12 +219,13 @@ if ($cartinfo->quantity > 0 && strpos($currUri,"/store/checkout") !== false){
 
             <li>
               <?php  if ($link!="ajax/finalOrder.php"){?>
-            <a <?php echo $fncall; ?> href="<?php echo $link; ?>" onclick="show1();"><button><?php echo $linkName; ?></button></a>
+            <!--<a <?php // echo $fncall; ?> href="<?php // echo $link; ?>" onclick="show1();"><button><?php // echo $linkName; ?></button></a>-->
+            <a <?php echo $fncall; ?> href="<?php echo $link; ?>"><button><?php echo $linkName; ?></button></a>
             <?php  }else{ ?>            
             <input type="button" value="<?php echo $linkName; ?>"  onclick="show1();">
             <?php  } ?>
             
-<!--               <a <?php //echo $fncall; ?> href="<?php// echo $link; ?>" ><img src="images/cart.png" style="vertical-align:bottom;"/><button><?php echo $linkName; ?></button></a>
+<!--               <a <?php //echo $fncall; ?> href="<?php// echo $link; ?>" ><img src="images/cart.png" style="vertical-align:bottom;"/><button><?php // echo $linkName; ?></button></a>
             
             -->
             </li>
