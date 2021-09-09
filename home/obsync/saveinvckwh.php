@@ -11,12 +11,13 @@ require_once "lib/logger/clsLogger.php";
 $clsLogger = new clsLogger();
 
 extract($_POST);
+//$records='21220064<>0<>1627650445000<>11317.0<>40.0<>58950.0<>21183.13<>0.0<>538.34<>aa::aa<>Administrator<><><>TUSHAR ENTERPRISES  TEJ COURIERS<><>1<>129<>10766.87<>21183.13<>10766.87<>269.17<>269.17<>0.0<>11305.21<>11.31<>27000.0<><==>GST 5%<>0.05<>538.34<++><==>62<==>8900000409150<>SLIM SHIRT<>1495.0<>12.0<>17940.0<>257.2030089058524<>3086.436106870229<>6636.77<>684.7328244274809<>8216.79<>3086.436106870229<>77.16<>77.16<>0.0<>0.05<++>8900000089338<>FORMAL SHIRT<>1695.0<>18.0<>30510.0<>291.61078880407126<>5248.994198473283<>11286.96<>776.3358778625955<>13974.05<>5248.994198473283<>131.22<>131.22<>0.0<>0.05<++>8900000260942<>TROUSER<>1050.0<>10.0<>10500.0<>243.14396946564892<>2431.4396946564893<>3259.4<>480.91603053435114<>4809.16<>2431.4396946564893<>60.79<>60.79<>0.0<>0.05<++><==>';
 if(!isset($records) || trim($records) == ""){
 	$logger->logError("Missing parameter [records]:".print_r($_POST, true));
 	print "1::Missing parameter [records]";
 	return;
 }
-
+//print $records;
 try {
     $db = new DBConn();
     $serverCh = new clsServerChanges();
@@ -78,6 +79,7 @@ try {
                     $igst_total = $invfields[22];
                     $net_amount = $invfields[23];
                     $tcs75 = $invfields[24];
+                    $total_add_disc = $invfields[25];
                     
                     $iClause = "";
                     if(trim($rate_subtotal)!=""){ $iClause .= " , rate_subtotal = $rate_subtotal "; }
@@ -88,6 +90,7 @@ try {
                     if(trim($igst_total)!=""){ $iClause .= " , igst_total = $igst_total "; }
                     if(trim($net_amount)!=""){ $iClause .= " , net_amount = $net_amount "; }
                     if(trim($tcs75)!=""){ $iClause .= " , tcs_0075pct = $tcs75 "; }
+                    if(trim($total_add_disc)!=""){ $iClause .= " , additional_disc_val   = $total_add_disc "; }
                     if(trim($transport_dtl)!=""){ $iClause .= " , transportdtl   = $transport_dtl "; }
                     if(trim($remarks)!=""){ $iClause .= " , transportdtl_remark   = $remarks "; } 
                         
@@ -134,11 +137,13 @@ try {
                             $rate = floatval($fields[5]);
                             $total_rate_qty = floatval($fields[6]); // rate * quantity
                             $discount_val = floatval($fields[7]);
-                            $taxable_value = floatval($fields[8]);
-                            $cgst = floatval($fields[9]);
-                            $sgst = floatval($fields[10]);
-                            $igst = floatval($fields[11]);
-                            $tax_rate = floatval($fields[12]);
+                            $add_discount_val = floatval($fields[8]);
+                            $total_add_discount_val = floatval($fields[9]);
+                            $taxable_value = floatval($fields[10]);
+                            $cgst = floatval($fields[11]);
+                            $sgst = floatval($fields[12]);
+                            $igst = floatval($fields[13]);
+                            $tax_rate = floatval($fields[14]);
 
                             $liClause = "";
                             if(trim($total_price_qty)!=""){ $liClause .= " , total_price_qty = $total_price_qty "; }
@@ -146,6 +151,8 @@ try {
                             if(trim($total_rate_qty)!=""){ $liClause .= " , total_rate_qty = $total_rate_qty "; }
                             if(trim($discount_val)!=""){ $liClause .= " , discount_val = $discount_val "; }
                             if(trim($taxable_value)!=""){ $liClause .= " , taxable_value = $taxable_value "; }
+                            if(trim($add_discount_val)!=""){ $liClause .= " , additional_disc_val = $add_discount_val "; }
+                            if(trim($total_add_discount_val)!=""){ $liClause .= " , total_additional_disc_val = $total_add_discount_val "; }
                             if(trim($cgst)!=""){ $liClause .= " , cgst = $cgst "; }
                             if(trim($sgst)!=""){ $liClause .= " , sgst = $sgst "; }
                             if(trim($igst)!=""){ $liClause .= " , igst = $igst "; }
@@ -231,6 +238,7 @@ try {
                                 //gst changes
                                 $json_invoice['rate_subtotal'] = $invoice->rate_subtotal;
                                 $json_invoice['discount_val'] = $invoice->discount_val;
+                                $json_invoice['additional_disc_val'] = $invoice->additional_disc_val;
                                 $json_invoice['total_taxable_value'] = $invoice->total_taxable_value;
                                 $json_invoice['cgst_total'] = $invoice->cgst_total;
                                 $json_invoice['sgst_total'] = $invoice->sgst_total;
@@ -238,7 +246,7 @@ try {
 
 
                                 $items = $db->fetchObjectArray("select barcode,price,quantity,total_price_qty,rate,total_rate_qty,"
-                                        . "discount_val,taxable_value,cgst,sgst,igst,tax_rate from it_sp_invoice_items where "
+                                        . "discount_val,taxable_value,cgst,sgst,igst,tax_rate,additional_disc_val from it_sp_invoice_items where "
                                         . "invoice_id = $invoice->id");
                                 $json_items = array();
                                 foreach ($items as $item) {
@@ -289,6 +297,7 @@ try {
                     $igst_total = $invfields[22];
                     $net_amount = $invfields[23];
                     $tcs75 = $invfields[24];
+                    $total_add_disc=$invfields[25];
                     
                     $iClause = "";
                     if(trim($rate_subtotal)!=""){ $iClause .= " , rate_subtotal = $rate_subtotal "; }
@@ -299,6 +308,7 @@ try {
                     if(trim($igst_total)!=""){ $iClause .= " , igst_total = $igst_total "; }
                     if(trim($net_amount)!=""){ $iClause .= " , net_amount = $net_amount "; }
                     if(trim($tcs75)!=""){ $iClause .= " , tcs_0075pct = $tcs75 "; }
+                    if(trim($total_add_disc)!=""){ $iClause .= " , additional_disc_val   = $total_add_disc "; }
                     if(trim($transport_dtl)!=""){ $iClause .= " , transportdtl   = $transport_dtl "; }
                     if(trim($remarks)!=""){ $iClause .= " , transportdtl_remark   = $remarks "; } 
                     
@@ -308,7 +318,7 @@ try {
                             . "invoice_qty=$invoice_qty , total_mrp = $total_mrp , discount_1 = $discount_1 ,"
                             . " discount_2 = $discount_2, tax = $tax , tax_type = $tax_type , tax_percent = $tax_percent ,"
                             . " payment = $payment , no_of_challans = $noofchallans , challan_nos =  $challan_numbers $iClause ";
-                    //echo "<br/>$query<br/>";
+//                    echo "<br/>$query<br/>";
                     $invoice_id = $db->execInsert($query);
                     if (!$invoice_id) { break; }
                     
@@ -336,11 +346,13 @@ try {
                         $rate = floatval($fields[5]);
                         $total_rate_qty = floatval($fields[6]); // rate * quantity
                         $discount_val = floatval($fields[7]);
-                        $taxable_value = floatval($fields[8]);
-                        $cgst = floatval($fields[9]);
-                        $sgst = floatval($fields[10]);
-                        $igst = floatval($fields[11]);
-                        $tax_rate = floatval($fields[12]);
+                        $add_discount_val = floatval($fields[8]);
+                        $total_add_discount_val = floatval($fields[9]);
+                        $taxable_value = floatval($fields[10]);
+                        $cgst = floatval($fields[11]);
+                        $sgst = floatval($fields[12]);
+                        $igst = floatval($fields[13]);
+                        $tax_rate = floatval($fields[14]);
                         
                         
                         $liClause = "";
@@ -349,6 +361,8 @@ try {
                         if(trim($total_rate_qty)!=""){ $liClause .= " , total_rate_qty = $total_rate_qty "; }
                         if(trim($discount_val)!=""){ $liClause .= " , discount_val = $discount_val "; }
                         if(trim($taxable_value)!=""){ $liClause .= " , taxable_value = $taxable_value "; }
+                        if(trim($add_discount_val)!=""){ $liClause .= " , additional_disc_val = $add_discount_val "; }
+                        if(trim($total_add_discount_val)!=""){ $liClause .= " , total_additional_disc_val = $total_add_discount_val "; }
                         if(trim($cgst)!=""){ $liClause .= " , cgst = $cgst "; }
                         if(trim($sgst)!=""){ $liClause .= " , sgst = $sgst "; }
                         if(trim($igst)!=""){ $liClause .= " , igst = $igst "; }
@@ -384,7 +398,7 @@ try {
                     . " tax_type = $tax_type , tax_percent = $tax_percent ,ck_invoice_id=$invoice_id $iClause";
            $sp_id=$db->execInsert($qursp);
            //print_r($sp_id);
-           //print ($qursp);
+//           print ($qursp);
            if(isset($invoice_id)){
                $db->execUpdate("update it_invoices set sp_invoice_id=$sp_id where id=$invoice_id");
            }
@@ -403,11 +417,13 @@ try {
                         $rate = floatval($fields[5]);
                         $total_rate_qty = floatval($fields[6]); // rate * quantity
                         $discount_val = floatval($fields[7]);
-                        $taxable_value = floatval($fields[8]);
-                        $cgst = floatval($fields[9]);
-                        $sgst = floatval($fields[10]);
-                        $igst = floatval($fields[11]);
-                        $tax_rate = floatval($fields[12]);
+                        $add_discount_val = floatval($fields[8]);
+                        $total_add_discount_val = floatval($fields[9]);
+                        $taxable_value = floatval($fields[10]);
+                        $cgst = floatval($fields[11]);
+                        $sgst = floatval($fields[12]);
+                        $igst = floatval($fields[13]);
+                        $tax_rate = floatval($fields[14]);
                         
                         
                         $liSPClause = "";
@@ -416,6 +432,8 @@ try {
                         if(trim($total_rate_qty)!=""){ $liSPClause .= " , total_rate_qty = $total_rate_qty "; }
                         if(trim($discount_val)!=""){ $liSPClause .= " , discount_val = $discount_val "; }
                         if(trim($taxable_value)!=""){ $liSPClause .= " , taxable_value = $taxable_value "; }
+                        if(trim($add_discount_val)!=""){ $liSPClause .= " , additional_disc_val = $add_discount_val "; }
+                        if(trim($total_add_discount_val)!=""){ $liSPClause .= " , total_additional_disc_val = $total_add_discount_val "; }
                         if(trim($cgst)!=""){ $liSPClause .= " , cgst = $cgst "; }
                         if(trim($sgst)!=""){ $liSPClause .= " , sgst = $sgst "; }
                         if(trim($igst)!=""){ $liSPClause .= " , igst = $igst "; }
@@ -423,7 +441,7 @@ try {
                         
                         $query = "insert into it_sp_invoice_items set invoice_id=$sp_id, barcode=$ck_code, price=$price, "
                                 . "quantity=$quantity $liSPClause";                  
-                        //echo "<br/>".$query."<br/>";
+//                        echo "<br/>".$query."<br/>";
                         $insertedinsp = $db->execInsert($query);
 //                        if (!$inserted) { break; }
                         $items[$ck_code] = $quantity;
@@ -588,7 +606,6 @@ try {
                                     $q1 ="update it_items set curr_qty =  $value , updatetime = now() where barcode = $key";
                                     $db->execUpdate($q1); 
                                 }
-
                             }*/
                      }
                     }
@@ -642,6 +659,7 @@ try {
             if($invoice_type == "'0'" || $invoice_type == "'6'" || $invoice_type == "'7'"){ // only sales inv shld get inserted in it_server_changes
                 //$query = "select * from it_invoices where id = $invoice_id ";                
                 $query = "select sp.*  from  it_sp_invoices sp where sp.id = $sp_id and sp.invoice_type in ('0','6','7')";
+//                echo $query."<br>";
                 // add code to include sp_invoice_no field
                 
                 $invoice = $db->fetchObject($query);
@@ -658,6 +676,7 @@ try {
                         $json_invoice['total_mrp'] = $invoice->total_mrp;
                         $json_invoice['discount_1'] = $invoice->discount_1;
                         $json_invoice['discount_2'] = $invoice->discount_2;
+                        $json_invoice['additional_disc_val'] = $invoice->additional_disc_val;
                         $json_invoice['tax'] = $invoice->tax;
                         $json_invoice['payment'] = $invoice->payment;
                                 //gst changes
@@ -668,9 +687,12 @@ try {
                         $json_invoice['sgst_total'] = $invoice->sgst_total;
                         $json_invoice['igst_total'] = $invoice->igst_total;
 
+//                        echo "select barcode,price,quantity,total_price_qty,rate,total_rate_qty,"
+//                                . " discount_val,taxable_value,cgst,sgst,igst,tax_rate,additional_disc_val from it_sp_invoice_items "
+//                                . "where invoice_id = $invoice->id";
                         
                         $items = $db->fetchObjectArray("select barcode,price,quantity,total_price_qty,rate,total_rate_qty,"
-                                . " discount_val,taxable_value,cgst,sgst,igst,tax_rate from it_sp_invoice_items "
+                                . " discount_val,taxable_value,cgst,sgst,igst,tax_rate,additional_disc_val from it_sp_invoice_items "
                                 . "where invoice_id = $invoice->id");
                         $json_items = array();
                         foreach ($items as $item) {                               
