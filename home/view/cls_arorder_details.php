@@ -308,7 +308,7 @@ foreach ($objs as $obj) {
             
          try {
                 $storequery1 = "select c.id as store_id, c.store_name  from it_codes c,it_orders o,it_order_items oi where c.is_closed = 0 $storeClause $dQuery and c.id=o.store_id  and o.tickettype in (0,1,6) and oi.order_id = o.id  group by c.id";
-//                 echo $storequelry1;       
+//                echo $storequelry1;       
                 $sobjs1 = $db->fetchObjectArray($storequery1); 
                 if(empty($sobjs1)){
                     echo '<span style="font-weight:bold; color:red;" co><label><h3>Records not Available For Selected Store.</h3></lable></span>';
@@ -353,7 +353,7 @@ foreach ($objs as $obj) {
                     $is_firsstore=1;
                 foreach ($sobjs1 as $storeobj) {
                                  $query = "Select oi.item_id as item_id,sum(oi.quantity) as qty from it_orders o,it_order_items oi   where o.id = oi.order_id  $dQuery  and o.store_id = oi.store_id and o.tickettype in (0,6) and o.store_id = " . $storeobj->store_id . "   group by oi.item_id";
-//                                   echo $query; 
+ //                                  echo $query; 
                                 $objs = $db->fetchObjectArray($query);
 
                                 foreach ($objs as $obj) { 
@@ -434,20 +434,21 @@ foreach ($objs as $obj) {
                 }
 //                print_r($items);
               //  and i.id in($item_id)
-                
+             $row_no = 0;   
             foreach ($design as $key => $value) {
                         $arr= explode(":",$key);
 //                        print_r($arr);                       
                 $query = "select i.id,i.ctg_id,c.name as category,i.design_no,i.mrp,d.image from it_items i,it_categories c,it_ck_designs d where i.ctg_id=c.id and i.is_design_mrp_active=1 and i.id in($item_id1) and d.id=i.design_id and i.design_no='$arr[0]' and i.mrp=$arr[1]  $categoryClause  group by i.mrp";
 //                 echo $query;
                 $arobj = $db->fetchObjectArray($query);
-                $row_no = 0;
+              //  $row_no = 0;
                 ?>
 
 
                 
             <?php
             foreach ($arobj as $obj) {
+                if($row_no <20){
                 $row_no++;
                 $design_no = $db->safe($obj->design_no);
                 $ctg_id = $db->safe($obj->ctg_id);
@@ -539,6 +540,7 @@ foreach ($objs as $obj) {
                     </div> <!-- end class="box" -->
                     <div class="clear"></div>
                 <?php
+                }
             } 
                  }// end foreach allDesigns
              }
