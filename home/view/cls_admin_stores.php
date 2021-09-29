@@ -89,6 +89,7 @@ class cls_admin_stores extends cls_renderer {
 <div id="storeinfo"></div>
     <div style="float:right;margin-right:15px;">
         <button name="dwnFile" id="dwnFile" onclick="DownloadStoreExcel();">Download Store Details</button>
+        <button name="dwnFile" id="dwnFile" onclick="DownloadExcel();">Download Disable Store Report</button>
         
 <?php if ($disableStoreLogins) { ?>
     <a href="admin/stores/enablelogins"><button>Enable Store Logins</button></a>
