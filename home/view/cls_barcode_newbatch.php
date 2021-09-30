@@ -75,7 +75,7 @@ function check_mrpCAP()
             {
              var mrp = $("#mrp").val(); 
 //             alert(mrp);
-             if(mrp >5000) //if(mrp >5000)
+             if(mrp >50000) //if(mrp >5000)
              {
                  alert("Please Check MRP Value for Selected Design");
                  $("#mrp").val(""); 
