@@ -60,6 +60,39 @@ Your session has expired. Click <a href="">here</a> to login.
 
     //--><!]]>
 </script>
+<script langauge="text/javascript">
+ function backtoInpic(pickgroup)
+ {
+ var r=confirm("Are you sure this order change back to In-Picking ?");
+ if(r== true)
+ {
+ //alert(pickgroup);
+                $.ajax({
+			type: "POST",
+                        dataType: "json",
+			url: "ajax/backToinpicking.php",
+			data: "pid="+pickgroup,
+                        success:function(return_data)
+                        {
+                          if(return_data.error==0)
+                          {
+                              window.location.href="admin/orders/packing";
+                              }
+                          if(return_data.error==1)
+                           {
+                               alert(return_data.message);
+                           }
+                        }
+                            
+                            
+                        
+                                
+		});
+                
+        
+        }
+        }
+            </script>
     <?php
     }
     //extra-headers close
@@ -123,6 +156,7 @@ Your session has expired. Click <a href="">here</a> to login.
                             <td><?php echo $order->order_amount; ?></td>
                             <td><?php echo $order->num_designs; ?></td>
                         </tr>
+                        <?php if($this->currStore->usertype ==UserType::Admin) { if($order->status==OrderStatus::Picking_Complete){?>  <tr><td colspan="4"></td><td  align="centere"><input type="button" onclick="backtoInpic('<?php echo $this->pickgroup_id; ?>')" value="Change back to In-Picking"/></td></tr><?php }}?>
                     </table>
 <?php if ($this->currStore->id == $order->dispatcher_id && $order->status == OrderStatus::Picking) { ?>
                     <button onclick="javascript:printOrder(<?php echo $this->pickgroup_id; ?>);">Print Order</button>
