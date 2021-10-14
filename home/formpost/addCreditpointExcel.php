@@ -22,11 +22,14 @@ try{
     $objPHPExcel->getActiveSheet()->setCellValue('A1', 'ID');
     $objPHPExcel->getActiveSheet()->setCellValue('B1', 'Store Name');
     $objPHPExcel->getActiveSheet()->setCellValue('C1', 'Credit Point');
+    $objPHPExcel->getActiveSheet()->setCellValue('D1', 'Remark');
+
 
             
     $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
     $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(40);
     $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(20);
+    $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(40);
 
     
     $styleArray = array(
@@ -38,6 +41,8 @@ try{
     $objPHPExcel->getActiveSheet()->getStyle('A')->applyFromArray($styleArray);
     $objPHPExcel->getActiveSheet()->getStyle('B')->applyFromArray($styleArray);
     $objPHPExcel->getActiveSheet()->getStyle('C')->applyFromArray($styleArray);
+    $objPHPExcel->getActiveSheet()->getStyle('D')->applyFromArray($styleArray);
+
 
     
     $colCount=0;

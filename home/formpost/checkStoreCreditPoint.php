@@ -131,6 +131,9 @@ function checkfile($newdir) {
                     $return = "Creditpoint must be Numeric";
                 }
             }
+            if ($colno == 3) {
+                $remark = $value;
+            }
             $colno++;
         }
     }
@@ -172,6 +175,7 @@ function updatecreditpoints($newdir) {
         $id = "";
         $store_name = "";
         $creditpoint = 0;
+        $remark = "";
         foreach ($cellIterator as $cell) {
             $value = trim(strval($cell->getValue()));
             if (trim($value) != "") {
@@ -184,6 +188,9 @@ function updatecreditpoints($newdir) {
                 if ($colno == 2) {
                     $creditpoint = $value;
                 }
+                if ($colno == 3) {
+                $remark = $value;
+            }
             }
             $colno++;
         }
@@ -202,7 +209,7 @@ function updatecreditpoints($newdir) {
             }
 
             if (isset($objcode) && $objcode->usertype == 4) {
-                $query = "INSERT INTO it_store_redeem_points (store_id,points_to_upload,points_upload_date)VALUES ($id,$creditpoint,now()); ";
+                $query = "INSERT INTO it_store_redeem_points (store_id,points_to_upload,remark,points_upload_date)VALUES ($id,$creditpoint,'$remark',now()); ";
                 $objredeem = $db->execInsert($query);
                 $i++;
                 

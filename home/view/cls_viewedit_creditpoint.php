@@ -375,7 +375,10 @@ class cls_viewedit_creditpoint extends cls_renderer {
                                     <th>Is Redeem</th>
                                     <th>Points Redeem Date</th>
                                     <th>Redeem in (Invoice No)</th>
+                                    <th>Remark</th>
+                                    <?php if($this->currStore->usertype == UserType::CKAdmin ){ ?>
                                     <th> Action </th>
+                                    <?php } ?>
                     <!--                            <th><table style="width:100%" border="0"><tr><th>CGST</th></tr><tr><th>Rate</th><th>Amount</th></tr></table><tbody  style="overflow-y: auto;height: 20px;overflow-x: hidden"></th>
                                     <th><table style="width:100%"><tr><th>SGST</th></tr><tr><th>Rate</th><th>Amount</th></tr></table></th>
                                     <th><table style="width:100%"><tr><th>IGST</th></tr><tr><th>Rate</th><th>Amount</th></tr></table></th>-->
@@ -410,7 +413,7 @@ class cls_viewedit_creditpoint extends cls_renderer {
                                         
                                         <?php } ?>
                                         
-                               
+                               <td><?php echo $obj->remark ; ?></td>
 
                                         <?php if(($obj->is_reddeme==0 )&& ($this->currStore->usertype == UserType::CKAdmin )){ ?>
                                          <td>
@@ -423,9 +426,9 @@ class cls_viewedit_creditpoint extends cls_renderer {
                                                 <input type="submit" style="background-color: #EC311B;   border: none;  color: white;   text-align: center; padding:5px; font-size: 14px; font-style: bold" 
                                                     <?php if (isset($obj->is_redeem) && $obj->is_redeem == 1) {echo "abcf"; ?> disabled <?php }; ?> value="Remove" onclick="return is_confirm('<?php echo $obj->points_to_upload;?>','<?php echo $obj->store_name; ?>')"></form>
                                         </td>
-                                        <?php }else{ ?>
-                                        <td>-</td>
-                                        <?php } ?>
+                                        <?php }//else{ ?>
+                                        <!--<td>-</td>-->
+                                        <?php //} ?>
                                        
                                     </tr>
                         <?php $i++;
@@ -433,10 +436,10 @@ class cls_viewedit_creditpoint extends cls_renderer {
                     
                     
                                 if ($this->storeid == -1) {
-                            $iquery = "select  c.store_name ,r.points_to_upload,r.points_upload_date,if(r.is_reddeme =1,'Yes','No' ) as Is_Redeem,if(r.is_reddeme =1,r.points_redeemdate,'-' ) as points_redeemdate,if(r.is_reddeme =1,r.invoice_no,'-' ) as invoice_no from it_codes c,it_store_redeem_points r where  $dQuery  and r.active=1 and r.store_id=c.id order by c.store_name ";
+                            $iquery = "select  c.store_name ,r.points_to_upload,r.points_upload_date,if(r.is_reddeme =1,'Yes','No' ) as Is_Redeem,if(r.is_reddeme =1,r.points_redeemdate,'-' ) as points_redeemdate,if(r.is_reddeme =1,r.invoice_no,'-' ) as invoice_no,r.remark from it_codes c,it_store_redeem_points r where  $dQuery  and r.active=1 and r.store_id=c.id order by c.store_name ";
                         } else {
 
-                            $iquery = "select c.store_name ,r.points_to_upload,r.points_upload_date,if(r.is_reddeme =1,'Yes','No' ) as Is_Redeem,if(r.is_reddeme =1,r.points_redeemdate,'-' ) as points_redeemdate,if(r.is_reddeme =1,r.invoice_no,'-' ) as invoice_no from it_codes c,it_store_redeem_points r where  $dQuery  and r.active=1 and r.store_id= $this->storeid and r.store_id=c.id";
+                            $iquery = "select c.store_name ,r.points_to_upload,r.points_upload_date,if(r.is_reddeme =1,'Yes','No' ) as Is_Redeem,if(r.is_reddeme =1,r.points_redeemdate,'-' ) as points_redeemdate,if(r.is_reddeme =1,r.invoice_no,'-' ) as invoice_no,r.remark from it_codes c,it_store_redeem_points r where  $dQuery  and r.active=1 and r.store_id= $this->storeid and r.store_id=c.id";
                         }
                         $items = $db->fetchObjectArray($iquery);               
                     
@@ -455,7 +458,7 @@ class cls_viewedit_creditpoint extends cls_renderer {
              fwrite($fp2,"<table width='100%' style='overflow:auto;'><thead><tr>");
             } 
             
-            $tableheaders="Store Name:Points:Points Upload Date:Is Redeem:Points Redeem Date:Redeem in (Invoice No)";
+            $tableheaders="Store Name:Points:Points Upload Date:Is Redeem:Points Redeem Date:Redeem in (Invoice No):Remark";
         
             $headerarr = explode(":", $tableheaders); 
             foreach ($headerarr as $harr) {
