@@ -2,6 +2,7 @@
 require_once "view/cls_renderer.php";
 require_once "lib/db/DBConn.php";
 require_once "lib/core/Constants.php";
+require_once "lib/core/strutil.php";
 require_once "session_check.php";
 
 class cls_report_grid_storesales extends cls_renderer {
@@ -26,8 +27,19 @@ class cls_report_grid_storesales extends cls_renderer {
             $this->dtrange = $params['dtrange'];
         }else{
             $db = new DBConn();
-            $obj = $db->fetchObject(" select date_format(min(bill_datetime),'%d-%m-%Y') as d1, date_format(max(bill_datetime),'%d-%m-%Y') as d2 from it_orders");
-            $this->dtrange = $obj->d1." - ".$obj->d2;
+//            $obj = $db->fetchObject(" select date_format(min(bill_datetime),'%d-%m-%Y') as d1, date_format(max(bill_datetime),'%d-%m-%Y') as d2 from it_orders");
+            $obj = $db->fetchObject(" select min(bill_datetime) as d1, max(bill_datetime) as d2 from it_orders where bill_datetime >= now() - interval 3 month");
+//            print_r($obj);
+            if(isset($obj) && $obj->d1 != NULL){
+                $objd1 = ddmmyy($obj->d1);
+                $objd2 = ddmmyy($obj->d2);
+            }else{
+                $objd1 = date("d-m-Y");
+                $objd2 = date("d-m-Y");
+            }
+//            print_r($objd1);exit();
+//            $this->dtrange = $obj->d1." - ".$obj->d2;
+            $this->dtrange = $objd1." - ".$objd2;
         }
         if(isset($params['ptype'])){
             $this->ptype = $params['ptype'];
@@ -144,7 +156,8 @@ var mrp = '<?php echo $this->mrp; ?>';
                              }else{ $defaultSel = ""; } ?>
                             <option value="-1" <?php echo $defaultSel;?>>All Stores</option> 
                             <?php
-                            $objs = $db->fetchObjectArray("select * from it_codes where usertype= ".UserType::Dealer." and id in (select distinct store_id from it_orders ) order by store_name");
+//                            $objs = $db->fetchObjectArray("select * from it_codes where usertype= ".UserType::Dealer." and id in (select distinct store_id from it_orders ) order by store_name");
+                            $objs = $db->fetchObjectArray("select id,store_name from it_codes where usertype= ".UserType::Dealer." and id in (select distinct store_id from it_orders ) order by store_name");
 
                             if ($this->storeidreport == "-1") {
                                 $storeid = array();
@@ -187,7 +200,8 @@ var mrp = '<?php echo $this->mrp; ?>';
                     <div>
                             Select Production Type:
                        <?php
-                         $pTypequery = "select * from it_prod_types order by name ";
+//                         $pTypequery = "select * from it_prod_types order by name ";
+                         $pTypequery = "select id,name from it_prod_types order by name ";
                          $prodObjs = $db->fetchObjectArray($pTypequery);
                          $ptypeIds = explode(",",$this->ptype);
                        ?>
@@ -257,7 +271,8 @@ var mrp = '<?php echo $this->mrp; ?>';
                         $sizeobj = $db->fetchObjectArray("select s.id,s.name as size_name from it_sizes s,it_ck_sizes si where si.ctg_id=$ctgid and si.size_id=s.id order by sequence");
                         $no_sizes = count($sizeobj);
                        
-                            $cat = $db->fetchObject("select * from it_categories where id=$ctgid");
+//                            $cat = $db->fetchObject("select * from it_categories where id=$ctgid");
+                            $cat = $db->fetchObject("select name from it_categories where id=$ctgid");
                             if(isset($this->ptype) && trim($this->ptype) != "" && $this->ptype != 0 ){
                                 $prodObj = $db->fetchObjectArray("select name from it_prod_types where id in ($this->ptype)");                            
                                 $prod_name = "";
@@ -300,9 +315,11 @@ var mrp = '<?php echo $this->mrp; ?>';
                                                 for ($i = 0; $i < $no_sizes; $i++) {
                                                     ?><td><?php
                                                 $total = 0;
+                                                print $i;
                                                 //$saleqtyqry = "select sum( oi.quantity ) as salesqty  from it_order_items oi , it_orders o , it_items i ,it_categories c , it_prod_types p , it_ck_designs d where oi.order_id = o.id and oi.item_id = i.id and i.ctg_id = c.id and i.prod_type_id = p.id and i.design_id = d.id and d.active = 1 $storeClause $mrpqry $ptypeqry $dQuery and i.style_id = ".$styleobj[$k]->id." and i.size_id = ".$sizeobj[$i]->id." and i.ctg_id = $ctgid ";
                                                 $saleqtyqry = "select  (case when (o.tickettype = 0 ) then sum(oi.quantity) else 0 end) as salesqty  from it_order_items oi , it_orders o , it_items i ,it_categories c , it_prod_types p , it_ck_designs d where oi.order_id = o.id and oi.item_id = i.id and i.ctg_id = c.id and i.prod_type_id = p.id and i.design_id = d.id $storeClause $mrpqry $ptypeqry $dQuery and i.style_id = ".$styleobj[$k]->id." and i.size_id = ".$sizeobj[$i]->id." and i.ctg_id = $ctgid "; //and d.active = 1 
                                                 // echo "<br/>SALES QRY: ".$saleqtyqry."<br/>";
+//                                                print_r($saleqtyqry);exit();
                                                 $saleQty = $db->fetchObject($saleqtyqry);
                                                 if($saleQty){$total=$saleQty->salesqty;}
                                                 print " [ ".$total." ] ";
