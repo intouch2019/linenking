@@ -1,5 +1,4 @@
 <?php
-
 require_once("../../it_config.php");
 require_once("session_check.php");
 require_once "lib/db/DBConn.php";
@@ -14,7 +13,7 @@ $user = getCurrUser();
 $db = new DBConn();
 $userpage = new clsUsers();
 $pagecode = $db->safe($_SESSION['pagecode']);
-$page = $db->fetchObject("select * from it_pages where pagecode = $pagecode");
+$page = $db->fetchObject("select pagecode from it_pages where pagecode = $pagecode");
 if ($page) {
     $allowed = $userpage->isAuthorized($user->id, $page->pagecode);
     if (!$allowed) {
@@ -29,9 +28,9 @@ if ($page) {
 $errors = array();
 $success = array();
 $_SESSION['form_post'] = $_POST;
-if (!$pack_dt || trim($pack_dt) == "") {
-    $pack_dt = strtoupper(date("M Y"));
-}
+//if (!$pack_dt || trim($pack_dt) == "") {
+//    $pack_dt = strtoupper(date("M Y"));
+//}
 
 if (isset($material)) {
     $material = trim($material);
@@ -94,13 +93,14 @@ try {
 <tr><td style=\"font-weight:bold;\" colspan=\"4\">Product: $item->category</td></tr>
 <tr><td colspan=\"4\">Design no: $item->design_no&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Qty in Nos: $item->num_units</td></tr>
 <tr><td style=\"font-weight:bold;\" colspan=\"4\">Material: $print_material</td></tr>
-<tr style=\"font-weight:bold;\"><td colspan=\"4\" align=\"center\" style=\"font-size:11px;\">$item->size CM - $item->style</td></tr>
+<tr style=\"font-weight:bold;\"><td colspan=\"4\" align=\"center\" style=\"font-size:11px;\">$item->size cm - $item->style</td></tr>
 <tr><td align=\"center\" colspan=\"4\"><barcode type=\"EAN13\" value=\"$item->barcode\" label=\"label\" style=\"width:36mm; height:6mm; font-size: 2mm\"></barcode></td></tr>
 <tr style=\"font-weight:bold;\"><td colspan=\"2\" style=\"font-size:$fontsz;\">Rs.$item->MRP.00$mtr</td><td colspan=\"2\" style=\"font-size:5px;\">Maximum Retail Price<br />(Incl. All Taxes)</td></tr>
-<tr><td colspan=\"4\" style=\"font-size:6px;\">Pack Dt :$pack_dt</td></tr>
+
 </table>
 </div>
 </page>";
+//<tr><td colspan=\"4\" style=\"font-size:6px;\">Pack Dt :$pack_dt</td></tr>
             }
         }
         $html2pdf->writeHTML($html);
@@ -146,10 +146,10 @@ try {
                 <tr><td style=\"font-weight:bold;font-size:7px;\" colspan=\"3\">Product: $item->category</td></tr>
                 <tr><td colspan=\"4\" style=\"font-size:8px;\">Design no: $item->design_no&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Qty in Nos: $item->num_units</td></tr>
                 <tr><td style=\"font-weight:bold;font-size:7px;\" colspan=\"4\">$print_material</td></tr>
-                <tr style=\"font-weight:bold;\"><td colspan=\"4\" align=\"center\" style=\"font-size:11px;\">$item->size CM - $item->style</td></tr>
+                <tr style=\"font-weight:bold;\"><td colspan=\"4\" align=\"center\" style=\"font-size:11px;\">$item->size cm - $item->style</td></tr>
                 <tr><td align=\"center\" colspan=\"4\"><barcode type=\"EAN13\" value=\"$item->barcode\" label=\"label\" style=\"width:36mm; height:6mm; font-size: 2mm;\"></barcode></td></tr>
                 <tr style=\"font-weight:bold;\"><td colspan=\"2\" style=\"font-size:$fontsz;\">Rs.$item->MRP.00$mtr</td><td colspan=\"2\" style=\"font-size:6px;\">Maximum Retail Price<br />(Incl. All Taxes)</td></tr>
-                <tr><td colspan=\"4\" style=\"font-size:7px;\">Pack Dt :$pack_dt</td></tr>
+                
                 </table>
             </div>
         </td>
@@ -163,16 +163,17 @@ try {
                 <tr><td style=\"font-weight:bold;font-size:7px;\" colspan=\"3\">Product: $item->category</td></tr>
                 <tr><td colspan=\"4\" style=\"font-size:8px;\">Design no: $item->design_no&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Qty in Nos: $item->num_units</td></tr>
                 <tr><td style=\"font-weight:bold;font-size:7px;\" colspan=\"4\">$print_material</td></tr>
-                <tr><td colspan=\"4\" align=\"center\" style=\"font-size:10px;padding-top:-4px;font-weight:bold;\">$item->size CM - $item->style</td></tr>
+                <tr><td colspan=\"4\" align=\"center\" style=\"font-size:10px;padding-top:-4px;font-weight:bold;\">$item->size cm - $item->style</td></tr>
                 <tr><td align=\"center\" colspan=\"4\"><barcode type=\"EAN13\" value=\"$item->barcode\" label=\"label\" style=\"width:36mm; height:6mm; font-size: 2mm;\"></barcode></td></tr>
                 <tr style=\"font-weight:bold;\"><td colspan=\"2\" style=\"font-size:$fontsz;\">Rs.$item->MRP.00$mtr</td><td colspan=\"2\" style=\"font-size:6px;\">Maximum Retail Price<br />(Incl. All Taxes)</td></tr>
-                <tr><td colspan=\"4\" style=\"font-size:7px;\">Pack Dt :$pack_dt</td></tr>
+                
                 </table>
            </div>
         </td></tr>
     </table>
     </div>
 </page>";
+//<tr><td colspan=\"4\" style=\"font-size:7px;\">Pack Dt :$pack_dt</td></tr>
             }
         }
         $total=$total*2;
