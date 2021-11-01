@@ -438,7 +438,7 @@ foreach ($objs as $obj) {
             foreach ($design as $key => $value) {
                         $arr= explode(":",$key);
 //                        print_r($arr);                       
-                $query = "select i.id,i.ctg_id,c.name as category,i.design_no,i.mrp,d.image from it_items i,it_categories c,it_ck_designs d where i.ctg_id=c.id and i.is_design_mrp_active=1 and i.id in($item_id1) and d.id=i.design_id and i.design_no='$arr[0]' and i.mrp=$arr[1]  $categoryClause  group by i.mrp";
+                $query = "select i.id,i.ctg_id,c.name as category,i.design_no,i.mrp,d.image from it_items i,it_categories c,it_ck_designs d where i.ctg_id=c.id and i.is_design_mrp_active=1 and c. setaccesories=0 and c. setotheractive=0 and i.id in($item_id1) and d.id=i.design_id and i.design_no='$arr[0]' and i.mrp=$arr[1]  $categoryClause  group by i.mrp";
 //                 echo $query;
                 $arobj = $db->fetchObjectArray($query);
               //  $row_no = 0;
