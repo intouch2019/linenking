@@ -197,9 +197,9 @@ function sendEmail($fpath,$rowCount,$txndt,$Totalamt){
         
         array_push($toArray,"cmsdirect.debit@axisbank.com");
 //        array_push($ccArray,"shubhra1.singh@axisbank.com");
-     array_push($ccArray,"Sachit.Pandey@axisbank.com");
+        array_push($ccArray,"Sachit.Pandey@axisbank.com");
         array_push($ccArray,"sampat.kumar@kinglifestyle.com");
-	array_push($ccArray,"ganesh.kavle@kinglifestyle.com");
+	array_push($ccArray,"suraj.sakunde@kinglifestyle.com");
         
         if(!empty($toArray)){
 //            print "<br>";
