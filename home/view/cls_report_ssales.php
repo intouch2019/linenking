@@ -103,6 +103,7 @@ class cls_report_ssales extends cls_renderer{
 
 <link rel="stylesheet" href="js/chosen/chosen.css" />
 <script type="text/javascript" src="js/ajax.js"></script>
+<script type="text/javascript" src="js/custom.js"></script>
 <script type="text/javascript" src="js/ajax-dynamic-list.js">
 	/************************************************************************************************************
 	(C) www.dhtmlgoodies.com, April 2006
@@ -707,7 +708,13 @@ var storeloggedin = '<?php echo $this->storeloggedin; ?>';
     
     var fieldlist = new Array();
     
-    function reloadreport() {        
+    function reloadreport() {  
+    
+     var ret = dateRange();
+        if(ret==1)
+          return;
+      
+          
        if(storeloggedin == '-1'){
            storeid = $('#store').val();
           //alert("SID:"+storeid);
