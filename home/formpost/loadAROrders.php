@@ -14,7 +14,7 @@ global $storeid;
 
 $userpage = new clsUsers();
 $pagecode = $db->safe($_SESSION['pagecode']);
-$page = $db->fetchObject("select * from it_pages where pagecode = $pagecode");
+$page = $db->fetchObject("select pagecode from it_pages where pagecode = $pagecode");
 if($page){
     $allowed = $userpage->isAuthorized($currStore->id, $page->pagecode);
     if (!$allowed) { header("Location: ".DEF_SITEURL."unauthorized"); return; }
@@ -33,7 +33,7 @@ try {
     $items = array();
     $itmcnt = 0;
     //step 1 : check if for that store sbstock feature is enabled
-    $query = "select * from it_codes where id = $storeid";
+    $query = "select sbstock_active from it_codes where id = $storeid";
 //    error_log("\n LAR STORE CHK: $query ",3,"tmp.txt");
     $storeobj = $db->fetchObject($query);
     if(isset($storeobj)){
@@ -55,7 +55,7 @@ try {
             
         }else if($storeobj->sbstock_active == 1){ // means enabled standing/base stock feature
             //step 1 : check if base stock ratio is set against the store
-            $query = "select * from it_store_ratios where store_id = $storeid ";
+            $query = "select id from it_store_ratios where store_id = $storeid ";
             //error_log("\nLAR : ENQUERY: $query ",3,"tmp.txt");
             $sobj = $db->fetchObject($query);
             if(! isset($sobj)){
@@ -73,7 +73,8 @@ try {
                     //$qty = $obj->qty;
                     // qty shld be difference between curr stock and base stock ratio against that item
                     $barcode_db = $db->safe(trim($obj->barcode));
-                    $qry = "select c.*,i.* from it_current_stock c , it_items i where c.barcode = i.barcode and c.store_id = $storeid and c.barcode = $barcode_db ";
+//                    $qry = "select c.*,i.* from it_current_stock c , it_items i where c.barcode = i.barcode and c.store_id = $storeid and c.barcode = $barcode_db ";
+                    $qry = "select c.ctg_id,c.design_id,c.style_id,c.size_id from it_current_stock c , it_items i where c.barcode = i.barcode and c.store_id = $storeid and c.barcode = $barcode_db ";
 //                    error_log("\n LAR CURR ITMQUERY: $qry ",3,"tmp.txt");
                     $bobj = $db->fetchObject($qry);
 
@@ -94,7 +95,7 @@ try {
                          $intransit_stock_value=0;
                          //fetch base stock ratio against that item
                          //$bsquery = "select * from it_store_ratios where store_id = $storeid and ctg_id = $bobj->ctg_id and design_id = $bobj->design_id and style_id = $bobj->style_id and size_id = $bobj->size_id and mrp = $bobj->MRP and ratio_type = ".RatioType::Base;
-                         $bsquery = "select * from it_store_ratios where store_id = $storeid and ctg_id = $bobj->ctg_id and design_id = $bobj->design_id and style_id = $bobj->style_id and size_id = $bobj->size_id  and ratio_type = ".RatioType::Base;
+                         $bsquery = "select ratio from it_store_ratios where store_id = $storeid and ctg_id = $bobj->ctg_id and design_id = $bobj->design_id and style_id = $bobj->style_id and size_id = $bobj->size_id  and ratio_type = ".RatioType::Base;
 //                         error_log("\nBASIC TSK ITMQUERY: $bsquery ",3,"tmp.txt");
                        //  $tquery2 = "select sum(oi.quantity) as intransit_stock_value from it_invoices o , it_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6 ) and o.store_id = $storeid and o.is_procsdForRetail = 0 and oi.item_code = i.barcode and oi.item_code in (select barcode from it_items where ctg_id = $bobj->ctg_id and design_id = $bobj->design_id and style_id = $bobj->style_id and size_id = $bobj->size_id ) "; //= i.barcode and i.barcode = $barcode_db ";
                           $tquery2 = "select sum(oi.quantity) as intransit_stock_value from it_sp_invoices o , it_sp_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6 ) and o.store_id = $storeid and o.is_procsdForRetail = 0 and oi.barcode = i.barcode and i.ctg_id = $bobj->ctg_id and i.design_id = $bobj->design_id and i.style_id = $bobj->style_id and i.size_id = $bobj->size_id  "; //= i.barcode and i.barcode = $barcode_db ";
@@ -109,7 +110,7 @@ try {
                           }
                           $bsobj = $db->fetchObject($bsquery);
                           if(!isset($bsobj)){
-                                $bsquery = "select * from it_store_ratios where store_id = $storeid and ctg_id = $bobj->ctg_id "
+                                $bsquery = "select ratio from it_store_ratios where store_id = $storeid and ctg_id = $bobj->ctg_id "
                                         . "and design_id = -1 and style_id = $bobj->style_id and size_id = $bobj->size_id  and ratio_type = ".RatioType::Base;                              
                                 //echo $bsquery."<br>";        
                                 $bsobj = $db->fetchObject($bsquery);                                

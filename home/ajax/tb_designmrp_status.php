@@ -98,7 +98,7 @@ $state = isset($_GET['is_design_mrp_active']) ? $_GET['is_design_mrp_active'] : 
  * Get data to display
  */
 $sQuery = "
-            select d.*,ctg.name as ctg_name,i.MRP,i.is_design_mrp_active 
+            select SQL_CALC_FOUND_ROWS d.design_no,d.lineno,d.rackno ,ctg.name as ctg_name,i.MRP,i.is_design_mrp_active 
             from it_ck_designs d,it_categories ctg , it_items i               
             $sWhere   
                  group by d.design_no,d.ctg_id,i.MRP

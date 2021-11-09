@@ -4,7 +4,7 @@ require_once "lib/db/DBConn.php";
 require_once("session_check.php");
 require_once "lib/core/Constants.php";
 require_once 'lib/users/clsUsers.php';
-require_once "lib/logger/clsLogger.php";
+//require_once "lib/logger/clsLogger.php";
 
 extract($_POST);
 try {       
@@ -12,9 +12,9 @@ try {
     $db = new DBConn();
     $errors = array();
     $userpage = new clsUsers();
-    $clsLogger = new clsLogger();
+//    $clsLogger = new clsLogger();
     $pagecode = $db->safe($_SESSION['pagecode']);
-    $page = $db->fetchObject("select * from it_pages where pagecode = $pagecode");
+    $page = $db->fetchObject("select pagecode from it_pages where pagecode = $pagecode");
     if($page){
         $allowed = $userpage->isAuthorized($store->id, $page->pagecode);
         if (!$allowed) { header("Location: ".DEF_SITEURL."unauthorized"); return; }
@@ -23,7 +23,7 @@ try {
     $items = array();
     $itmcnt = 0;
        //step 1 : check if sbstock feature is enabled for the store
-        $query = "select * from it_codes where id = $sid ";
+        $query = "select sbstock_active from it_codes where id = $sid ";
         $storeobj = $db->fetchObject($query);
         
         if($storeobj->sbstock_active == 0){ //means old feature
@@ -42,7 +42,7 @@ try {
                    } 
         }else if($storeobj->sbstock_active == 1){ //means enabled standing/base stock feature
                 //step 1 : check if base stock ratio is set against the store
-                $query = "select * from it_store_ratios where store_id = $sid ";
+                $query = "select id from it_store_ratios where store_id = $sid ";
                // print "<br>".$query;
 //                error_log("\nIN SBSEC ENQUERY: $query ",3,"tmp.txt");
                 $sobj = $db->fetchObject($query);
@@ -66,7 +66,8 @@ try {
                            //  $qty = $obj->qty;
                              // qty shld be difference between curr stock and base stock ratio against that item
                              $barcode_db = $db->safe(trim($obj->barcode));
-                             $qry = "select c.*,i.* from it_current_stock c , it_items i where c.barcode = i.barcode and c.store_id = $sid and c.barcode = $barcode_db ";
+//                             $qry = "select c.*,i.* from it_current_stock c , it_items i where c.barcode = i.barcode and c.store_id = $sid and c.barcode = $barcode_db ";
+                             $qry = "select c.ctg_id,c.design_id,c.style_id,c.size_id from it_current_stock c , it_items i where c.barcode = i.barcode and c.store_id = $sid and c.barcode = $barcode_db ";
 //                             print "<br>".$qry;
 //                             error_log("\n CURR ITMQUERY: $qry ",3,"tmp.txt");
                              $bobj = $db->fetchObject($qry);
@@ -86,7 +87,7 @@ try {
                                  $intransit_stock_value=0;
                                  //fetch base stock ratio against that item
                                 // $bsquery = "select * from it_store_ratios where store_id = $sid and ctg_id = $bobj->ctg_id and design_id = $bobj->design_id and style_id = $bobj->style_id and size_id = $bobj->size_id and mrp = $bobj->MRP and ratio_type = ".RatioType::Base;
-                                 $bsquery = "select * from it_store_ratios where store_id = $sid and ctg_id = $bobj->ctg_id and "
+                                 $bsquery = "select ratio from it_store_ratios where store_id = $sid and ctg_id = $bobj->ctg_id and "
                                          . "design_id = $bobj->design_id and style_id = $bobj->style_id and size_id = $bobj->size_id  and ratio_type = ".RatioType::Base; 
                                  //print "<br>".$bsquery;
 //                                 error_log("\nBASIC TSK ITMQUERY: $bsquery ",3,"tmp.txt");
@@ -105,7 +106,7 @@ try {
                                  }
                                  $bsobj = $db->fetchObject($bsquery);
                                     if(!isset($bsobj)){
-                                          $bsquery = "select * from it_store_ratios where store_id = $sid and ctg_id = $bobj->ctg_id "
+                                          $bsquery = "select ratio from it_store_ratios where store_id = $sid and ctg_id = $bobj->ctg_id "
                                                   . "and design_id = -1 and style_id = $bobj->style_id and size_id = $bobj->size_id  and ratio_type = ".RatioType::Base;                              
                                           //print "<br>".$bsquery;        
                                           $bsobj = $db->fetchObject($bsquery);                                
@@ -171,7 +172,7 @@ try {
                 $avail_qty += $dbobj->curr_qty;
             }
 
-            $lastrecord = $db->fetchObject("select * from it_orders where store_id = $sid order by id desc limit 1");
+            $lastrecord = $db->fetchObject("select createtime from it_orders where store_id = $sid order by id desc limit 1");
 
              if($ordered_qty == 0){
 //                 error_log("\n Item count = ".$itemcnt." MISSED ITM = ".$missedSBItem,3,"tmp.txt"); 
