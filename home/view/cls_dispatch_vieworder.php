@@ -162,7 +162,9 @@ Your session has expired. Click <a href="">here</a> to login.
                     <button onclick="javascript:printOrder(<?php echo $this->pickgroup_id; ?>);">Print Order</button>
                     <button onclick='window.location="formpost/orderRevert.php?pid=<?php echo $this->pickgroup_id; ?>"'>Change back to Active</button>
                     <button onclick='window.location="dispatch/shipped/pid=<?php echo $this->pickgroup_id; ?>"'>Picking Complete</button>
-<?php } ?>
+<?php } elseif ($this->currStore->usertype == UserType::Admin) { ?>
+                    <button onclick='window.location = "formpost/orderRevert.php?pid=<?php echo $this->pickgroup_id; ?>"'>Change back to Active</button>
+                                          <?php  }?>
                 </div>
             </div>
         </div>
