@@ -28,9 +28,9 @@ function dateRange()
     //alert(getDaysDifference);
     var daysCount = getDaysDifference(new Date(date1),new Date(date2));
 //    alert(daysCount+ 'days');
-    if (daysCount>92) {
+    if (daysCount>366) {
         $("#dateselect").val("");
-        alert("you need to select date within three months");
+        alert("you need to select date within a year");
         return 1;
     }
 }
