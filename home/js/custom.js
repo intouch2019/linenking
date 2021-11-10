@@ -22,7 +22,7 @@ function dateRange()
         var d2=array[1].split('-');
     }
     var date1=(new Date(d1[2]+'-'+d1[1]+'-'+d1[0]));
-    //alert(date1);
+    //alert(date1);;
     var date2=(new Date(d2[2]+'-'+d2[1]+'-'+d2[0]));
     var getDaysDifference = (date1,date2) =>(date2-date1)/(1000*3600*24);
     //alert(getDaysDifference);
