@@ -13,20 +13,26 @@ $user = getCurrUser();
 $db = new DBConn();
 $designids = $_POST['designids'];
 $category_id = $_POST['category'];
-$store_id = $_POST['sid'];
+$store_ids = $_POST['sid'];
 $ratio_type = $_POST['rtype'];
 $userid = $_POST['userid'];
 //$mrp = $_POST['mrp'];
 
-print $designids;
+//print $designids;
 
 try {
-    $sid = $db->fetchObject("select * from it_codes where id=$store_id");
-    if (isset($sid)) {
-        $Clause = $sid->store_name;
-    } else {
-        $Clause = "";
-    }
+    $Clause = "";
+    $sids = $db->fetchObjectArray("select store_name from it_codes where id in ($store_ids)");
+    if (isset($sids)) {
+        foreach ($sids as $sid) {
+            $Clause .= $sid->store_name.",";
+        }
+        $Clause = rtrim($Clause, ',');
+    }    
+    
+    $sid_array = explode(',', $store_ids);
+    
+    foreach ($sid_array as $store_id) {
 
     //print_r($_POST);
     foreach ($_POST as $key => $value) {
@@ -44,7 +50,7 @@ try {
                 //step 1 : check if all designs is selected, if yes then insert record against all designs
                 if(trim($design_id)== "-1"){ // means all designs
                     /*NEW CHANGES FOR ALL DESIGN NUMBER*/
-                        $query = "select * from it_store_ratios where store_id=$store_id and ctg_id=$category_id and "
+                        $query = "select id from it_store_ratios where store_id=$store_id and ctg_id=$category_id and "
                                 . "design_id = -1 and ratio_type=$ratio_type and style_id=$arr[0] "
                                 . "and size_id=$arr[1]";
                         $obj = $db->fetchObject($query);
@@ -107,10 +113,10 @@ try {
                     //print_r($design_arr);
                     for($i=0; $i<sizeof($design_arr); $i++){
                         //echo $design_arr[$i];
-                        $query="select * from it_store_ratios where store_id = $store_id and ctg_id = $category_id and "
+                        $query="select id from it_store_ratios where store_id = $store_id and ctg_id = $category_id and "
                                 . "ratio_type = $ratio_type and style_id = $arr[0] and size_id = $arr[1] and "
                                 . "design_id = $design_arr[$i]";
-                        print $query."<br/>";
+//                        print $query."<br/>";
                         $obj = $db->fetchObject($query);
                         if(isset($obj) && !empty($obj)){
                             $query = "update it_store_ratios set ratio=$value,updated_by=$userid,updatetime=now() where id = $obj->id";
@@ -123,7 +129,7 @@ try {
                         }
                         
                         if($ratio_type == RatioType::Standing ){ // then same update/insert goes against standing ratio type i.e. for exceptional design
-                           $query="select * from it_store_ratios where store_id = $store_id and ctg_id = $category_id and "
+                           $query="select id from it_store_ratios where store_id = $store_id and ctg_id = $category_id and "
                                 . "ratio_type = ".RatioType::Standing." and style_id = $arr[0] and size_id = $arr[1] and "
                                 . "design_id = $design_arr[$i]";
                             // print $query."<br/>";
@@ -160,7 +166,7 @@ try {
           
             
         }
-    }
+    }}
 } catch (Exception $xcp) {
 
     $errors['status'] = "There was a problem processing your request. Please try again later";

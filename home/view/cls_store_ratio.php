@@ -389,13 +389,15 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
                         <td colspan="5">Select store:</td>
                         <td colspan="5">
                         <?php if ($this->currUser->usertype != UserType::Dealer) { ?>
-                            <select id="sel_store" name="sel_store" data-placeholder="Search Store" class="chzn-select" single style="width:100%" onchange="searchstore(this.value);">
+                            <select id="sel_store" name="sel_store" data-placeholder="Search Store" class="chzn-select" multiple style="width:100%" onchange="searchstore(this.value);">
                                 <option value="0">Select Store</option> 
                                 <?php
                                 $objs = $db->fetchObjectArray("select * from it_codes where usertype=" . UserType::Dealer . " and inactive=0  and is_closed=0 order by store_name");
 
+                                $sids = split(',', $this->sid);
                                 foreach ($objs as $obj) {
-                                    if ($this->sid == $obj->id) {
+//                                    if ($this->sid == $obj->id) {
+                                    if (in_array($obj->id, $sids)){
                                         $sel = 'selected';
                                     } else {
                                         $sel = '';
@@ -600,7 +602,7 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
                 <div class="clear"></div>
                
         <!------------------------------All without exception start here------------------------------->
-                
+            <?php if(count($sids) == 1){?>    
                  <div class="clear"></div>
              <div id="expand_collapse">
                     <div class="box">
@@ -802,7 +804,7 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
                         </div> <!-- end class="collapse"--> 
                     </div><!--  end class="block" -->
                        
-                     <?php } } } ?>
+            <?php } } } } ?>
                 </div>
                 <div class="clear"></div>
              
@@ -918,7 +920,7 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
                 <div class="clear"></div>
                
         <!------------------------------All without exception start here------------------------------->
-                
+            <?php if(count($sids) == 1){?>    
                  <div class="clear"></div>
              <div id="expand_collapse">
                     <div class="box">
@@ -1104,7 +1106,7 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
                 <div class="clear"></div>
              
                 <?php
-            }
+            }}
              ?>    
         </div> <!--end div class 10-->
         <script src="js/chosen/chosen.jquery.js" type="text/javascript"></script>
