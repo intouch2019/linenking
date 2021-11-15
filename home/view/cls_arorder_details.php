@@ -176,7 +176,7 @@ class cls_arorder_details extends cls_renderer {
           <b>Select Store*:</b><br/>
           <span style="font-weight:bold;">
               
-              <select name="store" id="store" data-placeholder="Choose Store" class="chzn-select" style="width:100%;" onchange="storelablehide()">
+              <select name="store" id="store" data-placeholder="Choose Store" class="chzn-select"multiple style="width:100%;" style="width:100%;" onchange="storelablehide()">
                <option value="0">Select store</option>  
               <?php if( $this->storeid == -1 ){
                                    $defaultSel = "selected";
@@ -186,11 +186,14 @@ class cls_arorder_details extends cls_renderer {
 $objs = $db->fetchObjectArray("select * from it_codes where usertype=4  order by store_name");
  
 
+$sids = explode(',', $this->storeid); 
+
 foreach ($objs as $obj) {        
 	$selected="";
 //	if (isset($this->storeidreport) && $obj->id==$this->storeidreport) { $selected = "selected"; }
         if ($this->storeid != -1){ 
-                if($obj->id== $this->storeid) 
+               // if($obj->id== $this->storeid) 
+                  if (in_array($obj->id, $sids))
                 { 
                     $selected = "selected";
                 }
@@ -221,7 +224,7 @@ foreach ($objs as $obj) {
             
           <b>Select Categories*:</b><br/>
           <span style="font-weight:bold;">
-              <select name="category" id="category" data-placeholder="Choose category" class="chzn-select" style="width:50%;" onchange="catlablehide()">
+              <select name="category" id="category" data-placeholder="Choose category" class="chzn-select" multiple style="width:100%;" style="width:50%;" onchange="catlablehide()">
    <option value="0">Select Category</option>                 
     <?php if( $this->categoryid == -1 ){
                                    $defaultSel = "selected";
@@ -230,16 +233,19 @@ foreach ($objs as $obj) {
 <?php
 $objs = $db->fetchObjectArray("select * from it_categories where  active=1  order by name");
  
+ $cids = explode(',', $this->categoryid);
 //echo 'cat id'.$this->categoryid;
 foreach ($objs as $obj) {        
 	$selected="";
 //	if (isset($this->storeidreport) && $obj->id==$this->storeidreport) { $selected = "selected"; }
         if ($this->categoryid != -1){ 
-                if($obj->id== $this->categoryid) 
+              //  if($obj->id== $this->categoryid) 
+                   if (in_array($obj->id, $cids)){
                 { 
                     $selected = "selected";
                 }
             
+        }
         }
 ?>
           <option value="<?php echo $obj->id; ?>" <?php echo $selected; ?>><?php echo $obj->name; ?></option> 
@@ -321,7 +327,7 @@ foreach ($objs as $obj) {
                  if($this->categoryid==-1 ){
                     $categoryname="AllCategories";
                  }else{
-                     $catnamequery="select name as category_name from it_categories where id=$this->categoryid";
+                     $catnamequery="select name as category_name from it_categories where id in ($this->categoryid)";
                         $category=$db->fetchObject($catnamequery);
                      $categoryname="$category->category_name";
                  }
