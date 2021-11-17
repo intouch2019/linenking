@@ -9,9 +9,11 @@ require_once 'Classes/PHPExcel/Writer/Excel2007.php';
 
 $db = new DBConn();
 
+extract($_GET);
+//$state = isset($_GET['is_design_mrp_active']) ? $_GET['is_design_mrp_active'] : 0;
 
-
-$sWhere = " where d.ctg_id=ctg.id and d.design_no = i.design_no and d.ctg_id = i.ctg_id and d.id = i.design_id ";
+ $Where = " where d.ctg_id=ctg.id and d.design_no = i.design_no and d.ctg_id = i.ctg_id and d.id = i.design_id and  i.is_design_mrp_active = ". $status." ";
+ 
 
 $sheetIndex=0;
 // Create new PHPExcel object.
@@ -83,7 +85,7 @@ $rowCount=2;
 $query = "
             select d.design_no,d.lineno,d.rackno ,ctg.name as ctg_name,i.MRP,i.is_design_mrp_active 
             from it_ck_designs d,it_categories ctg , it_items i                  
-            $sWhere   
+            $Where   
                  group by d.design_no,d.ctg_id,i.MRP order by d.design_no";
 //echo $query;
 $objs = $db->fetchObjectArray($query);

@@ -73,9 +73,14 @@ function showInvoiceDetails( invid){
 }
 
 function genExcelDesignRep(){
-     window.location.href="formpost/genActiveInactiveDesignExcel.php";
-} 
-
+    var status= $("#status").val();
+    if(status == "report/designs/active=0"){
+        status = 0;
+    }else{
+        status = 1;
+    }
+     window.location.href="formpost/genActiveInactiveDesignExcel.php?status="+status;
+}   
 </script>
 
 <?php    }
@@ -88,7 +93,7 @@ function genExcelDesignRep(){
         $imgex = "";
         ?>
 <div class="grid_10">
-<select onchange="document.location.href=this.options[this.selectedIndex].value;">
+<select id="status" name="status" onchange="document.location.href=this.options[this.selectedIndex].value;">
 <option value="report/designs/active=0" <?php if ($this->active == 0) echo 'selected'; ?> >Show Inactive</option>
 <option value="report/designs/active=1" <?php if ($this->active != 0) echo 'selected'; ?> >Show Active</option>
 </select> 
