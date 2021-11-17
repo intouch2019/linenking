@@ -71,6 +71,11 @@ $(function() {
 function showInvoiceDetails( invid){
     window.location.href = "lk/invoice/id="+invid;
 }
+
+function genExcelDesignRep(){
+     window.location.href="formpost/genActiveInactiveDesignExcel.php";
+} 
+
 </script>
 
 <?php    }
@@ -87,6 +92,9 @@ function showInvoiceDetails( invid){
 <option value="report/designs/active=0" <?php if ($this->active == 0) echo 'selected'; ?> >Show Inactive</option>
 <option value="report/designs/active=1" <?php if ($this->active != 0) echo 'selected'; ?> >Show Active</option>
 </select> 
+
+<input type="button" name="genexcel" value="Export to Excel" onclick="javascript:genExcelDesignRep();"> 
+
    <br> <br>
 <div class="grid_12" id="tablebox" class="ui-widget-content ui-corner-bottom" style="overflow:auto;">
 	
