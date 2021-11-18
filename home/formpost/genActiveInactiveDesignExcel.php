@@ -7,6 +7,8 @@ require_once "Classes/PHPExcel.php";
 require_once 'Classes/PHPExcel/Writer/Excel2007.php';
 
 
+ini_set('memory_limit', '512M');
+
 $db = new DBConn();
 
 extract($_GET);
