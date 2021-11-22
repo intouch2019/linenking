@@ -347,7 +347,7 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
          $designarr = explode(",",$this->des_code);
         }
             
-        
+        $sids = explode(',', $this->sid);
         
         
         $allDesigns = array();
@@ -394,7 +394,7 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
                                 <?php
                                 $objs = $db->fetchObjectArray("select * from it_codes where usertype=" . UserType::Dealer . " and inactive=0  and is_closed=0 order by store_name");
 
-                                $sids = split(',', $this->sid);
+//                                $sids = split(',', $this->sid);
                                 foreach ($objs as $obj) {
 //                                    if ($this->sid == $obj->id) {
                                     if (in_array($obj->id, $sids)){
