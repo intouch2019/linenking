@@ -95,6 +95,7 @@ class cls_dispatch_orders_active extends cls_renderer {
                             <th>Sr. No</th>
                             <th>Store</th>
                             <th>Order No</th>
+                            <th><?php if ($this->store_id) { ?><input type="checkbox" name="all" id="checkall">Check All</button><?php } ?> </th>
                             <th>Status</th>
                             <th>Order Date</th>
                             <th>Total Items</th>
@@ -104,15 +105,18 @@ class cls_dispatch_orders_active extends cls_renderer {
                         </tr>
                         <?php
 			$count = 0; $tot_qty=0; $tot_amount=0;
+			 $ids = "";
 			foreach ($orders as $order) {
 			$count++;
 			$tot_qty += $order->order_qty;
 			$tot_amount += $order->order_amount;
+			  $ids .= $order->id.",";
 			?>
                         <tr>
                             <td><?php echo $count; ?><span style="display:none;"><?php echo $order->id; ?></span></td>
                             <td><?php echo $order->store_name; ?></td>
                             <td><?php echo $order->order_no; ?></td>
+                            <td><?php if ($this->store_id) { ?><input type="checkbox" id="ch_<?php echo $order->id; ?>"><?php } ?></td>
                             <td><?php echo OrderStatus::getName($order->status); ?></td>
                             <td><?php echo mmddyy($order->active_time); ?></td>
                             <td><?php echo $order->order_qty; ?></td>
@@ -120,10 +124,34 @@ class cls_dispatch_orders_active extends cls_renderer {
                             <td><?php echo $order->num_designs; ?></td>
                             <td><button onclick='window.location="formpost/orderPickup.php?oid=<?php echo $order->id; ?>"'>Pickup</button></td>
                         </tr>
+                            <script>
+
+                               $('#checkall:checkbox').change(function () {
+                               if($(this).attr("checked")) $('input:checkbox').attr('checked','checked');
+                               else $('input:checkbox').removeAttr('checked');
+                               });
+         
+   
+                        function myFunction() {
+                            var abc = $('#ids').val();
+                             abc = abc.trim(',');
+                             var arr = abc.split(',');        
+                             var send_ids = "";
+                                for(var i=0; i<arr.length-1; i++){
+                                if(document.getElementById('ch_'+arr[i]).checked){
+                                    send_ids += arr[i]+",";
+                                    window.location="formpost/orderPickup.php?oids="+send_ids;
+                                }  
+                            }
+    
+                          }
+                    </script>
+
 			<?php } ?>
                         <tr style="font-weight:bold;">
                             <td></td>
                             <td>TOTAL</td>
+                            <td><input type="hidden" id="ids" name="ids" value="<?php echo $ids; ?>"/></td>
                             <td></td>
                             <td></td>
                             <td></td>
@@ -134,7 +162,8 @@ class cls_dispatch_orders_active extends cls_renderer {
                         </tr>
                     </table>
 <?php if ($this->store_id) { ?>
-		<div><button onclick='window.location="formpost/orderPickup.php?sid=<?php echo $this->store_id; ?>"'>Pickup ALL</button></div>
+		<div><button onclick="myFunction();">Pickup selected</button></div><br>
+		
 <?php } ?>
                 </div>
             </div>

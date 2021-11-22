@@ -5,11 +5,14 @@ require_once "lib/core/Constants.php";
 require_once "session_check.php";
 require_once 'lib/users/clsUsers.php';
 
-$order_id=false; $store_id=false;
+$order_id=false; $store_id=false;$orderids=false;
 if (isset($_GET['oid']))
 	$order_id = $_GET['oid'];
 if (isset($_GET['sid']))
 	$store_id = $_GET['sid'];
+if (isset($_GET['oids']))
+	$orderids = $_GET['oids'];
+	
 
 $currStore = getCurrUser();
 $db = new DBConn();
@@ -45,6 +48,23 @@ if ($store_id) {
 	}
 	$order_ids = implode(",", $ids);
 	$order_nos = implode(", ", $nos);
+}else 
+if ($orderids) {
+    $orderids = rtrim($orderids, ',');
+    $query = "select id,order_no,store_id,active_time from it_ck_orders where id in ($orderids) and status=".OrderStatus::Active." order by active_time";
+    $objs = $db->fetchObjectArray($query);
+    if (!$objs) { print "Order [$orderids] not found. Please report this error"; exit; }
+    $ids = array();
+    $nos = array();
+    foreach ($objs as $obj) {
+             $ids[] = $obj->id;
+             $nos[] = $obj->order_no;
+             $active_time = $obj->active_time;
+             $store_id = $obj->store_id; 
+            
+       }
+       $order_ids = implode(",", $ids);
+       $order_nos = implode(", ", $nos);
 } else {
 	print "ERROR: missing parameters. Please report this."; return;
 }
