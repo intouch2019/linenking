@@ -19,20 +19,20 @@ extract($_GET);
     $invoice = $db->fetchObject("select id,invoice_no,now() as datetime from it_sp_invoices where id = $invoiceid");
     
     $phoneno = $store->phone;
-    $message = "Stock for the Invoice $invoice->invoice_no is dispatched. Driver Name $drivername, Mobile no. $drivermob & Vehicle no $vehicleno."; //%26 for &
-
+    $message = "LK - Stock for the Invoice $invoice->invoice_no is dispatched. Driver Name $drivername, Mobile no. $drivermob & Vehicle no $vehicleno."; //%26 for &
+    
     $transport_insert_id = $db->execInsert("insert into it_invoice_transport_details set store_id=$storeid, invoice_id=$invoiceid,invoice_no='$invoice->invoice_no',transporter='$transporter',vehicleno='$vehicleno',driver_name='$drivername',driver_mob='$drivermob'");
 
     $smsHelper = new SMSHelper();
     $errormsg = $smsHelper->sendSMS($phoneno,$message);
     //print_r($errormsg);
 
-//    if(strpos($errormsg, 'Message Submitted Successfully') !== false){
-//
-//        $db->execQuery("update it_invoice_transport_details set is_sms_sent=1, sent_sms_response='$errormsg', updatetime=now() where id = $transport_insert_id");
-//    }else{
-//        $sent_status = 2;
-//    }
+    if(strpos($errormsg, 'Message Submitted Successfully') !== false){
+
+        $db->execQuery("update it_invoice_transport_details set is_sms_sent=1, sent_sms_response='$errormsg', updatetime=now() where id = $transport_insert_id");
+    }else{
+        $sent_status = 2;
+    }
 
     //exit();
     ////send sms ends here///////
@@ -63,7 +63,7 @@ extract($_GET);
             $body .= "<p>Thanks and Regards <br>";
             $body .= "Dispatch Team </p>";
             
-            $body .= "<p>Fashioking brands pvt. ltd. </p><br>";
+            $body .= "<p>Fashionking Brands Pvt. Ltd. </p><br>";
             
             $body .= "<p>Note:  This is a system generated mail. Do not reply to this email. </p>";
             
