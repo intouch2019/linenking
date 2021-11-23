@@ -14,14 +14,21 @@ extract($_GET);
 
     $db = new DBconn();
     $sent_status = 1;
+    $inv_nos = "";
 
     $store = $db->fetchObject("select phone,email,email2,store_name from it_codes where id = $storeid");
-    $invoice = $db->fetchObject("select id,invoice_no,now() as datetime from it_sp_invoices where id = $invoiceid");
+    $invoice = $db->fetchObjectArray("select id,invoice_no,now() as datetime from it_sp_invoices where id in ($invoiceid)");
+    
+    foreach ($invoice as $inv) {
+        $inv_nos .= $inv->invoice_no.",";
+    }
+    $inv_nos = rtrim($inv_nos, ',');
     
     $phoneno = $store->phone;
-    $message = "LK - Stock for the Invoice $invoice->invoice_no is dispatched. Driver Name $drivername, Mobile no. $drivermob & Vehicle no $vehicleno."; //%26 for &
+    $message = "LK - Stock for the Invoice ".$invoice[0]->invoice_no." is dispatched. Driver Name $drivername, Mobile no. $drivermob & Vehicle no $vehicleno."; //%26 for &
     
-    $transport_insert_id = $db->execInsert("insert into it_invoice_transport_details set store_id=$storeid, invoice_id=$invoiceid,invoice_no='$invoice->invoice_no',transporter='$transporter',vehicleno='$vehicleno',driver_name='$drivername',driver_mob='$drivermob'");
+//    $transport_insert_id = $db->execInsert("insert into it_invoice_transport_details set store_id=$storeid, invoice_id=$invoiceid,invoice_no='$invoice->invoice_no',transporter='$transporter',vehicleno='$vehicleno',driver_name='$drivername',driver_mob='$drivermob'");
+    $transport_insert_id = $db->execInsert("insert into it_invoice_transport_details set store_id=$storeid, invoice_id='$invoiceid',invoice_no='$inv_nos',transporter='$transporter',vehicleno='$vehicleno',driver_name='$drivername',driver_mob='$drivermob'");
 
     $smsHelper = new SMSHelper();
     $errormsg = $smsHelper->sendSMS($phoneno,$message);
@@ -53,9 +60,9 @@ extract($_GET);
 //     array_push($toArray,"rghule@intouchrewards.com");
         
         if(!empty($toArray)){
-            $subject = "LK-The stock for Invoice $invoice->invoice_no has been dispatched on $invoice->datetime.";
+            $subject = "LK-The stock for Invoice $inv_nos has been dispatched on ".$invoice[0]->datetime;
             $body = "<p>Hi ". $store->store_name.",</p>";
-            $body .= "<p>The stock for Invoice $invoice->invoice_no has been dispatched on $invoice->datetime. </p>";
+            $body .= "<p>The stock for Invoice $inv_nos has been dispatched on ".$invoice[0]->datetime.". </p>";
             $body .= "<p>Vehicle No : ".$vehicleno." <br>";
             $body .= "Driver Name : ".$drivername." <br>";
             $body .= "Driver Mobile : ".$drivermob."</p>";

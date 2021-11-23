@@ -39,15 +39,14 @@ class cls_invoice_sendmailandsms extends cls_renderer {
             return;
         }
         ?>
-        <script type="text/javascript" src="<?php 'js/daterangepicker.jQuery.js'; ?>"></script>
-        <link rel="stylesheet" href="<?php 'css/ui.daterangepicker.css'; ?>" type="text/css" />
-        <link rel="stylesheet" href="<?php 'css/redmond/jquery-ui-1.7.1.custom.css'; ?>" type="text/css" title="ui-theme" />
-        <script type="text/javascript" src="<?php 'js/expand.js'; ?>"></script>
-        <link rel="stylesheet" type="text/css" href="<?php 'css/dark-glass/sidebar.css'; ?>" />
-        <script type="text/javascript" src="<?php 'js/sidebar/jquery.sidebar.js'; ?>"></script>
-        <link rel="stylesheet" href="<?php 'css/prettyPhoto.css'; ?>" type="text/css" media="screen" title="prettyPhoto main stylesheet" charset="utf-8" />
-        <script src="<?php 'js/prettyPhoto/jquery.prettyPhoto.js'; ?>" type="text/javascript" charset="utf-8"></script>
-        <link rel="stylesheet" href="<?php 'js/chosen/chosen.css'; ?>" />
+        <script type="text/javascript" src="jqueryui/js/jquery-ui-1.7.1.custom.min.js"></script>
+        <script type="text/javascript" src="js/daterangepicker.jQuery.js"></script>
+        <link rel="stylesheet" href="css/ui.daterangepicker.css" type="text/css" />
+        <link rel="stylesheet" href="css/redmond/jquery-ui-1.7.1.custom.css" type="text/css" title="ui-theme" />
+
+        <link rel="stylesheet" href="js/chosen/chosen.css" />
+        <script type="text/javascript" src="js/ajax.js"></script>   
+        <script language="JavaScript" src="js/tigra/validator.js"></script>
         <script type="text/javascript">
 
             function searchstore(store_id) {
@@ -56,7 +55,8 @@ class cls_invoice_sendmailandsms extends cls_renderer {
             }
             function searchinvoice(invoice_id) {
                 var store_id = $("#sel_store").val();
-                window.location.href = "invoice/sendmailandsms/sid=" + store_id + "/invoiceid=" + invoice_id ;
+                var invoice_ids = $("#sel_invoice").val();
+                window.location.href = "invoice/sendmailandsms/sid=" + store_id + "/invoiceid=" + invoice_ids ;
             }
             
             function submitform(){ // for users of type dealer
@@ -101,9 +101,9 @@ class cls_invoice_sendmailandsms extends cls_renderer {
                             <select id="sel_store" name="sel_store" data-placeholder="Search Store" class="chzn-select" single style="width:100%" onchange="searchstore(this.value);">
                                 <option value="0">Select Store</option> 
                                 <?php
-                                $objs = $db->fetchObjectArray("select id,store_name from it_codes where usertype=" . UserType::Dealer . " and inactive=0 and is_closed=0 order by store_name");
+                                $objs = $db->fetchObjectArray("select id,store_name from it_codes where usertype=" . UserType::Dealer . " and is_closed=0 order by store_name");
 
-                                $sids = split(',', $this->sid);
+                                $sids = explode(',', $this->sid);
                                 foreach ($objs as $obj) {
 //                                    if ($this->sid == $obj->id) {
                                     if (in_array($obj->id, $sids)){
@@ -121,12 +121,16 @@ class cls_invoice_sendmailandsms extends cls_renderer {
                     <tr>
                         <td colspan="5">Select Invoice:</td>
                         <td colspan="5">
-                            <select id="sel_invoice" name="sel_invoice" data-placeholder="Search Invoice" class="chzn-select" single style="width:100%" onchange="searchinvoice(this.value);">
+                            <select id="sel_invoice" name="sel_invoice" data-placeholder="Search Invoice" class="chzn-select" multiple style="width:100%" onchange="searchinvoice(this.value);">
                                 <option value="0">Select Invoice</option> 
                                 <?php
-                                $objs = $db->fetchObjectArray("select id,invoice_no from it_sp_invoices where is_procsdForRetail = 0 and store_id = $this->sid order by invoice_no desc");
+                                $date = date("Y-m-d");
+                                $date_arr = explode('-', $date);
+                                if($date_arr[1] < 4){$date_arr[0] = $date_arr[0]-1;}
+                                
+                                $objs = $db->fetchObjectArray("select id,invoice_no from it_sp_invoices where is_procsdForRetail = 0 and store_id = $this->sid and invoice_dt >= '$date_arr[0]-04-01 00:00:00' order by invoice_no desc");
 
-                                $invoiceids = split(',', $this->invoiceid);
+                                $invoiceids = explode(',', $this->invoiceid);
                                 foreach ($objs as $obj) {
 //                                    if ($this->sid == $obj->id) {
                                     if (in_array($obj->id, $invoiceids)){
@@ -148,10 +152,10 @@ class cls_invoice_sendmailandsms extends cls_renderer {
                             <select id="sel_transporter" name="sel_transporter" data-placeholder="Search Transporter" class="chzn-select" single style="width:100%">
                                 <option value="0">Select Transporter</option> 
                                 <?php
-                                $obj = $db->fetchObject("select id,transportdtl from it_sp_invoices where id = $this->invoiceid");
+                                $objs = $db->fetchObjectArray("select distinct transportdtl from it_sp_invoices where id in ($this->invoiceid)");
 
-//                                $invoiceids = split(',', $this->invoiceid);
-//                                foreach ($objs as $obj) {
+//                                $invoiceids = explode(',', $this->invoiceid);
+                                foreach ($objs as $obj) {
 //                                    if ($this->sid == $obj->id) {
 //                                    if (in_array($obj->id, $invoiceids)){
                                         $sel = 'selected';
@@ -160,7 +164,7 @@ class cls_invoice_sendmailandsms extends cls_renderer {
 //                                    }
                                     ?>
                                     <option value="<?php echo $obj->transportdtl; ?>" <?php echo $sel; ?>><?php echo $obj->transportdtl; ?></option> 
-                                <?php // } ?>
+                                <?php } ?>
                             </select>
                             </td>
                     </tr>
@@ -211,9 +215,8 @@ class cls_invoice_sendmailandsms extends cls_renderer {
         
         </div> <!--end div class 10-->
 <!--        <form method="post" action="formpost/addRatioDetails.php"></form>-->
-        <script src="<?php  CdnUrl('js/chosen/chosen.jquery.js'); ?>" type="text/javascript"></script>
-        <script type="text/javascript"> $(".chzn-select").chosen(); $(".chzn-select-deselect").chosen({allow_single_deselect: true});</script>
-
+        <script src="js/chosen/chosen.jquery.js" type="text/javascript"></script>
+    <script type="text/javascript"> $(".chzn-select").chosen(); $(".chzn-select-deselect").chosen({allow_single_deselect:true}); </script>
         <?php
     }
 
