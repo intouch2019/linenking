@@ -50,7 +50,7 @@ class cls_invoice_sendmailandsms extends cls_renderer {
         <script type="text/javascript">
 
             function searchstore(store_id) {
-//                var store_id = $("#sel_store").val();
+                var store_id = $("#sel_store").val();
                 window.location.href = "invoice/sendmailandsms/sid=" + store_id ;
             }
             function searchinvoice(invoice_id) {
@@ -98,7 +98,7 @@ class cls_invoice_sendmailandsms extends cls_renderer {
                         <tr>
                         <td colspan="5">Select store:</td>
                         <td colspan="5">
-                            <select id="sel_store" name="sel_store" data-placeholder="Search Store" class="chzn-select" single style="width:100%" onchange="searchstore(this.value);">
+                            <select id="sel_store" name="sel_store" data-placeholder="Search Store" class="chzn-select" multiple style="width:100%" onchange="searchstore(this.value);">
                                 <option value="0">Select Store</option> 
                                 <?php
                                 $objs = $db->fetchObjectArray("select id,store_name from it_codes where usertype=" . UserType::Dealer . " and is_closed=0 order by store_name");
@@ -126,9 +126,9 @@ class cls_invoice_sendmailandsms extends cls_renderer {
                                 <?php
                                 $date = date("Y-m-d");
                                 $date_arr = explode('-', $date);
-                                if($date_arr[1] < 4){$date_arr[0] = $date_arr[0]-1;}
+                                if($date_arr[1] < 4){$date_arr[0] = $date_arr[0]-1;} //Sets Current Financial Year
                                 
-                                $objs = $db->fetchObjectArray("select id,invoice_no from it_sp_invoices where is_procsdForRetail = 0 and store_id = $this->sid and invoice_dt >= '$date_arr[0]-04-01 00:00:00' order by invoice_no desc");
+                                $objs = $db->fetchObjectArray("select id,invoice_no from it_sp_invoices where is_procsdForRetail = 0 and store_id in ($this->sid) and invoice_dt >= '$date_arr[0]-04-01 00:00:00' order by invoice_no desc");
 
                                 $invoiceids = explode(',', $this->invoiceid);
                                 foreach ($objs as $obj) {
