@@ -22,15 +22,15 @@ class cls_ratiopercentage_uniqueno extends cls_renderer {
     }
     function extraHeaders() {
 ?>
-<script type="text/javascript" src="<?php CdnUrl('jqueryui/js/jquery-ui-1.7.1.custom.min.js'); ?>"></script>
-<script type="text/javascript" src="<?php CdnUrl('js/daterangepicker.jQuery.js'); ?>"></script>
-<link rel="stylesheet" href="<?php CdnUrl('css/ui.daterangepicker.css')?>" type="text/css" />
-<link rel="stylesheet" href="<?php CdnUrl('css/redmond/jquery-ui-1.7.1.custom.css');?>" type="text/css" title="ui-theme" />
+<script type="text/javascript" src="jqueryui/js/jquery-ui-1.7.1.custom.min.js"></script>
+<script type="text/javascript" src="js/daterangepicker.jQuery.js"></script>
+<link rel="stylesheet" href="css/ui.daterangepicker.css" type="text/css" />
+<link rel="stylesheet" href="css/redmond/jquery-ui-1.7.1.custom.css" type="text/css" title="ui-theme" />
 <script type="text/javascript"> 
 </script>
-<link rel="stylesheet" href="<?php CdnUrl('css/prettyPhoto.css');?>" type="text/css" media="screen" title="prettyPhoto main stylesheet" charset="utf-8" />
-<script src="<?php CdnUrl('js/prettyPhoto/jquery.prettyPhoto.js');?>" type="text/javascript" charset="utf-8"></script>
-<script type="text/javascript" src='js/custom.js'></script>
+<link rel="stylesheet" href="css/prettyPhoto.css" type="text/css" media="screen" title="prettyPhoto main stylesheet" charset="utf-8" />
+<script src="js/prettyPhoto/jquery.prettyPhoto.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" src="js/custom.js"></script>
 <script type="text/javascript">
     <!--//--><![CDATA[//><!--
     $(function(){
