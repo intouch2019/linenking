@@ -115,11 +115,11 @@ $query = "select bill_no,cust_phone from it_orders o where store_id = $storeid  
 }
 
 if($storeid=="All Stores"){
-  $query1 = "SELECT  bill_no,cust_phone,COUNT(*) as icount FROM it_orders o where cust_phone is not null and $dtClause GROUP BY cust_phone ORDER BY COUNT(*) DESC limit 20 ";  
+  $query1 = "SELECT  bill_no,cust_phone,COUNT(*) as icount FROM it_orders o where cust_phone is not null and $dtClause GROUP BY cust_phone HAVING COUNT(*) > 1 ORDER BY COUNT(*) DESC limit 20 ";  
 }
 else{
 
-$query1="SELECT  bill_no,cust_phone,COUNT(*) as icount FROM it_orders o where cust_phone is not null and store_id = $storeid  and $dtClause GROUP BY cust_phone ORDER BY COUNT(*) DESC limit 20 ";
+$query1="SELECT  bill_no,cust_phone,COUNT(*) as icount FROM it_orders o where cust_phone is not null and store_id = $storeid  and $dtClause GROUP BY cust_phone HAVING COUNT(*) > 1 ORDER BY COUNT(*) DESC limit 20 ";
 }
 
 $objs = $db->fetchObjectArray($query);
