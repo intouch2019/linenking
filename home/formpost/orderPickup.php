@@ -77,4 +77,4 @@ $query = "insert into it_ck_pickgroup set storeid = $store_id, dispatcher_id=".$
 $insert_id = $db->execInsert($query);
 $query = "update it_ck_orders set status=2, pickgroup=$insert_id where id in ($order_ids)";
 $db->execUpdate($query);
-header("Location: ".DEF_SITEURL."admin/orders/packing");
+header("Location: ".DEF_SITEURL."dispatch/orders/packing");
