@@ -140,10 +140,10 @@ class cls_dispatch_orders_active extends cls_renderer {
                                 for(var i=0; i<arr.length-1; i++){
                                 if(document.getElementById('ch_'+arr[i]).checked){
                                     send_ids += arr[i]+",";
-                                    window.location="formpost/orderPickup.php?oids="+send_ids;
+                                    
                                 }  
                             }
-    
+                            window.location="formpost/orderPickup.php?oids="+send_ids;
                           }
                     </script>
 
