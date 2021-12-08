@@ -243,7 +243,7 @@ try {
     $update_DA_hedaer = "update it_debit_advice set debit_amt=$total_rate_in_bill,discount_value=$total_disc_in_bill," 
                         . "tax = $total_tax_in_bill,total_taxable_value=$total_rate_in_bill,"
                         . "rate_subtotal=$total_rate_in_bill"
-                        . $final_query.",updatetime=now(),ref_no='$storeinvoice',ref_date='$ref_date',remark='$remark',frt_ins=$frt_ins where id=$debit_id";
+                        . $final_query.",updatetime=now(),ref_no='$storeinvoice',ref_date='$ref_date',remark='$remark',frt_ins='$frt_ins' where id=$debit_id";
 //    print 'header Update '.$update_DA_hedaer.'<br/>';
    $db->execUpdate($update_DA_hedaer); 
         $db->execQuery("update it_Debitnote_challans set debit_advoice_no=$debit_advoice_num,is_generated=1 where debit_advoice_no is null");
