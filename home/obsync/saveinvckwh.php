@@ -36,6 +36,7 @@ try {
          //   print_r($invRecord);
             
             $invHeader = $invRecord[0];
+            $EwayBillno = $db->safe(trim($invRecord[5]));
             $invfields = explode("<>",$invHeader);
             $stock_balance_flag =  0; // default kept as 0
             $pickingId = "";
@@ -95,20 +96,20 @@ try {
                     if(trim($remarks)!=""){ $iClause .= " , transportdtl_remark   = $remarks "; } 
                         
                     $sqlquery = "update it_invoices set invoice_text = $invoice_text , invoice_amt =  $invoice_amt , store_id=$store_id,"
-                            . "invoice_qty = $invoice_qty , total_mrp = $total_mrp , updatetime = now() $iClause where id = $exists->id ";
+                            . "invoice_qty = $invoice_qty , total_mrp = $total_mrp , EwayBillno= $EwayBillno, updatetime = now() $iClause where id = $exists->id ";
                     $db->execUpdate($sqlquery);
                     
                     if(isset($existsinsp)){
                         //update header informations and delete items and reinsert items
                             $sqlSPquery = "update it_sp_invoices set invoice_text = $invoice_text , invoice_amt =  $invoice_amt ,"
-                                    . " store_id=$store_id, invoice_qty = $invoice_qty , total_mrp = $total_mrp ,"
+                                    . " store_id=$store_id, invoice_qty = $invoice_qty , total_mrp = $total_mrp ,EwayBillno= $EwayBillno,"
                                     . " updatetime = now() $iClause where id = $existsinsp->id ";
                             $db->execUpdate($sqlSPquery);
                     } else{
                          $qursp="insert into it_sp_invoices set invoice_text = $invoice_text,store_id=$store_id, invoice_no=$invoice_no,"
                     . " invoice_dt=$invoice_dt, invoice_amt=$invoice_amt, invoice_type=$invoice_type,invoice_qty=$invoice_qty, "
                     . "total_mrp = $total_mrp , discount_1=$discount_1,discount_2=$discount_2, tax=$tax, payment = $payment,"
-                    . " tax_type = $tax_type , tax_percent = $tax_percent ,ck_invoice_id=$exists->id $iClause";
+                    . " tax_type = $tax_type , tax_percent = $tax_percent ,EwayBillno= $EwayBillno,ck_invoice_id=$exists->id $iClause";
                         //print $qursp;
                          $sp_id=$db->execInsert($qursp);
                          $db->execUpdate("update it_invoices set sp_invoice_id=$sp_id where id=$exists->id");
@@ -243,6 +244,7 @@ try {
                                 $json_invoice['cgst_total'] = $invoice->cgst_total;
                                 $json_invoice['sgst_total'] = $invoice->sgst_total;
                                 $json_invoice['igst_total'] = $invoice->igst_total;
+                                 $json_invoice ['EwayBillno'] = $invoice->EwayBillno;
 
 
                                 $items = $db->fetchObjectArray("select barcode,price,quantity,total_price_qty,rate,total_rate_qty,"
@@ -317,7 +319,7 @@ try {
                             . " invoice_dt=$invoice_dt, invoice_type=$invoice_type, invoice_amt=$invoice_amt, "
                             . "invoice_qty=$invoice_qty , total_mrp = $total_mrp , discount_1 = $discount_1 ,"
                             . " discount_2 = $discount_2, tax = $tax , tax_type = $tax_type , tax_percent = $tax_percent ,"
-                            . " payment = $payment , no_of_challans = $noofchallans , challan_nos =  $challan_numbers $iClause ";
+                            . " payment = $payment , no_of_challans = $noofchallans , challan_nos =  $challan_numbers, EwayBillno= $EwayBillno $iClause ";
 //                    echo "<br/>$query<br/>";
                     $invoice_id = $db->execInsert($query);
                     if (!$invoice_id) { break; }
@@ -395,7 +397,7 @@ try {
             $qursp="insert into it_sp_invoices set invoice_text = $invoice_text,store_id=$store_id, invoice_no=$invoice_no,"
                     . " invoice_dt=$invoice_dt, invoice_amt=$invoice_amt, invoice_type=$invoice_type,invoice_qty=$invoice_qty, "
                     . "total_mrp = $total_mrp , discount_1=$discount_1,discount_2=$discount_2, tax=$tax, payment = $payment,"
-                    . " tax_type = $tax_type , tax_percent = $tax_percent ,ck_invoice_id=$invoice_id $iClause";
+                    . " tax_type = $tax_type , tax_percent = $tax_percent ,ck_invoice_id=$invoice_id,EwayBillno= $EwayBillno $iClause";
            $sp_id=$db->execInsert($qursp);
            //print_r($sp_id);
 //           print ($qursp);
@@ -686,6 +688,7 @@ try {
                         $json_invoice['cgst_total'] = $invoice->cgst_total;
                         $json_invoice['sgst_total'] = $invoice->sgst_total;
                         $json_invoice['igst_total'] = $invoice->igst_total;
+                        $json_invoice['EwayBillno'] = $invoice->EwayBillno;
 
 //                        echo "select barcode,price,quantity,total_price_qty,rate,total_rate_qty,"
 //                                . " discount_val,taxable_value,cgst,sgst,igst,tax_rate,additional_disc_val from it_sp_invoice_items "
