@@ -108,6 +108,7 @@ class changeType{
     const wip_stock=31;
     const crditPoints = 32;
     const removeCrditPoints = 33;
+    const properties = 34;
     
     
     public static function getAll(){
@@ -136,7 +137,8 @@ class changeType{
             changeType::puchasereturn=>"Purchase Return",
             changeType::wip_stock => "Stock From WIP",
             changeType::crditPoints => "Credit Point Sync",
-            changeType::removeCrditPoints => "Remove Credit Point Sync"
+            changeType::removeCrditPoints => "Remove Credit Point Sync",
+            changeType::properties => "Properties"
         );
     }
     
