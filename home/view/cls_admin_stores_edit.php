@@ -98,7 +98,8 @@ class cls_admin_stores_edit extends cls_renderer {
        // alert(discval);
         //document.getElementById("discval").value=discval;
         
-        if(discval==12 ||discval==24 ||discval==26)
+        //if(discval==12 ||discval==24 ||discval==26)
+        if(discval==12 ||discval==16 ||discval==18 ||discval==21 ||discval==24 ||discval==26)
         {
             
         document.getElementById("discval").value = discval;
@@ -401,12 +402,12 @@ if(discval>0){
                     
                      <p class="grid_3">
                                 <label>Dealer Discount: *</label>
-                         <?php if ($this->currStore->usertype == UserType::CKAdmin) { ?>
-                                    <input   type="text" name="discval" id="discval" value="<?php echo $this->getFieldValue('discval', $store->discountset); ?>" required oninput="isCheckedById();" >
-                                <?php }
+                         <?php //if ($this->currStore->usertype == UserType::CKAdmin) { ?>
+                                    <!--<input   type="text" name="discval" id="discval" value="<?php echo $this->getFieldValue('discval', $store->discountset); ?>" required oninput="isCheckedById();" >-->
+                                <?php //}
                                 
                                 
-                                elseif($this->currStore->usertype == UserType::Admin ||$this->currStore->id==128) {
+                                if($this->currStore->usertype == UserType::CKAdmin||$this->currStore->usertype == UserType::Admin ||$this->currStore->id==128) {
                                     
                                      $query ="select * from it_dealer_discount order by discount asc";     
                                         $obj_deler_disc = $db->fetchObjectArray($query);
@@ -420,6 +421,8 @@ if(discval>0){
         <?php
         foreach ($obj_deler_disc as $disc) {
              $selected = "";
+             
+             if( $disc->id > 3 && $this->currStore->usertype != UserType::CKAdmin) { continue;}
             
             ?>
                                     <option <?php echo $selected; ?> value="<?php echo $disc->discount; ?>" >
