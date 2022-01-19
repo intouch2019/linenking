@@ -58,7 +58,7 @@ try {
 //                                $itmcnt++;
                             }
                
-                if($total_order_qty >60){
+                if($total_order_qty >100){  //60
                 $ress = saveOrder($storeid, $items); 
                  $arr= explode(":",$ress); 
                  if($arr[0]==1){
@@ -155,7 +155,7 @@ try {
                          } 
                      }        
                 }
-                    if($total_order_qty >60){
+                    if($total_order_qty >100){   //60
                 $ress = saveOrder($storeid, $items); 
                  $arr= explode(":",$ress); 
                  if($arr[0]==1){
@@ -302,4 +302,3 @@ function saveOrder($storeid, $items) {
      $db->execUpdate($query);
      return $res1;
 }
-
