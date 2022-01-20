@@ -145,7 +145,7 @@ if(!$store || !$user_id || !$from || !$to)// || !$sman || !$sincentive)
      {
          
          $newentryinc = "update it_sales_incentive set salesman_incentive=$sman, store_incentive= $sincentive, "
-                 . "updatedby_id=$user_id, updatedby_name='$createdbyname->store_name' ,updatetime= now()"
+                 . "updatedby_id=$user_id, updatedby_name='$createdbyname->store_name' ,remark='$remark' ,updatetime= now()"
                  . "where store_id= $store and start_date=$stdate and end_date=$edate";
          $newentryincentive = $db->execUpdate($newentryinc);
          
@@ -153,7 +153,7 @@ if(!$store || !$user_id || !$from || !$to)// || !$sman || !$sincentive)
      else {
         
          $newentryinc = "insert into it_sales_incentive set store_id= $store, store_name= '$storename->store_name' , quarter= $qt1, "
-                 . "salesman_incentive=$sman, store_incentive= $sincentive, start_date=$stdate, end_date= $edate, "
+                 . "salesman_incentive=$sman, store_incentive= $sincentive,remark='$remark' , start_date=$stdate, end_date= $edate, "
                  . "createdby_id=$user_id, createdby_name='$createdbyname->store_name'";
          $newentryincentive = $db->execInsert($newentryinc);
          if($newentryincentive){
