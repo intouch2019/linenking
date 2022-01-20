@@ -14,6 +14,8 @@ $storeids = $_GET['storeids'] ? $_GET['storeids'] : 0;
 $qtr = $_GET['atypes'] ? $_GET['atypes'] : 0;
 //yrtypes
 $finacialyear = $_GET['yrtypes'] ? $_GET['yrtypes'] : 0;
+$finacialyear = $_GET['yrtypes'] ? $_GET['yrtypes'] : 0;
+$Remark=$_GET['remark'] ? $_GET['remark']: 0;
 
 
 if(isset($storeids) && trim($storeids)!="-1"){
@@ -69,7 +71,8 @@ $headers = array(
          'Sales Representive Name',
          'SalesMan Incentive',
          'Store Incentive',
-         'Dated'
+         'Dated',
+         'Remark'
           );
 
 foreach($headers as $harr){
@@ -100,6 +103,7 @@ foreach($headers as $harr){
                 $tcell[] .= $obj->salesman_incentive;
                 $tcell[] .= $obj->store_incentive;
                  $tcell[] .= $createtime;
+                 $tcell[] .=$obj->remark;
                 //fputcsv($output, $tcell,',',chr(0));
                 fputcsv($output, array_values($tcell));
        

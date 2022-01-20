@@ -161,7 +161,7 @@ else {
                      $store_name = $db->fetchObject($sname);
                      $newentryinc = "insert into it_sales_incentive set store_id= $stid->id, store_name= '$store_name->store_name' , quarter= $qt1, "
                      . "salesman_incentive=$smans, store_incentive=$sincentives, start_date=$stdate, end_date= $edate, "
-                     . "createdby_id=$user_id, createdby_name='$createdbyname->store_name'";
+                     . "createdby_id=$user_id, createdby_name='$createdbyname->store_name',remark='$remark'";
                       //print $newentryinc;
                      //echo '</br>';
                      $newentryincentive = $db->execInsert($newentryinc);
