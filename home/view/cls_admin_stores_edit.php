@@ -99,7 +99,7 @@ class cls_admin_stores_edit extends cls_renderer {
         //document.getElementById("discval").value=discval;
         
         //if(discval==12 ||discval==24 ||discval==26)
-        if(discval==12 ||discval==16 ||discval==18 ||discval==21 ||discval==24 ||discval==26)
+        if(discval==12 ||discval==14 ||discval==16 ||discval==18 ||discval==21 ||discval==24 ||discval==26)
         {
             
         document.getElementById("discval").value = discval;
