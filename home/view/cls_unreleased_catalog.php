@@ -464,6 +464,14 @@ function txtValChk(t_id){
         </div> <!-- end class="block" -->
     </div> <!-- end class="box" -->  
             <?php } ?>
+     <label for="Release"><h5>Release Time:<h5></label>
+                
+                <select id="Release" name="Release">
+                  <option value="00:00:00">Release now</option>
+                  <option value="13:30:00">Release at 1.30 pm</option>
+                  <option value="20:30:00">Release at 8.30 pm</option>
+                </select>
+                  <br><br>
     <input class="blueglassbutton" type="submit" name="btnSubmit" id="btnSubmit" value="SAVE" />    
     <input class="blueglassbutton" type="button" name="releaseAllBtn" id="releaseAllBtn" value="RELEASE ALL" onclick="releaseAllDivCellValues();"/>    
     <input class="blueglassbutton" type="button" name="resetAllBtn" id="resetAllBtn" value="RESET ALL" onclick="resetAllDivCellValues();"/>    
