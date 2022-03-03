@@ -18,6 +18,8 @@ $clsLogger = new clsLogger();
 $clsOrders = new clsOrders();
  
 $place_ord = isset($_POST['stand_ord']) ? $_POST['stand_ord'] : false;
+$Release_time = isset($_POST['Release']) ? $_POST['Release'] : false;
+$id = isset($_POST['id']) ? $_POST['id'] : false;
 
 $errors = array();
 $store_orders = array(); //store orders information
@@ -43,7 +45,14 @@ try{
     $storeobjs = $db->fetchObjectArray($squery);
     
 //    print_r($_POST['designid']);
+    $sa = "select Rel_sent_temp from release_orders where id=$id and Rel_sent_temp=1"; 
+    $sc = $db->fetchObject($sa);
+
+if (isset($sc->Rel_sent_temp)==1 || $Release_time == '00:00:00') {
     
+     $du = "update release_orders set Rel_sent_temp=0 where id=$id and Rel_sent_temp=1"; 
+             $db->execUpdate($du);
+             
     foreach($designid as $darrobj){
 //        print "<br><br>Design OBJ begins: ";
 //        print_r($darrobj);
@@ -250,7 +259,14 @@ try{
         } //items loop within design ends here
     
     }// all design loop ends here
+       }   else {
 
+$str = serialize($_POST);
+
+    $Rtime_qry ="insert into release_orders set designid='$str',Release_time='$Release_time',Rel_sent=0,createtime = now()";
+    $db->execInsert($Rtime_qry);
+
+} 
     
     $cnt=0;
        //code added for store order placing   
