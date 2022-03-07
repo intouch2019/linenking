@@ -138,7 +138,83 @@ Your session has expired. Click <a href="">here</a> to login.
             <?php
                 //$query = "SELECT o.item_id as order_item_id , d.image,i.design_no, i.ctg_id, ctg.name, i.MRP, sum(o.order_qty) as total_qty ,o.remarks from it_ck_designs d, it_items i,it_categories ctg, it_ck_orderitems o where o.item_id=i.id and i.ctg_id=ctg.id and o.design_no=d.design_no and i.ctg_id=d.ctg_id and o.mrp=i.mrp and o.store_id=$store_id and i.ctg_id != 29 and  o.order_id in ($order->order_ids) group by i.ctg_id, i.design_no ,i.mrp order by o.order_no desc,i.ctg_id,i.design_no";
                 $query = "SELECT o.item_id as order_item_id , d.image,i.design_no, i.ctg_id, ctg.name, i.MRP, sum(o.order_qty) as total_qty ,o.remarks from it_ck_designs d, it_items i,it_categories ctg, it_ck_orderitems o where o.item_id=i.id and i.ctg_id=ctg.id and o.design_no=d.design_no and i.ctg_id=d.ctg_id and o.mrp=i.mrp and i.ctg_id != 29 and o.order_id in ($order->order_ids) group by i.ctg_id, i.design_no ,i.mrp order by o.order_no desc,i.ctg_id,i.design_no";                
+                $query1 = "SELECT i.ctg_id, ctg.name, sum(o.order_qty) as total_qty ,i.size_id,s2.name as size_name from it_ck_designs d, it_items i,it_categories ctg, it_ck_orderitems o,it_sizes s2 where i.size_id=s2.id and o.item_id=i.id and i.ctg_id=ctg.id and o.design_no=d.design_no and i.ctg_id=d.ctg_id and o.mrp=i.mrp and i.ctg_id != 21 and o.order_id in ($order->order_ids) group by i.ctg_id,i.size_id order by i.ctg_id,i.size_id";
+                //print_r($query1);exit();
+                $query2 = "SELECT count(distinct i.size_id) as size_count,ctg.name, sum(o.order_qty) as total_qty ,i.size_id,s2.name as size_name from it_ck_designs d, it_items i,it_categories ctg, it_ck_orderitems o,it_sizes s2 where i.size_id=s2.id and o.item_id=i.id and i.ctg_id=ctg.id and o.design_no=d.design_no and i.ctg_id=d.ctg_id and o.mrp=i.mrp and i.ctg_id != 21 and o.order_id in ($order->order_ids) group by i.ctg_id order by size_count desc limit 1";
+                $allsizes = $db->fetchObject($query2);
+                $allcategories = $db->fetchObjectArray($query1);
                 $allDesigns = $db->fetchObjectArray($query);
+                $sel_cat = "";
+                 
+                if( substr($order->order_nos,0,2)== 'FA' || substr($order->order_nos,0,2)== 'AT'){
+                foreach ($allcategories as $category) {
+                     if($sel_cat == ""){
+                         $cntspes=1;
+                     $sel_cat= $category->name;
+                    
+  
+        ?>
+                <div class="box">
+        <h2>Autorefill order summary  Category wise and size Wise:</h2><br>
+        <div style="margin-top: 0px; margin-right: 0px; margin-bottom: 0px; margin-left: 0px; position: static; overflow-x: hidden; overflow-y: hidden; ">
+            <div class="block" style="margin-top: 0px; margin-right: 0px; margin-bottom: 0px; margin-left: 0px; ">
+
+                    <table>
+<!--                     <tr>
+                         <th>Category</th>
+                         <th>Size</th>
+                      
+                     </tr>  -->
+                   <tr>
+                      <td><?php echo $category->name;?></td>
+                      <td><?php echo $category->size_name."= ".$category->total_qty;?></td>
+                      
+                 <?php }
+                 else{
+                     if($sel_cat==$category->name){  $cntspes++; ?>
+                         
+                     <td><?php echo $category->size_name."= ".$category->total_qty;?></td>    
+                         
+                    <?php } else{
+                        
+                        if($cntspes < $allsizes->size_count ){
+                            
+                                   $remcnt=$allsizes->size_count-$cntspes;
+                                   for($i=0;$i<$remcnt;$i++)
+                                   {
+                                       ?><td></td><?php
+                     
+                                   }
+                        
+                        }
+                        
+                      $cntspes = 1;
+                      $sel_cat= $category->name;
+                      ?>
+                     </tr>
+                      <tr>
+                      <td><?php echo $category->name;?></td>
+                      <td><?php echo $category->size_name."= ".$category->total_qty;?></td> 
+                        
+                    <?php }
+                   
+                 }
+                     ?>
+                  
+                  <?php 
+    
+                }?>
+                      
+                </tr>
+                </table>
+
+            </div>
+        </div>
+    </div> 
+    
+                <?php
+   }
+   
 //                $query = "SELECT d.image,i.design_no, i.ctg_id, ctg.name, i.MRP, sum(o.order_qty) as total_qty,o.remarks from it_ck_designs d, it_items i,it_categories ctg, it_ck_orderitems o where o.item_id=i.id and i.ctg_id=ctg.id and o.design_no=d.design_no and i.ctg_id=d.ctg_id and o.mrp=i.mrp and o.store_id=$store_id and o.order_id in ($order->order_ids)  and i.ctg_id != (select id from it_categories where name = 'Others' ) group by i.ctg_id, i.design_no order by o.order_no desc,i.ctg_id,i.design_no";
 //                $allDesigns = $db->fetchObjectArray($query);
 //                print $query;
