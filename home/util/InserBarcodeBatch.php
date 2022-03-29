@@ -22,20 +22,20 @@ try{
 //                       $serverCh->insert($ser_type, $server_ch ,$obj->id);
 //                }
 //    
-//    $objs = $db->fetchObjectArray("select * from it_ck_designs where design_no='7924'");
-//
-//    if(isset($objs) && !empty($objs) && $objs != null){
-//       foreach ($objs as $obj){
-//                    $server = json_encode($obj);
-//                    $server_ch = "[".$server."]"; // converting n storing in obj format so that easy retrival at pos side
-//                    $ser_type = changeType::ck_designs;
-//                    $serverCh->insert($ser_type, $server_ch,$obj->id);
-//                    $cnt++;
-//       }
-//    }
+    $objs = $db->fetchObjectArray("select * from it_ck_designs where design_no='K38185'");
+
+    if(isset($objs) && !empty($objs) && $objs != null){
+       foreach ($objs as $obj){
+                    $server = json_encode($obj);
+                    $server_ch = "[".$server."]"; // converting n storing in obj format so that easy retrival at pos side
+                    $ser_type = changeType::ck_designs;
+                    $serverCh->insert($ser_type, $server_ch,$obj->id);
+                    $cnt++;
+       }
+    }
    
     
-      $objj1 = $db->fetchObjectArray("select * from it_items where barcode in('8900001157326')");
+      $objj1 = $db->fetchObjectArray("select * from it_items where barcode in('8900001157340')");
       $db->closeConnection();
                 //$server_ch = json_encode($obj1);
                 foreach ($objj1 as $obj1){
