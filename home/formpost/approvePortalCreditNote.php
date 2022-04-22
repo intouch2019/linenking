@@ -295,7 +295,7 @@ function callCredinotAPI($crn_id,$credit_no)
 
 //---------------------------------------------------------------------------------------------------------
                 //for Live credentials uncomment when deploy on live
-//                
+////                
                 $cnoi->set_CDKey("1695383");
                 $cnoi->set_EInvUserName("FASHIONKIN_API_CKP");
                 $cnoi->set_EInvPassword("Fashionking@29");
@@ -317,26 +317,32 @@ function callCredinotAPI($crn_id,$credit_no)
                         
                         $cn_items[$crn_item++]=$cnoi;
                         }
-                    
-    $data_array['Data']=$cn_items;
-    $Push_Data_List_array['Push_Data_List']=$data_array;
-//    echo json_encode($Push_Data_List_array) ."</br></br> Response:</br></br>";
-    $fields_string = json_encode($Push_Data_List_array);
+                        $data_array['Data'] = $cn_items;
+//            print_r($data_array);
+            //$fields_string = json_encode($data_array);
+            $Push_Data_List_array['Push_Data_List'] = $data_array;
+    //echo json_encode($Push_Data_List_array) ."</br></br> Response:</br></br>";
+          
+          $ticketinfo=json_encode($Push_Data_List_array);
 //    exit();
     
    //-------------------------------API Call-------------------------------------------- 
     
     $url = "http://einvlive.webtel.in/v1.03/GenIRN";    //for live
 //      $url = "http://einvSandbox.webtel.in/v1.03/GenIRN";    //for testing
-       $ch = curl_init();
+        $ch = curl_init();
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_URL, $url);
 //        curl_setopt($ch, CURLOPT_POST, count($fields));
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $fields_string);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Content-Type: application/json',
+         )); 
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $ticketinfo);
 
         $output = curl_exec($ch);
 //        print_r($output);
+//        exit();
     
    
     //----------------------------------------API Response handling-----------------------
