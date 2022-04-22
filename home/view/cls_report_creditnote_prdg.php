@@ -372,7 +372,7 @@ foreach ($objs as $obj) {
                             
                            $action="-";
                            if($order->is_approved==1){
-                           $action="<a href='formpost/generateDGpdfs.php?invid=$order->id' >Download</a>";}
+                           $action="<a href='formpost/generateDGpdfs.php?invid=$order->id' target=_blank >Download</a>";}
                            
                             $table .= "<td style='width:10%;'>$gst</td><td style='width:10%;'>$total</td>"
                               ." <td>$created_by</td>"

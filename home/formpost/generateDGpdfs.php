@@ -104,15 +104,9 @@ Phone : 02112-244121<br/>
 Customer Care-Ph. : 020-25431266/67<br/>
 Email : info@cottonking.com</div></td>"
         ."<td align=\"center\" width=\"50.5%\"><div style=\"font-size:12px;padding:4px\">"
-        . "<img src=\"../images/QR_code/".$Qr_Image."\" width=\"160px\" height=\"150px\"></td>"
+        . "<img src=\"../images/QR_code/".$Qr_Image."\" width=\"160px\" height=\"150px\"></div></td>"
         
        ."</tr>";
-
-
-
-
-
-
 
 $outputheader .="<tr><td align=\"left\" width=\"54.5%\"><div style=\"font-size:12px;padding:3px\">GSTIN NO :&nbsp;&nbsp;$storeobj->gstin_no</div></td>"
     . "<td align=\"left\" width=\"50.5%\"><div style=\"font-size:12px;padding:3px\">GSTIN NO :&nbsp;&nbsp;27AAACC7418H1ZQ</div></td>"
@@ -560,22 +554,31 @@ $output.= ""
         . "</table>"
         . "</td>"
         . ""
-         . "<tr></tr><tr><td   width=\"50%\" align=\"left\"><div style=\"font-size:10px;padding:4px 0 0px 0\"><b>Created By:</b>$obj->createdby</div></td><td   width=\"50%\" align=\"left\"><div style=\"font-size:10px;padding:4px 0 0px 0\"><b>Approve By:</b>$obj->approveby</div></td>"
+         . "</tr><tr><td   width=\"50%\" align=\"left\"><div style=\"font-size:10px;padding:4px 0 0px 0\"><b>Created By:</b>$obj->createdby</div></td><td   width=\"50%\" align=\"left\"><div style=\"font-size:10px;padding:4px 0 0px 0\"><b>Approve By:</b>$obj->approveby</div></td>"
         .  "</tr>"
-        . "<tr><td colspan=2  width=\"50%\" align=\"left\"><div style=\"font-size:10px;padding:4px 0 0px 0\"><b>Remark : Defective Garment Credit Note</div></td>"
-        .  "</tr>"
-        . "</tr>"
-        . "</table>";
+        . "<tr><td colspan=2  width=\"50%\" align=\"left\"><div style=\"font-size:10px;padding:4px 0 0px 0\"><b>Remark : </b>Defective Garment Credit Note</div></td>"
+                . "</tr>"
+            . "</table>"
+            . "</td>"
+            . "</tr>"
+            . "</table>"
+            . "</table>";
         
 }
 
 $output."</body></html>";
+
 //echo "$output"; exit();
 $myFile = '../DGCreditnote/TestDGCreditnote.html'; // or .php   
 $fh = fopen($myFile, 'w'); // or die("error");  
 $stringData = "your html code php code goes here";   
 fwrite($fh, $output);
 fclose($fh);
+
+header("Location: ../DGCreditnote/TestDGCreditnote.html"); /* Redirect browser */ 
+
+exit();
+
 //
 
 //$fname="../DGCreditnote/DGCreditnote-".$invno.".pdf";
@@ -613,7 +616,6 @@ if (count($errors) > 0) {
 header('Content-Type: application/pdf');
 header("Content-Disposition: attachment; filename=\"".basename($fname)."\"");
 echo file_get_contents($fname);
-
 
 
 
