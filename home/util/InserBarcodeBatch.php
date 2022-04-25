@@ -22,7 +22,7 @@ try{
 //                       $serverCh->insert($ser_type, $server_ch ,$obj->id);
 //                }
 //    
-    $objs = $db->fetchObjectArray("select * from it_ck_designs where design_no='K38185'");
+    $objs = $db->fetchObjectArray("select * from it_ck_designs where design_no='J38260'");
 
     if(isset($objs) && !empty($objs) && $objs != null){
        foreach ($objs as $obj){
@@ -35,7 +35,7 @@ try{
     }
    
     
-      $objj1 = $db->fetchObjectArray("select * from it_items where barcode in('8900001157647','8900001157654','8900001157661','8900001157678','8900001157838','8900001157821','8900001157814','8900001157807','8900001157630','8900001157371','8900001157326','8900001157340','8900001157333','8900001157890','8900001157876','8900001157883','8900001157869','8900001157906','8900001156404','8900001156398','8900001156428','8900001156411','8900001156770','8900001157029','8900001157012','8900001157005','8900001156756','8900001156992','8900001156749','8900001156985','8900001157791','8900001156732','8900001156763')");
+      $objj1 = $db->fetchObjectArray("select * from it_items where barcode in('8900001181550','8900001181567','8900001181574','8900001181581')");
       $db->closeConnection();
                 //$server_ch = json_encode($obj1);
                 foreach ($objj1 as $obj1){
