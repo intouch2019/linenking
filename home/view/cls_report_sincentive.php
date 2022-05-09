@@ -359,13 +359,13 @@ foreach ($objs as $obj) {
                         //  if ($field=="returntotal") {$tableheaders.="Return Value:"; $queryfields .= "round(sum(s.return_total),2) as returntotal ,";} 
                        // if ($field=="amt") {$tableheaders.="Net Sale :"; $queryfields .= "round(sum(s.incentive_amount),2) as isamt ,";}                                                                       
                          //if ($field=="amt") {$tableheaders.="Net Sale :"; $queryfields .= "round(sum(s.incentive_amount),2) as isamt ,";}                                                                       
-                        if ($field=="amt") {$tableheaders.="Net Sale :"; $queryfields .= "round(sum(s.incentive_amount),2) as isamt ,";}                                                                       
-                        if ($field=="atv") {$tableheaders.="ATV:"; $queryfields .= "round(((sum(s.incentive_amount))/count(DISTINCT s.bill_no)),2) as atv  ,";}                                                                       
+                        if ($field=="amt") {$tableheaders.="Net Sale :"; $queryfields .= "round(sum(s.net_total)-sum(s.return_total),2) as isamt ,";}                                                                       
+                        if ($field=="atv") {$tableheaders.="ATV:"; $queryfields .= "round(((sum(s.net_total)-sum(s.return_total))/count(DISTINCT s.bill_no)),2) as atv  ,";}                                                                       
                         if ($field=="upt") {$tableheaders.="UPT:"; $queryfields .= "round(((sum(s.qty))/count(DISTINCT s.bill_no)) ,2) as upt  ,";}                                                                       
                          
                        // if ($field=="incentive") {$tableheaders.="Incentive :"; $queryfields .= " round(sum(s.incentive_amount),2) as Incentive ,";}   //22092020                                                                    
                           // if ($field=="incentive") {$tableheaders.="Incentive :"; $queryfields .= " round(sum(s.incentive_amount),2)*.01 as Incentive ,";}                                                                       
-                           if ($field=="incentive") {$tableheaders.="Incentive :"; $queryfields .= " round(sum(s.incentive_amount),2)*.01 as Incentive ,";}                                                                       
+                           if ($field=="incentive") {$tableheaders.="Incentive :"; $queryfields .= " round(sum(s.net_total)-sum(s.return_total),2)*.01 as Incentive ,";}                                                                       
                        
                          if ($field=="bill_no") {$tableheaders.="Bill No :"; $queryfields .= " s.bill_no as billno ,";$group_by[] = "s.bill_no";}                                                                       
                         
