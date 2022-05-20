@@ -66,6 +66,8 @@ jQuery.fn.daterangepicker = function(settings){
 
 	//custom datepicker options, extended by options
 	var datepickerOptions = {
+            changeMonth:true,
+            changeYear:true,
 		onSelect: function() { 
 				if(rp.find('.ui-daterangepicker-specificDate').is('.ui-state-active')){
 					rp.find('.range-end').datepicker('setDate', rp.find('.range-start').datepicker('getDate') ); 
