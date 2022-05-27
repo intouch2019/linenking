@@ -88,7 +88,7 @@ elseif ((!isset($claimed)) && (isset($cashes))) {
 }
 
 
-if (!$storec || !$dealer_name || !$address || !$city || !$zip || !$name || !$phone || !$email  || !$gstin_no || !$taxtype || !$nstate ||  !$region || trim($discval)=="") { $errors['storec'] = "Please enter value for all required field marked with *"; }
+if (!$storec || !$dealer_name || !$address || !$city || !$zip || !$name || !$phone || !$email  || !$gstin_no || !$taxtype || !$nstate ||  !$region ||  !$status || trim($discval)=="") { $errors['storec'] = "Please enter value for all required field marked with *"; }
 else {
 try {
 	
@@ -127,10 +127,16 @@ try {
         
         $distance = $db->safe($distance);
         $is_tallyxml = $db->safe($is_tallyxml);
+        
+        $status = $db->safe($status);
+
+        $upi_name = $db->safe($upi_name);
+        $upi_id = $db->safe($upi_id);
 //        $retail_saletally_name = $db->safe($retail_saletally_name);
 //        $retail_sale_cash_name = $db->safe($retail_sale_cash_name);
 //        $retail_sale_card_name = $db->safe($retail_sale_card_name);
         
+       
         
         $discquery = "";
         if(isset($additional_discount) && trim($additional_discount) != ""){ $discquery .= " , additional_discount = $additional_discount " ; }
@@ -249,6 +255,9 @@ try {
         //$tallyname = $db->safe($tally);
 	$exist = $db->fetchObject("select * from it_codes where usertype=".UserType::Dealer." and code=$storec");
         $texist = $db->fetchObject("select * from it_codes where usertype= ".UserType::Dealer." and tally_name=$tally_name");
+          $maxseq_querry = "select max(sequence)as maxseq from it_codes";
+            $maxsequence = $db->fetchObject($maxseq_querry);
+       $maxseq= $maxsequence->maxseq+1;
         // error_log("select * from it_codes where usertype=4 and code=$storec",3,"tmp.txt"); 
         if (!$exist && !$texist && (!$storep || !$storep2)) {
             $errors['pass']='Password cannot be empty';
@@ -269,7 +278,7 @@ try {
                 $license= generateRandomString();
                 if ($obj) { $store_number = intval($obj->store_number) + 1; }
                 $new_store_number = $db->safe(sprintf("%03d", $store_number));
-                $qry = "insert into it_codes set  created_by=$store->id, code=$storec, password=$pass,license=md5(concat($id,'$license')), store_name=$dealer_name, store_number=$new_store_number, address=$address, state_id=$nstate, region_id=$region, city=$city, zipcode = $zipcode , owner=$name, phone=$phone, phone2=$phone2, email=$email, email2=$email2, vat=$vat,gstin_no=$gstin_no, usertype=".UserType::Dealer." , tally_name = $tally_name ,UMRN=$umrn,cust_tobe_debited=$cust_tobe_debtd,cust_ifsc_or_mcr=$cust_ifsc_mcr,cust_debit_account=$cust_debit_account,Area=$area,Location=$location,is_natch_required=$is_natch1,tax_type = $taxtype $sClause $addquery ";
+                $qry = "insert into it_codes set  created_by=$store->id, code=$storec, password=$pass,license=md5(concat($id,'$license')), store_name=$dealer_name, store_number=$new_store_number, address=$address, state_id=$nstate, region_id=$region, city=$city, zipcode = $zipcode , owner=$name, phone=$phone, phone2=$phone2, email=$email, email2=$email2, status=$status, upi_name =$upi_name, upi_id =$upi_id, vat=$vat,gstin_no=$gstin_no, usertype=".UserType::Dealer." , tally_name = $tally_name ,UMRN=$umrn,cust_tobe_debited=$cust_tobe_debtd,cust_ifsc_or_mcr=$cust_ifsc_mcr,cust_debit_account=$cust_debit_account,Area=$area,Location=$location,is_natch_required=$is_natch1,tax_type = $taxtype $sClause $addquery ";
                // print "<br>QUERY: $qry";
              //   print "insert into it_ck_storediscount set store_id = 125 , dealer_discount = $effecteddisc $discquery";
                 
@@ -298,6 +307,24 @@ try {
                         $store_id = $inscode; // data for that store specifically
                         $serverCh->save($ser_type, $server_ch,$store_id,$obj->store_id);
                    }
+                   $ratio_query = "select id,name from it_categories where active=1";
+                    $cat_objs = $db->fetchObjectArray($ratio_query);
+
+                    foreach ($cat_objs as $rq) {
+                        $styleobj = $db->fetchObjectArray("select s1.style_id,s2.name as style_name from it_ck_styles s1,it_styles s2 where s1.ctg_id=$rq->id and s1.style_id=s2.id  and s2.is_active = 1 order by s1.sequence");
+                        //  $no_styles = count($styleobj);
+                        foreach ($styleobj as $so) {                                 // print_r($styleobj);
+                            $sizeobj = $db->fetchObjectArray("select s1.size_id, s2.name as size_name from it_ck_sizes s1,it_sizes s2 where s1.ctg_id=$rq->id and s1.size_id=s2.id order by s1.sequence");
+                            foreach ($sizeobj as $sz) {
+//                                $sz;
+                                $ins = "insert into it_store_ratios set store_id=$inscode,ctg_id=$rq->id,"
+                                        . "design_id=-1,style_id=$so->style_id,size_id=$sz->size_id,"
+                                        . "ratio_type=2,ratio=1,updated_by=$store->id,createtime=now()";
+                               // print "<br>" . $ins;
+                                $db->execInsert($ins);
+                            }
+                        }
+                    }
                     //code to assign default pages to new store
                     if($inscode){
                         $query=" select id, menuhead, pagename from it_pages where id in (select page_id from it_usertype_pages where usertype = ".UserType::Dealer.") group by menuhead,pagename";
@@ -308,6 +335,9 @@ try {
         //                              error_log("\nINS PGS QRY: $iq\n",3,"tmp.txt");
                                       $db->execInsert($iq);                                                     
                             }
+                              $iq = "insert into it_user_pages set page_id = 247 , user_id = $inscode";
+                            //                              error_log("\nINS PGS QRY: $iq\n",3,"tmp.txt");
+                            $db->execInsert($iq);
                     }
            } 
                 $success = 'Store has been added';

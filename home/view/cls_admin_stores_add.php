@@ -342,6 +342,33 @@ if(discval>0){
                                 <label id="t_tally">Distance </label>
                                 <input type="text" name="distance" value="<?php echo $this->getFieldValue('distance'); ?>">
                       </p> 
+                    
+                      <p class="grid_12" style="width:40%">
+                                <label>*Status: </label>
+                                <select name="status" id="status" required>
+                                    <!--<option <?php // echo ($store->status == "" || $store->status == NULL) ? "selected" : "" ?> value="0">Select Status</option>-->
+                                    <option value="0">Select Status</option>
+                                    <?php
+                                        $allstorestatus = StoreStatus::getALL();
+                                        foreach ($allstorestatus as $key => $value) { ?>
+                                    alert($value);
+                                            <option value="<?php echo $key; ?>" <?php echo $selected; ?>><?php echo $value; ?></option>
+                                    <?php } ?>
+                                </select> 
+                            </p>        
+                            
+                            
+                            
+                      <p class="grid_12">
+                                <label id="t_upiname">Upi Name </label>
+                                <input type="text" name="upi_name" value="<?php echo $this->getFieldValue('upi_name'); ?>">
+                            </p>   
+                            
+                      <p class="grid_12">
+                                <label id="t_upiid">Upi Id </label>
+                                <input type="text" name="upi_id" value="<?php echo $this->getFieldValue('upi_id'); ?>">
+                            </p>
+                    
                             
                             
 <!--                    <p class="grid_3">                        
