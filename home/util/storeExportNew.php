@@ -13,7 +13,7 @@ require_once 'Classes/PHPExcel/Writer/Excel2007.php';
 $table = "it_codes";
 $db = new DBConn();
 //$query = "select id,store_name,tally_name,IF(is_autorefill = 1, 'Yes', 'No') AS is_autorefill, IF(is_closed = 1, 'Yes', 'No') AS is_closed,IF(sbstock_active = 1, 'Yes', 'No') AS Standing_Base_Stock,owner,address,city,zipcode,phone,phone2,email,email2,vat,store_number,pancard_no,min_stock_level,server_change_id,createtime as Store_Create_Time, IF(inactive = 1, 'Yes', 'No') AS inactive,gstin_no from $table where usertype=4 order by createtime";
-$query = "select c.id,c.store_name,c.is_natch_required,c.tally_name,IF(c.is_autorefill = 1, 'Yes', 'No') AS is_autorefill, IF(c.is_closed = 1, 'Yes', 'No') AS is_closed,IF(c.sbstock_active = 1, 'Yes', 'No') AS Standing_Base_Stock,c.owner,c.address,c.city,c.zipcode,c.phone,c.phone2,c.email,c.email2,c.vat,c.store_number,c.pancard_no,c.min_stock_level,c.max_stock_level,c.server_change_id,c.createtime as Store_Create_Time, IF(c.inactive = 1, 'Yes', 'No') AS inactive,c.gstin_no,sd.dealer_discount as Dealer_Discount,(select state from states where id=c.state_id)as state,(select region from region where id=c.region_id) as region ,c.status,c.area,c.location,c.distance,IF(c.is_claim = 1, 'Yes', 'No') as is_claim,IF(c.is_cash = 1, 'Yes', 'No') as is_cash,IF(c.tax_type=1, 'Within Maharashtra','Outside Maharashtra')as tax_type,IF(c.mask_margin=0, 'Regular','55% margin')as mask_margin,c.store_type from $table c,it_ck_storediscount sd where usertype=4 and is_closed=0 and c.id=sd.store_id order by createtime";
+$query = "select c.id,c.store_name,c.is_natch_required,c.tally_name,IF(c.is_autorefill = 1, 'Yes', 'No') AS is_autorefill, IF(c.is_closed = 1, 'Yes', 'No') AS is_closed,IF(c.sbstock_active = 1, 'Yes', 'No') AS Standing_Base_Stock,c.owner,c.address,c.city,c.zipcode,c.phone,c.phone2,c.email,c.email2,c.vat,c.store_number,c.pancard_no,c.min_stock_level,c.max_stock_level,c.server_change_id,c.createtime as Store_Create_Time, IF(c.inactive = 1, 'Yes', 'No') AS inactive,c.gstin_no,sd.dealer_discount as Dealer_Discount,(select state from states where id=c.state_id)as state,(select region from region where id=c.region_id) as region ,c.status,c.area,c.location,c.distance,IF(c.is_claim = 1, 'Yes', 'No') as is_claim,IF(c.is_cash = 1, 'Yes', 'No') as is_cash,IF(c.tax_type=1, 'Within Maharashtra','Outside Maharashtra')as tax_type,IF(c.mask_margin=0, 'Regular','55% margin')as mask_margin,IF(c.composite_billing_opted = 1, 'Yes', 'No') AS composite_billing_opted,IF(c.is_tallyxml = 1, 'Yes', 'No') AS is_tallyxml,c.store_type from $table c,it_ck_storediscount sd where usertype=4 and is_closed=0 and c.id=sd.store_id order by createtime";
 $alldealersobj = $db->fetchObjectArray($query);
 //print_r($alldealersobj);
 //return;
@@ -68,6 +68,8 @@ function createexcel($alldealersobj, $objPHPExcel) {
     $objPHPExcel->getActiveSheet()->setCellValue('AH1', 'Store Type');
     $objPHPExcel->getActiveSheet()->setCellValue('AI1', 'Tax Type');
     $objPHPExcel->getActiveSheet()->setCellValue('AJ1', 'Margin For Mask');
+    $objPHPExcel->getActiveSheet()->setCellValue('AK1', 'Composite Billing Opted');
+    $objPHPExcel->getActiveSheet()->setCellValue('AL1', 'Tally Transfer Feature Enabled');
 
 
 
@@ -108,6 +110,8 @@ function createexcel($alldealersobj, $objPHPExcel) {
     $objPHPExcel->getActiveSheet()->getColumnDimension('AH')->setWidth(20);
     $objPHPExcel->getActiveSheet()->getColumnDimension('AI')->setWidth(20);
     $objPHPExcel->getActiveSheet()->getColumnDimension('AJ')->setWidth(20);
+    $objPHPExcel->getActiveSheet()->getColumnDimension('AK')->setWidth(20);
+    $objPHPExcel->getActiveSheet()->getColumnDimension('AL')->setWidth(20);
 
 
 
@@ -184,6 +188,8 @@ function createexcel($alldealersobj, $objPHPExcel) {
         }
         $tax_type = trim($dealer->tax_type);
         $mask_margin = trim($dealer->mask_margin);
+        $composite_billing_opted = trim($dealer->composite_billing_opted);
+        $is_tallyxml = trim($dealer->is_tallyxml);
 
 
 
@@ -227,7 +233,8 @@ function createexcel($alldealersobj, $objPHPExcel) {
         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(33, $rowCount, $storetype);
         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(34, $rowCount, $tax_type);
         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(35, $rowCount, $mask_margin);
-
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(36, $rowCount, $composite_billing_opted);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(37, $rowCount, $is_tallyxml);
 
 
         $rowCount++;
