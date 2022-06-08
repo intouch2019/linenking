@@ -16,17 +16,19 @@ $mail->SMTPSecure = "ssl";                 // sets the prefix to the servier
 $mail->Host       = "smtp.gmail.com";      // sets GMAIL as the SMTP server
 $mail->Port       = 465;                   // set the SMTP port
 
-$mail->Username   = "cottonking.portal@gmail.com";  // GMAIL username
-$mail->Password   = "cottonking2012";            // GMAIL password
+#$mail->Username   = "cottonking.portal@gmail.com";  // GMAIL username
+#$mail->Password   = "cottonking2012";            // GMAIL password
+$mail->Username   = "cottonkingwebmaster@gmail.com";  // GMAIL username
+$mail->Password   = "hqsehyhriufycvci";            // GMAIL password
 
-$mail->From       = "cottonking.portal@gmail.com";
+$mail->From       = "cottonkingwebmaster@gmail.com";
 $mail->FromName   = "Linenking  Webmaster";
 $mail->Subject    = $subject;
 $mail->WordWrap   = 50; // set word wrap
 
 $mail->MsgHTML($body);
 
-$mail->AddReplyTo("cottonking.portal@gmail.com","Linenking Webmaster");
+$mail->AddReplyTo("cottonkingwebmaster@gmail.com","Linenking Webmaster");
 
 //adding attachement(s)
 if($attachments){
