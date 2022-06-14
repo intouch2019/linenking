@@ -311,6 +311,11 @@ class cls_viewedit_creditpoint extends cls_renderer {
 //                $dQuery = "  r.points_upload_date >= '$sdate 00:00:00' and r.points_upload_date <= '$edate 23:59:59' ";
                 $dQuery = "   r.points_upload_date <= '$edate 23:59:59' ";
                 $newfname = "CreditPointReports_".$sdate."_".$edate.".csv"; 
+                
+                if($edate == date("Y-m-d")){
+                      $dQuery = "   r.points_upload_date <= '$edate 23:59:59'  and r.is_reddeme=0  ";
+                  }
+                
             } else if (count($dtarr) == 2) {
                 list($dd, $mm, $yy) = explode("-", $dtarr[0]);
                 $sdate = "$yy-$mm-$dd";
@@ -388,10 +393,10 @@ class cls_viewedit_creditpoint extends cls_renderer {
                         <?php
                         $i = 1;
                         if ($this->storeid == -1) {
-                            $iquery = "select r.*, c.store_name  from it_codes c,it_store_redeem_points r where  $dQuery  and r.is_reddeme=0 and r.active=1 and r.store_id=c.id order by c.store_name ";
+                            $iquery = "select r.*, c.store_name  from it_codes c,it_store_redeem_points r where  $dQuery  and r.active=1 and r.store_id=c.id order by c.store_name ";
                         } else {
 
-                            $iquery = "select r.*, c.store_name  from it_codes c,it_store_redeem_points r where  $dQuery  and r.is_reddeme=0 and r.active=1 and r.store_id= $this->storeid and r.store_id=c.id";
+                            $iquery = "select r.*, c.store_name  from it_codes c,it_store_redeem_points r where  $dQuery  and r.active=1 and r.store_id= $this->storeid and r.store_id=c.id";
                         }
                         $items = $db->fetchObjectArray($iquery);
                         
@@ -442,10 +447,10 @@ class cls_viewedit_creditpoint extends cls_renderer {
                     <?php
                     
                                 if ($this->storeid == -1) {
-                            $iquery = "select  c.store_name ,r.points_to_upload,r.points_upload_date,if(r.is_reddeme =1,'Yes','No' ) as Is_Redeem,if(r.is_reddeme =1,r.points_redeemdate,'-' ) as points_redeemdate,if(r.is_reddeme =1,r.invoice_no,'-' ) as invoice_no,r.remark from it_codes c,it_store_redeem_points r where  $dQuery  and r.is_reddeme=0 and r.active=1 and r.store_id=c.id order by c.store_name ";
+                            $iquery = "select  c.store_name ,r.points_to_upload,r.points_upload_date,if(r.is_reddeme =1,'Yes','No' ) as Is_Redeem,if(r.is_reddeme =1,r.points_redeemdate,'-' ) as points_redeemdate,if(r.is_reddeme =1,r.invoice_no,'-' ) as invoice_no,r.remark from it_codes c,it_store_redeem_points r where  $dQuery  and r.active=1 and r.store_id=c.id order by c.store_name ";
                         } else {
 
-                            $iquery = "select c.store_name ,r.points_to_upload,r.points_upload_date,if(r.is_reddeme =1,'Yes','No' ) as Is_Redeem,if(r.is_reddeme =1,r.points_redeemdate,'-' ) as points_redeemdate,if(r.is_reddeme =1,r.invoice_no,'-' ) as invoice_no,r.remark from it_codes c,it_store_redeem_points r where  $dQuery  and r.is_reddeme=0 and r.active=1 and r.store_id= $this->storeid and r.store_id=c.id";
+                            $iquery = "select c.store_name ,r.points_to_upload,r.points_upload_date,if(r.is_reddeme =1,'Yes','No' ) as Is_Redeem,if(r.is_reddeme =1,r.points_redeemdate,'-' ) as points_redeemdate,if(r.is_reddeme =1,r.invoice_no,'-' ) as invoice_no,r.remark from it_codes c,it_store_redeem_points r where  $dQuery  and r.active=1 and r.store_id= $this->storeid and r.store_id=c.id";
                         }
                         $items = $db->fetchObjectArray($iquery);               
                     
