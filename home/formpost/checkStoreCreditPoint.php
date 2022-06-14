@@ -24,6 +24,8 @@ $db = new DBConn();
 $errors = array();
 $success = "";
 $err = "";
+$totalcreditpoints=0;
+$i=0;
 if ($_FILES["file"]["error"] > 0) {
     $errors['err'] = "Error: " . $_FILES["file"]["error"] . "<br>";
 } else {
@@ -53,8 +55,9 @@ if ($_FILES["file"]["error"] > 0) {
             //$fname="turnoverdisc"   ;//link change to new tdcn
             //$fname="formpost/genTdCnNew.php?from=$startdate&to=$enddate";
             // $success = "File ($textname) is successfully uploaded for Qtr.:$qt1 of year $dated. </br><span>Please click here to</span><br/><a href='$fname' class='btn btn-primary btn-lg active' role='button'>Generate TD Credit Note</a>";
-            $success = "<div> File successfully uploaded and entries done</div>";
-
+            //$success = "<div> File successfully uploaded and entries done</div>";
+              $success =  "<div style='font-size:14px;background-color:white'> Total $i Stores Credit Points Uploaded Successfully with Amount - $totalcreditpoints/-</div>";
+            
             unlink($newdir);
         }
     } else {
@@ -161,7 +164,9 @@ function updatecreditpoints($newdir) {
     $flg = 0;
     $rcnt = 1;
     $array_seq = array();
-    $i = 0;
+//    $i = 0;
+    global $i;
+    global $totalcreditpoints;
     $i++;
     foreach ($objWorksheet->getRowIterator() as $row) {
         if ($flg == 0) {
@@ -211,8 +216,10 @@ function updatecreditpoints($newdir) {
             if (isset($objcode) && $objcode->usertype == 4) {
                 $query = "INSERT INTO it_store_redeem_points (store_id,points_to_upload,remark,points_upload_date)VALUES ($id,$creditpoint,'$remark',now()); ";
                 $objredeem = $db->execInsert($query);
-                $i++;
-                
+//                $i++;
+                $totalcreditpoints+=$creditpoint;
+                $ii+=count($id);
+                $i=$ii;
      
                 
                 $return = "values inserted successfully";
