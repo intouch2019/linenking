@@ -18,6 +18,7 @@ class cls_Resync_batch extends cls_renderer {
     var $design_id;
     var $data;
     var $cat;
+  
 
     function __construct($params = null) {
         //parent::__construct(array(UserType::Admin, UserType::CKAdmin));
@@ -97,6 +98,7 @@ class cls_Resync_batch extends cls_renderer {
             <?php
             $display = "none";
             $num = 0;
+      //
             ?>
             <div class="box" style="clear:both;">
                 <fieldset class="login">
