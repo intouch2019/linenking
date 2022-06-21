@@ -221,41 +221,68 @@ if (count($errors) == 0) {
                                             }
 
                                             $msl = $db->fetchObject("select min_stock_level,max_stock_level,inactive from it_codes where id = $sobj->id");
+
                                             $store_stock = $db->fetchObject("select sum(c.quantity * i.MRP) as curr_stock_value from it_current_stock c , it_items i where c.store_id = $sobj->id  and c.barcode = i.barcode");
+                                            if (isset($store_stock) && trim($store_stock->curr_stock_value) != "") {
+                                                $curr_stock_val = $store_stock->curr_stock_value;
+                                            } else {
+                                                $curr_stock_val = 0;
+                                            }
+
                                             $stock_intransit_new = $db->fetchObject("select sum(i.MRP*oi.quantity) as intransit_stock_value_new from it_sp_invoices o , it_sp_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6 ) and o.store_id =$sobj->id   and o.is_procsdForRetail = 0 and oi.barcode = i.barcode");
+                                            if (isset($stock_intransit_new) && trim($stock_intransit_new->intransit_stock_value_new) != "") {
+                                                $intransit_stock_value_new = $stock_intransit_new->intransit_stock_value_new;
+                                            } else {
+                                                $intransit_stock_value_new = 0;
+                                            }
+
                                             $active_amount = $db->fetchObject("select sum(order_amount) as active_amount from it_ck_orders where status=1 and store_id=$sobj->id");
                                             if (isset($active_amount) && trim($active_amount->active_amount) != "") {
                                                 $active_amt = $active_amount->active_amount;
                                             } else {
                                                 $active_amt = 0;
                                             }
+
                                             $picking_amount = $db->fetchObject("select sum(order_amount) as picking_amount  from it_ck_orders where status=2 and store_id=$sobj->id");
                                             if (isset($picking_amount) && trim($picking_amount->picking_amount) != "") {
                                                 $picking_amt = $picking_amount->picking_amount;
                                             } else {
                                                 $picking_amt = 0;
                                             }
+
                                             $picking_complete_amount = $db->fetchObject("select sum(order_amount) as picking_complete_amount  from it_ck_orders where status=5 and store_id=$sobj->id");
                                             if (isset($picking_complete_amount) && trim($picking_complete_amount->picking_complete_amount) != "") {
                                                 $picking_complete_amt = $picking_complete_amount->picking_complete_amount;
                                             } else {
                                                 $picking_complete_amt = 0;
                                             }
-                                            $cartinfoo = $db->fetchObject("select * from it_ck_orders where store_id=$sobj->id and status=" . OrderStatus::InCart);
+
+                                            $cartinfoo = $db->fetchObject("select  sum(order_amount) as cart_amt from it_ck_orders where store_id=$sobj->id and status=" . OrderStatus::InCart);
+                                            if (isset($cartinfoo) && trim($cartinfoo->cart_amt) != "") {
+                                                $cart_amount = $cartinfoo->cart_amt;
+                                            } else {
+                                                $cart_amount = 0;
+                                            }
 
                                             if (isset($msl) && trim($msl->max_stock_level) != NULL && trim($msl->max_stock_level) != 0) {
                                                 if (array_key_exists($sobj->id, $store_orders)) {
                                                     $order_id = $store_orders[$sobj->id];
 
                                                     $pre_amt = $db->fetchObject("select sum(order_qty*MRP) as previous_amount from it_ck_orderitems where store_id=$sobj->id and order_id=$order_id ");
-                                                    $ttt = $pre_amt->previous_amount + $store_stock->curr_stock_value + $stock_intransit_new->intransit_stock_value_new + $active_amt + $picking_amt + $picking_complete_amt + $cartinfoo->order_amount;
+                                                    if (isset($pre_amt) && trim($pre_amt->previous_amount) != "") {
+                                                        $pre_amount = $pre_amt->previous_amount;
+                                                    } else {
+                                                        $pre_amount = 0;
+                                                    }
+
+                                                    $ttt = $pre_amount + $curr_stock_val + $intransit_stock_value_new + $active_amt + $picking_amt + $picking_complete_amt + $cart_amount;
 
                                                     if ($ttt > $msl->max_stock_level) {
                                                         continue;
                                                     }
                                                 } else {
 
-                                                    $tt = $store_stock->curr_stock_value + $stock_intransit_new->intransit_stock_value_new + $active_amt + $picking_amt + $picking_complete_amt + $cartinfoo->order_amount;
+                                                    $tt = $curr_stock_val + $intransit_stock_value_new + $active_amt + $picking_amt + $picking_complete_amt + $cart_amount;
 
                                                     if ($tt > $msl->max_stock_level) {
                                                         continue;
@@ -439,27 +466,26 @@ if (count($errors) == 0) {
                                 //cancel this order 
                                 cancelOrder($order_id);
                             } else {
-                                    $query = "select sum(oi.order_qty) as tot_qty, sum(oi.order_qty * oi.MRP) as tot_amt, count(distinct(oi.design_no)) as num_designs from it_ck_orderitems oi, it_items i where oi.order_id=$order_id and oi.item_id = i.id and i.ctg_id != 21";
+                                $query = "select sum(oi.order_qty) as tot_qty, sum(oi.order_qty * oi.MRP) as tot_amt, count(distinct(oi.design_no)) as num_designs from it_ck_orderitems oi, it_items i where oi.order_id=$order_id and oi.item_id = i.id and i.ctg_id != 21";
 //               print "<br> FINAL ITM UPDATE SEL: $query <br>";                 
-                            $orderobj = $db->fetchObject($query);
+                                $orderobj = $db->fetchObject($query);
 //               print_r($orderobj);
-                            //below code created random active time
-                            $date = new DateTime($dt);
-                            $date->add(new DateInterval('P0Y0M0DT0H0M' . mt_rand(1, 5) . 'S'));
-                            $activedt_new = $date->format('Y-m-d H:i:s');
+                                //below code created random active time
+                                $date = new DateTime($dt);
+                                $date->add(new DateInterval('P0Y0M0DT0H0M' . mt_rand(1, 5) . 'S'));
+                                $activedt_new = $date->format('Y-m-d H:i:s');
 
-                            if ($orderobj && $orderobj->tot_qty && $orderobj->tot_amt && $orderobj->num_designs) {
-                                $query = "update it_ck_orders set order_qty=$orderobj->tot_qty, order_amount=$orderobj->tot_amt, num_designs=$orderobj->num_designs , status=" . OrderStatus::Active . " , active_time = '$activedt_new' where id=$order_id";
+                                if ($orderobj && $orderobj->tot_qty && $orderobj->tot_amt && $orderobj->num_designs) {
+                                    $query = "update it_ck_orders set order_qty=$orderobj->tot_qty, order_amount=$orderobj->tot_amt, num_designs=$orderobj->num_designs , status=" . OrderStatus::Active . " , active_time = '$activedt_new' where id=$order_id";
 //                   print "<br> UPDATE PROPER: $query";
-                                $db->execUpdate($query);
-                            } else {
-                                $query = "update it_ck_orders set order_qty=0, order_amount=0, num_designs=$orderobj->num_designs  , active_time = '$activedt_new' where id=$order_id and store_id=$store_id";
+                                    $db->execUpdate($query);
+                                } else {
+                                    $query = "update it_ck_orders set order_qty=0, order_amount=0, num_designs=$orderobj->num_designs  , active_time = '$activedt_new' where id=$order_id and store_id=$store_id";
 //                           print "<br> UPDATE IM PROPER: $query";
-                                $db->execUpdate($query);
-                            }
-                            $cnt++;
-                            $dt = $activedt_new;
-      
+                                    $db->execUpdate($query);
+                                }
+                                $cnt++;
+                                $dt = $activedt_new;
                             }
                         } else {
 
