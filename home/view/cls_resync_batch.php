@@ -10,7 +10,7 @@ require_once "lib/items/clsItems.php";
  *
  * @author Dante
  */
-class cls_Resync_batch extends cls_renderer {
+class cls_resync_batch extends cls_renderer {
   
       var $currUser;
     var $userid;
@@ -18,7 +18,6 @@ class cls_Resync_batch extends cls_renderer {
     var $design_id;
     var $data;
     var $cat;
-  
 
     function __construct($params = null) {
         //parent::__construct(array(UserType::Admin, UserType::CKAdmin));
@@ -98,7 +97,6 @@ class cls_Resync_batch extends cls_renderer {
             <?php
             $display = "none";
             $num = 0;
-      //
             ?>
             <div class="box" style="clear:both;">
                 <fieldset class="login">
