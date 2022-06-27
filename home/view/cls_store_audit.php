@@ -131,7 +131,7 @@ class cls_store_audit extends cls_renderer {
 
 
                                 <?php
-                                $objs = $db->fetchObjectArray("select id,store_name from it_codes where usertype=" . UserType::Dealer . " and inactive=0 and isastore=1 and is_closed=0 order by store_name");
+                                $objs = $db->fetchObjectArray("select id,store_name from it_codes where usertype=" . UserType::Dealer . " and inactive=0 and is_closed=0 order by store_name");
 
                                 if ($objs) {
                                     foreach ($objs as $obj) {
@@ -160,7 +160,7 @@ class cls_store_audit extends cls_renderer {
                
                         
                         &nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;   
-                        <button><a href="/linenking/home/tmp1/StoreAuditform.pdf" download >Download Store Audit Form</a></button>
+                        <button><a href="https://cottonking.intouchrewards.com/tmp1/StoreAuditform.pdf" download >Download Store Audit Form</a></button>
                        <br><br> <div><table border="3">
                                
                     <tr>
