@@ -160,7 +160,7 @@ class cls_store_audit extends cls_renderer {
                
                         
                         &nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;   
-                        <button><a href="https://cottonking.intouchrewards.com/tmp1/StoreAuditform.pdf" download >Download Store Audit Form</a></button>
+                        <button><a href="https://cottonking.intouchrewards.com/tmp1/StoreAuditformLK.pdf" download >Download Store Audit Form</a></button>
                        <br><br> <div><table border="3">
                                
                     <tr>
