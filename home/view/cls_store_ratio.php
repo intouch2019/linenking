@@ -496,14 +496,14 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
                                         ?>
                                         <option value="-1" <?php echo $defaultSel; ?>>All Stores</option> 
                                         <?php
-                                        $objs = $db->fetchObjectArray("select id,store_name from it_codes where usertype=" . UserType::Dealer . "  and isastore=1 and is_closed=0 and level=  '$this->level' order by store_name"); //and inactive=0
+                                        $objs = $db->fetchObjectArray("select id,store_name from it_codes where usertype=" . UserType::Dealer . "  and is_closed=0 and level=  '$this->level' order by store_name"); //and inactive=0
 //            print_r($objs);
                                         if ($this->sid == "-1") {
                                             $storeid = array();
                                             if ($this->a == 0) { //means 'all stores report is req only in excel'
                                                 $write_htm = false;
                                             }
-                                            $allstoreArrays = $db->fetchObjectArray("select id,store_name from it_codes where usertype=" . UserType::Dealer . "  and isastore=1 and is_closed=0 and level=  '$this->level' order by store_name"); //and inactive=0
+                                            $allstoreArrays = $db->fetchObjectArray("select id,store_name from it_codes where usertype=" . UserType::Dealer . " and is_closed=0 and level=  '$this->level' order by store_name"); //and inactive=0
                                             foreach ($allstoreArrays as $storeArray) {
                                                 foreach ($storeArray as $store) {
                                                     array_push($storeid, $store);
