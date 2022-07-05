@@ -113,6 +113,7 @@ class cls_admin_stores extends cls_renderer {
                 <th>Dealer Number</th>
                   <th>Store ID</th>
                 <th>Username</th>
+                <th>Level</th>
                 <th>Is Store Closed</th>
                 <th>Dealer Name</th>
                 <th>City</th>
@@ -142,6 +143,9 @@ $dialogHtml .= '<td width="70px;">Create Date:</td><td>'.mmddyy($obj->createtime
 $dialogHtml .= "</tr>";
 $dialogHtml .= "<tr>";
 $dialogHtml .= "<td>Store Number:</td><td>$obj->store_number</td>";
+$dialogHtml .= "</tr>";
+$dialogHtml .= "<tr>";
+$dialogHtml .= "<th colspan=2>$obj->level</th>";
 $dialogHtml .= "</tr>";
 $dialogHtml .= "<tr>";
 $dialogHtml .= "<td>Owner:</td><td>$obj->owner</td>";
@@ -184,6 +188,7 @@ $dialogHtml = json_encode($dialogHtml);
                 <td><?php echo $obj->store_number; ?></td>
                  <td><?php echo $obj->id; ?></td>
                 <td><?php echo "$obj->code<br>$server_change"; ?></td>
+                <td><?php echo $obj->level; ?></td>
                 <td><?php if(trim($obj->is_closed)==1){ echo "Yes";}else{ echo "No";}?></td>
                 <td><?php echo $obj->store_name; ?></td>
                 <td><?php echo $obj->city; ?></td>

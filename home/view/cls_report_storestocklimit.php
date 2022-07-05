@@ -50,12 +50,12 @@ $(function(){
     oTable = $('#tb_msl').dataTable( {
 	"bProcessing": true,
 	"bServerSide": true,
-        "aoColumns": [ null, null, {bSortable:false}, {bSortable:false}, {bSortable:false}, {bSortable:false}, {bSortable:false}, {bSortable:false}, {bSortable:false}, {bSortable:false},{bSortable:false},{bSortable:false} ,{bSortable:false} ],
+        "aoColumns": [ null, null, {bSortable:false}, {bSortable:false}, {bSortable:false}, {bSortable:false}, {bSortable:false}, {bSortable:false}, {bSortable:false}, {bSortable:false},{bSortable:false}], //,{bSortable:false} ,{bSortable:false} 
 	"sAjaxSource": url
     } );
 // search on pressing Enter key only
     $('.dataTables_filter input').unbind('keyup').bind('keyup', function(e){
-	if (e.which == 13){                     
+	if (e.which == 11){                     
 		oTable.fnFilter($(this).val(), null, false, true);
 	}
     });    
@@ -89,15 +89,16 @@ function genRep(){
                  <th>ID</th>                        
                 <th>Store Name</th>
                 <th>Store Apparels Current Stock</th>
-                <th>Store mask Current Stock</th>
+                <!--<th>Store mask Current Stock</th>-->
                 <th>Store Total Current Stock</th>
                 <th>Store Apparels Stock in Transit</th>
-                <th>Store Mask Stock in Transit</th>
+                <!--<th>Store Mask Stock in Transit</th>-->
                 <th>Store Total in Transit</th>
                 <th>Store Apparels Total Stock</th>
-                <th>Store Mask Total Stock</th>
+                <!--<th>Store Mask Total Stock</th>-->
                 <th>Store Total Stock</th>
-                <th>Store Minimum Stock Level</th>                
+                <th>Store Minimum Stock Level</th>
+                <th>Store Maximum Stock Level</th>                
                 <th>Difference</th>
 	    </tr>
 	</thead>
