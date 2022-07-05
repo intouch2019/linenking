@@ -14,8 +14,10 @@ class cls_store_ratio extends cls_renderer {
     var $cat;
     var $sid = "";
     var $design_id = "";
+    var $level;
+    var $core;
     var $rtype = "";
-    var $des_code="";
+    var $des_code = "";
 
     function __construct($params = null) {
         //parent::__construct(array(UserType::Admin, UserType::CKAdmin, UserType::Dispatcher, UserType::Manager));
@@ -41,6 +43,15 @@ class cls_store_ratio extends cls_renderer {
         if ($params && isset($params['rtype'])) {
             $this->rtype = $params['rtype'];
         }
+         if ($params && isset($params['level'])) {
+            $this->level = strtoupper($params['level']);
+            if ($this->level == "AP") {
+                $this->level = "A+";
+            }
+        }
+        if ($params && isset($params['core'])) {
+            $this->core = strtoupper($params['core']);
+        }
         if ($params && isset($params['dno']))
             $this->des_code = $params['dno'];
     }
@@ -63,6 +74,7 @@ class cls_store_ratio extends cls_renderer {
         <link rel="stylesheet" href="css/prettyPhoto.css" type="text/css" media="screen" title="prettyPhoto main stylesheet" charset="utf-8" />
         <script src="js/prettyPhoto/jquery.prettyPhoto.js" type="text/javascript" charset="utf-8"></script>
         <link rel="stylesheet" href="js/chosen/chosen.css" />
+         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <script type="text/javascript">
             <!--//--><![CDATA[//><!--
             $(function () {
@@ -181,52 +193,110 @@ class cls_store_ratio extends cls_renderer {
                 document.getElementById("sel_ratio_type").selectedIndex = 0;
             }
             
-            function ctgwise(ctg_id){
-                 <?php if ($this->currUser->usertype == UserType::Dealer) { ?>
-                    var store_id = '<?php echo $this->currUser->id; ?>';
-        <?php } else { ?>
-                    var store_id = $("#sel_store").val();
-        <?php  } ?>
-               // var cat_id = $("#sel_cat").val();
-                //alert(cat_id);
-                var ratio_type = $("#sel_ratio_type").val();
-                if(store_id == 0){
-                   alert("Please select store");
-                }else if(ratio_type == 0){
-                    alert("Please select Ratio Type");
-                }else{
-                //window.location.href = "store/ratio/sid=" + store_id + "/cat=" + cat_id;
-                //var des_id = $("#sel_des").val();
-                //window.location.href = "store/ratio/sid=" + store_id + "/cat=" + cat_id + "/design_id=" + des_id + "/rtype=" + ratio_type;
-                window.location.href = "store/ratio/sid=" + store_id + "/rtype=" + ratio_type +"/cat=" + ctg_id;
-               }
+            function ctgwise(ctg_id) {
+                        // alert("ctgid: "+ctg_id)    ;
+                         var level = $("#getlevel").val();
+                        var core = $("#getcore").val();
+                        if (level == "A+") {
+                            level = "AP";
+                        }
+            <?php if ($this->currUser->usertype == UserType::Dealer) { ?>
+                            var store_id = '<?php echo $this->currUser->id; ?>';
+            <?php } else { ?>
+                            var store_id = $("#sel_store").val();
+            <?php } ?>
+        //                var cat_id = $("#sel_cat").val();
+        //                alert("catid: "+cat_id);
+                        var ratio_type = $("#sel_ratio_type").val();
+                        if (store_id == 0) {
+                            alert("Please select store");
+                        } else if (ratio_type == 0) {
+                            alert("Please select Ratio Type");
+                        } else {
+                            //window.location.href = "store/ratio/sid=" + store_id + "/cat=" + cat_id;
+                            //var des_id = $("#sel_des").val();
+                            //window.location.href = "store/ratio/sid=" + store_id + "/cat=" + cat_id + "/design_id=" + des_id + "/rtype=" + ratio_type;
+                            window.location.href = "store/ratio/level=" + level + "/core=" + core + "/sid=" + store_id + "/rtype=" + ratio_type + "/cat=" + ctg_id;
+
+                        }
+                    }
+                     function getlevel() {
+                        var store_id = $("#sel_store").val();
+                        var level = $("#getlevel").val();
+                        var core = $("#getcore").val();
+                        var ratio_type = $('#sel_ratio_type').val();
+                        if (level == "A+") {
+                            level = "AP";
+                        }
+                        // alert($("#design_ids").val());
+                        window.location.href = "store/ratio/level=" + level + "/core=" + core + "/sid=" + store_id + "/rtype=" + ratio_type;
+        //                $("#designids").val(designnos);
+
             }
+
             
-            function designwise(){
-                var designnos = $("#designos").val();
-                $("#designids").val(designnos);
-                //alert($("#design_ids").val());
-            }
+            function designwise(    ) {
+
+                        var designnos = $("#designos").val();
+
+                        $("#designids").val(designnos);
+                        var level = $("#getlevel").val();
+                        var core = $("#getcore").val();
+                        if (level == "A+") {
+                            level = "AP";
+                        }
+            <?php if ($this->currUser->usertype == UserType::Dealer) { ?>
+                            var store_id = '<?php echo $this->currUser->id; ?>';
+            <?php } else { ?>
+                            var store_id = $("#sel_store").val();
+            <?php } ?>
+                        var ctg_id = $("#sel_cat").val();
+        //                alert("catid: "+cat_id);
+                        var ratio_type = $("#sel_ratio_type").val();
+                        if (store_id == 0) {
+                            alert("Please select store");
+                        } else if (ratio_type == 0) {
+                            alert("Please select Ratio Type");
+                        } else {
+                            //window.location.href = "store/ratio/sid=" + store_id + "/cat=" + cat_id;
+                            //var des_id = $("#sel_des").val();
+                            //window.location.href = "store/ratio/sid=" + store_id + "/cat=" + cat_id + "/design_id=" + des_id + "/rtype=" + ratio_type;
+//                            alert(designnos);
+                            $("#designids").val(designnos);
+                            if (designnos !== null && designnos != "") {
+                                window.location.href = "store/ratio/level=" + level + "/core=" + core + "/sid=" + store_id + "/rtype=" + ratio_type + "/cat=" + ctg_id + "/design_id=" + designnos;
+                            } else {
+                                window.location.href = "store/ratio/level=" + level + "/core=" + core + "/sid=" + store_id + "/rtype=" + ratio_type + "/cat=" + ctg_id;
+                            }
+                        }
+        //                alert("store/ratio/level=" + level+ "/core=" + core+ "/sid=" + store_id + "/rtype=" + ratio_type +"/cat=" + ctg_id+"/design_id="+designnos);
+                    }
+
             
-            function searchratiotype(ratio_type) {
-        <?php if ($this->currUser->usertype == UserType::Dealer) { ?>
-                    var store_id = '<?php echo $this->currUser->id; ?>';
-        <?php } else { ?>
-                    var store_id = $("#sel_store").val();
-        <?php } ?>
-                var cat_id = $("#sel_cat").val();
-                if(store_id == 0){
-                   alert("Please select store")     ;
-                   $("#sel_ratio_type").val("0");
-                }/*else if(cat_id == 0){
-                    alert("Please select category");
-                    $("#sel_ratio_type").val("0");
-                }*/else{
-                //var des_id = $("#sel_des").val();
-                //window.location.href = "store/ratio/sid=" + store_id + "/cat=" + cat_id + "/design_id=" + des_id + "/rtype=" + ratio_type;
-                 window.location.href = "store/ratio/sid=" + store_id + "/rtype=" + ratio_type;
-                }
-            }
+      function searchratiotype(ratio_type) {
+                        var level = $("#getlevel").val();
+                        var core = $("#getcore").val();
+                        if (level == "A+") {
+                            level = "AP";
+                        }
+            <?php if ($this->currUser->usertype == UserType::Dealer) { ?>
+                            var store_id = '<?php echo $this->currUser->id; ?>';
+            <?php } else { ?>
+                            var store_id = $("#sel_store").val();
+            <?php } ?>
+                        var cat_id = $("#sel_cat").val();
+                        if (store_id == 0) {
+                            alert("Please select store");
+                            $("#sel_ratio_type").val("0");
+                        }/*else if(cat_id == 0){
+                         alert("Please select category");
+                         $("#sel_ratio_type").val("0");
+                         }*/else {
+                            //var des_id = $("#sel_des").val();
+                            //window.location.href = "store/ratio/sid=" + store_id + "/cat=" + cat_id + "/design_id=" + des_id + "/rtype=" + ratio_type;
+                            window.location.href = "store/ratio/level=" + level + "/core=" + core + " /sid=" + store_id + "/rtype=" + ratio_type;
+                        }
+                    }
             
             
             
@@ -300,6 +370,7 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
             }
     
 }
+
 
 
      function editDesignRatio(theForm) {
@@ -386,36 +457,105 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
                     <legend>Standing / Base Ratio</legend>
                     <table>
                         <tr>
-                        <td colspan="5">Select store:</td>
-                        <td colspan="5">
-                        <?php if ($this->currUser->usertype != UserType::Dealer) { ?>
-                            <select id="sel_store" name="sel_store" data-placeholder="Search Store" class="chzn-select" multiple style="width:100%" onchange="searchstore(this.value);">
-                                <option value="0">Select Store</option> 
-                                <?php
-                                $objs = $db->fetchObjectArray("select * from it_codes where usertype=" . UserType::Dealer . " and inactive=0  and is_closed=0 order by store_name");
+                            <td colspan="5">Select level:</td>
+                            <td colspan="5">
+                                <select name="getlevel" id="getlevel" class="chzn-select" style="width:100%" required onchange="getlevel(this.value)">
 
-//                                $sids = split(',', $this->sid);
-                                foreach ($objs as $obj) {
-//                                    if ($this->sid == $obj->id) {
-                                    if (in_array($obj->id, $sids)){
-                                        $sel = 'selected';
+                                        <option selected value="0">Select Level</option>
+                                            <?php
+                                            $allstorelevel = StoreLevel::getLevel();
+                                            if ($usertype != UserType::Admin && $usertype != UserType::CKAdmin) {
+                                                ?> <option <?php echo "selected" ?>  value="<?php echo $this->currUser->level; ?>"><?php echo $this->currUser->level; ?></option>
+                                        <?php } else {
+                                            foreach ($allstorelevel as $key => $value) {
+                                                ?>
+                                                <option <?php echo ( $this->level == $key ) ? "selected" : "" ?>  value="<?php echo $key; ?>"><?php echo $value; ?></option>
+                                            <?php }
+                                        }
+                                        ?>
+                                    </select> 
+                            </td>
+                            
+                       </tr>
+                   <tr>
+
+                            <td colspan="5">Select store:</td>
+                            <td colspan="5">
+                                <select name="sel_store" id="sel_store" data-placeholder="Choose Store" class="chzn-select" multiple style="width:100%;">
+                                    <?php
+                                    if ($usertype == UserType::Dealer) {
+                                        ?>  <option value= "<?php echo $this->currUser->id; ?>" <?php echo "selected"; ?>> <?php echo $this->currUser->store_name; ?></option> <?php
                                     } else {
-                                        $sel = '';
+
+
+                                        if ($this->sid == -1) {
+                                            $defaultSel = "selected";
+                                        } else {
+                                            $defaultSel = "";
+                                        }
+                                        ?>
+                                        <option value="-1" <?php echo $defaultSel; ?>>All Stores</option> 
+                                        <?php
+                                        $objs = $db->fetchObjectArray("select id,store_name from it_codes where usertype=" . UserType::Dealer . "  and isastore=1 and is_closed=0 and level=  '$this->level' order by store_name"); //and inactive=0
+//            print_r($objs);
+                                        if ($this->sid == "-1") {
+                                            $storeid = array();
+                                            if ($this->a == 0) { //means 'all stores report is req only in excel'
+                                                $write_htm = false;
+                                            }
+                                            $allstoreArrays = $db->fetchObjectArray("select id,store_name from it_codes where usertype=" . UserType::Dealer . "  and isastore=1 and is_closed=0 and level=  '$this->level' order by store_name"); //and inactive=0
+                                            foreach ($allstoreArrays as $storeArray) {
+                                                foreach ($storeArray as $store) {
+                                                    array_push($storeid, $store);
+                                                }
+                                            }
+                                        } else {
+                                            $storeid = explode(",", $this->sid);
+                                        }
+//print_r($allst);
+//print_r($storeid);
+                                        foreach ($objs as $obj) {
+                                            $selected = "";
+//	if (isset($this->storeidreport) && $obj->id==$this->storeidreport) { $selected = "selected"; }
+                                            if ($this->sid != -1) {
+                                                foreach ($storeid as $sid) {
+                                                    if ($obj->id == $sid) {
+                                                        $selected = "selected";
+                                                    }
+                                                }
+                                            }
+                                            ?> 
+                                            <option value="<?php echo $obj->id; ?>" <?php echo $selected; ?>><?php echo $obj->store_name; ?></option> 
+                                        <?php }
                                     }
                                     ?>
-                                    <option value="<?php echo $obj->id; ?>" <?php echo $sel; ?>><?php echo $obj->store_name; ?></option> 
-                                <?php } ?>
-                            </select>
-                        <?php } else { ?>
-                            <input type="text" id="sel_store" name="sel_store" value="<?php echo $this->currUser->store_name; ?>" readonly>
-                        <?php }
-                        ?>
+                                </select>
+                                </div>
+                        </tr>
+                           <tr>
+                            <td colspan="5">Select Design Type:</td>
+                            <td colspan="5">
+                                    <select name="designtype" id="getcore" data-placeholder="Choose design no..." class="chzn-select"  onchange="getlevel(this.value)"  single style="width:100%;" required>
+                                        <?php // if(!isset($this->core)&& ($this->core) ==""){?>   
+                                            <!--<option value="Select Design Type" <?php echo "selected"; ?>>Select Design Type</option>--> 
+
+                                        <?php
+                                        // }  else{
+                                        $objs = coreNoncore::getcore();
+                                        foreach ($objs as $key => $value) {
+                                            ?><option <?php echo ( $this->core == $key ) ? "selected" : "" ?>  value="<?php echo $key; ?>"><?php echo $value; ?></option><?php }// } 
+                                        ?>            
+
+                                        <!--                                                <option value="1">Core</option>
+                                                                                <option value="0">Non Core</option>-->
+                                    </select>
                             </td>
-                    </tr>
+                        </tr>
+                        
                     <tr>
                         <td colspan="5">Select Ratio type:</td>
                         <td colspan="5">
-                        <select id="sel_ratio_type" name="sel_ratio_type" data-placeholder="Search Ratio Type" style="width:100%" onchange="searchratiotype(this.value);">
+                        <select id="sel_ratio_type" name="sel_ratio_type" data-placeholder="Search Ratio Type" class="chzn-select" style="width:100%" onchange="searchratiotype(this.value);">
                             <option value="0">Select Ratio Type</option> 
                             <?php
                             $objs = RatioType::getALL();
@@ -432,61 +572,116 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
                         </td>    
                     </tr>   
                     
-                    <tr>
-                        <td colspan="5">
-                        Select category:
-                        </td>
-                        <td colspan="5">
-                        <select id="sel_cat" name="sel_cat" data-placeholder="Search Category" style="width:100%" onchange="ctgwise(this.value);"> <!--searchcat(this.value);-->
-                            <option value="0">Select Category</option> 
-                            <?php
-                            $objs = $db->fetchObjectArray("select * from it_categories where active=1 order by name");
-                            foreach ($objs as $obj) {
-                                if ($this->cat == $obj->id) {
-                                    $sel = 'selected';
-                                } else {
-                                    $sel = '';
-                                }
-                                ?>
-                                <option value="<?php echo $obj->id; ?>" <?php echo $sel; ?>><?php echo $obj->name; ?></option> 
-                            <?php } ?>
-                        </select>
-                        </td>
-                    </tr>
-                    
-                    <tr>
-                        <td colspan="5">Select Design:</td>
-                        <td colspan="5">
-                            <select id="designos" name="designnos" data-placeholder="All" style="width:75%" class="chzn-select" multiple onchange="designwise(this.value);"> 
-                            <option value="-1">All</option>
-                            <?php
-                             if($this->rtype == RatioType::Base || $this->rtype == RatioType::Standing){ // show designs only for base ratio type
-                                // $query="select d.id as design_id,d.design_no,c.name,c.id from it_ck_designs d , it_categories c where d.ctg_id = c.id  and image is not null"; //and d.active = 1
-                               $query = "select id as design_id,design_no from it_ck_designs where ctg_id = ".$this->cat." order by design_no";
-                               //print $query;
-                               $objs = $db->fetchObjectArray($query);
-                               foreach($objs as $obj){
-                                   $selected = "";
-                                   if(!empty($designarr)){
-                                       if(in_array($obj->design_id, $designarr)){ 
-                                           $selected = "selected";}
-                                           else{ $selected = ""; }
-                                   }
-                                   $option_value = $obj->design_no;
-                            ?>
-                            <option value="<?php echo $obj->design_id; ?>" <?php echo $selected; ?>><?php echo $option_value; ?></option>
-    <?php }} ?>
-                        </select>
-                            
-                        </td>    
-                    </tr>
+                   <tr>
+                            <td colspan="5">
+                                Select category:
+                            </td>
+                            <td colspan="5">
+                                    <select id="sel_cat" name="sel_cat" data-placeholder="Search Category" class="chzn-select"  style="width:100%" onchange="ctgwise(this.value);"> <!--searchcat(this.value);-->
+                                    <option value="0">Select Category</option> 
+                                    <?php
+                                    $objs = $db->fetchObjectArray("select id,name from it_categories where active=1 order by name");
+                                    foreach ($objs as $obj) {
+                                        if ($this->cat == $obj->id) {
+                                            $sel = 'selected';
+                                        } else {
+                                            $sel = '';
+                                        }
+                                        ?>
+                                            <option value="<?php echo $obj->id; ?>" <?php echo $sel; ?>><?php echo $obj->name; ?></option> 
+        <?php } ?>
+                                    </select>
+                            </td>
+                        </tr>
+                   <?php 
+                    if (isset($this->core) && ($this->core != "") && ($this->core == 0)) {
+                                                    $corevar = 0;
+                                                    $corequery = "core = " . $corevar . " and";
+                                                } else if (isset($this->core) && ($this->core != "") && ($this->core == 1)) {
+                                                    $corevar = 1;
+                                                    $corequery = "core = " . $corevar . " and";
+                                                } else {
+                                                    $corequery = "";
+                                                }
+                   
+                   
+                   
+                   $query = "select id as design_id,design_no from it_ck_designs where  " . $corequery . " ctg_id = " . $this->cat . " order by design_no";
+               ?> 
+                          <tr>
+                                        <?php if ($this->rtype == RatioType::Base || $this->rtype == RatioType::Standing) { ?>
+                                <td colspan="5">Select Design:</td>
+                                <td colspan="5">
+                                        <select id="designos" name="designnos" data-placeholder="All" style="width:100%" class="chzn-select" multiple onchange="designwise();"> 
+                                            <?php if (isset($excptional) && trim($excptional) != "") { ?>
+                                                <option value="-1">All except <?php echo $excptional_ds ?></option>
+
+                                            <?php } else { ?>
+                                                <option value="-1">All</option>
+                                            <?php } ?>
+                                            <?php
+                                            if ($this->rtype == RatioType::Base || $this->rtype == RatioType::Standing) { // show designs only for base ratio type
+//                                 if(isset($excptional) && trim($excptional)!="" && $flag==1){
+//                                    $aClausee = "and id not in ($excptional)";
+//                                } else {
+//                                  $aClausee="";  
+//                                }
+                                                if (isset($this->core) && ($this->core != "") && ($this->core == 0)) {
+                                                    $corevar = 0;
+                                                    $corequery = "core = " . $corevar . " and";
+                                                } else if (isset($this->core) && ($this->core != "") && ($this->core == 1)) {
+                                                    $corevar = 1;
+                                                    $corequery = "core = " . $corevar . " and";
+                                                } else {
+                                                    $corequery = "";
+                                                }
+
+                                                if ($this->design_id == "-1") {
+                                                    $designarr = array();
+                                                    if ($this->a == 0) { //means 'all stores report is req only in excel'
+                                                        $write_htm = false;
+                                                    }
+                                                    $allstoreArrays = $db->fetchObjectArray("select id as design_id,design_no from it_ck_designs where  " . $corequery . " ctg_id = " . $this->cat . " order by design_no");
+                                                    foreach ($allstoreArrays as $storeArray) {
+                                                        foreach ($storeArray as $store) {
+                                                            array_push($designarr, $store);
+                                                        }
+                                                    }
+                                                } else {
+                                                    $designarr = explode(",", $this->design_id);
+                                                }
+
+                                                $query = "select id as design_id,design_no from it_ck_designs where  " . $corequery . " ctg_id = " . $this->cat . " order by design_no";
+//                               print_r($query)  ;
+                                                $objs = $db->fetchObjectArray($query);
+                                                if ($objs != NULL) {
+                                                    foreach ($objs as $obj) {
+                                                        $selected = "";
+                                                        if (!empty($designarr)) {
+                                                            if (in_array($obj->design_id, $designarr)) {
+                                                                $selected = "selected";
+                                                            } else {
+                                                                $selected = "";
+                                                            }
+                                                        }
+                                                        $option_value = $obj->design_no;
+                                                        ?>
+                                                        <option value="<?php echo $obj->design_id; ?>" <?php echo $selected; ?>><?php echo $option_value; ?></option>
+                    <?php }
+                }
+            } ?>
+                                        </select>
+
+                                </td>    
+                            </tr>
+        <?php } ?>
                     
 <!--                    <tr>
                         <td colspan="10"><b>NOTE: Standing/Base ratio setting against 'All Designs' option TAKES 2-3 Minutes to complete.<br />Please Wait for it to do so.<br />Donot Hit the Browser Refresh or any other Buttons</b></td>
                     </tr>-->
                     <tr>
                         <td colspan="10">
-                          <span id="statusMsg" class="<?php echo $formResult->cssClass; ?>" style="display:<?php echo $formResult->showhide; ?>;"><?php echo $formResult->status; ?></span>
+                          <span id="statusMsg" class="<?php echo $formResult->cssClass; ?>" style="display:block"><?php if (isset($formResult->status) && $formResult->status !== "") {echo $formResult->status;} else {if ($this->currUser->usertype == UserType::Dealer) { ?><i class="fa fa-warning" style="font-size:16px;color:black"></i><?php echo "  <b> Decreasing the standing ratio for the set value is not permitted.</b>";}} ?></span>
                         </td>
                     </tr>
 
@@ -500,7 +695,7 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
             <?php
             if ($this->cat != "" && $this->cat != 0  && $this->sid != "" && $this->sid != 0  && $this->rtype == RatioType::Base) { //&& $this->design_id != "" && $this->design_id != 0
                 //$query = "select c.id as ctg_id,c.name as category,c.active,d.design_no,d.image,i.mrp,d.lineno,d.rackno from it_categories c,it_ck_designs d,it_items i where c.id=d.ctg_id and d.id=i.design_id and c.id=i.ctg_id and c.id=$this->cat and d.id=$this->design_id group by d.design_no";
-                $query = "select c.* from it_categories c where c.id=$this->cat ";
+                $query = "select c.name, c.active from it_categories c where c.id=$this->cat ";
                 $obj = $db->fetchObject($query);
                 if (isset($obj)) {
                     $cat_name = $obj->name;
@@ -512,7 +707,7 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
              <div id="expand_collapse">
                     <div class="box">
                         
-                        <h2 class="expand"><?php echo $cat_name; ?> <?php echo $state_str; ?> &nbsp;&nbsp; (Set Selected Design's ratio)</h2> <!--Design No: <?php // echo $design_no.$mrp_str ; ?>-->
+                        <h2 class="expand"><?php echo $cat_name; ?> <?php echo $state_str; ?> &nbsp;&nbsp;  Please Insert Ratio For Selected Design</h2> <!--Design No: <?php // echo $design_no.$mrp_str ; ?>-->
                         <div class="collapse" > 
                             
                             <?php // if (isset($obj->image)) { ?>
@@ -534,6 +729,8 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
                                     <input type="hidden" id="userid" name="userid" value="<?php echo $this->currUser->id; ?>" />
                                     <!--<input type="hidden" id="mrp" name="mrp" value="<?php //echo $mrp; ?>" />-->
                                     <input type="hidden" id="designids" name="designids" value="-1"/>
+                                     <input type="hidden" id="core" name="core" value="<?php echo $this->core; ?>"/>
+                                     <input type="hidden" id="level" name="level" value="<?php echo $this->level; ?>"/>
                                     <table>
                                         <?php                                        
                                         $styleobj = $db->fetchObjectArray("select s1.style_id,s2.name as style_name from it_ck_styles s1,it_styles s2 where s1.ctg_id=$this->cat and s1.style_id=s2.id  and s2.is_active = 1 order by s1.sequence");
@@ -577,13 +774,13 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
 //                                                      $query = "select * from it_store_ratios where store_id=$storeid and ctg_id=$this->cat  and ratio_type=$this->rtype and style_id = $stylcod and size_id = $sizeid ";  
 //                                                    }else{
                                                      //$query = "select * from it_store_ratios where store_id=$storeid and ctg_id=$this->cat and design_id=$this->design_id and ratio_type=$this->rtype and style_id = $stylcod and size_id = $sizeid and mrp = $mrp ";
-                                                      $query = "select * from it_store_ratios where store_id=$storeid and ctg_id=$this->cat and ratio_type=$this->rtype and style_id = $stylcod and size_id = $sizeid ";
+                                                      $query = "select id,ratio from it_store_ratios where store_id=$storeid and ctg_id=$this->cat and ratio_type=$this->rtype and style_id = $stylcod and size_id = $sizeid ";
 //                                                    }
 //                                                    print "<br>".$query."<br>";
                                                       
                                                       
                                                     $getratio = $db->fetchObject($query);
-                                                    ?><td>
+                                                    ?><td name="A">
                                                         <input type="text" id="<?php echo $styleobj[$k]->style_id . "_" . $sizeobj[$i]->size_id; ?>" name="<?php echo $styleobj[$k]->style_id . "_" . $sizeobj[$i]->size_id; ?>" style="width:40%" value="<?php if(isset($getratio)){ echo $getratio->ratio; } else {echo '1';}  ?>" >
                                                     </td><?php
                                                 }
@@ -592,7 +789,7 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
                                         ?>
                                         </tbody>
                                     </table><Br>
-                                    <span id="statusMsg" class="<?php echo $formResult->cssClass; ?>" style="display:<?php echo $formResult->showhide; ?>;"><?php echo $formResult->status; ?></span>
+                                    <!--<span id="statusMsg" class="<?php echo $formResult->cssClass; ?>" style="display:<?php echo $formResult->showhide; ?>;"><?php echo $formResult->status; ?></span>-->
                                     <input class="blueglassbutton" type="submit" value="Save" style="float:right;">
                                 </form>
                             </div> <!-- end class=grid_10 --><div class="clear"></div>
@@ -627,6 +824,8 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
                                     <input type="hidden" id="userid" name="userid" value="<?php echo $this->currUser->id; ?>" />
                                     <!--<input type="hidden" id="mrp" name="mrp" value="<?php //echo $mrp; ?>" />-->
                                     <input type="hidden" id="designids" name="designids" value="-1"/>
+                                     <input type="hidden" id="core" name="core" value="<?php echo $this->core; ?>"/>
+                                     <input type="hidden" id="level" name="level" value="<?php echo $this->level; ?>"/>
                                     <table>
                                         <?php                                        
                                         $styleobj = $db->fetchObjectArray("select s1.style_id,s2.name as style_name from it_ck_styles s1,it_styles s2 where s1.ctg_id=$this->cat and s1.style_id=s2.id  and s2.is_active = 1 order by s1.sequence");
@@ -667,11 +866,14 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
                                                 for ($i = 0; $i < $no_sizes; $i++) {
                                                     $sizeid = $sizeobj[$i]->size_id;
                                                     
-                                                    $query = "select * from it_store_ratios where store_id=$storeid and ctg_id=$this->cat and design_id = -1 and ratio_type=$this->rtype and style_id = $stylcod and size_id = $sizeid ";
+                                                    $query = "select id,ratio from it_store_ratios where store_id=$storeid and ctg_id=$this->cat and design_id = -1 and ratio_type=$this->rtype and style_id = $stylcod and size_id = $sizeid ";
                                                     $getratio = $db->fetchObject($query);
                                                     //print_r($query);
-                                                    ?><td>
-                                                        <input type="text" id="<?php echo $styleobj[$k]->style_id . "_" . $sizeobj[$i]->size_id; ?>" name="<?php echo $styleobj[$k]->style_id . "_" . $sizeobj[$i]->size_id; ?>" style="width:40%" value="<?php if(isset($getratio)){ echo $getratio->ratio; }?>" readonly>
+                                                    ?><td name="B">
+                                                        <!--<input type="text" id="<?php echo $styleobj[$k]->style_id . "_" . $sizeobj[$i]->size_id; ?>" name="<?php echo $styleobj[$k]->style_id . "_" . $sizeobj[$i]->size_id; ?>" style="width:40%" value="<?php if(isset($getratio)){ echo $getratio->ratio; }?>" readonly>-->
+                                             <?php if (isset($getratio)) {
+                                    echo "<strong>" . $getratio->ratio . "</strong>";
+                                } ?>
                                                     </td><?php
                                                 }
                                             }
@@ -679,7 +881,7 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
                                         ?>
                                         </tbody>
                                     </table><Br>
-                                    <span id="statusMsg" class="<?php echo $formResult->cssClass; ?>" style="display:<?php echo $formResult->showhide; ?>;"><?php echo $formResult->status; ?></span>
+                                    <!--<span id="statusMsg" class="<?php echo $formResult->cssClass; ?>" style="display:<?php echo $formResult->showhide; ?>;"><?php echo $formResult->status; ?></span>-->
                                     <!--<input type="submit" value="Save" style="float:right;">
                                 </form>-->
                             </div> <!-- end class=grid_10 --><div class="clear"></div>
@@ -742,6 +944,8 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
                                     <input type="hidden" id="rtype" name="rtype" value="<?php echo $this->rtype; ?>" />
                                     <input type="hidden" id="userid" name="userid" value="<?php echo $this->currUser->id; ?>" />
                                      <input type="hidden" id="desno" name="designids" value="<?php echo $dobj->design_id; ?>" />
+                                     <input type="hidden" id="core" name="core" value="<?php echo $this->core; ?>"/>
+                                     <input type="hidden" id="level" name="level" value="<?php echo $this->level; ?>"/>
                                     <table>
                                         <?php                                        
                                         $styleobj = $db->fetchObjectArray("select s1.style_id,s2.name as style_name from it_ck_styles s1,it_styles s2 where s1.ctg_id=$dobj->ctg_id and s1.style_id=s2.id  and s2.is_active = 1 order by s1.sequence");
@@ -779,10 +983,10 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
                                                  
                                                 for ($i = 0; $i < $no_sizes; $i++) {
                                                     $sizeid = $sizeobj[$i]->size_id;
-                                                    $query = "select * from it_store_ratios where store_id=$dobj->store_id and ctg_id=$dobj->ctg_id and design_id = $dobj->design_id and ratio_type=$dobj->ratio_type and style_id = $stylcod and size_id = $sizeid ";
+                                                    $query = "select id,ratio from it_store_ratios where store_id=$dobj->store_id and ctg_id=$dobj->ctg_id and design_id = $dobj->design_id and ratio_type=$dobj->ratio_type and style_id = $stylcod and size_id = $sizeid ";
                                                     $getratio = $db->fetchObject($query);
                                                    if(isset($getratio)){$gid = $getratio->id; }else{ $gid=0;}
-                                                    ?><td>
+                                                    ?><td name="C">
                                                         <input type="text" id="<?php echo $row_no.$styleobj[$k]->style_id . "_" . $sizeobj[$i]->size_id; ?>" name="<?php echo "item_".$styleobj[$k]->style_id . "_" . $sizeobj[$i]->size_id; ?>" style="width:40%" value="<?php if(isset($getratio)){ echo $getratio->ratio; }   ?>" pattern= "[0-9]+" title="ONLY NUMBER" >
                                                     
                                                     </td><?php
@@ -793,7 +997,7 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
                                         ?>
                                         </tbody>
                                     </table><Br>
-                                    <span id="statusMsg" class="<?php echo $formResult->cssClass; ?>" style="display:<?php echo $formResult->showhide; ?>;"><?php echo $formResult->status; ?></span>
+                                    <!--<span id="statusMsg" class="<?php echo $formResult->cssClass; ?>" style="display:<?php echo $formResult->showhide; ?>;"><?php echo $formResult->status; ?></span>-->
                                   <!--  <input type="button" value="Save" style="float:right;" onclick="javascript:saveDivSpc">-->
                                <input class="blueglassbutton" type="reset" value="Rset to 1" style="float:right;" onclick="designratioreset(<?php echo "'".$dobj->store_id."','".$dobj->ctg_id."','".$dobj->design_id."','".$dobj->design_no."','".$this->currUser->id."'";?>)">
                                     <input class="blueglassbutton" type="submit" value="Save" style="float:right;">
@@ -817,7 +1021,8 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
             
             else  if ($this->cat != "" && $this->cat != 0  && $this->sid != "" && $this->sid != 0  && $this->rtype == RatioType::Standing) { //&& $this->design_id != "" && $this->design_id != 0
                 //$query = "select c.id as ctg_id,c.name as category,c.active,d.design_no,d.image,i.mrp,d.lineno,d.rackno from it_categories c,it_ck_designs d,it_items i where c.id=d.ctg_id and d.id=i.design_id and c.id=i.ctg_id and c.id=$this->cat and d.id=$this->design_id group by d.design_no";
-                $query = "select c.* from it_categories c where c.id=$this->cat ";
+                $query = "select c.name, c.active from it_categories c where c.id=$this->cat ";
+//                print_r($query);
                 $obj = $db->fetchObject($query);
                 if (isset($obj)) {
                     $cat_name = $obj->name;
@@ -825,6 +1030,7 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
                     $state_str = "[ ".$state."]";
                 }
                 ?>
+
                 <div class="clear"></div>
              <div id="expand_collapse">
                     <div class="box">
@@ -850,7 +1056,9 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
                                     <input type="hidden" id="rtype" name="rtype" value="<?php echo $this->rtype; ?>" />
                                     <input type="hidden" id="userid" name="userid" value="<?php echo $this->currUser->id; ?>" />
                                     <!--<input type="hidden" id="mrp" name="mrp" value="<?php //echo $mrp; ?>" />-->
-                                    <input type="hidden" id="designids" name="designids" value="-1"/>
+                                    <input type="hidden" id="designids" name="designids" value="<?php if (isset($this->design_id) && $this->design_id !== "") {echo $this->design_id;} else {echo "-1";} ?>"/> <!-- selected design Values passing to addratiodetails-->
+                                     <input type="hidden" id="core" name="core" value="<?php echo $this->core; ?>"/>
+                                     <input type="hidden" id="level" name="level" value="<?php echo $this->level; ?>"/>
                                     <table>
                                         <?php                                        
                                         $styleobj = $db->fetchObjectArray("select s1.style_id,s2.name as style_name from it_ck_styles s1,it_styles s2 where s1.ctg_id=$this->cat and s1.style_id=s2.id  and s2.is_active = 1 order by s1.sequence");
@@ -889,20 +1097,21 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
                                                  
                                                 for ($i = 0; $i < $no_sizes; $i++) {
                                                     $sizeid = $sizeobj[$i]->size_id;
-                                                    
-//                                                    if($this->design_id == "-1"){
-//                                                      $query = "select * from it_store_ratios where store_id=$storeid and ctg_id=$this->cat  and ratio_type=$this->rtype and style_id = $stylcod and size_id = $sizeid ";  
-//                                                    }else{
-                                                     //$query = "select * from it_store_ratios where store_id=$storeid and ctg_id=$this->cat and design_id=$this->design_id and ratio_type=$this->rtype and style_id = $stylcod and size_id = $sizeid and mrp = $mrp ";
-                                                      $query = "select * from it_store_ratios where store_id=$storeid and ctg_id=$this->cat and ratio_type=$this->rtype and style_id = $stylcod and size_id = $sizeid ";
-//                                                    }
-//                                                    print "<br>".$query."<br>";
+                                         
+                                                    if ($this->design_id == "-1" || $this->design_id == "") {
+                        $query = "select id,ratio from it_store_ratios where store_id in ($storeid) and ctg_id=$this->cat and design_id = -1 and ratio_type=$this->rtype and style_id = $stylcod and size_id = $sizeid and core =$this->core";     //and design_id = -1
+                    } else {
+                        $query = "select id,ratio from it_store_ratios where store_id in ($storeid) and ctg_id=$this->cat and design_id in ($this->design_id) and ratio_type=$this->rtype and style_id = $stylcod and size_id = $sizeid and core =$this->core"; // and mrp = $mrp ";
+//                                                      $query = "select id,ratio from it_store_ratios where store_id=$storeid and ctg_id=$this->cat and ratio_type=$this->rtype and style_id = $stylcod and size_id = $sizeid ";
+//                                                   
+                    }
+//                                                    print $query."<br>";
                                                       
                                                       
                                                     $getratio = $db->fetchObject($query);
-                                                    ?><td>
-                                                        <input type="text" id="<?php echo $styleobj[$k]->style_id . "_" . $sizeobj[$i]->size_id; ?>" name="<?php echo $styleobj[$k]->style_id . "_" . $sizeobj[$i]->size_id; ?>" style="width:40%" value="<?php if(isset($getratio)){ echo $getratio->ratio; } else {echo '1';}  ?>" >
-                                                    </td><?php
+                                                    ?><td name="D">
+                                                       <input type="number" min="0" <?php if ($this->currUser->usertype == UserType::Dealer && $this->core == 1) { ?>min="<?php if (isset($getratio)) {echo $getratio->ratio;} else {echo '1';} ?>" onfocusout="this.value = !!this.value && Math.abs(this.value) >= <?php if (isset($getratio)) {echo $getratio->ratio;} else {echo '1';} ?> ? Math.abs(this.value) : <?php if (isset($getratio)) {echo $getratio->ratio;} else {echo '1';} ?>" id="<?php echo $styleobj[$k]->style_id . "_" . $sizeobj[$i]->size_id;} ?>"  name="<?php echo $styleobj[$k]->style_id . "_" . $sizeobj[$i]->size_id; ?>" style="width:80%"   value="<?php if (isset($getratio)) {echo $getratio->ratio;} else {echo '1';} ?>" >
+                                                       </td><?php
                                                 }
                                                 
                                             }
@@ -910,7 +1119,7 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
                                         ?>
                                         </tbody>
                                     </table><Br>
-                                    <span id="statusMsg" class="<?php echo $formResult->cssClass; ?>" style="display:<?php echo $formResult->showhide; ?>;"><?php echo $formResult->status; ?></span>
+                                    <!--<span id="statusMsg" class="<?php echo $formResult->cssClass; ?>" style="display:<?php echo $formResult->showhide; ?>;"><?php echo $formResult->status; ?></span>-->
                                     <input class="blueglassbutton" type="submit" value="Save" style="float:right;">
                                 </form>
                             </div> <!-- end class=grid_10 --><div class="clear"></div>
@@ -945,6 +1154,8 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
                                     <input type="hidden" id="userid" name="userid" value="<?php echo $this->currUser->id; ?>" />
                                     <!--<input type="hidden" id="mrp" name="mrp" value="<?php //echo $mrp; ?>" />-->
                                     <input type="hidden" id="designids" name="designids" value="-1"/>
+                                     <input type="hidden" id="core" name="core" value="<?php echo $this->core; ?>"/>
+                                     <input type="hidden" id="level" name="level" value="<?php echo $this->level; ?>"/>
                                     <table>
                                         <?php                                        
                                         $styleobj = $db->fetchObjectArray("select s1.style_id,s2.name as style_name from it_ck_styles s1,it_styles s2 where s1.ctg_id=$this->cat and s1.style_id=s2.id  and s2.is_active = 1 order by s1.sequence");
@@ -985,10 +1196,10 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
                                                 for ($i = 0; $i < $no_sizes; $i++) {
                                                     $sizeid = $sizeobj[$i]->size_id;
                                                     
-                                                    $query = "select * from it_store_ratios where store_id=$storeid and ctg_id=$this->cat and design_id = -1 and ratio_type=$this->rtype and style_id = $stylcod and size_id = $sizeid ";
+                                                    $query = "select id,ratio from it_store_ratios where store_id=$storeid and ctg_id=$this->cat and design_id = -1 and ratio_type=$this->rtype and style_id = $stylcod and size_id = $sizeid and core= $this->core";
                                                     $getratio = $db->fetchObject($query);
-                                                    //print_r($query);
-                                                    ?><td>
+//                                                    print_r($query);
+                                                    ?><td name=E>
                                                         <input type="text" id="<?php echo $styleobj[$k]->style_id . "_" . $sizeobj[$i]->size_id; ?>" name="<?php echo $styleobj[$k]->style_id . "_" . $sizeobj[$i]->size_id; ?>" style="width:40%" value="<?php if(isset($getratio)){ echo $getratio->ratio; }?>" readonly>
                                                     </td><?php
                                                 }
@@ -997,7 +1208,7 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
                                         ?>
                                         </tbody>
                                     </table><Br>
-                                    <span id="statusMsg" class="<?php echo $formResult->cssClass; ?>" style="display:<?php echo $formResult->showhide; ?>;"><?php echo $formResult->status; ?></span>
+                                    <!--<span id="statusMsg" class="<?php echo $formResult->cssClass; ?>" style="display:<?php echo $formResult->showhide; ?>;"><?php echo $formResult->status; ?></span>-->
                                     <!--<input type="submit" value="Save" style="float:right;">
                                 </form>-->
                             </div> <!-- end class=grid_10 --><div class="clear"></div>
@@ -1008,9 +1219,8 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
           <!------------------------All without Exception end here----------------------------------->
                    <?php 
                       $row_no = 1;
-                     $dquery = "select s.id,s.store_id,s.ctg_id,ctg.name as ctgname,ctg.active,s.design_id,c.design_no,s.style_id,s.size_id,s.mrp,s.ratio_type,s.ratio,s.is_exceptional,s.is_exceptional_active,s.createtime from it_store_ratios s , it_ck_designs c , it_categories ctg where c.id = s.design_id and  s.store_id = $this->sid and  s.ctg_id = $this->cat and s.ratio_type = $this->rtype group by s.ctg_id,s.design_id";
+                     $dquery = "select s.id,s.store_id,s.ctg_id,ctg.name as ctgname,ctg.active,s.design_id,c.design_no,s.style_id,s.size_id,s.mrp,s.ratio_type,s.ratio,s.is_exceptional,s.is_exceptional_active,s.createtime,c.core from it_store_ratios s , it_ck_designs c , it_categories ctg where c.id = s.design_id and  s.store_id = $this->sid and  s.ctg_id = $this->cat and s.ratio_type = $this->rtype group by s.ctg_id,s.design_id";
                      $dObjs = $db->fetchObjectArray($dquery);
-                     
                      foreach($dObjs as $dobj){ 
                                if(isset($dobj) && !empty($dobj) && $dobj != null){
                                    $row_no++;
@@ -1018,7 +1228,8 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
 //                                   $cat_name = $dobj->ctgname;
 //                                   $state = $dobj->active ? "ACTIVE" : "INACTIVE";
 //                                   $state_str = "[ ".$state."]";
-                        ?>
+                       
+          if($dobj->core == $this->core){ ?>
                         <div class="box">
                         <h2 class="expand">Design No:<?php echo $dobj->design_no; ?></h2> <!--Design No: <?php // echo $design_no.$mrp_str ; ?>-->
                         <div class="collapse" id="<?php echo $divid; ?>" >
@@ -1041,6 +1252,8 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
                                     <input type="hidden"  name="designid[<?php echo $dobj->design_id; ?>][userid]" value="<?php echo $this->currUser->id; ?>" />
                                     <input type="hidden" id="mrp" name="mrp" value="<?php //echo $mrp; ?>" />
                                     <input type="hidden" name="designid[<?php echo $dobj->design_id; ?>][designid]" value="<?php echo $dobj->design_id; ?>"/>
+                                    <input type="hidden" id="core" name="core" value="<?php echo $this->core; ?>"/>
+                                     <input type="hidden" id="level" name="level" value="<?php echo $this->level; ?>"/>
                                     <table>
                                         <?php                                        
                                         $styleobj = $db->fetchObjectArray("select s1.style_id,s2.name as style_name from it_ck_styles s1,it_styles s2 where s1.ctg_id=$dobj->ctg_id and s1.style_id=s2.id  and s2.is_active = 1 order by s1.sequence");
@@ -1078,10 +1291,11 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
                                                  
                                                 for ($i = 0; $i < $no_sizes; $i++) {
                                                     $sizeid = $sizeobj[$i]->size_id;
-                                                    $query = "select * from it_store_ratios where store_id=$dobj->store_id and ctg_id=$dobj->ctg_id and design_id = $dobj->design_id and ratio_type=$dobj->ratio_type and style_id = $stylcod and size_id = $sizeid ";
+                                                    $query = "select id,ratio from it_store_ratios where store_id=$dobj->store_id and ctg_id=$dobj->ctg_id and design_id = $dobj->design_id and ratio_type=$dobj->ratio_type and style_id = $stylcod and size_id = $sizeid and core= $this->core";
                                                     $getratio = $db->fetchObject($query);
+//                                                    print_r($query);
                                                    if(isset($getratio)){$gid = $getratio->id; }else{ $gid=0;}
-                                                    ?><td>
+                                                    ?><td name="F">
                                                         <input type="text" name="designid[<?php echo $dobj->design_id ;?>][item][item_<?php echo $gid; ?>_<?php echo $stylcod; ?>_<?php echo $sizeid ; ?>]"  id="designid[<?php echo $dobj->design_id ;?>][item][item_<?php echo $gid; ?>_<?php echo $stylcod; ?>_<?php echo $sizeid ; ?>]" style="width:40%" value="<?php if(isset($getratio)){ echo $getratio->ratio; }?>" readonly >
                                                     </td><?php
                                                    
@@ -1093,7 +1307,7 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
                                         ?>
                                         </tbody>
                                     </table><Br>
-                                    <span id="statusMsg" class="<?php echo $formResult->cssClass; ?>" style="display:<?php echo $formResult->showhide; ?>;"><?php echo $formResult->status; ?></span>
+                                    <!--<span id="statusMsg" class="<?php echo $formResult->cssClass; ?>" style="display:<?php echo $formResult->showhide; ?>;"><?php echo $formResult->status; ?></span>-->
                                   <!--  <input type="button" value="Save" style="float:right;" onclick="javascript:saveDivSpc">-->
                                
                             </div> <!-- end class=grid_10--> <div class="clear"></div>                                                   
@@ -1101,7 +1315,7 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
                         </div> <!-- end class="collapse"--> 
                     </div><!--  end class="block" -->
                        
-                     <?php } } ?>
+                     <?php }} } ?>
                 </div>
                 <div class="clear"></div>
              

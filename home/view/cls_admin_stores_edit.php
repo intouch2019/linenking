@@ -333,7 +333,18 @@ if(discval>0){
                                     <?php } ?>
                                 </select> 
                             </p>
-                            
+                          
+                                     <p class="grid_12" style="width:40%">
+                                <label>*Level: </label>
+                                <select name="level" id="level" required>
+                                    <option <?php echo ($store->level == "" || $store->level == NULL) ? "selected" : "" ?> value="0">Select Level</option>
+                                    <?php
+                                        $allstorelevel = StoreLevel::getLevel();
+                                        foreach ($allstorelevel as $key => $value) { ?>
+                                            <option <?php echo ( $store->level == $key ) ? "selected" : "" ?> value="<?php echo $key; ?>" <?php echo $selected; ?>><?php echo $value; ?></option>
+                                    <?php } ?>
+                                </select> 
+                            </p>
                             
                     
                     <p class="grid_12">
@@ -409,7 +420,7 @@ if(discval>0){
                                 
                                 if($this->currStore->usertype == UserType::CKAdmin||$this->currStore->usertype == UserType::Admin ||$this->currStore->id==128) {
                                     
-                                     $query ="select * from it_dealer_discount order by discount asc";     
+                                     $query ="select id,discount from it_dealer_discount order by discount asc";     
                                         $obj_deler_disc = $db->fetchObjectArray($query);
                                         
                                     

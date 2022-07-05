@@ -23,7 +23,7 @@ if (!$storeid) {
     return;
 }
 
-$storees = "select  * from it_codes where id = $storeid ";
+$storees = "select  discountset from it_codes where id = $storeid ";
 //      print "***************$query1********************";
 $store_check = $db->fetchObject($storees);
 
@@ -92,7 +92,7 @@ if ($store->usertype == UserType::Admin || $store->usertype == UserType::CKAdmin
         $obj1 = $db->fetchObject($query1);
         $old_discountset = "" . $obj1->discountset;
 
-        $query = "select * from it_ck_storediscount where store_id = $storeid ";
+        $query = "select dealer_discount,cash,nonclaim from it_ck_storediscount where store_id = $storeid ";
         $obj = $db->fetchObject($query);
         $old_disc = "" . $obj->dealer_discount;
         $old_cashvalue = "" . $obj->cash;
@@ -152,6 +152,7 @@ if (!$store_name || !$address || !$city || !$zip || !$owner || !$phone || !$emai
         $gstin_no = $db->safe($gstin_no);
         $tally_name = $db->safe($tally_name);
         $distance = $db->safe($distance);
+          $level = $db->safe($level);
         //        $tallyname = $db->safe($tally);
         //$zipcode = isset($zip) ? $db->safe(trim($zip)) : false;
 
@@ -275,7 +276,7 @@ if (!$store_name || !$address || !$city || !$zip || !$owner || !$phone || !$emai
             $errors['password'] = 'Passwords do not match';
         } else {
             if (count($errors) == 0) {
-                $query1 = "select * from it_codes where id = $storeid";
+                $query1 = "select autorefil_dttm from it_codes where id = $storeid";
                 $storeobj = $db->fetchObject($query1);
                 if (trim($is_autorefill) == 1 && trim($storeobj->autorefil_dttm) == "") {
                     //fetch check if not set then only update
@@ -285,7 +286,7 @@ if (!$store_name || !$address || !$city || !$zip || !$owner || !$phone || !$emai
                 } else {
                     $aClause = "";
                 }
-                $query = "update it_codes set store_name=$store_name, address=$address, city=$city, zipcode = $zipcode , owner=$owner, phone=$phone, phone2=$phone2, email=$email, email2=$email2,gstin_no=$gstin_no, tax_type = $taxtype , tally_name=$tally_name,distance= $distance,UMRN=$umrn,cust_tobe_debited=$cust_tobe_debtd,cust_ifsc_or_mcr=$cust_ifsc_mcr,cust_debit_account=$cust_debit_account,is_natch_required=$is_natch1,Area=$area,Location=$location,is_tallyxml=$is_tallyxml,state_id=$nstate,region_id=$region $aClause $sClause $addquery ";  //, tally_name=$tallyname
+                $query = "update it_codes set store_name=$store_name, address=$address, city=$city, zipcode = $zipcode , owner=$owner, phone=$phone, phone2=$phone2, email=$email, email2=$email2,gstin_no=$gstin_no, tax_type = $taxtype , tally_name=$tally_name,distance= $distance,UMRN=$umrn,cust_tobe_debited=$cust_tobe_debtd,cust_ifsc_or_mcr=$cust_ifsc_mcr,cust_debit_account=$cust_debit_account,is_natch_required=$is_natch1,Area=$area,Location=$location,is_tallyxml=$is_tallyxml,state_id=$nstate,region_id=$region,level=$level $aClause $sClause $addquery ";  //, tally_name=$tallyname
 //                   
                 if ($password) {
                     $query .= ",password=" . $db->safe(md5($password));

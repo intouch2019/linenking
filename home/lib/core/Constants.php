@@ -275,6 +275,49 @@ class StoreStatus{
         else{ return "Unknown"; }
     }
 }
+class StoreLevel{
+//      const Undefine= 0;
+    const AP = "A+";
+    const A = "A";
+    const B = "B";
+    const C = "C";
+    const D = "D";
+
+    public static function getLevel() {
+        return array(
+//            StoreType::Undefine => "Undefine",
+            StoreLevel::AP => "A+",
+            StoreLevel::A => "A",
+            StoreLevel::B => "B",
+            StoreLevel::C => "C",
+            StoreLevel::D => "D"
+        );
+    }
+
+    public static function getName($type) {
+        $all = StoreLevel::getALL();
+        if (isset($all[$type])) {
+            return $all[$type];
+        } else {
+            return "Unknown";
+        }
+    }
+
+}
+
+class coreNoncore{
+     const core= 1;
+      const noncore = 0;
+    public static function getcore(){
+        return array(
+            coreNoncore::core => "core",
+            coreNoncore::noncore => "noncore",
+      
+        );
+    }
+    
+
+}
 
 class Cat_MarginType{
       const Regular = 1;

@@ -40,13 +40,15 @@ if (trim($place_ord) == "") {
 if (count($errors) == 0) {
     try {
         //step 1 : fetch all auto refill stores
-        $squery = "select * from  it_codes where usertype = " . UserType::Dealer . " and is_autorefill = 1 and is_closed = 0 and inactive = 0 and sbstock_active = 1 and sequence is not null and sequence > 0 order by sequence ";
+        $squery = "select id,store_number from  it_codes where usertype = " . UserType::Dealer . " and is_autorefill = 1 and is_closed = 0 and inactive = 0 and sbstock_active = 1 and sequence is not null and sequence > 0 order by sequence ";
 //   $sresults = $db->execQuery($squery);
-//    print "<br>Store QRY: $squery <br><br>";
+  
         $storeobjs = $db->fetchObjectArray($squery);
-
+  print "<br>Store QRY: $squery <br><br><br>";
+//  print_r($storeobjs);
 //    print_r($_POST['designid']);
         $sa = "select Rel_sent_temp from release_orders where id=$id and Rel_sent_temp=1";
+//        print_r($sa);
         $sc = $db->fetchObject($sa);
 
         if (isset($sc->Rel_sent_temp) == 1 || $Release_time == '00:00:00') {
@@ -72,7 +74,7 @@ if (count($errors) == 0) {
                 //ctg_description
                 if (isset($cdesp) && trim($cdesp) != "" && trim($cdesp) != "-1") {
                     $cdesp_db = $db->safe(trim($cdesp));
-                    $sqry = "select * from it_grn_ctg_desp where ctg_id = $ctg_id and design_id = $design_id ";
+                    $sqry = "select id from it_grn_ctg_desp where ctg_id = $ctg_id and design_id = $design_id ";
                     $sgobj = $db->fetchObject($sqry);
                     if ($sgobj) {
                         $uqry = "update it_grn_ctg_desp set cdesp = $cdesp_db where id = $sgobj->id ";
@@ -119,7 +121,7 @@ if (count($errors) == 0) {
 //                 print "<br>ITEM KEY: $item_key <br> ITEM VALUE: $item_value ";
 //                  print "<br> INITIAL ITEM ID: $item_id <br>";
                     if ($grn_qty > 0 && $to_release_qty > 0 && $to_release_qty <= $grn_qty) {
-                        $iqry = "select * from it_items where id = $item_id ";
+                        $iqry = "select barcode,grn_qty,curr_qty,ctg_id,design_id,style_id,size_id,design_no,id,MRP from it_items where id = $item_id ";
 //                    print "<br>ITEMS DETAILS: $iqry ";
                         $iobj = $db->fetchObject($iqry);
 //                    print "<br>";
@@ -187,14 +189,22 @@ if (count($errors) == 0) {
                                         }
 //                                            print "<br>INSTRANSIT : $intransit_stock_value ";
                                         //fetch store's standing stock ratio againts item                                          
-                                        $squery = "select * from it_store_ratios where store_id = $sobj->id and ctg_id = $iobj->ctg_id and design_id = $design_id and style_id = $iobj->style_id and size_id = $iobj->size_id and ratio_type = " . RatioType::Standing . " and is_exceptional = 1 and is_exceptional_active = 1 ";
-//                                           print "<br> STORE STANDING STOCK QRY: $squery";
+                                          $checkcore="select core from it_ck_designs where id= $design_id";
+                                       
+                                            $core = $db->fetchObject($checkcore);
+                                       
+                                        $squery = "select ratio from it_store_ratios where store_id = $sobj->id and ctg_id = $iobj->ctg_id and design_id = $design_id and style_id = $iobj->style_id and size_id = $iobj->size_id and ratio_type = " . RatioType::Standing . " and is_exceptional = 1 and is_exceptional_active = 1 and core=$core->core";
+                                          // print "<br> STORE STANDING STOCK QRY: $squery";
                                         $stkobj = $db->fetchObject($squery);
 
                                         if (!isset($stkobj)) {
-                                            $squery = "select * from it_store_ratios where store_id = $sobj->id and ctg_id = $iobj->ctg_id "
-                                                    . "and design_id = -1 and style_id = $iobj->style_id and size_id = $iobj->size_id and ratio_type = " . RatioType::Standing;
-//                                                print "<br> STORE STANDING STOCK QRY FOR ALL DESIGNS: $squery";
+                                              $checkcore="select core from it_ck_designs where id= $design_id";
+                                        
+                                            $core = $db->fetchObject($checkcore);
+                                     
+                                            $squery = "select ratio from it_store_ratios where store_id = $sobj->id and ctg_id = $iobj->ctg_id "
+                                                    . "and design_id = -1 and style_id = $iobj->style_id and size_id = $iobj->size_id and ratio_type = " . RatioType::Standing ." and core=$core->core";
+                                              //  print "<br> STORE STANDING STOCK QRY FOR ALL DESIGNS: $squery";
                                             $stkobj = $db->fetchObject($squery);
                                         }
 
@@ -206,6 +216,7 @@ if (count($errors) == 0) {
                                         if (isset($stkobj) && $release_bal_qty > 0 && isset($siobj) . $currCheck) {
 
                                             if ($sum_qty <= 0) {
+                                              //  print_r(" ratio=". $stkobj->ratio);
                                                 $qty = $stkobj->ratio;
                                             } else {
                                                 if ($sum_qty < $stkobj->ratio) {
@@ -325,6 +336,7 @@ if (count($errors) == 0) {
                 } //items loop within design ends here
             }// all design loop ends here
         } else {
+         
 
             $str = serialize($_POST);
 
@@ -342,19 +354,19 @@ if (count($errors) == 0) {
 
             $seq_sorted_arr = array();
             foreach ($storeobjs as $storeobj) {
+              
                 if (array_key_exists($storeobj->id, $store_orders)) {
                     $seq_sorted_arr[$storeobj->id] = $store_orders[$storeobj->id];
                 }
             }
 
-//        print "<br>SORTED ORDERS ARR: <br>";
-//        print_r($seq_sorted_arr);
+       // print "<br>SORTED ORDERS ARR: <br>";
             //fetching random datetime by fluctuating seconds
             $dt = date('Y-m-d H:i:s');
 
             //foreach($store_orders as $store_id => $order_id){
             foreach ($seq_sorted_arr as $store_id => $order_id) {
-
+ 
                 $cartinfo = $clsOrders->getCartInfo($store_id);
                 $min_stock = 0;
                 $store_stock = 0;
@@ -368,7 +380,7 @@ if (count($errors) == 0) {
                 $is_inactive = 0;
                 $order_tot_val = 0;
                 $db = new DBConn();
-                $msl = $db->fetchObject("select * from it_codes where id = $store_id ");
+                $msl = $db->fetchObject("select min_stock_level,max_stock_level from it_codes where id = $store_id ");
                 $db->closeConnection();
                 if (isset($msl) && trim($msl->min_stock_level) != "") {
                     //step 1: fetch current order's tot val
@@ -607,10 +619,10 @@ function cancelOrder($order_id) {
 
     $updates = array();
     $count = 0;
-    $objs = $db->fetchObjectArray("select * from it_ck_orderitems where order_id = $order_id");
+    $objs = $db->fetchObjectArray("select item_id,order_qty from it_ck_orderitems where order_id = $order_id");
     foreach ($objs as $oi) {
 //        $query = "select * from it_ck_items where ctg_id='$oi->ctg_id' and style_id='$oi->style_id' and size_id='$oi->size_id' and design_no='$oi->design_no' and MRP=$oi->MRP";
-        $query = "select * from it_items where id = $oi->item_id ";
+        $query = "select barcode,grn_qty,curr_qty,ctg_id,design_id,style_id,size_id,design_no,id,MRP from it_items where id = $oi->item_id ";
         $obj = $db->fetchObject($query);
         if (!$obj) {
             continue;
@@ -819,7 +831,7 @@ function grnItemsBal($iobj, $to_release_qty) {
     $db = new DBConn();
     $clsLogger = new clsLogger();
     $multiple_items_released = array();
-    $query = "select * from it_items where ctg_id = $iobj->ctg_id and design_id = $iobj->design_id and style_id = $iobj->style_id and size_id = $iobj->size_id and grn_qty > 0 order by grn_qty desc ";
+    $query = "select ctg_id,design_no,id,MRP from it_items where ctg_id = $iobj->ctg_id and design_id = $iobj->design_id and style_id = $iobj->style_id and size_id = $iobj->size_id and grn_qty > 0 order by grn_qty desc ";
 //   print "<br>ITM QRY: ".$query;
     $objs = $db->fetchObjectArray($query);
     $release_balance = $to_release_qty;
