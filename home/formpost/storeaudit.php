@@ -6,6 +6,8 @@ require_once "lib/db/DBConn.php";
 require_once "lib/core/Constants.php";
 require_once "lib/serverChanges/clsServerChanges.php";
 require_once 'lib/users/clsUsers.php';
+require_once "lib/email/EmailHelper.php";
+require_once "lib/sms/SMSHelper.php";
 //print "Yes";
 
 $_SESSION['form_post'] = $_POST;
@@ -70,6 +72,79 @@ if (!$Manager_name || !$Managerphone || !$Auditor_name || !$AuditDate ||  !$rema
                     // print_r($qry);
                      $discinsert = $db->execInsert($qry);
                   } 
+                  
+                  
+      ////send sms starts here///////
+
+    //$db = new DBconn();
+//    $sent_status = 1;    
+
+//    $stores = $db->fetchObjectArray("select id,phone,email,store_name from it_codes where id in ($store_id)");
+    $stores = $db->fetchObjectArray("select a.Managerphone,a.AuditDate,a.remark,s.id,s.phone,s.email,s.store_name from it_auditdetails a, it_codes s  where a.store_id= s.id and s.id=$store_id and a.id=$audit_id");                
+    foreach ($stores as $store) {
+
+        $date=date('Y-m-d', strtotime($store->AuditDate));
+//        print_r($date);exit();
+        $Managerphone= $store->Managerphone;
+        $phoneno = $store->phone;
+       
+        //$message = "Audit report for the store - $store->store_name is submitted on the portal. Date $date"; //%26 for &
+        $message =  "LK Audit report for the store - $store->store_name is submitted on the portal. Date $date";
+        $smsHelper = new SMSHelper();
+        
+        if($phoneno!= null || $phoneno!= "")
+        {
+        $errormsg = $smsHelper->sendSMS($phoneno,$message);
+//        print_r($errormsg);
+        }
+       
+        
+        if($Managerphone!= null || $Managerphone!= "")
+        {
+        $errormsg = $smsHelper->sendSMS($Managerphone,$message);
+//         print_r($errormsg);
+        }
+
+        //print_r($errormsg);
+
+        //exit();
+        ////send sms ends here///////
+
+
+    /////////////////Email send code starts here /////////
+
+         $emailHelper = new EmailHelper();
+
+         $toArray = array();
+         $ccArray = array();     
+
+         if(isset($store)){
+             if($store->email != null){array_push($toArray,$store->email);}
+             if($store->email2 != null){array_push($toArray,$store->email2);}
+         }
+
+         array_push($toArray,"abhoir@intouchrewards.com");
+
+            if(!empty($toArray)){
+    //            $subject = "CK-The stock for Invoice $invoice->invoice_no has been dispatched on $invoice->datetime.";
+                $subject = "Store audit report, audit conducted on $date";
+                //$body = "<p>To </p>";
+                $body .= "<p>Dear Store Owner/ Store Manager, </p>";
+                $body .= "<p>Audit for the store $store->store_name is conducted on date $date, <br>";
+                $body .= "and is submitted on the portal. The observations and remarks are as follows: <br>";
+                $body .= "$store->remark</p>";
+
+                $body .= "<p>You are expected to take the appropriate actions as suggested by the auditor before the next audit. <br>";
+                $body .= "For any queries or clarifications, reach out to the respective store auditor.   </p>";
+                
+                $body .= "<p>**** This is a system generated email, Do not reply to this email. ****   </p>";
+
+    //            $body .= "PFA , <br/>";
+                $errormsg = $emailHelper->send($toArray, $subject, $body ,array(), $ccArray);
+                print "<br>EMAIL SENT RESP:".$errormsg;
+            }
+    }
+/////////////////Email send code ends here /////////            
                 
             
         
