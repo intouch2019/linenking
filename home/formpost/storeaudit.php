@@ -109,7 +109,7 @@ if (!$Manager_name || !$Managerphone || !$Auditor_name || !$AuditDate ||  !$rema
 
         //exit();
         ////send sms ends here///////
-
+$Questions= $db->fetchObjectArray("Select id,description from it_auditquestions  where id in (select question_id from it_auditresponse where audit_id=$audit_id and is_opted=0)");
 
     /////////////////Email send code starts here /////////
 
@@ -123,7 +123,7 @@ if (!$Manager_name || !$Managerphone || !$Auditor_name || !$AuditDate ||  !$rema
              if($store->email2 != null){array_push($toArray,$store->email2);}
          }
 
-         array_push($toArray,"abhoir@intouchrewards.com");
+         array_push($toArray,"nmarkandeya@intouchrewards.com");
 
             if(!empty($toArray)){
     //            $subject = "CK-The stock for Invoice $invoice->invoice_no has been dispatched on $invoice->datetime.";
@@ -133,6 +133,12 @@ if (!$Manager_name || !$Managerphone || !$Auditor_name || !$AuditDate ||  !$rema
                 $body .= "<p>Audit for the store $store->store_name is conducted on date $date, <br>";
                 $body .= "and is submitted on the portal. The observations and remarks are as follows: <br>";
                 $body .= "$store->remark</p>";
+                $body .= "During the Audit it is observed that you are not meeting following criteria:";
+                $body.="<h4>Questions</h4>";
+                foreach ($Questions as $ques) {
+                    $body .="$ques->id .  $ques->description-No";
+                    $body .= "<br>";
+                }
 
                 $body .= "<p>You are expected to take the appropriate actions as suggested by the auditor before the next audit. <br>";
                 $body .= "For any queries or clarifications, reach out to the respective store auditor.   </p>";
