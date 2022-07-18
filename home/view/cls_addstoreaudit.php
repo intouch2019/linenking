@@ -1,4 +1,5 @@
 <?php
+ini_set('max_execution_time', -1);
 require_once "view/cls_renderer.php";
 require_once "lib/db/DBConn.php";
 require_once "lib/core/Constants.php";
@@ -143,7 +144,7 @@ function validationform(){
                     <?php 
                  
                     $audit =$db->fetchObject("select * from it_auditdetails where id =$this->aid order by id desc ");
-                   
+                    $storename =$db->fetchObject("select store_name from it_codes where id= $this->sid ");
                  ?> 
                   
 
@@ -157,6 +158,7 @@ function validationform(){
                            
 
                                     <div class="grid_12">
+                                        <h1><?php print_r($storename->store_name)?></h1>
                                         <div class="grid_4">
                                         <label><span style="color:red">*</span>Manager Name: </label>
                                         <input type="text"  id="Manager_name" name="Manager_name" style="width:100%;height:23px;font-size:14px;" required value="<?php if(isset($audit)){echo $audit->Manager_name;} ?>"required>

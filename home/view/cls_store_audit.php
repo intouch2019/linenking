@@ -1,5 +1,6 @@
 
 <?php
+ini_set('max_execution_time', -1);
 require_once "view/cls_renderer.php";
 require_once ("lib/db/DBConn.php");
 require_once ("lib/core/Constants.php");
@@ -130,8 +131,13 @@ class cls_store_audit extends cls_renderer {
                                 <option value="1" selected>Select Store</option>
 
 
-                                <?php
-                                $objs = $db->fetchObjectArray("select id,store_name from it_codes where usertype=" . UserType::Dealer . " and is_closed=0 order by store_name");
+                               <?php
+                                if($currUser->usertype==4){
+                                 $storeqry=" and id=$currUser->id";
+                                }else{
+                                   $storeqry=""; 
+                                }
+                                $objs = $db->fetchObjectArray("select id,store_name from it_codes where usertype=" . UserType::Dealer . " and inactive=0 and isastore=1 and is_closed=0 $storeqry order by store_name");
 
                                 if ($objs) {
                                     foreach ($objs as $obj) {
@@ -146,7 +152,7 @@ class cls_store_audit extends cls_renderer {
                                     }
                                         ?>
 
-                                        <option value="<?php echo $obj->id; ?>"<?php echo $sel; ?>  ><?php echo $obj->store_name; ?></option>
+                                        <option value="<?php echo $obj->id; ?>"<?php echo $sel;?> ><?php echo $obj->store_name; ?></option>
                                         <?php
                                     }
                                 }
@@ -174,24 +180,25 @@ class cls_store_audit extends cls_renderer {
                         <th>Auditor Name</th>
                         <th>Audit Date</th>
                         <th>Submitted Date</th>
+                        <th>Score</th>
                         <th>Remarks</th>
                          <th>Action</th>
                     </tr>
                     
  
-                       <?php
+                      <?php   
                        if (isset($this->sid)&& $this->sid!==""){
                            $qsid="and a.store_id=$this->sid"; 
                        }else{
                            $qsid="and a.store_id=-1";
                        }
-                                $objsdetails = $db->fetchObjectArray("select a.*,s.store_name from it_auditdetails a, it_codes s  where a.store_id= s.id $qsid order by a.id desc ");
-                               
+      $objsdetails = $db->fetchObjectArray("select a.*,s.store_name ,(select count(*)as score from it_auditresponse where audit_id = a.id and is_opted=1)as score,(select count(*)as score from it_auditresponse where audit_id = a.id )as outof from it_auditdetails a, it_codes s  where a.store_id= s.id $qsid order by a.id desc ");
+
+                  
                                 $max=0; $i= sizeof($objsdetails);
                                 if($i==0 && $this->sid > 1){ ?><h6 span class="error" style="color:white;"> No Store Audit Report Available For Selected Store </h6></span><br><div align='right'class="grid_4"><button onclick = "addstoreaudit1()">Create Store Audit Report</button><br><br></div><?php }
                             foreach ($objsdetails as $obj) {    
-                        ?>
-                                
+                        ?>      
                         <tr>
                                             <td><?php echo $i ?></td>
                                             <td><?php echo $obj->store_name; ?></td>
@@ -200,11 +207,15 @@ class cls_store_audit extends cls_renderer {
                                             <td><?php echo $obj->Auditor_name; ?></td>
                                             <td><?php echo $obj->AuditDate; ?></td>
                                             <td><?php echo $obj->SubmittedDate; ?></td>
+                                            <td><?php echo $obj->score."/".$obj->outof ?></td>
                                             <td><div class="tooltip">Show Remark<span class="tooltiptext"><?php echo $obj->remark; ?></span></div></td> 
                                                   
-                                                                                                  
-                                            <?php if($max==0){?><td><a href='addstoreaudit/aid=<?php echo $obj->id;?>/sid=<?php echo $obj->store_id;?>'>View & Edit</a></td> <?php $max++; }
-                                             elseif($max > 0 && $max <=2){?><td><a href='addstoreaudit/aid=<?php echo $obj->id;?>/sid=<?php echo $obj->store_id;?>/view=<?php echo 1;?>'>View</a></td> <?php $max++; }else{?> <td></td> <?php }?>
+                                            <?php if($currUser->usertype==4){?> <td><a href='addstoreaudit/aid=<?php echo $obj->id;?>/sid=<?php echo $obj->store_id;?>/view=<?php echo 1;?>'>View</a></td>                   
+                                            <?php }else{ 
+                                                if($max==0){?><td><a href='addstoreaudit/aid=<?php echo $obj->id;?>/sid=<?php echo $obj->store_id;?>'>View & Edit</a></td> <?php $max++; }
+                                            elseif($max > 0 && $max <=2){?><td><a href='addstoreaudit/aid=<?php echo $obj->id;?>/sid=<?php echo $obj->store_id;?>/view=<?php echo 1;?>'>View</a></td> <?php $max++; }else{?> <td></td> <?php }
+                                            
+                                            }?>
                                             
                                             
                                             
