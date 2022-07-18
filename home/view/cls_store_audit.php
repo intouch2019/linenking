@@ -137,7 +137,7 @@ class cls_store_audit extends cls_renderer {
                                 }else{
                                    $storeqry=""; 
                                 }
-                                $objs = $db->fetchObjectArray("select id,store_name from it_codes where usertype=" . UserType::Dealer . " and inactive=0 and isastore=1 and is_closed=0 $storeqry order by store_name");
+                                $objs = $db->fetchObjectArray("select id,store_name from it_codes where usertype=" . UserType::Dealer . "  and is_closed=0 $storeqry order by store_name");
 
                                 if ($objs) {
                                     foreach ($objs as $obj) {
