@@ -12,7 +12,7 @@ require_once "lib/conv/CurrencyConv.php";
 require_once "lib/core/Constants.php";
 require_once "lib/core/strutil.php";
 require_once 'lib/users/clsUsers.php';
-//require_once "Classes/html2pdf/html2pdf.class.php";//
+require_once "Classes/html2pdf/html2pdf.class.php";//
 
 extract($_POST);
 $user = getCurrUser();
@@ -569,15 +569,16 @@ $output.= ""
 $output."</body></html>";
 
 //echo "$output"; exit();
-$myFile = '../DGCreditnote/TestDGCreditnote.html'; // or .php   
+//$myFile = '../DGCreditnote/TestDGCreditnote.html'; // or .php   
+$myFile = "../cnote/DGCreditnote-" . $invno . ".html";
 $fh = fopen($myFile, 'w'); // or die("error");  
 $stringData = "your html code php code goes here";   
 fwrite($fh, $output);
 fclose($fh);
 
-header("Location: ../DGCreditnote/TestDGCreditnote.html"); /* Redirect browser */ 
+//header("Location: ../DGCreditnote/TestDGCreditnote.html"); /* Redirect browser */ 
 
-exit();
+//exit();
 
 //
 
@@ -591,17 +592,21 @@ exit();
        {
 //           $fname="D:/Xampp/htdocs/ck_new_y/home/DGCreditnote/DGCreditnote-".$invno.".pdf";
 //           $location="D:/Xampp/htdocs/ck_new_y/home/DGCreditnote/DGCreditnote-".$invno.".pdf";
-           $fname="../DGCreditnote/DGCreditnote-".$invno.".pdf";
-           $location="../DGCreditnote/DGCreditnote-".$invno.".pdf";
+           //$fname="../DGCreditnote/DGCreditnote-".$invno.".pdf";
+            $fname="../cnote/DGCreditnote-".$invno.".pdf";
+           $location="../cnote/DGCreditnote-".$invno.".pdf";
        }
-        
+        try{
 //$cmd = "pisa -s /var/www/html/linenking/home/tmp/TestInvoice.html ".$location;
 //$cmd = "pisa -s D:/Xampp/htdocs/ck_new_y/home/DGCreditnote/TestDGCreditnote.html ".$location;
-$cmd = "pisa -s ../DGCreditnote/TestDGCreditnote.html ".$location;
+//$cmd = "pisa -s ../DGCreditnote/TestDGCreditnote.html ".$location;
 //echo $cmd;
 //exit();
-$result = shell_exec($cmd);
-
+sleep(10);
+//$result = shell_exec($cmd);
+        } catch (HTML2PDF_exception $e){
+            echo $e;
+        }
 if (count($errors) > 0) {
 	$_SESSION['form_errors'] = $errors;
 	$redirect = "report/creditnote/prdg";
@@ -614,8 +619,8 @@ if (count($errors) > 0) {
 //$html2fpdf->writeHTML($output);
 //$html2fpdf->Output($fname, "F");
 header('Content-Type: application/pdf');
-header("Content-Disposition: attachment; filename=\"".basename($fname)."\"");
-echo file_get_contents($fname);
+header("Content-Disposition: attachment; filename=\"".basename($location)."\"");
+echo file_get_contents($location);
 
 
 
