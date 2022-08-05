@@ -564,7 +564,7 @@ fclose($fh);
        }
         
 //$cmd = "pisa -s /var/www/html/linenking/home/tmp/TestInvoice.html ".$location;
-$cmd = "pisa -s ../DGCreditnote/TestDGCreditnote.html ".$location;
+$cmd = "/usr/local/bin/pisa -s ../DGCreditnote/TestDGCreditnote.html ".$location;
 $result = shell_exec($cmd);
 
 if (count($errors) > 0) {
