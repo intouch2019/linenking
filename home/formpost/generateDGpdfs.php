@@ -600,9 +600,11 @@ fclose($fh);
 //$cmd = "pisa -s /var/www/html/linenking/home/tmp/TestInvoice.html ".$location;
 //$cmd = "pisa -s D:/Xampp/htdocs/ck_new_y/home/DGCreditnote/TestDGCreditnote.html ".$location;
 //$cmd = "pisa -s ../DGCreditnote/TestDGCreditnote.html ".$location;
+$cmd = "/usr/local/bin/pisa -s ".$myFile." ".$fname;        // recent live pisa
+$result = shell_exec($cmd); // recent live pisa
 //echo $cmd;
 //exit();
-sleep(10);
+//sleep(10);
 //$result = shell_exec($cmd);
         } catch (HTML2PDF_exception $e){
             echo $e;
