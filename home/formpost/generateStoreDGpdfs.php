@@ -545,7 +545,8 @@ $output.= ""
 
 $output."</body></html>";
 //echo "$output";//exit();
-$myFile = '../DGCreditnote/TestDGCreditnote.html'; // or .php   
+//$myFile = '../DGCreditnote/TestDGCreditnote.html'; // or .php  
+$myFile = '../cnote/TestDGCreditnote.html'; // or .php 
 $fh = fopen($myFile, 'w'); // or die("error");  
 $stringData = "your html code php code goes here";   
 fwrite($fh, $output);
@@ -559,12 +560,12 @@ fclose($fh);
 //       
        if(isset($invno) && trim($invno)!="" && trim($invno) != "-1")
        {
-           $fname="../DGCreditnote/DGCreditnote-".$invno.".pdf";
-           $location="../DGCreditnote/DGCreditnote-".$invno.".pdf";
+           $fname="../cnote/DGCreditnote-".$invno.".pdf";
+           $location="../cnote/DGCreditnote-".$invno.".pdf";
        }
         
 //$cmd = "pisa -s /var/www/html/linenking/home/tmp/TestInvoice.html ".$location;
-$cmd = "/usr/local/bin/pisa -s ../DGCreditnote/TestDGCreditnote.html ".$location;
+$cmd = "/usr/local/bin/pisa -s ../cnote/TestDGCreditnote.html ".$location;
 $result = shell_exec($cmd);
 
 if (count($errors) > 0) {
