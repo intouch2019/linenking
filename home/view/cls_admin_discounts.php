@@ -41,7 +41,7 @@ document.getElementById("addform").submit();
         include "sidemenu.".$this->currStore->usertype.".php";
         global $g_categories;
         $db = new DBConn();
-        $discobjs = $db->fetchObjectArray("select s.*,c.store_name from it_ck_storediscount s, it_codes c where s.store_id=c.id and c.inactive = 0 order by s.store_id ");
+        $discobjs = $db->fetchObjectArray("select s.*,c.store_name from it_ck_storediscount s, it_codes c where s.store_id=c.id order by s.store_id ");
         ?>
 <div class="grid_10" style="overflow:auto;">
     <?php if ($this->currStore->usertype !=UserType::Dispatcher) { ?>
