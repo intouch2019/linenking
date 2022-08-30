@@ -28,13 +28,13 @@ try{
         $barcode = $db->safe($currrec[0]);
         $quantity = $currrec[1];
         
-        $chkQry = "select * from it_current_stock where barcode = $barcode and store_id = $store_id ";
+        $chkQry = "select id from it_current_stock where barcode = $barcode and store_id = $store_id ";
         $check = $db->fetchObject($chkQry);
         if($check){
             $updtQry = "update it_current_stock set quantity = $quantity , updatetime = now()  where barcode = $barcode and store_id = $store_id ";
             $db->execQuery($updtQry);
         }else{
-            $iqry = "select * from it_items where barcode = $barcode ";
+            $iqry = "select ctg_id,design_id,style_id,size_id from it_items where barcode = $barcode ";
             $iobj = $db->fetchObject($iqry);
             if(isset($iobj)){
                 $ctg_id = $iobj->ctg_id;
