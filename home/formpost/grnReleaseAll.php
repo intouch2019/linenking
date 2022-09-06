@@ -831,7 +831,7 @@ function grnItemsBal($iobj, $to_release_qty) {
     $db = new DBConn();
     $clsLogger = new clsLogger();
     $multiple_items_released = array();
-    $query = "select ctg_id,design_no,id,MRP from it_items where ctg_id = $iobj->ctg_id and design_id = $iobj->design_id and style_id = $iobj->style_id and size_id = $iobj->size_id and grn_qty > 0 order by grn_qty desc ";
+    $query = "select ctg_id,design_no,id,MRP,grn_qty from it_items where ctg_id = $iobj->ctg_id and design_id = $iobj->design_id and style_id = $iobj->style_id and size_id = $iobj->size_id and grn_qty > 0 order by grn_qty desc ";
 //   print "<br>ITM QRY: ".$query;
     $objs = $db->fetchObjectArray($query);
     $release_balance = $to_release_qty;
