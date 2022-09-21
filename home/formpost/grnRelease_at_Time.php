@@ -33,7 +33,7 @@ print_r($activedt_new);
 echo "</pre>";
 
 
-$sq = "select * from release_orders where Rel_sent =0 and Release_time ='13:30:00'";
+$sq = "select id,designid from release_orders where Rel_sent =0 and Release_time ='13:30:00'";
 $iobj = $db->fetchObjectArray($sq);
 
 
@@ -74,7 +74,7 @@ foreach ($iobj as $io) {
 }
 
 
-$sqs = "select * from release_orders where Rel_sent =0 and Release_time ='20:30:00'";
+$sqs = "select id,designid from release_orders where Rel_sent =0 and Release_time ='20:30:00'";
 $iobs = $db->fetchObjectArray($sqs);
 
 foreach ($iobs as $iob) {

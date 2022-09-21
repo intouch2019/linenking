@@ -42,9 +42,9 @@ if (count($errors) == 0) {
         //step 1 : fetch all auto refill stores
         $squery = "select id,store_number from  it_codes where usertype = " . UserType::Dealer . " and is_autorefill = 1 and is_closed = 0 and inactive = 0 and sbstock_active = 1 and sequence is not null and sequence > 0 order by sequence ";
 //   $sresults = $db->execQuery($squery);
-  
+
         $storeobjs = $db->fetchObjectArray($squery);
-  print "<br>Store QRY: $squery <br><br><br>";
+      //  print "<br>Store QRY: $squery <br><br><br>";
 //  print_r($storeobjs);
 //    print_r($_POST['designid']);
         $sa = "select Rel_sent_temp from release_orders where id=$id and Rel_sent_temp=1";
@@ -189,22 +189,22 @@ if (count($errors) == 0) {
                                         }
 //                                            print "<br>INSTRANSIT : $intransit_stock_value ";
                                         //fetch store's standing stock ratio againts item                                          
-                                          $checkcore="select core from it_ck_designs where id= $design_id";
-                                       
-                                            $core = $db->fetchObject($checkcore);
-                                       
+                                        $checkcore = "select core from it_ck_designs where id= $design_id";
+
+                                        $core = $db->fetchObject($checkcore);
+
                                         $squery = "select ratio from it_store_ratios where store_id = $sobj->id and ctg_id = $iobj->ctg_id and design_id = $design_id and style_id = $iobj->style_id and size_id = $iobj->size_id and ratio_type = " . RatioType::Standing . " and is_exceptional = 1 and is_exceptional_active = 1 and core=$core->core";
-                                          // print "<br> STORE STANDING STOCK QRY: $squery";
+                                        // print "<br> STORE STANDING STOCK QRY: $squery";
                                         $stkobj = $db->fetchObject($squery);
 
                                         if (!isset($stkobj)) {
-                                              $checkcore="select core from it_ck_designs where id= $design_id";
-                                        
+                                            $checkcore = "select core from it_ck_designs where id= $design_id";
+
                                             $core = $db->fetchObject($checkcore);
-                                     
+
                                             $squery = "select ratio from it_store_ratios where store_id = $sobj->id and ctg_id = $iobj->ctg_id "
-                                                    . "and design_id = -1 and style_id = $iobj->style_id and size_id = $iobj->size_id and ratio_type = " . RatioType::Standing ." and core=$core->core";
-                                              //  print "<br> STORE STANDING STOCK QRY FOR ALL DESIGNS: $squery";
+                                                    . "and design_id = -1 and style_id = $iobj->style_id and size_id = $iobj->size_id and ratio_type = " . RatioType::Standing . " and core=$core->core";
+                                            //  print "<br> STORE STANDING STOCK QRY FOR ALL DESIGNS: $squery";
                                             $stkobj = $db->fetchObject($squery);
                                         }
 
@@ -216,7 +216,7 @@ if (count($errors) == 0) {
                                         if (isset($stkobj) && $release_bal_qty > 0 && isset($siobj) . $currCheck) {
 
                                             if ($sum_qty <= 0) {
-                                              //  print_r(" ratio=". $stkobj->ratio);
+                                                //  print_r(" ratio=". $stkobj->ratio);
                                                 $qty = $stkobj->ratio;
                                             } else {
                                                 if ($sum_qty < $stkobj->ratio) {
@@ -233,47 +233,94 @@ if (count($errors) == 0) {
 
                                             $msl = $db->fetchObject("select min_stock_level,max_stock_level,inactive from it_codes where id = $sobj->id");
 
-                                            $store_stock = $db->fetchObject("select sum(c.quantity * i.MRP) as curr_stock_value from it_current_stock c , it_items i where c.store_id = $sobj->id  and c.barcode = i.barcode");
-                                            if (isset($store_stock) && trim($store_stock->curr_stock_value) != "") {
-                                                $curr_stock_val = $store_stock->curr_stock_value;
+                                            if (!isset($csv[$sobj->id])) {
+
+                                                $store_stock = $db->fetchObject("select sum(c.quantity * i.MRP) as curr_stock_value from it_current_stock c , it_items i where c.store_id = $sobj->id  and c.barcode = i.barcode");
+
+                                                if (isset($store_stock) && trim($store_stock->curr_stock_value) != "") {
+                                                    $curr_stock_val = $store_stock->curr_stock_value;
+                                                } else {
+                                                    $curr_stock_val = 0;
+                                                }
+                                                $csv[$sobj->id] = $curr_stock_val;
                                             } else {
-                                                $curr_stock_val = 0;
+
+                                                $curr_stock_val = $csv[$sobj->id];
                                             }
 
-                                            $stock_intransit_new = $db->fetchObject("select sum(i.MRP*oi.quantity) as intransit_stock_value_new from it_sp_invoices o , it_sp_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6 ) and o.store_id =$sobj->id   and o.is_procsdForRetail = 0 and oi.barcode = i.barcode");
-                                            if (isset($stock_intransit_new) && trim($stock_intransit_new->intransit_stock_value_new) != "") {
-                                                $intransit_stock_value_new = $stock_intransit_new->intransit_stock_value_new;
+                                            if (!isset($isv[$sobj->id])) {
+
+                                                $stock_intransit_new = $db->fetchObject("select sum(i.MRP*oi.quantity) as intransit_stock_value_new from it_sp_invoices o , it_sp_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6 ) and o.store_id =$sobj->id   and o.is_procsdForRetail = 0 and oi.barcode = i.barcode");
+
+                                                if (isset($stock_intransit_new) && trim($stock_intransit_new->intransit_stock_value_new) != "") {
+                                                    $intransit_stock_value_new = $stock_intransit_new->intransit_stock_value_new;
+                                                } else {
+                                                    $intransit_stock_value_new = 0;
+                                                }
+                                                $isv[$sobj->id] = $intransit_stock_value_new;
                                             } else {
-                                                $intransit_stock_value_new = 0;
+                                                $intransit_stock_value_new = $isv[$sobj->id];
                                             }
 
-                                            $active_amount = $db->fetchObject("select sum(order_amount) as active_amount from it_ck_orders where status=1 and store_id=$sobj->id");
-                                            if (isset($active_amount) && trim($active_amount->active_amount) != "") {
-                                                $active_amt = $active_amount->active_amount;
+                                            if (!isset($aa[$sobj->id])) {
+
+                                                $active_amount = $db->fetchObject("select sum(order_amount) as active_amount from it_ck_orders where status=1 and store_id=$sobj->id");
+
+                                                if (isset($active_amount) && trim($active_amount->active_amount) != "") {
+                                                    $active_amt = $active_amount->active_amount;
+                                                } else {
+                                                    $active_amt = 0;
+                                                }
+                                                $aa[$sobj->id] = $active_amt;
                                             } else {
-                                                $active_amt = 0;
+                                                $active_amt = $aa[$sobj->id];
                                             }
 
-                                            $picking_amount = $db->fetchObject("select sum(order_amount) as picking_amount  from it_ck_orders where status=2 and store_id=$sobj->id");
-                                            if (isset($picking_amount) && trim($picking_amount->picking_amount) != "") {
-                                                $picking_amt = $picking_amount->picking_amount;
+                                            if (!isset($pa[$sobj->id])) {
+
+                                                $picking_amount = $db->fetchObject("select sum(order_amount) as picking_amount  from it_ck_orders where status=2 and store_id=$sobj->id");
+
+                                                if (isset($picking_amount) && trim($picking_amount->picking_amount) != "") {
+                                                    $picking_amt = $picking_amount->picking_amount;
+                                                } else {
+                                                    $picking_amt = 0;
+                                                }
+                                                $pa[$sobj->id] = $picking_amt;
                                             } else {
-                                                $picking_amt = 0;
+                                                $picking_amt = $pa[$sobj->id];
                                             }
 
-                                            $picking_complete_amount = $db->fetchObject("select sum(order_amount) as picking_complete_amount  from it_ck_orders where status=5 and store_id=$sobj->id");
-                                            if (isset($picking_complete_amount) && trim($picking_complete_amount->picking_complete_amount) != "") {
-                                                $picking_complete_amt = $picking_complete_amount->picking_complete_amount;
+                                            if (!isset($pca[$sobj->id])) {
+
+                                                $picking_complete_amount = $db->fetchObject("select sum(order_amount) as picking_complete_amount  from it_ck_orders where status=5 and store_id=$sobj->id");
+
+                                                if (isset($picking_complete_amount) && trim($picking_complete_amount->picking_complete_amount) != "") {
+                                                    $picking_complete_amt = $picking_complete_amount->picking_complete_amount;
+                                                } else {
+                                                    $picking_complete_amt = 0;
+                                                }
+                                                $pca[$sobj->id] = $picking_complete_amt;
                                             } else {
-                                                $picking_complete_amt = 0;
+                                                $picking_complete_amt = $pca[$sobj->id];
                                             }
 
-                                            $cartinfoo = $db->fetchObject("select  sum(order_amount) as cart_amt from it_ck_orders where store_id=$sobj->id and status=" . OrderStatus::InCart);
-                                            if (isset($cartinfoo) && trim($cartinfoo->cart_amt) != "") {
-                                                $cart_amount = $cartinfoo->cart_amt;
+                                            if (!isset($ca[$sobj->id])) {
+
+                                                $cartinfoo = $db->fetchObject("select  sum(order_amount) as cart_amt from it_ck_orders where store_id=$sobj->id and status=0");
+
+                                                if (isset($cartinfoo) && trim($cartinfoo->cart_amt) != "") {
+                                                    $cart_amount = $cartinfoo->cart_amt;
+                                                } else {
+                                                    $cart_amount = 0;
+                                                }
+                                                $ca[$sobj->id] = $cart_amount;
                                             } else {
-                                                $cart_amount = 0;
+
+                                                $cart_amount = $ca[$sobj->id];
                                             }
+
+
+
 
                                             if (isset($msl) && trim($msl->max_stock_level) != NULL && trim($msl->max_stock_level) != 0) {
                                                 if (array_key_exists($sobj->id, $store_orders)) {
@@ -336,7 +383,7 @@ if (count($errors) == 0) {
                 } //items loop within design ends here
             }// all design loop ends here
         } else {
-         
+
 
             $str = serialize($_POST);
 
@@ -354,19 +401,19 @@ if (count($errors) == 0) {
 
             $seq_sorted_arr = array();
             foreach ($storeobjs as $storeobj) {
-              
+
                 if (array_key_exists($storeobj->id, $store_orders)) {
                     $seq_sorted_arr[$storeobj->id] = $store_orders[$storeobj->id];
                 }
             }
 
-       // print "<br>SORTED ORDERS ARR: <br>";
+            // print "<br>SORTED ORDERS ARR: <br>";
             //fetching random datetime by fluctuating seconds
             $dt = date('Y-m-d H:i:s');
 
             //foreach($store_orders as $store_id => $order_id){
             foreach ($seq_sorted_arr as $store_id => $order_id) {
- 
+
                 $cartinfo = $clsOrders->getCartInfo($store_id);
                 $min_stock = 0;
                 $store_stock = 0;
