@@ -22,9 +22,14 @@ if($page){
     if (!$allowed) { header("Location: ".DEF_SITEURL."unauthorized"); return; }
 }else{ header("Location:".DEF_SITEURL."nopagefound"); return; }
 
-if(trim($edreason)==""){
-    $errors[] = "Please Enter disabling reason";
+if(trim($edreason)=="" && trim($edreason)=="$paymentlink"){
+    $errors[] = "Please Enter Disabling reason or Paymentlink";
 }
+  $paymentlink = isset($paymentlink) && trim($paymentlink) != "" ? $db->safe($paymentlink) : false;
+    $paymentlinkquery = ",paymentlink=$paymentlink";
+    if (!$paymentlink) {
+       $paymentlinkquery =",paymentlink= null";
+    }
 try{
     if(count($errors)==0){
         $reason_db = $db->safe(trim($edreason));
@@ -34,7 +39,7 @@ try{
            //$query = "update it_codes set inactive=1 inactivated_by = $store->id , inactivating_reason = $reason_db , inactive_dttm = now() where usertype = ".UserType::Dealer; 
            $query = "update it_codes set loginsdisable_by = $store->id , disablelogins_reason = $reason_db , disablelogins_dttm = now() where usertype = ".UserType::Dealer; 
         }else{
-           $query = "update it_codes set inactive=1, inactivated_by = $store->id , inactivating_reason = $reason_db , inactive_dttm = now() where id = $cid";
+           $query = "update it_codes set inactive=1, inactivated_by = $store->id , inactivating_reason = $reason_db $paymentlinkquery, inactive_dttm = now() where id = $cid";
         }
        print "<br>".$query;
         $rowaffected = $db->execUpdate($query);
