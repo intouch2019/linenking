@@ -59,6 +59,10 @@ class cls_stores_disablelogin_reason extends cls_renderer {
                     <td colspan="4">Reason for Disabling:</td>
                     <td colspan="10"><textarea name="edreason" id="edreason" rows="5" cols="50"></textarea></td>
                 </tr> 
+                 <tr>
+                    <td colspan="4">Payment link:</td>
+                    <td colspan="10"><input type="text" name="paymentlink" id="paymentlink" autocomplete="off" style="width:70%"></td>
+                </tr> 
                 <tr>
                     <td colspan="4"><input type="hidden" id="cid" name="cid" value="<?php echo $sobj->id ; ?>">                         
                     </td>

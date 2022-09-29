@@ -73,7 +73,17 @@ class cls_header {
 //                                            print_r($this->storeinfo);
                                             ?><div class="grid_9">
                                                 <div class="error" style="font-size:1.6em; color:red">Your portal is disabled.
-                                                    <br>Reason is :<?php echo $this->storeinfo->inactivating_reason; ?> 
+                                                     <?php if (isset($this->storeinfo) && trim($this->storeinfo->inactivating_reason) != "") {
+                                                        ?>
+                                                        <br>Reason is : <?php echo $this->storeinfo->inactivating_reason; ?>
+
+                                                        <?php }
+                                                        ?> 
+
+                                                        <?php if (isset($this->storeinfo->paymentlink) && $this->storeinfo->paymentlink != "") { ?>
+                                                            <br> To make payment click this link <a href="<?php echo $this->storeinfo->paymentlink; ?>" target="_blank" style="color:blue"><?php echo $this->storeinfo->paymentlink; ?> </a>
+
+                                                            <?php } ?>
                                                         <br>Please <a href="<?php echo DEF_SITEURL; ?>home/login">TRY AGAIN</a> later. Thank you for your patience.</div>
                                                             </div><?php
                                             }
