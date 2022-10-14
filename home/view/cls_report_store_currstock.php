@@ -334,7 +334,7 @@ foreach ($objs as $obj) {
             //$query2 = "select c.store_name , cs.barcode, sum(cs.quantity) as quantity from it_codes c , it_current_stock cs where c.id = cs.store_id and cs.store_id in ( $storeClause ) group by cs.barcode ";
             //echo $query2;
             $query = "select $queryfields";
-            $query .= " from it_codes c,it_current_stock cs, it_items i, it_categories ctg, it_brands br, it_styles st, it_sizes si, it_fabric_types fb, it_materials mt, it_prod_types pr, it_mfg_by mfg  where c.id = cs.store_id and cs.store_id in ( $storeClause ) and cs.barcode = i.barcode and  ctg.id=i.ctg_id and br.id=i.brand_id and st.id=i.style_id and si.id=i.size_id and pr.id=i.prod_type_id and mt.id=i.material_id and fb.id=i.fabric_type_id and mfg.id=i.mfg_id and cs.store_id = c.id  $gClause ";
+            $query .= " from it_codes c,it_current_stock cs, it_items i, it_categories ctg, it_brands br, it_styles st, it_sizes si, it_fabric_types fb, it_materials mt, it_prod_types pr, it_mfg_by mfg  where c.id = cs.store_id and cs.store_id in ( $storeClause ) and cs.barcode = i.barcode and  ctg.id=i.ctg_id and br.id=i.brand_id and st.id=i.style_id and si.id=i.size_id and pr.id=i.prod_type_id and mt.id=i.material_id and fb.id=i.fabric_type_id and mfg.id=i.mfg_id and cs.store_id = c.id and cs.quantity !=0 $gClause ";
 //            echo $query;
             $result = $db->execQuery($query);
 
