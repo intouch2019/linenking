@@ -56,6 +56,11 @@ class cls_admin_stores extends cls_renderer {
             //alert("hello");
              window.location.href="util/storeExportNew.php";
        }
+       
+       function DownloadNonclaimExcel(){
+            //alert("hello");
+             window.location.href="util/NonclaimstoreExport.php";
+       }
                 
         function enableLogin(id,reason,whom){
          //alert(reason);
@@ -88,6 +93,7 @@ class cls_admin_stores extends cls_renderer {
         ?>
 <div id="storeinfo"></div>
     <div style="float:right;margin-right:15px;">
+        <button name="dwnFile" id="dwnFile" onclick="DownloadNonclaimExcel();">Download Nonclaim Store Details</button>
         <button name="dwnFile" id="dwnFile" onclick="DownloadStoreExcel();">Download Store Details</button>
         <button name="dwnFile" id="dwnFile" onclick="DownloadExcel();">Download Disable Store Report</button>
         
