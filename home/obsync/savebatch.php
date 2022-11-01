@@ -97,7 +97,7 @@ foreach ($arr as $orderinfo) {
                         $baddClause .= ", bill_datetime = '$bill_datetime'";
                 }
                 
-                $qry = "update it_orders set orderinfo = concat(orderinfo,$orderinfo_append) , updatetime = now() $baddClause where id = $billobj->id  ";
+                $qry = "update it_orders set orderinfo = concat(orderinfo,$orderinfo_append) , updatetime = now() $baddClause ,is_sent =0 where id = $billobj->id  ";
 //                print "<br>TEXT APPEND QRY: $qry <br>";
                 $db->execUpdate($qry);
                 reSaveCancelBill($billobj->id,$billtype,$gCodeId,$records);
@@ -166,7 +166,7 @@ foreach ($arr as $orderinfo) {
            }   
            //means a sale bill was cancelled n send again
            $orderinfo_cappend = $db->safe(trim("<=##New_TEXT##=>".$orderinfo));
-                $db->execUpdate("update it_orders set orderinfo = concat(orderinfo,$orderinfo_cappend) ,tickettype=3, updatetime=now() where id=$orderobj->id");
+                $db->execUpdate("update it_orders set orderinfo = concat(orderinfo,$orderinfo_cappend) ,tickettype=3, updatetime=now() ,is_sent =0 where id=$orderobj->id");
 //                echo "<br/>update it_orders set tickettype=3, updatetime=now() where id=$orderobj->id<br/>";
                 reSaveCancelBill($orderobj->id,$billtype,$gCodeId,$records);
                 $itemlines = explode("<++>", $records[2]);
@@ -220,7 +220,7 @@ foreach ($arr as $orderinfo) {
                             $baddClause .= ", bill_datetime = '$bill_datetime'";
                     }
                     
-                    $qry = "update it_orders set orderinfo = concat(orderinfo,$orderinfo_append) , updatetime = now() $baddClause  where id = $billobj->id  ";
+                    $qry = "update it_orders set orderinfo = concat(orderinfo,$orderinfo_append) , updatetime = now() $baddClause ,is_sent =0 where id = $billobj->id  ";
 //                    print "<br>TEXT APPEND QRY: $qry <br>";
                     $db->execUpdate($qry);
                     //step 2: Do Stock update revert n del old orderitems & old orderpayments
@@ -416,7 +416,7 @@ foreach ($arr as $orderinfo) {
                 if (trim($firstname) != "") { $baddClause .= ", cust_name='$firstname'"; }
                 if (trim($phoneno) != "") { $baddClause .= ", cust_phone=$phoneno"; }
                 
-                $qry = "update it_orders set orderinfo = concat(orderinfo,$orderinfo_append) , updatetime = now() $baddClause where id = $billobj->id  ";
+                $qry = "update it_orders set orderinfo = concat(orderinfo,$orderinfo_append) , updatetime = now() $baddClause ,is_sent =0 where id = $billobj->id  ";
 //                print "<br>TEXT APPEND QRY: $qry <br>";
                 $db->execUpdate($qry);
                 reSaveCancelBill2($billobj->id,$billtype,$gCodeId,$tobj);
@@ -531,7 +531,7 @@ foreach ($arr as $orderinfo) {
 //           print "<br>In Sale Bill Cancelled and send again <br>";
            //means a sale bill was cancelled n send again
                 $orderinfo_cappend = $db->safe(trim("<=##New_TEXT##=>".$orderinfo));
-                $db->execUpdate("update it_orders set orderinfo = concat(orderinfo,$orderinfo_cappend) ,tickettype=3, updatetime=now() where id=$orderobj->id");
+                $db->execUpdate("update it_orders set orderinfo = concat(orderinfo,$orderinfo_cappend) ,tickettype=3, updatetime=now() ,is_sent =0 where id=$orderobj->id");
 //                echo "<br/>update it_orders set tickettype=3, updatetime=now() where id=$orderobj->id<br/>";
                 reSaveCancelBill2($orderobj->id,$billtype,$gCodeId,$tobj);
                 $itemlines = $tobj->ticketlines;
@@ -609,7 +609,7 @@ foreach ($arr as $orderinfo) {
                     if (trim($firstname) != "") { $baddClause .= ", cust_name='$firstname'"; }
                     if (trim($phoneno) != "") { $baddClause .= ", cust_phone=$phoneno"; }
                     
-                    $qry = "update it_orders set orderinfo = concat(orderinfo,$orderinfo_append) , updatetime = now() $baddClause  where id = $billobj->id  ";
+                    $qry = "update it_orders set orderinfo = concat(orderinfo,$orderinfo_append) , updatetime = now() $baddClause ,is_sent =0 where id = $billobj->id  ";
 //                    print "<br>TEXT APPEND QRY: $qry <br>";
                     $db->execUpdate($qry);
                     //step 2: Do Stock update revert n del old orderitems & old orderpayments
@@ -766,7 +766,7 @@ foreach ($arr as $orderinfo) {
                     if (trim($firstname) != "") { $query .= ", cust_name='$firstname'"; }
                     if (trim($phoneno) != "") { $query .= ", cust_phone=$phoneno"; }
                     
-                    $qry = "update it_orders set orderinfo = concat(orderinfo,$orderinfo_append) , updatetime = now() $baddClause  where id = $billobj->id  ";
+                    $qry = "update it_orders set orderinfo = concat(orderinfo,$orderinfo_append) , updatetime = now() $baddClause ,is_sent =0 where id = $billobj->id  ";
 //                    print "<br>TEXT APPEND QRY: $qry <br>";
                     $db->execUpdate($qry);
                     //step 2: Do Stock update revert n del old orderitems & old orderpayments
@@ -1128,7 +1128,7 @@ function  updateDiscPct($order_id){
         //print "<br>DISC PCT: $disc_pct<br>";
         
         //step 4 : update order's dist pct
-        $query2 = "update it_orders set discount_pct = $disc_pct where id = $order_id ";
+        $query2 = "update it_orders set discount_pct = $disc_pct ,is_sent =0 where id = $order_id ";
 //        print "<br>UPDATE ORDER: $query2<br>";
         $db->execUpdate($query2);
         
