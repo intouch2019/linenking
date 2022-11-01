@@ -434,7 +434,7 @@ foreach ($objs as $obj) {
                         if ($field=="itemctg") {$tableheaders.="Category:"; $queryfields .= "oi.Category as itemctg,";$group_by[] = "oi.Category"; $total_td .= "<td></td>";}
                         if ($field=="hsncode") {$tableheaders.="HSN Code:"; $queryfields .= "oi.Category as hsncode,";$group_by[] = "oi.Category"; $total_td .= "<td></td>";}
                         if ($field=="designno") {$tableheaders.="Design No.:"; $queryfields .= "oi.design_no,";$group_by[] = "oi.design_no"; $total_td .= "<td></td>";}
-                        if ($field=="itemmrp") {$tableheaders.="MRP (Rs):"; $queryfields .= "oi.price,";$group_by[] = "oi.price"; $total_td .= "<td></td>";}
+                        if ($field=="itemmrp") {$tableheaders.="MRP (Rs):"; $queryfields .= "i.mrp,";$group_by[] = "i.mrp"; $total_td .= "<td></td>";}
 //                        if ($field=="itemvalue") { $tableheaders .="Sold Price:"; $queryfields .="sum(case when (o.discount_pct is not NULL) then (((100-o.discount_pct)/100)*oi.price) else oi.price end) as itemvalue,"; $total_td .= "<td></td>"; }
 //                        if ($field=="itemqty") {$tableheaders.="Quantity:"; $queryfields .= "sum(oi.quantity) as quantity,";}
                         ////if ($field=="itemqty") {$tableheaders.="Quantity:"; $queryfields .= "(case when (o.tickettype = 0 ) then sum(oi.quantity) else 0 end) as quantity,";}                        
@@ -505,7 +505,7 @@ foreach ($objs as $obj) {
             
             $query = "select $queryfields";
       //      $query .= " from it_orders o,it_order_items oi, it_items i, it_codes c,states s,region r where $storeClause $dQuery and oi.order_id=o.id and i.id = oi.item_id and  o.store_id = c.id  and s.id = c.state_id and c.region_id=r.id  ".$gClause;
-           $query .= " from it_salesreports  o,it_salereport_items oi  where $storeClause $dQuery and oi.order_id=o.id ".$gClause;
+           $query .= " from it_salesreports  o,it_salereport_items oi,it_items i where $storeClause $dQuery and oi.order_id=o.id and i.id=oi.item_id ".$gClause;
          //   print $query;
             // print $query; //and c.id in ( $storeClause)
 	    //error_log("1:$query\n",3, "../ajax/tmp.txt");
