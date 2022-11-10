@@ -25,8 +25,9 @@ class cls_store_audit extends cls_renderer {
         if ($params && isset($params['sid'])) {
             $this->sid = $params['sid'];
         }
-        if (isset($_SESSION['account_dtrange'])) { $this->dtrange = $_SESSION['account_dtrange']; }
-        else { $this->dtrange = date("d-m-Y"); }
+        if (isset($_GET["dtrange"]) && $_GET["dtrange"] != "") {
+      $this->dtrange = $_GET["dtrange"];} 
+       else { $this->dtrange = date("d-m-y"); }
     }
 
     function extraHeaders() {
@@ -83,15 +84,16 @@ class cls_store_audit extends cls_renderer {
                             return;
                         }
                         var dtrange = $("#dateselect").val();
-                        $.ajax({
-                            url: "savesession.php?name=account_dtrange&value=" + dtrange,
-                            success: function (data) {
-                                //window.location.reload();
-                            }
-                        });
+//                        $.ajax({
+//                            url: "savesession.php?name=account_dtrange&value=" + dtrange,
+//                            success: function (data) {
+//                                //window.location.reload();
+//                            }
+//                        });
                         var getstoreid = document.getElementById("avalue").value;
                         // alert(getstoreid);
-                        window.location.href = "store/audit/sid=" + getstoreid;
+                        window.location.href = "store/audit/sid=" + getstoreid +"&dtrange="+dtrange;
+
                     }
                 });
 
@@ -217,7 +219,7 @@ class cls_store_audit extends cls_renderer {
                 if ($currUser->usertype == UserType::Admin || $currUser->usertype == UserType::CKAdmin) { ?>
                 <div class="grid_6">
                     <br /><div id="dwnloadbtn" style='margin-left:40px; padding-left:15px; height:24px;width:130px;border: solid gray 1px;background:#F5F5F5;padding-top:4px;'>
-                        <a href='<?php echo "util\auditDetails.php"; ?>' title='Export table to CSV'><img src='images/excel.png' width='20' hspace='3' style='margin-bottom:-6px;' /> Export To Excel</a>
+                        <a href='<?php echo "util/auditDetails.php?dtrange=$this->dtrange"; ?>' title='Export table to CSV'><img src='images/excel.png' width='20' hspace='3' style='margin-bottom:-6px;' /> Export To Excel</a>
                     </div><br />
                 </div>
                 <?php } ?>

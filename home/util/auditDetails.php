@@ -11,8 +11,8 @@ require_once 'Classes/PHPExcel/Writer/Excel2007.php';
 //$cnt=0;
 //$dealersList = array();
 $table = "it_auditdetails,it_codes";
-if (isset($_SESSION['account_dtrange'])) { $dtrange = $_SESSION['account_dtrange']; }
-        else { $dtrange = date("d-m-Y"); }
+if (isset($_GET["dtrange"]) && $_GET["dtrange"] != "") {
+  $dtrange = $_GET["dtrange"]; }
 $db = new DBConn();
 $dtarr = explode(" - ", $dtrange);
 //print_r($dtrange);
