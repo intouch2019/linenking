@@ -15,7 +15,7 @@ if (!$currStore) {
 //$logger = new clsLogger();
 
 //$aColumns = array( 'id','design_no','MRP', 'category','createtime', 'mfg_by','details');
-$aColumns = array( 'id','mfg_by','category', 'design_no','MRP', 'createtime','details');
+$aColumns = array( 'id','mfg_by','category', 'design_no','MRP', 'createtime','details','status','file_name');
 $sColumns = array('b.id','m.name','c.name','b.design_no');
 /* Indexed column (used for fast and accurate table cardinality) */
 //$sIndexColumn = "iid";
@@ -101,7 +101,7 @@ if ($sWhere == "") {
  */
                                     // b.id, b.createtime, m.name as mfg_by, c.name as category, b.design_no, b.MRP from it_barcode_batches b left outer join it_mfg_by m on b.mfg_by_id = m.id left outer join it_categories c on b.category_id = c.id order by b.id desc
 $sQuery = "
-            select SQL_CALC_FOUND_ROWS b.id, b.createtime, m.name as mfg_by, c.name as category, b.design_no, b.MRP from it_barcode_batches b left outer join it_mfg_by m on b.mfg_by_id = m.id left outer join it_categories c on b.category_id = c.id 
+            select SQL_CALC_FOUND_ROWS b.id, b.createtime, m.name as mfg_by, c.name as category, b.design_no, b.MRP,k.status,k.file_name from it_barcode_batches b left outer join it_mfg_by m on b.mfg_by_id = m.id left outer join it_categories c on b.category_id = c.id left outer join it_new_barcode_batch k on k.batch_id=b.id  
              
             $sWhere
                  group by b.id
@@ -155,8 +155,15 @@ foreach ($objs as $obj) {
                 $row[] = "<a href='barcode/batch/id=$obj->id/'>View Batch</a";            
                
         }
+        else if ($aColumns[$i] == "status") {            
+            $row[] =$obj->status;  
+        
+         }else if ($aColumns[$i] == "file_name") { 
+             
+    $row[] = "<a href='http://linenking.intouchrewards.com/cron/b_batch/$obj->file_name'>Download</a";   
+            
 
-         else {         
+        }else {         
             /* General output */
             $row[] = $obj->$aColumns[$i];
         }

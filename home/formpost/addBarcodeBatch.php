@@ -141,6 +141,22 @@ try {
 	}
 	}
 	}
+         $queryy = "insert into it_new_barcode_batch set batch_id=$batch_id,file_name='lin$batch_id.csv'";
+        $new_bar_batch = $db->execInsert($queryy);
+
+        $fp = fopen("../cron/b_batch/lin$batch_id.csv", "w");
+        $result = $db->execQuery("select i.batch_id,i.id, i.barcode, i.num_units, m.name as mfg_by, c.name as category, i.design_no, i.MRP, b.name as brand, st.name as style, si.name as size, p.name as prod_type, mt.name as material, f.name as fabric_type from it_items i left outer join it_mfg_by m on i.mfg_id = m.id left outer join it_categories c on i.ctg_id = c.id left outer join it_brands b on i.brand_id = b.id left outer join it_styles st on i.style_id = st.id left outer join it_sizes si on i.size_id = si.id left outer join it_prod_types p on i.prod_type_id = p.id left outer join it_materials mt on i.material_id = mt.id left outer join it_fabric_types f on i.fabric_type_id = f.id left outer join it_new_barcode_batch k on i.batch_id=k.batch_id where i.barcode not like '1%' and i.barcode not like '001%' and i.barcode not like '2%' and k.batch_id=$batch_id  order by i.id;");
+
+        fputs($fp, "Batch Id,Barcode,Manufacturer,Product,Design,MRP,Brand,Style,Size,Production Type,Material,Fabric Type,Units\n");
+        while ($item = $result->fetch_object()) {
+            fputs($fp, "$item->batch_id,$item->barcode,$item->mfg_by,$item->category,$item->design_no,$item->MRP,$item->brand,$item->style,$item->size,$item->prod_type,$item->material,$item->fabric_type,$item->num_units\n");
+        }
+
+        fclose($fp);
+        system("../cron/b_batch/lin$batch_id.csv");
+        
+        
+        
 	$redirect="batch/id=$batch_id/";
 	unset($_SESSION['form_post']);
 } catch (Exception $xcp) {
