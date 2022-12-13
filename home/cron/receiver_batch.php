@@ -69,7 +69,7 @@ foreach ($f_name as $f_nam) {
                 }
             }
             
-            if($toterror=="0"){
+            if($toterror==0){
             if ($stas == "COMPLETE") {
                 $db->execUpdate("update it_new_barcode_batch set status='$stas',is_sent=2,updatetime=now() where file_name='$fname'");
             }else{
