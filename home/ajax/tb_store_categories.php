@@ -68,7 +68,7 @@ if ( isset($_GET['sSearch']) &&  $_GET['sSearch'] != "") {
     $sWhere = substr_replace($sWhere, "", -3);
    // $sWhere .= ')';
 }
-error_log("\nInvs query: ".$sWhere."\n",3,"tmp.txt");
+//error_log("\nInvs query: ".$sWhere."\n",3,"tmp.txt");
 /* Individual column filtering */
 //for ($i = 0; $i < count($sColumns); $i++) {
 //    //if ($_GET['bSearchable_' . $i] == "true" && $_GET['sSearch_' . $i] != '') {
@@ -105,7 +105,7 @@ $sQuery = "
 	";
 
 //echo $sQuery;
-error_log("\nInvs query: ".$sQuery."\n",3,"tmp.txt");
+//error_log("\nInvs query: ".$sQuery."\n",3,"tmp.txt");
 //$logger->logInfo($sQuery);
 $objs = $db->fetchObjectArray($sQuery);
 //print_r($objs);
