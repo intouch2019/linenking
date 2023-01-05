@@ -483,7 +483,7 @@ Your session has expired. Click <a href="">here</a> to login.
                                                            
                                                            <?php if($margin==0 && $ctg_id1 !=41){ ?>
                                                            
-                                                                <td width="70%"><input type='text' id="id_<?php echo $getitm->id;?>" placeholder="Enter no of set/packet" <?php echo $validate;?> pattern= "[0-9]+" title="ONLY NUMBER" name="item_<?php echo $id."_".$qty; ?>" <?php
+                                                                <td width="70%"><input type='number' max="9" min="0" id="id_<?php echo $getitm->id;?>" placeholder="Enter no of set/packet" <?php echo $validate;?> pattern= "[0-9]+" title="ONLY NUMBER" name="item_<?php echo $id."_".$qty; ?>" <?php
                                                                 if ($exist) {
                                                                     print "value='";
                                                                     echo $exist->order_qty;
@@ -494,7 +494,7 @@ Your session has expired. Click <a href="">here</a> to login.
                                                         
                                                                 <?php } else { ?> 
                                                                 
-                                                                 <td><input type='text' style='width: 30px;' pattern= "[0-9]+" title="ONLY NUMBER" name="item_<?php echo $id."_".$qty; ?>" <?php
+                                                                 <td><input type='number' max="9" min="0" style='width: 40px;' pattern= "[0-9]+" title="ONLY NUMBER" name="item_<?php echo $id."_".$qty; ?>" <?php
                                                                 if ($exist) {
                                                                     print "value='";
                                                                     echo $exist->order_qty;
