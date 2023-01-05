@@ -96,6 +96,16 @@ class cls_companydetails extends cls_renderer {
                                 }
                             });
                         });
+                            $("#cn3").change(function () {
+                            var id = $("#cn3").val();
+                            $.ajax({
+                                url: "savesession.php?name=id&value=" + id,
+                                success: function (data) {
+                                    //alert(data);
+                                    window.location.reload();
+                                }
+                            });
+                        });
             }
                     );
 
@@ -138,7 +148,8 @@ class cls_companydetails extends cls_renderer {
                             <input type="radio" id="cn" name="cn" value="1"  <?php if ($this->id == 1) { ?>checked <?php } ?> onchange="reload()" ><b>Company Details</b>
                             <input type="radio" id="cn1" name="cn" value="2"   <?php if ($this->id == 2) { ?>checked <?php } ?>  onchange="reload()"><b>Bank Details</b>
                             <input type="radio" id="cn2" name="cn" value="3"   <?php if ($this->id == 3) { ?>checked <?php } ?>  onchange="reload()"><b>Company Contacts</b>
-                            <br><br>
+                            <input type="radio" id="cn3" name="cn" value="4"   <?php if ($this->id == 4) { ?>checked <?php } ?>  onchange="reload()"><b>Store Stock Limit</b>
+                           <br><br>
 
 
                             <?php if ($this->id == 1) { ?>
@@ -244,7 +255,27 @@ class cls_companydetails extends cls_renderer {
                                 </div>
                             <?php }
                             ?>        
+                            
+                              <?php if ($this->id == 4) { ?>
 
+                                <div class="grid_10">
+                                    <table>
+                                        <caption><b>Store Stock Limits</b></caption>
+                                        <?php $stocklimit=$db->fetchObject("select min_stock_level ,max_stock_level  from it_codes where id = ". $this->currStore->id);?>
+                                        <tr>
+                                            <th>Store Maximum Stock Limit </th>
+                                            <td><?php if(isset($stocklimit->max_stock_level) && $stocklimit->max_stock_level>0){
+                                            echo $stocklimit->max_stock_level;}else{echo "";}?></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Store Minimum Stock Limit</th>
+                                            <td><?php if(isset($stocklimit->min_stock_level) && $stocklimit->min_stock_level>0){
+                                            echo $stocklimit->min_stock_level;}else{echo "";}?></td>
+                                        </tr>
+
+                                    </table>
+                                </div>
+                            <?php } ?>
 
                         </div>
 
