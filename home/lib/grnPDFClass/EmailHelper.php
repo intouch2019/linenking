@@ -15,19 +15,22 @@ public function send($toArray, $subject, $body,$attachments=false , $ccArray=fal
     $mail->SMTPSecure = "ssl";                 // sets the prefix to the servier
     $mail->Host       = "smtp.gmail.com";      // sets GMAIL as the SMTP server
     $mail->Port       = 465;                   // set the SMTP port 
-    $mail->Username   = "cottonkingwebmaster@gmail.com";  // GMAIL username
+    //$mail->Username   = "cottonkingwebmaster@gmail.com";  // GMAIL username
     #$mail->Password   = "Cottonking@2012";            // GMAIL password(old- cottonking2012)
-    $mail->Password   = "hqsehyhriufycvci";            // GMAIL password(old- cottonking2012) //App Password
+    //$mail->Password   = "hqsehyhriufycvci";            // GMAIL password(old- cottonking2012) //App Password
     
+    $mail->Username   = "cottonkingwebmasters@gmail.com";  // GMAIL username
+    //$mail->Password   = "Cottonking@2023";            // GMAIL password
+    $mail->Password   = "gifiudlssrcmihlz";            // App password
 
-    $mail->From       = "cottonking.portal@gmail.com";
+    $mail->From       = "cottonkingwebmasters@gmail.com";
     $mail->FromName   = "LinenKing Webmaster";
     $mail->Subject    = $subject;
     $mail->WordWrap   = 50; // set word wrap
 
     $mail->MsgHTML($body);
 
-    $mail->AddReplyTo("cottonkingwebmaster@gmail.com","LinenKing Webmaster");
+    $mail->AddReplyTo("cottonkingwebmasters@gmail.com","LinenKing Webmaster");
     
     //adding attachement(s)
     if($attachments){
