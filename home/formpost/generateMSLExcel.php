@@ -11,57 +11,83 @@ try{
     $db = new DBConn();
     $cnt=0;
     $dealersList = array();
-    $alldealersobj = $db->fetchObjectArray("select id,store_name,min_stock_level  from it_codes where usertype = ".UserType::Dealer."   and is_closed = 0 and min_stock_level is not null" );  //and inactive = 0
+    $alldealersobj = $db->fetchObjectArray("select id,store_name,min_stock_level,max_stock_level  from it_codes where usertype = ".UserType::Dealer."   and is_closed = 0 and min_stock_level is not null" );  //and inactive = 0
     foreach($alldealersobj as $dealerobj){ 
-        if(trim($dealerobj->min_stock_level)!=""){
-     
-                
-            $tot_stk = 0;
-            $tot_curr_stk = 0;
-            $tot_mask_stk = 0;
-            
-            $query = "select sum(c.quantity * i.MRP) as appreal_curr_stock from it_current_stock c , it_items i where c.store_id = $dealerobj->id  and c.barcode = i.barcode and i.ctg_id not in (53,54)";
+//        if(trim($dealerobj->min_stock_level)!=""){
+//     
+//                
+//            $tot_stk = 0;
+//            $tot_curr_stk = 0;
+//            $tot_mask_stk = 0;
+//            
+//            $query = "select sum(c.quantity * i.MRP) as appreal_curr_stock from it_current_stock c , it_items i where c.store_id = $dealerobj->id  and c.barcode = i.barcode and i.ctg_id not in (53,54)";
+//            $cobj = $db->fetchObject($query);
+//            if(isset($cobj) && trim($cobj->appreal_curr_stock)!=""){ $store_appreal_stock_val = $cobj->appreal_curr_stock ;}
+//            else{ $store_appreal_stock_val = 0; }
+//            
+//            $tot_curr_stk += $store_appreal_stock_val;  
+//            
+//               ////////////////////////////////////////////////
+//             $query = "select sum(c.quantity * i.MRP) as mask_curr_stock from it_current_stock c , it_items i where c.store_id = $dealerobj->id  and c.barcode = i.barcode and i.ctg_id  in (53,54)";
+//            $cobj = $db->fetchObject($query);
+//            if(isset($cobj) && trim($cobj->mask_curr_stock)!=""){ $store_mask_stock_val = $cobj->mask_curr_stock ;}
+//            else{ $store_mask_stock_val = 0; }
+//            
+//            $tot_curr_stk += $store_mask_stock_val;  
+//            
+//                ////////////////////////////////////////////////
+//            $query2 = "select sum(i.MRP*oi.quantity) as appreal_stock_intransit from it_sp_invoices o , it_sp_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6 ) and o.store_id = $dealerobj->id and o.is_procsdForRetail = 0 and oi.barcode = i.barcode  and i.ctg_id not in(53,54)";
+//            $tobj = $db->fetchObject($query2);
+//            if(isset($tobj) && trim($tobj->appreal_stock_intransit)!=""){ $intransit_appreal_val = $tobj->appreal_stock_intransit ;}
+//            else{ $intransit_appreal_val = 0; }
+//            
+//            $tot_mask_stk += $intransit_appreal_val;    
+//            
+//                 ////////////////////////////////////////////////
+//            $query2 = "select sum(i.MRP*oi.quantity) as mask_stock_intransit from it_sp_invoices o , it_sp_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6 ) and o.store_id = $dealerobj->id and o.is_procsdForRetail = 0 and oi.barcode = i.barcode  and i.ctg_id  in(53,54)";
+//            $tobj = $db->fetchObject($query2);
+//            if(isset($tobj) && trim($tobj->mask_stock_intransit)!=""){ $intransit_appreal_val = $tobj->mask_stock_intransit ;}
+//            else{ $intransit_mask_val = 0; }
+//            
+//            $tot_mask_stk += $intransit_mask_val; 
+//            
+//            
+//             ////////////////////////////////////////////////
+//            $appreal_tot_stock = $store_appreal_stock_val + $intransit_appreal_val;  //
+//            $mask_tot_stock = $store_mask_stock_val + $intransit_mask_val;
+//            $tot_stk = $appreal_tot_stock + $mask_tot_stock;
+//
+//            $dealersList[$dealerobj->id] = $dealerobj->store_name . "::" . $store_appreal_stock_val . "::" . $store_mask_stock_val . "::" . $tot_curr_stk . "::" . "$intransit_appreal_val" . "::" . "$intransit_mask_val" . "::" . "$tot_mask_stk" . "::" . "$appreal_tot_stock" . "::" . "$mask_tot_stock" . "::" . "$tot_stk" . "::" . $dealerobj->min_stock_level;
+//        
+//            
+//            
+//        }     
+         if (trim($dealerobj->min_stock_level) != "") {
+            //step 1: fetch current stock value
+            $query = "select sum(c.quantity * i.MRP) as curr_stock_value from it_current_stock c , it_items i where c.store_id = $dealerobj->id  and c.barcode = i.barcode ";
             $cobj = $db->fetchObject($query);
-            if(isset($cobj) && trim($cobj->appreal_curr_stock)!=""){ $store_appreal_stock_val = $cobj->appreal_curr_stock ;}
-            else{ $store_appreal_stock_val = 0; }
-            
-            $tot_curr_stk += $store_appreal_stock_val;  
-            
-               ////////////////////////////////////////////////
-             $query = "select sum(c.quantity * i.MRP) as mask_curr_stock from it_current_stock c , it_items i where c.store_id = $dealerobj->id  and c.barcode = i.barcode and i.ctg_id  in (53,54)";
-            $cobj = $db->fetchObject($query);
-            if(isset($cobj) && trim($cobj->mask_curr_stock)!=""){ $store_mask_stock_val = $cobj->mask_curr_stock ;}
-            else{ $store_mask_stock_val = 0; }
-            
-            $tot_curr_stk += $store_mask_stock_val;  
-            
-                ////////////////////////////////////////////////
-            $query2 = "select sum(i.MRP*oi.quantity) as appreal_stock_intransit from it_sp_invoices o , it_sp_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6 ) and o.store_id = $dealerobj->id and o.is_procsdForRetail = 0 and oi.barcode = i.barcode  and i.ctg_id not in(53,54)";
-            $tobj = $db->fetchObject($query2);
-            if(isset($tobj) && trim($tobj->appreal_stock_intransit)!=""){ $intransit_appreal_val = $tobj->appreal_stock_intransit ;}
-            else{ $intransit_appreal_val = 0; }
-            
-            $tot_mask_stk += $intransit_appreal_val;    
-            
-                 ////////////////////////////////////////////////
-            $query2 = "select sum(i.MRP*oi.quantity) as mask_stock_intransit from it_sp_invoices o , it_sp_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6 ) and o.store_id = $dealerobj->id and o.is_procsdForRetail = 0 and oi.barcode = i.barcode  and i.ctg_id  in(53,54)";
-            $tobj = $db->fetchObject($query2);
-            if(isset($tobj) && trim($tobj->mask_stock_intransit)!=""){ $intransit_appreal_val = $tobj->mask_stock_intransit ;}
-            else{ $intransit_mask_val = 0; }
-            
-            $tot_mask_stk += $intransit_mask_val; 
-            
-            
-             ////////////////////////////////////////////////
-            $appreal_tot_stock = $store_appreal_stock_val + $intransit_appreal_val;  //
-            $mask_tot_stock = $store_mask_stock_val + $intransit_mask_val;
-            $tot_stk = $appreal_tot_stock + $mask_tot_stock;
+            if (isset($cobj) && trim($cobj->curr_stock_value) != "") {
+                $store_stock_val = $cobj->curr_stock_value;
+            } else {
+                $store_stock_val = 0;
+            }
 
-            $dealersList[$dealerobj->id] = $dealerobj->store_name . "::" . $store_appreal_stock_val . "::" . $store_mask_stock_val . "::" . $tot_curr_stk . "::" . "$intransit_appreal_val" . "::" . "$intransit_mask_val" . "::" . "$tot_mask_stk" . "::" . "$appreal_tot_stock" . "::" . "$mask_tot_stock" . "::" . "$tot_stk" . "::" . $dealerobj->min_stock_level;
-        
-            
-            
-        }     
+            //step 2: fetch intransit stock value
+            //$query2 = "select sum(invoice_amt) as intransit_stock_value from it_invoices where  invoice_type = 0 and store_id = $dealerobj->id and is_procsdForRetail = 0 ";
+            // $query2 = "select sum(oi.price*oi.quantity) as intransit_stock_value from it_invoices o , it_invoice_items oi where oi.invoice_id = o.id and o.invoice_type = 0 and o.store_id = $dealerobj->id and o.is_procsdForRetail = 0";
+            $query2 = "select sum(i.MRP*oi.quantity) as intransit_stock_value from it_invoices o , it_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6 ) and o.store_id = $dealerobj->id and o.is_procsdForRetail = 0 and oi.item_code = i.barcode";
+            $tobj = $db->fetchObject($query2);
+            if (isset($tobj) && trim($tobj->intransit_stock_value) != "") {
+                $intransit_stock_val = $tobj->intransit_stock_value;
+            } else {
+                $intransit_stock_val = 0;
+            }
+
+            $tot_stk_val = $store_stock_val + $intransit_stock_val;
+//            if($tot_stk_val < $dealerobj->min_stock_level){
+            $dealersList[$dealerobj->id] = $dealerobj->store_name . "::" . $store_stock_val . "::" . $intransit_stock_val . "::" . $tot_stk_val . "::" . $dealerobj->min_stock_level . "::" . $dealerobj->max_stock_level;
+//            }
+        }
     } 
     $db->closeConnection();
     if(!empty($dealersList)) {
@@ -83,30 +109,22 @@ function createexcel($dealersList){
     $objPHPExcel->getActiveSheet()->setCellValue('A1', 'Store ID');
     $objPHPExcel->getActiveSheet()->setCellValue('B1', 'Store Name');
     $objPHPExcel->getActiveSheet()->setCellValue('C1', 'Store Apparels Current Stock');
-    $objPHPExcel->getActiveSheet()->setCellValue('D1', 'Store mask Current Stock');
-    $objPHPExcel->getActiveSheet()->setCellValue('E1', 'Store Total Current Stock');
-    $objPHPExcel->getActiveSheet()->setCellValue('F1', 'Store Apparels Stock in Transit');
-    $objPHPExcel->getActiveSheet()->setCellValue('G1', 'Store Mask Stock in Transit');
-    $objPHPExcel->getActiveSheet()->setCellValue('H1', 'Store Total in Transit');
-    $objPHPExcel->getActiveSheet()->setCellValue('I1', 'Store Apparels Total Stock');
-    $objPHPExcel->getActiveSheet()->setCellValue('J1', 'Store Mask Total Stock');
-    $objPHPExcel->getActiveSheet()->setCellValue('K1', 'Store Total Stock');
-    $objPHPExcel->getActiveSheet()->setCellValue('L1', 'Store Minimum Stock Level');
-    $objPHPExcel->getActiveSheet()->setCellValue('M1', 'Difference');
+    $objPHPExcel->getActiveSheet()->setCellValue('D1', 'Store Apparels Stock in Transit');
+    $objPHPExcel->getActiveSheet()->setCellValue('E1', 'Store Apparels Total Stock Including Intransit');
+    $objPHPExcel->getActiveSheet()->setCellValue('F1', 'Store Minimum Stock Level');
+    $objPHPExcel->getActiveSheet()->setCellValue('G1', 'Store Maximum Stock Level');
+    $objPHPExcel->getActiveSheet()->setCellValue('H1', 'Min_Difference');
+    $objPHPExcel->getActiveSheet()->setCellValue('I1', 'Max_Difference');
 
     $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
     $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(20);
-    $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(30);
-    $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(30);
-    $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(30);
-    $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(30);
-    $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(30);
-    $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(30);
-    $objPHPExcel->getActiveSheet()->getColumnDimension('I')->setWidth(30);
-    $objPHPExcel->getActiveSheet()->getColumnDimension('J')->setWidth(30);
-    $objPHPExcel->getActiveSheet()->getColumnDimension('K')->setWidth(30);
-    $objPHPExcel->getActiveSheet()->getColumnDimension('L')->setWidth(30);
-    $objPHPExcel->getActiveSheet()->getColumnDimension('M')->setWidth(30);
+    $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(20);
+    $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(20);
+    $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(20);
+    $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(20);
+    $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(20);
+    $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(20);
+    $objPHPExcel->getActiveSheet()->getColumnDimension('I')->setWidth(20);
     
     
     $styleArray = array(
@@ -150,10 +168,6 @@ function createexcel($dealersList){
     $objPHPExcel->getActiveSheet()->getStyle('G1')->applyFromArray($styleArray);
     $objPHPExcel->getActiveSheet()->getStyle('H1')->applyFromArray($styleArray);
     $objPHPExcel->getActiveSheet()->getStyle('I1')->applyFromArray($styleArray);
-    $objPHPExcel->getActiveSheet()->getStyle('J1')->applyFromArray($styleArray);
-    $objPHPExcel->getActiveSheet()->getStyle('K1')->applyFromArray($styleArray);
-    $objPHPExcel->getActiveSheet()->getStyle('L1')->applyFromArray($styleArray);
-    $objPHPExcel->getActiveSheet()->getStyle('M1')->applyFromArray($styleArray);
 
     $objPHPExcel->getActiveSheet()->getStyle('A')->applyFromArray($cellstyleArray);
     $objPHPExcel->getActiveSheet()->getStyle('B')->applyFromArray($cellstyleArray);
@@ -164,47 +178,33 @@ function createexcel($dealersList){
     $objPHPExcel->getActiveSheet()->getStyle('G')->applyFromArray($cellstyleArray);
     $objPHPExcel->getActiveSheet()->getStyle('H')->applyFromArray($cellstyleArray);
     $objPHPExcel->getActiveSheet()->getStyle('I')->applyFromArray($cellstyleArray);
-    $objPHPExcel->getActiveSheet()->getStyle('J')->applyFromArray($cellstyleArray);
-    $objPHPExcel->getActiveSheet()->getStyle('K')->applyFromArray($cellstyleArray);
-    $objPHPExcel->getActiveSheet()->getStyle('L')->applyFromArray($cellstyleArray);
-    $objPHPExcel->getActiveSheet()->getStyle('M')->applyFromArray($cellstyleArray);
-    
+
     $colCount=0;
     $rowCount=3;
     
     foreach ($dealersList as $key => $value) {
-            $diff = 0;
+        $min_diff = 0;
+        $max_diff = 0;
         $arr = explode("::", $value);
         $store_name = trim($arr[0]);
-
-        $Store_Apparels_Current_Stock = trim($arr[1]);
-        $Store_Mask_Current_Stock = trim($arr[2]);
-        $Store_Total_Current_Stock = trim($arr[3]);
-        $Store_Apparels_Stockin_Transit = trim($arr[4]);
-        $Store_Mask_Stockin_Transit = trim($arr[5]);
-        $Store_Total_in_Transit = trim($arr[6]);
-        $Store_Apparels_Total_Stock = trim($arr[7]);
-        $Store_Mask_Total_Stock = trim($arr[8]);
-        $Store_Total_Stock = trim($arr[9]);
-        $Store_Minimum_Stock_Level = trim($arr[10]);
-        $diff = $Store_Total_Stock - $Store_Minimum_Stock_Level;
+        $curr_stock = trim($arr[1]);
+        $stock_intransit = trim($arr[2]);
+        $tot_stk = trim($arr[3]);
+        $minsl = trim($arr[4]);
+        $maxsl = trim($arr[5]);
+        $min_diff = $tot_stk - $minsl;
+        $max_diff = $tot_stk - $maxsl;
         
         
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, $rowCount, $key);
+    $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, $rowCount, $key);
         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(1, $rowCount, $store_name);
-        
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(2, $rowCount, $Store_Apparels_Current_Stock);
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(3, $rowCount, $Store_Mask_Current_Stock);
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(4, $rowCount, $Store_Total_Current_Stock);
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(5, $rowCount, $Store_Apparels_Stockin_Transit);
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(6, $rowCount, $Store_Mask_Stockin_Transit);
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(7, $rowCount, $Store_Total_in_Transit);
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(8, $rowCount, $Store_Apparels_Total_Stock);
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(9, $rowCount, $Store_Mask_Total_Stock);
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(10, $rowCount, $Store_Total_Stock);
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(11, $rowCount, $Store_Minimum_Stock_Level);
-
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(12, $rowCount, $diff);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(2, $rowCount, $curr_stock);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(3, $rowCount, $stock_intransit);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(4, $rowCount, $tot_stk);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(5, $rowCount, $minsl);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(6, $rowCount, $maxsl);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(7, $rowCount, $min_diff);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(8, $rowCount, $max_diff);
         $rowCount++;
     }    
     
@@ -224,4 +224,3 @@ $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
 $objWriter->save('php://output');    
 	
 }
-

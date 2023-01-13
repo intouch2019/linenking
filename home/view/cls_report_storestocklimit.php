@@ -50,12 +50,13 @@ $(function(){
     oTable = $('#tb_msl').dataTable( {
 	"bProcessing": true,
 	"bServerSide": true,
-        "aoColumns": [ null, null, {bSortable:false}, {bSortable:false}, {bSortable:false}, {bSortable:false}, {bSortable:false}, {bSortable:false}, {bSortable:false}, {bSortable:false},{bSortable:false}], //,{bSortable:false} ,{bSortable:false} 
-	"sAjaxSource": url
+        "aoColumns": [ null, null, {bSortable:false}, {bSortable:false}, {bSortable:false}, {bSortable:false}, {bSortable:false}, {bSortable:false}, {bSortable:false}], //, {bSortable:false},{bSortable:false},{bSortable:false} ,{bSortable:false} 
+	"sAjaxSource": url,
+        "iDisplayLength":10
     } );
 // search on pressing Enter key only
     $('.dataTables_filter input').unbind('keyup').bind('keyup', function(e){
-	if (e.which == 11){                     
+	if (e.which == 13){                     
 		oTable.fnFilter($(this).val(), null, false, true);
 	}
     });    
@@ -86,20 +87,21 @@ function genRep(){
         <table cellpadding="0" cellspacing="0" border="0" class="display" id="tb_msl">
 	<thead>
             <tr> 
-                 <th>ID</th>                        
+                <th>ID</th>                        
                 <th>Store Name</th>
                 <th>Store Apparels Current Stock</th>
                 <!--<th>Store mask Current Stock</th>-->
-                <th>Store Total Current Stock</th>
-                <th>Store Apparels Stock in Transit</th>
+                <!--<th>Store Total Current Stock</th>-->
+                <th>Store Apparels Stock Intransit</th>
                 <!--<th>Store Mask Stock in Transit</th>-->
-                <th>Store Total in Transit</th>
-                <th>Store Apparels Total Stock</th>
+                <!--<th>Store Total in Transit</th>-->
+                <th>Store Apparels Total Stock including Intransit</th>
                 <!--<th>Store Mask Total Stock</th>-->
-                <th>Store Total Stock</th>
-                <th>Store Minimum Stock Level</th>
-                <th>Store Maximum Stock Level</th>                
-                <th>Difference</th>
+                <!--<th>Store Total Stock</th>-->
+                <th>Store Minimum Stock Level</th> 
+                <th>Store Maximum Stock Level</th>  
+                <th>Min_Difference</th>
+                <th>Max_Difference</th>
 	    </tr>
 	</thead>
 	<tbody>
