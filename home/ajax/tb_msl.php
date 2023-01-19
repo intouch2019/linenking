@@ -7,11 +7,10 @@ require_once "lib/core/Constants.php";
 
 $currStore = getCurrUser();
 
-
 //$aColumns = array( 'id', 'store_name', 'curr_stock','stock_intransit', 'tot_stock','min_stock_level','difference');
 //$aColumns = array('id', 'store_name', 'appreal_curr_stock', 'mask_curr_stock', 'total_curr_stock', 'appreal_stock_intransit', 'mask_stock_intransit', 'total_stock_intransit', 'appreal_tot_stock', 'mask_tot_stock', 'tot_stock', 'min_stock_level', 'difference');
 //$aColumns = array('id', 'store_name', 'appreal_curr_stock', 'total_curr_stock', 'appreal_stock_intransit', 'total_stock_intransit', 'appreal_tot_stock', 'tot_stock', 'min_stock_level', 'max_stock_level', 'difference');
-$aColumns = array('id', 'store_name', 'appreal_curr_stock',  'appreal_stock_intransit',  'appreal_tot_stock', 'min_stock_level', 'max_stock_level', 'min_difference','max_difference');
+$aColumns = array('id', 'store_name', 'appreal_curr_stock', 'appreal_stock_intransit', 'appreal_tot_stock', 'min_stock_level', 'max_stock_level', 'min_difference', 'max_difference');
 
 //$sColumns = array('c.id', 'c.store_name', 'c.min_stock_level');
 $sColumns = array('c.id', 'c.store_name');
@@ -89,6 +88,8 @@ if ($sWhere == "") {
 }
 if ($currStore->usertype == UserType::BHMAcountant) {
     $sWhere .= " usertype = " . UserType::Dealer . "   and is_closed = 0 and  min_stock_level is not null  and  (is_bhmtallyxml=1 or store_type=3) "; //and inactive = 0
+} elseif ($currStore->usertype == UserType::Dealer) {
+    $sWhere .= " usertype = " . UserType::Dealer . "   and is_closed = 0 and  min_stock_level is not null and id =$currStore->id  "; //and inactive = 0   
 } else {
     $sWhere .= " usertype = " . UserType::Dealer . "   and is_closed = 0 and  min_stock_level is not null "; //and inactive = 0   
 }
@@ -117,7 +118,7 @@ foreach ($objs as $obj) {
     $tot_curr_stk = 0;
     $tot_intransit_stk = 0;
     $tot_mask_stk = 0;
-    $appreal_tot_stock_incl_intransit=0;
+    $appreal_tot_stock_incl_intransit = 0;
     $row = array();
     for ($i = 0; $i < count($aColumns); $i++) {
         if ($aColumns[$i] == 'id') {
@@ -137,8 +138,8 @@ foreach ($objs as $obj) {
                 $store_appreal_stock_val = 0;
             }
             // stock including Mask
-              $cquery = "select sum(c.quantity * i.MRP) as mask_curr_stock from it_current_stock c , it_items i where c.store_id = $obj->id  and c.barcode = i.barcode and i.ctg_id in(42,43)";
-          //  error_log("\nMSL query: " . $cquery . "\n", 3, "tmp_1.txt");
+            $cquery = "select sum(c.quantity * i.MRP) as mask_curr_stock from it_current_stock c , it_items i where c.store_id = $obj->id  and c.barcode = i.barcode and i.ctg_id in(42,43)";
+            //  error_log("\nMSL query: " . $cquery . "\n", 3, "tmp_1.txt");
             $cobj = $db->fetchObject($cquery);
             if (isset($cobj) && trim($cobj->mask_curr_stock) != "") {
                 $store_mask_stock_val = $cobj->mask_curr_stock;
@@ -147,14 +148,14 @@ foreach ($objs as $obj) {
             }
             //$row[] = $store_mask_stock_val;
             //$tot_curr_stk += $store_mask_stock_val;
-            
-            $row[] = $store_appreal_stock_val+$store_mask_stock_val;
-            $tot_curr_stk += $store_appreal_stock_val+$store_mask_stock_val;
+
+            $row[] = $store_appreal_stock_val + $store_mask_stock_val;
+            $tot_curr_stk += $store_appreal_stock_val + $store_mask_stock_val;
         }
         //mask_curr_stock 
         else if ($aColumns[$i] == 'mask_curr_stock') {
             $cquery = "select sum(c.quantity * i.MRP) as mask_curr_stock from it_current_stock c , it_items i where c.store_id = $obj->id  and c.barcode = i.barcode and i.ctg_id in(42,43)";
-          //  error_log("\nMSL query: " . $cquery . "\n", 3, "tmp_1.txt");
+            //  error_log("\nMSL query: " . $cquery . "\n", 3, "tmp_1.txt");
             $cobj = $db->fetchObject($cquery);
             if (isset($cobj) && trim($cobj->mask_curr_stock) != "") {
                 $store_mask_stock_val = $cobj->mask_curr_stock;
@@ -182,17 +183,16 @@ foreach ($objs as $obj) {
             }
             //$row[] = $intransit_appreal_val;
             //$tot_mask_stk += $intransit_appreal_val;
-            
             //mask stock intransit
-             $tquery2 = "select sum(i.MRP*oi.quantity) as mask_stock_intransit from it_invoices o , it_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6, 7) and o.store_id = $obj->id and o.is_procsdForRetail = 0 and oi.item_code = i.barcode and i.ctg_id in(42,43)";
+            $tquery2 = "select sum(i.MRP*oi.quantity) as mask_stock_intransit from it_invoices o , it_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6, 7) and o.store_id = $obj->id and o.is_procsdForRetail = 0 and oi.item_code = i.barcode and i.ctg_id in(42,43)";
             $tobj = $db->fetchObject($tquery2);
             if (isset($tobj) && trim($tobj->mask_stock_intransit) != "") {
                 $intransit_mask_val = $tobj->mask_stock_intransit;
             } else {
                 $intransit_mask_val = 0;
             }
-            $row[] = $intransit_mask_val+$intransit_appreal_val;
-            $tot_mask_stk += $intransit_mask_val+$intransit_appreal_val;
+            $row[] = $intransit_mask_val + $intransit_appreal_val;
+            $tot_mask_stk += $intransit_mask_val + $intransit_appreal_val;
         }
         //mask_stock_intransit  
         else if ($aColumns[$i] == 'mask_stock_intransit') {
@@ -216,8 +216,8 @@ foreach ($objs as $obj) {
         else if ($aColumns[$i] == 'appreal_tot_stock') {
 
             //$appreal_tot_stock = $store_appreal_stock_val + $intransit_appreal_val;
-             $appreal_tot_stock_incl_intransit +=$tot_intransit_stk+$tot_curr_stk;
-             
+            $appreal_tot_stock_incl_intransit += $tot_intransit_stk + $tot_curr_stk;
+
             $row[] = $appreal_tot_stock_incl_intransit;
         }
         //mask_tot_stock
@@ -228,7 +228,7 @@ foreach ($objs as $obj) {
 //        }
         //tot_stock
         else if ($aColumns[$i] == 'tot_stock') {
-            $tot_stk = $appreal_tot_stock ;  //+ $mask_tot_stock;
+            $tot_stk = $appreal_tot_stock;  //+ $mask_tot_stock;
             $row[] = $tot_stk;
         }
         //min_stock_level
@@ -237,22 +237,22 @@ foreach ($objs as $obj) {
         }
         //max_stock_level
         else if ($aColumns[$i] == 'max_stock_level') {
-           if($obj->max_stock_level==null){
-            $row[] = 0;
-           }else{
-             $row[] =$obj->max_stock_level;  
-           }
+            if ($obj->max_stock_level == null) {
+                $row[] = 0;
+            } else {
+                $row[] = $obj->max_stock_level;
+            }
         }
         //min_difference
         else if ($aColumns[$i] == 'min_difference') {
-           $row[] =  $appreal_tot_stock_incl_intransit-$obj->min_stock_level;
-           // $row[] = $tot_stk - $obj->min_stock_level;
+            $row[] = $appreal_tot_stock_incl_intransit - $obj->min_stock_level;
+            // $row[] = $tot_stk - $obj->min_stock_level;
         }
         //max_difference
         else if ($aColumns[$i] == 'max_difference') {
-              $row[] =  $appreal_tot_stock_incl_intransit-$obj->max_stock_level;
+            $row[] = $appreal_tot_stock_incl_intransit - $obj->max_stock_level;
             //$row[] = $tot_stk - $obj->max_stock_level;
-        }  else {
+        } else {
             $row[] = "-";
         }
     }
