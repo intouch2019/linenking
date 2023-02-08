@@ -12,6 +12,7 @@ class cls_report_ssales extends cls_renderer{
         var $params;
         var $date; var $store; var $billno; var $transaction;
         var $itemctg; var $designno; var $itemmrp; var $barcode;
+        var $voucheramt; var $nnetsale; var $creditvoucherused;
         var $linediscountper; var $linediscountval; var $ticketdiscountper;
         var $ticketdiscountval; var $totaldiscount; var $tax; var $brand;
         var $category; var $style; var $size; var $fabric; var $material;
@@ -46,6 +47,9 @@ class cls_report_ssales extends cls_renderer{
                 if (isset($params['store'])) { $this->fields['store']=$params['store']; $this->store = $params['store']; } else $this->fields['store']="0";
                 if (isset($params['billno'])) { $this->fields['billno']=$params['billno']; $this->billno = $params['billno']; } else $this->fields['billno']="0";
                 if (isset($params['billtype'])) { $this->fields['billtype']=$params['billtype']; $this->billtype = $params['billtype']; } else $this->fields['billtype']="0";
+                if (isset($params['nnetsale'])) { $this->fields['nnetsale']=$params['nnetsale']; $this->nnetsale = $params['nnetsale']; } else $this->fields['nnetsale']="0";
+                if (isset($params['voucheramt'])) { $this->fields['voucheramt']=$params['voucheramt']; $this->voucheramt = $params['voucheramt']; } else $this->fields['voucheramt']="0";
+                 if (isset($params['creditvoucherused'])) { $this->fields['creditvoucherused']=$params['creditvoucherused']; $this->creditvoucherused = $params['creditvoucherused']; } else $this->fields['creditvoucherused']="0";
 //                if (isset($params['transaction'])) { $this->fields['transaction']=$params['transaction']; $this->transaction = $params['transaction']; } else $this->fields['transaction']="0";
                 if (isset($params['itemctg'])) { $this->fields['itemctg']=$params['itemctg']; $this->itemctg = $params['itemctg']; } else $this->fields['itemctg']="0";
                 if (isset($params['hsncode'])) { $this->fields['hsncode']=$params['hsncode']; $this->hsncode = $params['hsncode']; } else $this->fields['hsncode']="0";
@@ -341,6 +345,9 @@ foreach ($objs as $obj) {
                                           <option value="date" selected>Date</option>
                                         <option value="billno" selected>Bill no</option>
                                         <option value="billtype" selected>Bill Type</option>
+                                        <option value="voucheramt" selected>Voucher Amount</option>
+                                         <option value="nnetsale" selected>Net Sale Value</option>
+                                         <option value="creditvoucherused" selected>Creditvaucher Used</option>
                                              <option value="salesmancode" selected>Salesman ID</option>
 <!--                                        <option value="itemvalue">Sold Price</option>-->
                                         <option value="month">Month</option>
@@ -421,7 +428,11 @@ foreach ($objs as $obj) {
                     if ($seq==$x) {
                         if ($field=="date") {$tableheaders.="Date:"; $queryfields .= " o.bill_datetime as date,"; $group_by[] = "o.bill_datetime"; $total_td .= "<td></td>";} // DATE_FORMAT(o.bill_datetime,'%d/%m/%Y')
                         if ($field=="billno") {$tableheaders.="Bill No.:";  $queryfields .= "o.bill_no,"; $group_by[] = "o.bill_no"; $total_td .= "<td></td>";}
-                        if ($field=="billtype") {$tableheaders.="Bill Type.:";  $queryfields .= "o.tickettype,"; $group_by[] = "o.tickettype"; $total_td .= "<td></td>";}
+                        if ($field=="voucheramt") {$tableheaders.="Voucher Amount:";$queryfields .= "o.voucher_amt,";  $total_td .= "<td></td>";}
+                        if ($field=="creditvoucherused") {$tableheaders.="Creditvoucher Used:";$queryfields .= "o.orderinfo,"; $total_td .= "<td></td>";}
+                       if ($field=="billtype") {$tableheaders.="Bill Type.:";  $queryfields .= "o.tickettype,"; $group_by[] = "o.tickettype"; $total_td .= "<td></td>";}
+                        if ($field=="nnetsale") {$tableheaders.="Net Sale Value:";$queryfields .= "if(o.tickettype<='0',o.net_total,''),"; $total_td .= "<td></td>";}
+                        
                         if ($field=="store") {$tableheaders.="Store Name:"; $queryfields .= "c.store_name,";$group_by[] = "o.store_id"; $total_td .= "<td></td>";}
                         if ($field=="itemctg") {$tableheaders.="Category:"; $queryfields .= "i.ctg_id as itemctg,";$group_by[] = "i.ctg_id"; $total_td .= "<td></td>";}
                         if ($field=="hsncode") {$tableheaders.="HSN Code:"; $queryfields .= "i.ctg_id as hsncode,";$group_by[] = "i.ctg_id"; $total_td .= "<td></td>";}
@@ -496,8 +507,9 @@ foreach ($objs as $obj) {
             }
             
             $query = "select $queryfields";
-            $query .= " from it_orders o,it_order_items oi, it_items i, it_codes c,states s,region r where $storeClause $dQuery and oi.order_id=o.id and i.id = oi.item_id and  o.store_id = c.id  and s.id = c.state_id and c.region_id=r.id  ".$gClause;
-          //print $query;
+           // $query .= " from it_orders o,it_order_items oi, it_items i, it_codes c,states s,region r where $storeClause $dQuery and oi.order_id=o.id and i.id = oi.item_id and  o.store_id = c.id  and s.id = c.state_id and c.region_id=r.id  ".$gClause;
+           $query .= " from it_orders o,it_order_items oi, it_items i, it_codes c,states s,region r where $storeClause $dQuery and oi.order_id=o.id and i.id = oi.item_id and  o.store_id = c.id  and s.id = c.state_id and c.region_id=r.id  ".$gClause;
+           //print $query;
             // print $query; //and c.id in ( $storeClause)
 	    //error_log("1:$query\n",3, "../ajax/tmp.txt");
             $result = $db->execQuery($query);
@@ -518,7 +530,9 @@ foreach ($objs as $obj) {
             }
             $tableheaders = "Date:Bill No:Bill Type:Bill Quantity:Bill Amount:Tax:Bill Discount Value:Bill Discount %:Voucher:Store Name:Area:city:Location:State:Region:Status";
             //$query2 = "select DATE_FORMAT(o.bill_datetime,'%d/%m/%Y') as bill_datetime,o.bill_no,o.tickettype,o.quantity,o.amount,o.tax,o.discount_val,o.discount_pct,o.voucher_amt from it_orders o where o.store_id in ( $storeClause ) $dQuery group by $gClause o.bill_no order by bill_datetime";
-            $query2 = "select o.bill_datetime ,o.bill_no,o.tickettype,o.quantity,o.amount,o.tax,o.discount_val,o.discount_pct,o.voucher_amt,c.store_name,c.Area,c.city,c.Location,s.state,r.region,c.status  from it_orders o , it_codes c,states s,region r   where $storeClause  and  o.store_id = c.id  and s.id=c.state_id and r.id = c.region_id  $dQuery group by o.store_id, o.bill_no order by bill_datetime";
+           // $query2 = "select o.bill_datetime ,o.bill_no,o.tickettype,o.quantity,o.amount,o.tax,o.discount_val,o.discount_pct,o.voucher_amt,c.store_name,c.Area,c.city,c.Location,s.state,r.region,c.status  from it_orders o , it_codes c,states s,region r   where $storeClause  and  o.store_id = c.id  and s.id=c.state_id and r.id = c.region_id  $dQuery group by o.store_id, o.bill_no order by bill_datetime";
+           $query2 = "select o.bill_datetime ,o.bill_no,o.tickettype,o.quantity,o.amount,o.tax,o.discount_val,o.discount_pct,o.voucher_amt,c.store_name,c.Area,c.city,c.Location,s.state,r.region,c.status  from it_orders o , it_codes c,states s,region r   where $storeClause  and  o.store_id = c.id  and s.id=c.state_id and r.id = c.region_id  $dQuery group by o.store_id, o.bill_no order by bill_datetime";
+
            // echo $query2;
             $result = $db->execQuery($query2);
         }
@@ -573,6 +587,14 @@ foreach ($objs as $obj) {
                    }else if($field == "date"){                                              
                        $t_str = ddmmyy2($value);
                        $value = $t_str;
+
+                   }else if($field=="orderinfo"){
+                        $json_array = json_decode($value, true);
+                        $isTouch = isset($json_array['creditNoteUsed']);
+                        if($isTouch==true){
+                            $value=substr($json_array['creditNoteUsed'], 21);
+                        }else{$value="";}
+
                    }else if($field == "quantity"){
                        $totqty += $value;
                    }else if($field == "itemvalue"){
