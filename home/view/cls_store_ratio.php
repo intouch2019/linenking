@@ -324,10 +324,7 @@ function designratioreset(store_id,cat_id,design_id,design_no,user_id)
                            }  
                           
                         }
-                            
-                            
-                        
-                                
+            
 		});
             }
 //    alert("done");
@@ -343,9 +340,7 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
    {
            var ratio_type = $("#sel_ratio_type").val();
             window.location.href="formpost/setMasterRatio.php?sid="+store_id+"&cat_id="+cat_id+"&r_type="+ratio_type+"&user_id="+user_id+"&cat_name="+cat_name;
-           
-   
-//  
+
 //               $.ajax({
 //			type: "POST",
 //                        dataType: "json",
@@ -361,17 +356,11 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
 //                               window.location.href = "store/ratio/sid=" + store_id + "/rtype=" + ratio_type +"/cat=" + cat_id;
 //                           }  
 //                          
-//                        }
-//                            
-//                            
-//                        
-//                                
+//                        }               
 //		});
             }
     
 }
-
-
 
      function editDesignRatio(theForm) {
                 var formName = theForm.name;
@@ -496,7 +485,7 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
                                         ?>
                                         <option value="-1" <?php echo $defaultSel; ?>>All Stores</option> 
                                         <?php
-                                        $objs = $db->fetchObjectArray("select id,store_name from it_codes where usertype=" . UserType::Dealer . "  and is_closed=0 and level=  '$this->level' order by store_name"); //and inactive=0
+                                        $objs = $db->fetchObjectArray("select id,store_name from it_codes where usertype=" . UserType::Dealer . " and is_closed=0 and level=  '$this->level' order by store_name"); //and inactive=0
 //            print_r($objs);
                                         if ($this->sid == "-1") {
                                             $storeid = array();
@@ -536,11 +525,7 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
                             <td colspan="5">Select Design Type:</td>
                             <td colspan="5">
                                     <select name="designtype" id="getcore" data-placeholder="Choose design no..." class="chzn-select"  onchange="getlevel(this.value)"  single style="width:100%;" required>
-                                        <?php // if(!isset($this->core)&& ($this->core) ==""){?>   
-                                            <!--<option value="Select Design Type" <?php echo "selected"; ?>>Select Design Type</option>--> 
-
                                         <?php
-                                        // }  else{
                                         $objs = coreNoncore::getcore();
                                         foreach ($objs as $key => $value) {
                                             ?><option <?php echo ( $this->core == $key ) ? "selected" : "" ?>  value="<?php echo $key; ?>"><?php echo $value; ?></option><?php }// } 
@@ -728,9 +713,10 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
                                     <input type="hidden" id="rtype" name="rtype" value="<?php echo $this->rtype; ?>" />
                                     <input type="hidden" id="userid" name="userid" value="<?php echo $this->currUser->id; ?>" />
                                     <!--<input type="hidden" id="mrp" name="mrp" value="<?php //echo $mrp; ?>" />-->
-                                    <input type="hidden" id="designids" name="designids" value="-1"/>
-                                     <input type="hidden" id="core" name="core" value="<?php echo $this->core; ?>"/>
-                                     <input type="hidden" id="level" name="level" value="<?php echo $this->level; ?>"/>
+                                    <!--<input type="hidden" id="designids" name="designids" value="-1"/>-->
+                                    <input type="hidden" id="designids" name="designids" value="<?php if (isset($this->design_id) && $this->design_id !== "") {echo $this->design_id;} else {echo "-1";} ?>"/><!-- selected design Values passing to addratiodetails-->
+                                    <input type="hidden" id="core" name="core" value="<?php echo $this->core; ?>"/>
+                                    <input type="hidden" id="level" name="level" value="<?php echo $this->level; ?>"/>
                                     <table>
                                         <?php                                        
                                         $styleobj = $db->fetchObjectArray("select s1.style_id,s2.name as style_name from it_ck_styles s1,it_styles s2 where s1.ctg_id=$this->cat and s1.style_id=s2.id  and s2.is_active = 1 order by s1.sequence");
@@ -866,7 +852,7 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
                                                 for ($i = 0; $i < $no_sizes; $i++) {
                                                     $sizeid = $sizeobj[$i]->size_id;
                                                     
-                                                    $query = "select id,ratio from it_store_ratios where store_id=$storeid and ctg_id=$this->cat and design_id = -1 and ratio_type=$this->rtype and style_id = $stylcod and size_id = $sizeid ";
+                                                    $query = "select id,ratio from it_store_ratios where store_id=$storeid and ctg_id=$this->cat and design_id = -1 and ratio_type=$this->rtype and style_id = $stylcod and size_id = $sizeid and core= $this->core";
                                                     $getratio = $db->fetchObject($query);
                                                     //print_r($query);
                                                     ?><td name="B">
