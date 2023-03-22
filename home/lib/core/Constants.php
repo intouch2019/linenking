@@ -11,6 +11,10 @@ const Accounts = 6;
 const NoLogin = -1;
 const BHMAcountant =7;
 //const Customer_corporate =7;
+// New Addition
+const Supervisor =8;
+const Operator =9;
+const OfficeBoy =10;
 
 public static function getAll() {
 	return array(
@@ -20,8 +24,12 @@ public static function getAll() {
                 UserType::Manager => "Manager",
                 UserType::Picker => "Picker",
                 UserType::Accounts => "Accounts Manager",
-                UserType::Dealer => "Store",
-                UserType::BHMAcountant => "BHM Accounts Manager"
+                UserType::Dealer => "Store Manager",
+                UserType::BHMAcountant => "BHM Accounts Manager",
+                //new addition
+                UserType::Supervisor => "Supervisor",
+                UserType::Operator => "Operator",
+                UserType::OfficeBoy => "Office Boy"
 //                UserType::Customer_corporate => "Corporate Customer"
 	);
 }
@@ -337,4 +345,50 @@ class Cat_MarginType{
     }
 }
 
+class RollType {
+const Management = 1;
+const IT = 2;
+const Administraion = 3;
+const Marketing = 4;
+//const Picker = 4;
+//const Supervisor = 4;
+const Accounts = 5; 
+const Sales = 6;
+const Warehouse =7;
+const Purchase =8;
+const VM =9;
+const Production =10;
+const HR =11;
+const Stores =12;
+const Quality =13;
+//const Customer_corporate =7;
+
+public static function getAll() {
+	return array(
+		RollType::Management => "Management",
+		RollType::IT => "IT",
+                RollType::Administraion => "Administraion",
+                RollType::Marketing => "Marketing",
+//                RollType::Picker => "Picker",
+//                RollType::Supervisor => "Supervisor",
+                RollType::Accounts => "Accounts",
+                RollType::Sales => "Sales",
+                RollType::Warehouse => "Warehouse",
+                RollType::Purchase =>"Purchase",
+                RollType::VM =>"VM",
+                RollType::Production =>"Production",
+                RollType::HR =>"HR",
+                RollType::Stores =>"Stores",
+                RollType::Quality =>"Quality",
+//                RollType::Warehouse => "Warehouse"
+//               UserType::Customer_corporate => "Corporate Customer"
+	);
+}
+
+public static function getName($rolltype) {
+	$all = RollType::getAll();
+	if (isset($all[$rolltype])) { return $all[$rolltype]; }
+	else { return "Unknown"; }
+}
+}
 ?>

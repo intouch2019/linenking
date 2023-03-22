@@ -99,6 +99,10 @@ abstract class cls_renderer {
         function designImageUrl($filename) {
         return "images/stock/$filename";
         }
+        
+        function TaskImageUrl($filename) {
+        return "images/task/$filename";
+        }
     
         function imageUrl($filename) {
         return "images/$filename";
