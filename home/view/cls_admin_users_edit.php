@@ -55,6 +55,22 @@ Your session has expired. Click <a href="">here</a> to login.
                         <input type="text" name="email" value="<?php echo $this->getFieldValue('email',$user->email); ?>">
                     </p>
                     <p>
+                        <label>Mobile No: </label>
+                        <input type="text" name="mobile" value="<?php echo $this->getFieldValue('mobile',$user->phone); ?>">
+                    </p>
+                    
+                    <p>
+                                <label> Department: </label>
+                                <select name="rolltype" id="rolltype" >
+                                    <option <?php echo ($user->roles == "" || $user->roles == NULL) ? "selected" : "" ?> value="">Select Department</option>
+                                    <?php
+                                        $allRollTypes = RollType::getALL();
+                                        foreach ($allRollTypes as $usertype => $typename) { ?>
+                                            <option <?php echo ( $user->roles == $usertype ) ? "selected" : "" ?> value="<?php echo $usertype; ?>" <?php echo $selected; ?>><?php echo $typename; ?></option>
+                                    <?php } ?>
+                                </select> 
+                    </p>
+                    <p>
                         <label>Password: (leave blank if you donot want to change)</label>
                         <input type="password" name="password" value="">
                     </p>

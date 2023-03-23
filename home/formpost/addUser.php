@@ -30,12 +30,19 @@ try {
 	if ($usertype != UserType::NoLogin) {
 		$username = isset($username) && trim($username) != "" ? $db->safe($username) : false;
 		if (!$username) { $errors['username'] = "Please enter the Username"; }
-		$exist = $db->fetchObject("select * from it_users where username=$username");
+		$exist = $db->fetchObject("select * from it_codes where code=$username");
 		if ($exist) {
 			$errors['username']="Username $username already exists";
 		}
 		$email = isset($email) && trim($email) != "" ? $db->safe($email) : false;
 		if (!$email) { $errors['email'] = "Please enter the Email"; }
+                
+                $mobile = isset($mobile) && trim($mobile) != "" ? $db->safe($mobile) : false;
+		if (!$mobile) { $errors['mobile'] = "Please enter the Mobile No."; }
+                
+                $rolltype = isset($rolltype) && trim($rolltype) != "" ? $db->safe($rolltype) : false;
+		if (!$rolltype) { $errors['rolltype'] = "Please enter the Department."; }
+                
 		if (!$password) { $errors['password'] = "Please enter the Password"; }
 		if ($password != $password2) { $errors['password2'] = "Confirm Password does not match the value entered in the Password field"; }
 	} else {
@@ -47,7 +54,7 @@ try {
 	}
 	if (count($errors) == 0) {
 	        $pass=$db->safe(md5($password));
-		$query = "insert into it_codes set usertype=$usertype, code=$username, password=$pass, store_name=$fullname";
+		$query = "insert into it_codes set usertype=$usertype, code=$username, password=$pass, store_name=$fullname, phone=$mobile, roles=$rolltype";
 		if ($email) { $query .= ", email=$email"; }
 		$user_id = $db->execInsert ($query);
                 if($user_id){

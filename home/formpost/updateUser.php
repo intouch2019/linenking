@@ -26,10 +26,17 @@ try {
 	if ($user->usertype != UserType::NoLogin) {
 		$email = isset($email) && trim($email) != "" ? $db->safe($email) : false;
 		if (!$email) { $errors['email'] = "Please enter the Email"; }
+                
+                $mobile = isset($mobile) && trim($mobile) != "" ? $db->safe($mobile) : false;
+		if (!$mobile) { $errors['mobile'] = "Please enter the Mobile No."; }
+                
+                $rolltype = isset($rolltype) && trim($rolltype) != "" ? $db->safe($rolltype) : false;
+		if (!$rolltype) { $errors['rolltype'] = "Please enter the Department."; }
+                
 		if ($password != $password2) { $errors['password2'] = "Confirm Password does not match the value entered in the Password field"; }
 	}
 	if (count($errors) == 0) {
-		$query = "update it_codes set store_name=$fullname";
+		$query = "update it_codes set store_name=$fullname, phone=$mobile, roles=$rolltype";
 		if ($email) { $query .= ", email=$email"; }
 		if ($password) {
 	        	$password=$db->safe(md5($password));

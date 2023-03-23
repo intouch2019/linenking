@@ -49,7 +49,7 @@ Your session has expired. Click <a href="">here</a> to login.
 <div class="grid_10">
             <?php $_SESSION['form_post'] = array(); ?>
             <?php
-            $objs = $db->fetchObjectArray("select id, usertype, code, store_name, date(createtime) as createdate from it_codes where inactive=0 and usertype not in (".UserType::Admin.",'4') order by usertype");
+            $objs = $db->fetchObjectArray("select id, usertype, code, store_name,email,phone,roles,date(createtime) as createdate from it_codes where inactive=0 and usertype not in (".UserType::Admin.") and is_closed=0 order by usertype");
             ?>
 
     <div style="float:right;margin-right:10px;">
@@ -58,17 +58,25 @@ Your session has expired. Click <a href="">here</a> to login.
     <div class="grid_12">
         <table align="center">
             <tr>
-                <th>User Type</th>
+                <!--<th>User Type</th>-->
                 <th>Username</th>
                 <th>Full Name</th>
+                <th>Email ID</th>
+                <th>Mobile No</th>
+                <th>Department</th>
+                <th>User Type/Roles</th>
                 <th>Create Date</th>
                 <th></th>
             </tr>
                     <?php foreach ($objs as $obj) { ?>
             <tr>
-                <td><?php echo UserType::getName($obj->usertype); ?></td>
+                <!--<td><?php // echo UserType::getName($obj->usertype); ?></td>-->
                 <td><?php echo $obj->code; ?></td>
                 <td><?php echo $obj->store_name; ?></td>
+                <td><?php echo $obj->email; ?></td>
+                <td><?php echo $obj->phone; ?></td>
+                <td><?php echo RollType::getName($obj->roles); ?></td>
+                <td><?php echo UserType::getName($obj->usertype); ?></td>
                 <td><?php echo $obj->createdate; ?></td>
                 <td><a href="admin/users/edit/id=<?php echo $obj->id; ?>"><button>Edit</button></a><button onclick="deleteUser(<?php echo $obj->id; ?>);">Delete</button></td>
             </tr>
