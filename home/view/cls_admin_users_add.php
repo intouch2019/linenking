@@ -107,6 +107,29 @@ Your session has expired. Click <a href="">here</a> to login.
                         <label>Email: </label>
                         <input type="text" name="email" value="<?php echo $this->getFieldValue('email'); ?>">
                     </p>
+                     <p>
+                        <label>Mobile No: </label>
+                        <input type="text" name="mobile" value="<?php echo $this->getFieldValue('mobile'); ?>">
+                    </p>
+                    <p>
+                    <label>Department: </label>
+                    <select name="rolltype" >  
+                        <option value="">Select Department </option>
+                                <?php
+                                $allRollTypes = RollType::getAll();
+                                $display = "block";
+                                foreach ($allRollTypes as $usertype => $typename) {
+                                    if ($usertype == UserType::Admin) { continue; }
+                                    if ($usertype == $this->getFieldValue('usertype')) {
+                                        $selected = "selected";
+                                        if ($usertype == UserType::NoLogin) { $display="none"; }
+                                    }
+                                    else { $selected = ""; }
+                                    ?>
+                        <option value="<?php echo $usertype; ?>" <?php echo $selected; ?>><?php echo $typename; ?></option>
+                                <?php } ?>
+                    </select>
+                    </p>
                     <p>
                         <label>Password: </label>
                         <input type="password" name="password" value="">
