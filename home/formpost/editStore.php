@@ -7,7 +7,6 @@ require_once "lib/core/Constants.php";
 require_once "lib/serverChanges/clsServerChanges.php";
 require_once "lib/logger/clsLogger.php";
 
-
 extract($_POST);
 //print_r($_POST);
 $errors = array();
@@ -152,7 +151,7 @@ if (!$store_name || !$address || !$city || !$zip || !$owner || !$phone || !$emai
         $gstin_no = $db->safe($gstin_no);
         $tally_name = $db->safe($tally_name);
         $distance = $db->safe($distance);
-          $level = $db->safe($level);
+        $level = $db->safe($level);
         //        $tallyname = $db->safe($tally);
         //$zipcode = isset($zip) ? $db->safe(trim($zip)) : false;
 
@@ -299,7 +298,7 @@ if (!$store_name || !$address || !$city || !$zip || !$owner || !$phone || !$emai
                 $logquery = "insert into it_codes_log(store_id,modified_by,message,ipaddr,createtime) values('$storeid','$usrname',$query,'$ipaddr1',now())";
                 //print $logquery;
                 $db->execInsert($logquery);
-                
+
                 //error_log("\nUPDATE STORE:-".$query."\n",3,"tmp.txt");
                 $discquery = " update it_ck_storediscount set  dealer_discount = $effecteddisc $discquery  where store_id = $storeid ";
                 //print ">>>>>>>>>$discquery>>>>>>";
@@ -310,22 +309,29 @@ if (!$store_name || !$address || !$city || !$zip || !$owner || !$phone || !$emai
                 $clsLogger->logInfo($discquery, $store->id, $pg_name, $ipaddr);
                 //--> log code ends here
                 $db->execUpdate($discquery);
-                $discquery=$db->safe($discquery);
+                $discquery = $db->safe($discquery);
                 $logquery1 = "insert into it_codes_log(store_id,modified_by,message,ipaddr,createtime) values('$storeid','$usrname',$discquery,'$ipaddr1',now())";
                 //print $logquery1;
-                $db->execInsert($logquery1); 
-                
+                $db->execInsert($logquery1);
+
                 //old 
                 //$query = "select c.id as store_id,c.code,c.store_name,c.tally_name,c.accountinfo,c.owner,c.address,c.city,c.zipcode,c.phone,c.phone2,c.email,c.email2,c.vat,c.gstin_no,c.store_number,c.usertype,c.pancard_no,c.tax_type,c.server_change_id,c.username,c.a1hash,c.trust,c.password,c.createtime,c.inactive,c.is_closed,c.is_natch_required,d.dealer_discount,d.additional_discount,d.transport,d.octroi,d.cash,d.nonclaim,c.distance,c.state_id , c.composite_billing_opted ,c.region_id from it_codes c left outer join it_ck_storediscount d on c.id = d.store_id where c.id = ".$storeid;
                 //new from discount formulaue
-                $query = "select c.id as store_id,c.code,c.store_name,c.tally_name,c.accountinfo,c.owner,c.address,c.city,c.zipcode,c.phone,c.phone2,c.email,c.email2,c.vat,c.gstin_no,c.store_number,c.usertype,c.pancard_no,c.tax_type,c.server_change_id,c.username,c.a1hash,c.trust,c.password,c.createtime,c.inactive,c.is_closed,c.is_natch_required,d.dealer_discount,c.distance,c.state_id,c.composite_billing_opted ,c.region_id,IF(c.store_type =3, 1,0) as is_companystore,c.mask_margin,c.upi_id,c.upi_name from it_codes c left outer join it_ck_storediscount d on c.id = d.store_id where c.id = " . $storeid;
+                $query = "select c.id as store_id,c.code,c.store_name,c.tally_name,c.accountinfo,c.owner,c.address,c.city,c.zipcode,c.phone,c.phone2,c.email,c.email2,c.vat,c.gstin_no,c.store_number,c.usertype,c.pancard_no,c.tax_type,c.server_change_id,c.username,c.a1hash,c.trust,c.password,c.createtime,c.inactive,c.is_closed,c.is_natch_required,d.dealer_discount,c.distance,c.state_id,c.composite_billing_opted ,c.region_id,IF(c.store_type =3, 1,0) as is_companystore,c.mask_margin,c.upi_id,c.upi_name,c.store_type from it_codes c left outer join it_ck_storediscount d on c.id = d.store_id where c.id = " . $storeid;
 
                 $obj = $db->fetchObject($query);
                 $server_ch = "[" . json_encode($obj) . "]";
                 $ser_type = changeType::store;
-                $store_id = DEF_CK_WAREHOUSE_ID; //changed on 15-03
+                if ($obj->store_type == 2) {
+                    $store_id = DEF_50CK_WAREHOUSE_ID;
+                } else {
+                    $store_id = DEF_CK_WAREHOUSE_ID;
+                }
+                
+                // $store_id = DEF_CK_WAREHOUSE_ID; //changed on 15-03
                 //here obj->store_id is  the id of table it_codes so it will become the data_id.
                 $serverCh->save($ser_type, $server_ch, $store_id, $obj->store_id);
+                
                 $store_id = $storeid; // data for that store specifically
                 $serverCh->save($ser_type, $server_ch, $storeid, $obj->store_id);
                 $success = 'Store information updated.';
