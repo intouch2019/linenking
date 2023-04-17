@@ -34,6 +34,7 @@ define("DEF_DEBUG", true);
 
 define("DEF_WAREHOUSE_ID", 61);
 define("DEF_SP_LIFESTYLE_ID",164);
+define("DEF_50CK_WAREHOUSE_ID",174);
 define("DEF_CK_WAREHOUSE_ID",84);
 if (DEF_DEBUG) {
 error_reporting(E_ALL);
