@@ -250,7 +250,7 @@ if (count($errors) == 0) {
 
                                             if (!isset($isv[$sobj->id])) {
 
-                                                $stock_intransit_new = $db->fetchObject("select sum(i.MRP*oi.quantity) as intransit_stock_value_new from it_sp_invoices o , it_sp_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6 ) and o.store_id =$sobj->id   and o.is_procsdForRetail = 0 and oi.barcode = i.barcode");
+                                                $stock_intransit_new = $db->fetchObject("select sum(i.MRP*oi.quantity) as intransit_stock_value_new from it_sp_invoices o , it_sp_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6 ) and o.store_id =$sobj->id   and o.is_procsdForRetail = 0 and oi.item_code = i.barcode");
 
                                                 if (isset($stock_intransit_new) && trim($stock_intransit_new->intransit_stock_value_new) != "") {
                                                     $intransit_stock_value_new = $stock_intransit_new->intransit_stock_value_new;
@@ -451,7 +451,7 @@ if (count($errors) == 0) {
                     //step 3: fetch store's stock in transit
 
                     $db = new DBConn();
-                    $stock_intransit_new = $db->fetchObject("select sum(i.MRP*oi.quantity) as intransit_stock_value_new from it_sp_invoices o , it_sp_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6 ) and o.store_id =$store_id  and o.is_procsdForRetail = 0 and oi.barcode = i.barcode");
+                    $stock_intransit_new = $db->fetchObject("select sum(i.MRP*oi.quantity) as intransit_stock_value_new from it_sp_invoices o , it_sp_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6 ) and o.store_id =$store_id  and o.is_procsdForRetail = 0 and oi.item_code = i.barcode");
                     $db->closeConnection();
 
                     if (isset($stock_intransit_new) && trim($stock_intransit_new->intransit_stock_value_new) != "") {

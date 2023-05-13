@@ -275,6 +275,20 @@ function saveOrder($storeid, $items) {
         $curr_stock_val = 0;
     }
     
+    
+    //---------------intransit_stock_value_new
+    
+    $stock_intransit_new = $db->fetchObject("select sum(i.MRP*oi.quantity) as intransit_stock_value_new from it_sp_invoices o , it_sp_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6 ) and o.store_id =$store_id  and o.is_procsdForRetail = 0 and oi.item_code = i.barcode");
+                    $db->closeConnection();
+
+                    if (isset($stock_intransit_new) && trim($stock_intransit_new->intransit_stock_value_new) != "") {
+                        $intransit_stock_value_new = $stock_intransit_new->intransit_stock_value_new;
+                    } else {
+                        $intransit_stock_value_new = 0;
+                    }
+    
+    
+    
     //------------------------------------check active ammount from order
 
     $active_amount = $db->fetchObject("select sum(order_amount) as active_amount from it_ck_orders where status=1 and store_id=$storeid");
