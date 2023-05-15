@@ -234,7 +234,7 @@ try {
      
     //----------------------------------intransit stock
 
-    $stock_intransit_new = $db->fetchObject("select sum(i.MRP*oi.quantity) as intransit_stock_value_new from it_sp_invoices o , it_sp_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6 ) and o.store_id =$sid  and o.is_procsdForRetail = 0 and oi.item_code = i.barcode");
+    $stock_intransit_new = $db->fetchObject("select sum(i.MRP*oi.quantity) as intransit_stock_value_new from it_sp_invoices o , it_sp_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6 ) and o.store_id =$sid  and o.is_procsdForRetail = 0 and oi.barcode = i.barcode");
     $db->closeConnection();
 
     if (isset($stock_intransit_new) && trim($stock_intransit_new->intransit_stock_value_new) != "") {
