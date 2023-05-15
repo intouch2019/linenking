@@ -118,7 +118,7 @@ try {
                         //fetch base stock ratio against that item
                         //$bsquery = "select * from it_store_ratios where store_id = $storeid and ctg_id = $bobj->ctg_id and design_id = $bobj->design_id and style_id = $bobj->style_id and size_id = $bobj->size_id and mrp = $bobj->MRP and ratio_type = ".RatioType::Base;
                         $bsquery = "select ratio from it_store_ratios where store_id = $storeid and ctg_id = $bobj->ctg_id and design_id = $bobj->design_id and style_id = $bobj->style_id and size_id = $bobj->size_id  and ratio_type = " . RatioType::Base;
-                        $tquery2 = "select sum(oi.quantity) as intransit_stock_value from it_invoices o , it_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6 ) and o.store_id = $storeid and o.is_procsdForRetail = 0 and oi.item_code = i.barcode and i.ctg_id = $bobj->ctg_id and i.design_id = $bobj->design_id and i.style_id = $bobj->style_id and i.size_id = $bobj->size_id  "; //= i.barcode and i.barcode = $barcode_db ";
+                        $tquery2 = "select sum(oi.quantity) as intransit_stock_value from it_sp_invoices o , it_sp_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6 ) and o.store_id = $storeid and o.is_procsdForRetail = 0 and oi.barcode = i.barcode and i.ctg_id = $bobj->ctg_id and i.design_id = $bobj->design_id and i.style_id = $bobj->style_id and i.size_id = $bobj->size_id  "; //= i.barcode and i.barcode = $barcode_db ";
                         //echo $tquery2."<br>";
                         $obs = $db->fetchObject($tquery2);
                         if (isset($obs)) {
@@ -278,7 +278,7 @@ function saveOrder($storeid, $items) {
     
     //---------------intransit_stock_value_new
     
-    $stock_intransit_new = $db->fetchObject("select sum(i.MRP*oi.quantity) as intransit_stock_value_new from it_sp_invoices o , it_sp_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6 ) and o.store_id =$store_id  and o.is_procsdForRetail = 0 and oi.item_code = i.barcode");
+    $stock_intransit_new = $db->fetchObject("select sum(i.MRP*oi.quantity) as intransit_stock_value_new from it_sp_invoices o , it_sp_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6 ) and o.store_id =$store_id  and o.is_procsdForRetail = 0 and oi.barcode = i.barcode");
                     $db->closeConnection();
 
                     if (isset($stock_intransit_new) && trim($stock_intransit_new->intransit_stock_value_new) != "") {
