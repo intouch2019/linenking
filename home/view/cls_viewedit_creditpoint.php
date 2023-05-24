@@ -15,7 +15,6 @@ class cls_viewedit_creditpoint extends cls_renderer {
     var $storeid;
     var $dtrange;
     var $categoryid;
-    
 
     function __construct($params = null) {
         $this->currStore = getCurrUser();
@@ -156,21 +155,20 @@ class cls_viewedit_creditpoint extends cls_renderer {
 
 
             }
-            
-            function is_confirm(num,store_name)
-{
-    // var num   
-     var r=confirm("Are you sure to remove Credit Points="+num+" and Store Name="+store_name+"  ?");
- if(r== true)
- {
-     return true;
- }
- else
- {
-     return false;
- }
-}
-            
+
+            function is_confirm(num, store_name)
+            {
+                // var num   
+                var r = confirm("Are you sure to remove Credit Points=" + num + " and Store Name=" + store_name + "  ?");
+                if (r == true)
+                {
+                    return true;
+                } else
+                {
+                    return false;
+                }
+            }
+
             function storelablehide() {
 
 
@@ -185,17 +183,16 @@ class cls_viewedit_creditpoint extends cls_renderer {
             {
                 document.getElementById('datelabel').style.display = 'none';
             }
-            
-            
-    function showPrevCP(){
-        $('#newCP').hide();
-        $('#prevCP').show();
-    }
-    
-    function showNewCP(){
-        $('#prevCP').hide();
-        $('#newCP').show();
-    }
+
+            function showPrevCP() {
+                $('#newCP').hide();
+                $('#prevCP').show();
+            }
+
+            function showNewCP() {
+                $('#prevCP').hide();
+                $('#newCP').show();
+            }
 
 
         </script>
@@ -219,7 +216,7 @@ class cls_viewedit_creditpoint extends cls_renderer {
             <div class="box" style="clear:both;">
                 <fieldset class="login">
                     <legend>Generate Viewedit Creditpoint Report</legend>
-  
+
                     <h3>
                         <div class="grid_10" style="float:left">View/Edit Creditpoint</div><br>
                     </h3>
@@ -230,33 +227,32 @@ class cls_viewedit_creditpoint extends cls_renderer {
 
                             <select name="store" id="store" data-placeholder="Choose Store" class="chzn-select" style="width:100%;" onchange="storelablehide()">
                                 <option value="0">Select store</option>  
-                    <?php
-                    if ($this->storeid == - 1) {
-                        $defaultSel = "selected";
-                    } else {
-                        $defaultSel = "";
-                    }
-                    
-                    
-                   
-                    
-                    if($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::CKAdmin || $this->currStore->usertype == UserType::Manager || $this->currStore->usertype == UserType::Accounts || $this->currStore->usertype == UserType::BHMAcountant) {
-                    ?>
-                                <option value="-1" <?php echo $defaultSel; ?>>All Stores</option> 
+                                <?php
+                                if ($this->storeid == - 1) {
+                                    $defaultSel = "selected";
+                                } else {
+                                    $defaultSel = "";
+                                }
 
 
-                    <?php }?>
+
+
+                                if ($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::CKAdmin || $this->currStore->usertype == UserType::Manager || $this->currStore->usertype == UserType::Accounts || $this->currStore->usertype == UserType::BHMAcountant) {
+                                    ?>
+                                    <option value="-1" <?php echo $defaultSel; ?>>All Stores</option> 
+
+
+                                <?php } ?>
 
 
 
 
 
                                 <?php
-                                
-                                 if($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::CKAdmin || $this->currStore->usertype == UserType::Manager || $this->currStore->usertype == UserType::Accounts || $this->currStore->usertype == UserType::BHMAcountant) {
-                                $objs = $db->fetchObjectArray("select * from it_codes where usertype=4 and is_closed=0 order by store_name");
-                                }else{
-                                   $objs = $db->fetchObjectArray("select * from it_codes where id=".$this->currStore->id ); 
+                                if ($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::CKAdmin || $this->currStore->usertype == UserType::Manager || $this->currStore->usertype == UserType::Accounts || $this->currStore->usertype == UserType::BHMAcountant) {
+                                    $objs = $db->fetchObjectArray("select * from it_codes where usertype=4 and is_closed=0 order by store_name");
+                                } else {
+                                    $objs = $db->fetchObjectArray("select * from it_codes where id=" . $this->currStore->id);
                                 }
 
                                 foreach ($objs as $obj) {
@@ -269,7 +265,7 @@ class cls_viewedit_creditpoint extends cls_renderer {
                                     }
                                     ?>
                                     <option value="<?php echo $obj->id; ?>" <?php echo $selected; ?>><?php echo $obj->store_name; ?></option> 
-                                    <?php }
+                                <?php }
                                 ?>
                             </select>
 
@@ -289,14 +285,16 @@ class cls_viewedit_creditpoint extends cls_renderer {
 
                         </div>
                     </div>
-                    
-                    
+
+
+
                     <input type="radio" name="cpView" id="ccp" value="Current Credit Points" onclick="showNewCP()" checked>
                     <label for="ccp">Current Credit Points</label>
                     <input type="radio" name="cpView" id="pcp" value="Previous Credit Points" onclick="showPrevCP()">
                     <label for="pcp">Previous Credit Points</label><br>
-                     
- 
+
+
+
                     <div class="grid_5">
                         <input type="button"   name="genRep1" id="genRep1" value="Generate Report" onclick="genReport()">
 
@@ -304,9 +302,9 @@ class cls_viewedit_creditpoint extends cls_renderer {
                 </fieldset>
             </div> <!-- class=box -->
 
-                        <?php
-                        if ($this->storeid != null && $this->dtrange != null) { //22 fields
-                            ?>
+        <?php
+        if ($this->storeid != null && $this->dtrange != null) { //22 fields
+            ?>
 
 
 
@@ -317,7 +315,7 @@ class cls_viewedit_creditpoint extends cls_renderer {
             $db = new DBConn();
             // $storeid = getCurrUserId();
 
-               $newfname="";
+            $newfname = "";
             $dtarr = explode(" - ", $this->dtrange);
             $_SESSION['storeid'] = $this->storeidreport;
             if (count($dtarr) == 1) {
@@ -327,7 +325,11 @@ class cls_viewedit_creditpoint extends cls_renderer {
                 //  $dQuery = " and o.bill_datetime >= '$sdate 00:00:00' and o.bill_datetime <= '$edate 23:59:59' ";
 //                $dQuery = "  r.points_upload_date >= '$sdate 00:00:00' and r.points_upload_date <= '$edate 23:59:59' ";
                 $dQuery = "   r.points_upload_date <= '$edate 23:59:59' ";
-                $newfname = "CreditPointReports_".$sdate."_".$edate.".csv"; 
+                $newfname = "CreditPointReports_" . $sdate . "_" . $edate . ".csv";
+
+                if ($edate == date("Y-m-d")) {
+                    $dQuery = "   r.points_upload_date <= '$edate 23:59:59'  and r.is_reddeme=0  ";
+                }
             } else if (count($dtarr) == 2) {
                 list($dd, $mm, $yy) = explode("-", $dtarr[0]);
                 $sdate = "$yy-$mm-$dd";
@@ -335,7 +337,7 @@ class cls_viewedit_creditpoint extends cls_renderer {
                 $edate = "$yy-$mm-$dd";
                 // $dQuery = " and o.bill_datetime >= '$sdate 00:00:00' and o.bill_datetime <= '$edate 23:59:59' ";
                 $dQuery = "  r.points_upload_date >= '$sdate 00:00:00' and r.points_upload_date <= '$edate 23:59:59' ";
-                    $newfname = "CreditPointReports_".$sdate."_".$edate.".csv"; 
+                $newfname = "CreditPointReports_" . $sdate . "_" . $edate . ".csv";
             } else {
                 $dQuery = "";
             }
@@ -356,420 +358,172 @@ class cls_viewedit_creditpoint extends cls_renderer {
             try {
 
                 //$storequery1 = "select c.id as store_id, c.store_name  from it_codes c,it_orders o,it_order_items oi where c.is_closed = 0 $storeClause $dQuery and c.id=o.store_id  and o.tickettype in (0,1,6) and oi.order_id = o.id  group by c.id ";
-              //  $storequery1 = "select r.*, c.store_name  from it_codes c,it_store_redeem_points r where  $dQuery  and r.store_id= $this->storeid and r.store_id=c.id ";
+                //  $storequery1 = "select r.*, c.store_name  from it_codes c,it_store_redeem_points r where  $dQuery  and r.store_id= $this->storeid and r.store_id=c.id ";
 //
                 //
                 //
                 //
                 //   echo $storequery1;
-           //     $sobjs1 = $db->fetchObjectArray($storequery1);
+                //     $sobjs1 = $db->fetchObjectArray($storequery1);
                 //  echo "<br><br><br>";   
                 //print_r($sobjs1);
-    
-
 //                if (empty($sobjs1)) {
 //                    echo '<span style="font-weight:bold; color:red;" co><label><h3>Records not Available For Selected Store.</h3></lable></span>';
 //                }
+                //   if (isset($sobjs1) && !empty($sobjs1) && $sobjs1 != null) {
+                ?>
 
-             //   if (isset($sobjs1) && !empty($sobjs1) && $sobjs1 != null) {
-                    ?>
-           
-            
-            
-            
-            
-            
-            
-            
-            
-            
-             <!--for old uploaded credit points-->
-                  
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    <!--for old uploaded credit points-->
                     <div class="grid_12" style="overflow-y: scroll; display:none;" id="prevCP">
-                    <div class="grid_12" >
-                        <div id="dwnloadbtn" style='margin-left:15px;  height:24px;width:130px;border: solid gray 1px;background:#F5F5F5;padding-top:4px;'>
-                            <a href='<?php echo "tmp1/credit_point.php?output=$newfname"; ?>' title='Export table to CSV'><img src="<?php CdnUrl('images/excel.png'); ?>" width='20' hspace='3' style='margin-bottom:-6px;' /> Export To Excel Old</a>
-                        </div>
-                    </div> 
-                        <table style="width:100%" >
-                            <tr>
-                                <th colspan="18"  align="center" style="font-size:14px">View Edit Creditpoint</th>
-                            </tr>
 
-                            <tr>
-
-                                <th>Sr.No.:</th>
-                                <th>Store Name</th>
-                                <th>Points </th>
-                                <th>Points Upload Date</th>
-                                <th>Is Redeem</th>
-                                <th>Points Redeem Date</th>
-                                <th>Redeem in (Invoice No)</th>
-                                <th>Remark</th>
-                                <?php if ($this->currStore->usertype == UserType::CKAdmin) { ?>
-                                    <th> Action </th>
-                                <?php } ?>
-                <!--                            <th><table style="width:100%" border="0"><tr><th>CGST</th></tr><tr><th>Rate</th><th>Amount</th></tr></table><tbody  style="overflow-y: auto;height: 20px;overflow-x: hidden"></th>
-                            <th><table style="width:100%"><tr><th>SGST</th></tr><tr><th>Rate</th><th>Amount</th></tr></table></th>
-                            <th><table style="width:100%"><tr><th>IGST</th></tr><tr><th>Rate</th><th>Amount</th></tr></table></th>-->
-                            </tr>
-
-                            <?php
-                            $i = 1;
-                            if ($this->storeid == -1) {
-                                $iquery = "select r.id,r.store_id,r.points_to_upload,r.points_upload_date,r.is_reddeme,r.points_redeemdate,r.invoice_no,r.active,r.remark, c.store_name from it_codes c,it_store_redeem_points r where  $dQuery  and r.active=1 and r.store_id=c.id order by c.store_name ";
-                            } else {
-
-                                $iquery = "select r.id,r.store_id,r.points_to_upload,r.points_upload_date,r.is_reddeme,r.points_redeemdate,r.invoice_no,r.active,r.remark, c.store_name from it_codes c,it_store_redeem_points r where  $dQuery  and r.active=1 and r.store_id= $this->storeid and r.store_id=c.id";
-//                          print_r($query);exit;
-                            }
-                            $items = $db->fetchObjectArray($iquery);
-
-                            $totalPoints = 0;
-                            foreach ($items as $obj) {
-                                $totalPoints += $obj->points_to_upload;
-                                ?>
-                                <tr>
-                                    <td><?php echo $i; ?></td>
-                                    <td><?php echo $obj->store_name; ?></td>
-
-                                    <td><?php echo $obj->points_to_upload; ?></td>
-                                    <td><?php echo $obj->points_upload_date; ?></td>
-                                    <?php if ($obj->is_reddeme == 0) { ?>
-                                        <td>No</td>
-                                        <td> - </td>
-                                        <td> - </td>
-
-                                    <?php } else { ?>
-                                        <td>Yes</td>
-                                        <td><?php echo $obj->points_redeemdate; ?></td>
-                                        <td><?php echo $obj->invoice_no; ?></td>
-
-                                    <?php } ?>
-
-                                    <td><?php echo $obj->remark; ?></td>
-
-                                    <?php if (($obj->is_reddeme == 0 ) && ($this->currStore->usertype == UserType::CKAdmin )) { ?>
-                                        <td>
-
-                                            <!--<form method="POST" action="">-->
-                                            <form method="POST" action="formpost/viewEditCreditpoint.php">
-                                                <input type="hidden" name="id" value='<?php echo $obj->id; ?>'>
-                                                <input type="hidden" name="store_id" value='<?php echo $obj->store_id; ?>'>
-                                                <input type="hidden" name="active" value='<?php echo $obj->active; ?>'>
-                                                <input type="submit" style="background-color: #EC311B;   border: none;  color: white;   text-align: center; padding:5px; font-size: 14px; font-style: bold" 
-                                                <?php if (isset($obj->is_redeem) && $obj->is_redeem == 1) {
-                                                    echo "abcf";
-                                                    ?> disabled <?php }; ?> value="Remove" onclick="return is_confirm('<?php echo $obj->points_to_upload; ?>', '<?php echo $obj->store_name; ?>')"></form>
-                                        </td>
-                                    <?php }//else{  ?>
-                                <!--<td>-</td>-->
-                    <?php //}  ?>
-
-                                </tr>
-                                <?php
-                                $i++;
-                            }
-                            ?>
-                            <tr><td></td><td><b>Total-</b></td><td><b><?php echo $totalPoints; ?></b></td><td></td><td></td><td></td><td></td><td></td></tr>
-                            <?php
-                            if ($this->storeid == -1) {
-                                $iquery = "select  c.store_name ,r.points_to_upload,r.points_upload_date,if(r.is_reddeme =1,'Yes','No' ) as Is_Redeem,if(r.is_reddeme =1,r.points_redeemdate,'-' ) as points_redeemdate,if(r.is_reddeme =1,r.invoice_no,'-' ) as invoice_no,r.remark from it_codes c,it_store_redeem_points r where  $dQuery  and r.active=1 and r.store_id=c.id order by c.store_name ";
-                            } else {
-
-                                $iquery = "select c.store_name ,r.points_to_upload,r.points_upload_date,if(r.is_reddeme =1,'Yes','No' ) as Is_Redeem,if(r.is_reddeme =1,r.points_redeemdate,'-' ) as points_redeemdate,if(r.is_reddeme =1,r.invoice_no,'-' ) as invoice_no,r.remark from it_codes c,it_store_redeem_points r where  $dQuery  and r.active=1 and r.store_id= $this->storeid and r.store_id=c.id";
-                            }
-                            $items = $db->fetchObjectArray($iquery);
-
-                            if (isset($items)) {
-
-
-                                $fp = fopen('tmp1/CreditPointReport.csv', 'w');
-
-                                if ($write_htm) {
-                                    $fp2 = fopen('tmp1/CreditPointReport.htm', 'w');
-                                }
-                                if ($fp) {
-                                    $trow = array();
-                                    $tcell = array();
-                                    //write header info   
-                                    if ($write_htm) {
-                                        fwrite($fp2, "<table width='100%' style='overflow:auto;'><thead><tr>");
-                                    }
-
-                                    $tableheaders = "Store Name:Points:Points Upload Date:Is Redeem:Points Redeem Date:Redeem in (Invoice No):Remark";
-
-                                    $headerarr = explode(":", $tableheaders);
-                                    foreach ($headerarr as $harr) {
-                                        if ($harr != "") {
-                                            $tcell[] .= $harr;
-                                            if ($write_htm) {
-                                                fwrite($fp2, "<th>$harr</th>");
-                                            }
-                                        }
-                                    }
-
-
-
-                                    fputcsv($fp, $tcell, ',', chr(0));
-                                    if ($write_htm) {
-                                        fwrite($fp2, "</tr></thead><tbody>");
-                                    }
-                                    //write body
-                                    foreach ($items as $order) {
-                                        $tcell = null;
-                                        if ($write_htm) {
-                                            fwrite($fp2, "<tr>");
-                                        }
-                                        foreach ($order as $field => $value) {
-
-
-//                    
-//                   if ($field=="Store Name") {
-//                       $value = $order;
-//                   } else if($field == "date"){                                              
-//                       $t_str = ddmmyy2($value);
-//                       $value = $t_str;
-//                   }
-                                     
-                                            
-                                            
-                                                $tcell[] .= trim($value);
-                                                if ($write_htm) {
-                                                    fwrite($fp2, "<td>" . trim($value) . "</td>");
-                                                }
-                                            
-
-                                        }
-                                        fputcsv($fp, $tcell, ',', chr(0));
-                                        if ($write_htm) {
-                                            fwrite($fp2, "</tr>");
-                                        }
-                                    }
-//            if($this->gen==1){
-//                $totTotalValue=$totAmt;
-                                    //    }
-                                    if ($write_htm) {
-                                        // fwrite($fp2,"<tr><td><b></b></td><td><b></b></td></tr>");
-                                        fwrite($fp2, "");
-                                        fwrite($fp2, "</tbody></table>");
-                                        fclose($fp2);
-                                    }
-                                    fclose($fp);
-                                    if ($write_htm) {
-                                        $table = file_get_contents("tmp1/CreditPointReport.htm");
-//                echo $table;
-                                    }
-                                } else {
-                                    echo "<br/>Unable to create file. Contact Intouch.";
-                                }
-                            }
-                            ?>    
-                            <tbody id="scrl" style="overflow-y: auto;height: 20px;overflow-x: hidden">
-
-                        </table>
-                    </div>
-
-
-
-
-
-
-
-
-                    
-                    
-                    
-                    
-                    
-
-
-
-
-                    <!--for new credit points--> 
-
-                    
-                    <div class="grid_12" style="overflow-y: scroll;" id="newCP">
-                    <div class="grid_12" >
-                        <div id="dwnloadbtn" style='margin-left:15px;  height:24px;width:130px;border: solid gray 1px;background:#F5F5F5;padding-top:4px;'>
-                            <a href='<?php echo "tmp1/credit_point_New.php?output=$newfname"; ?>' title='Export table to CSV'><img src="<?php CdnUrl('images/excel.png'); ?>" width='20' hspace='3' style='margin-bottom:-6px;' /> Export To Excel New</a>
-                        </div>
-                    </div> 
+                        <div class="grid_12" >
+                            <div id="dwnloadbtn" style='margin-left:15px;  height:24px;width:130px;border: solid gray 1px;background:#F5F5F5;padding-top:4px;'>
+                                <a href='<?php echo "tmp1/credit_point.php?output=$newfname"; ?>' title='Export table to CSV'><img src="images/excel.png" width='20' hspace='3' style='margin-bottom:-6px;' /> Export To Excel</a>
+                            </div>
+                        </div> 
                         
-                        <table style="width:100%" >
-                            <tr>
-                                <th colspan="18"  align="center" style="font-size:14px">View Edit Creditpoint</th>
-                            </tr>
-
-                            <tr>
-
-                                <th>Sr.No.:</th>
-                                <th>Store Name</th>
-                                <th>Points </th>
-                                <th>Points Upload Date</th>
-                                <th>Is Redeem</th>
-                                <th>Points Redeem Date</th>
-                                <th>Redeem in (Invoice No)</th>
-                                <th style="width: 100">Points Used</th>
-                                <th>Remark</th>
-                                <?php if ($this->currStore->usertype == UserType::CKAdmin) { ?>
-                                    <th> Action </th>
-                <?php } ?>
-                <!--                            <th><table style="width:100%" border="0"><tr><th>CGST</th></tr><tr><th>Rate</th><th>Amount</th></tr></table><tbody  style="overflow-y: auto;height: 20px;overflow-x: hidden"></th>
-                        <th><table style="width:100%"><tr><th>SGST</th></tr><tr><th>Rate</th><th>Amount</th></tr></table></th>
-                        <th><table style="width:100%"><tr><th>IGST</th></tr><tr><th>Rate</th><th>Amount</th></tr></table></th>-->
-                            </tr>
-
-                            <?php
-                            $i = 1;
-                            if ($this->storeid == -1) {
-//                            $iquery = "select r.id,r.store_id,r.points_to_upload,r.points_upload_date,r.is_reddeme,r.points_redeemdate,r.invoice_no,r.active,r.remark, c.store_name from it_codes c,it_store_redeem_points r where  $dQuery  and r.active=1 and r.store_id=c.id order by c.store_name ";
-//                              $iquery = "select r.id,r.store_id,r.points_to_upload,r.points_upload_date,r.is_reddeme,rp.points_redeemdate,rp.invoice_no, rp.points_used,r.active,r.remark, c.store_name from it_codes c,it_store_redeem_points r, it_store_redeem_points_partial rp where  $dQuery  and r.active=1 and r.store_id=c.id and r.id=rp.it_store_redeem_points_id order by c.store_name ";
-                                $iquery = "select r.id,r.store_id,r.points_to_upload,r.points_upload_date,r.is_reddeme,rp.points_redeemdate,rp.invoice_no, rp.points_used,r.active,r.remark, c.store_name from it_codes c inner join it_store_redeem_points r on r.store_id=c.id left join  it_store_redeem_points_partial rp on r.id=rp.it_store_redeem_points_id where  $dQuery  and r.active=1 order by c.store_name ";
-                            } else {
-
-//                            $iquery = "select r.id,r.store_id,r.points_to_upload,r.points_upload_date,r.is_reddeme,r.points_redeemdate,r.invoice_no,r.active,r.remark, c.store_name from it_codes c,it_store_redeem_points r where  $dQuery  and r.active=1 and r.store_id= $this->storeid and r.store_id=c.id";
-//                              $iquery = "select r.id,r.store_id,r.points_to_upload,r.points_upload_date,r.is_reddeme,rp.points_redeemdate,rp.invoice_no, rp.points_used,r.active,r.remark, c.store_name from it_codes c,it_store_redeem_points r, it_store_redeem_points_partial rp where  $dQuery  and r.active=1 and r.store_id= $this->storeid and r.store_id=c.id and r.id=rp.it_store_redeem_points_id";
-                                $iquery = "select r.id,r.store_id,r.points_to_upload,r.points_upload_date,r.is_reddeme,rp.points_redeemdate,rp.invoice_no, rp.points_used,r.active,r.remark, c.store_name from it_codes c inner join it_store_redeem_points r on r.store_id=c.id left join it_store_redeem_points_partial rp on r.id=rp.it_store_redeem_points_id where  $dQuery  and r.active=1 and r.store_id= $this->storeid";
-//                          print_r($iquery);exit;
-                            }
-                            $items = $db->fetchObjectArray($iquery);
-                            $pointsToUploadIdArray = array();
-                            $pointsToUploadIdArrayForTotal = array();
-                            $totalPoints = 0;
-                            $totalUsedPoints = 0;
-                            foreach ($items as $obj) {
-                                if (!in_array($obj->id, $pointsToUploadIdArrayForTotal)) {
-                                    array_push($pointsToUploadIdArrayForTotal, $obj->id);
-                                    $totalPoints += $obj->points_to_upload;
-                                }
-//                                foreach ($items1 as $abc){
-//                                    
-//                                }
-
-                                $totalUsedPoints += $obj->points_used;
-                                ?>
+                            <table style="width:100%" >
                                 <tr>
-                                    <td><?php echo $i; ?></td>
-                                    <td><?php echo $obj->store_name; ?></td>
+                                    <th colspan="18"  align="center" style="font-size:14px">View Edit Creditpoint</th>
+                                </tr>
 
-                                    <td><?php
-                                            if (!in_array($obj->id, $pointsToUploadIdArray)) {
-                                                echo $obj->points_to_upload;
-                                                array_push($pointsToUploadIdArray, $obj->id);
-                                                
-                                            } else {
-                                                ?>-<?php } ?>
-                                        </td>
-                                    <td><?php echo $obj->points_upload_date; ?></td>
+                                <tr>
+
+                                    <th>Sr.No.:</th>
+                                    <th>Store Name</th>
+                                    <th>Points </th>
+                                    <th>Points Upload Date</th>
+                                    <th>Is Redeem</th>
+                                    <th>Points Redeem Date</th>
+                                    <th>Redeem in (Invoice No)</th>
+                                    <th>Remark</th>
+                <?php if ($this->currStore->usertype == UserType::CKAdmin) { ?>
+                                        <th> Action </th>
+                <?php } ?>
+                    <!--                            <th><table style="width:100%" border="0"><tr><th>CGST</th></tr><tr><th>Rate</th><th>Amount</th></tr></table><tbody  style="overflow-y: auto;height: 20px;overflow-x: hidden"></th>
+                                    <th><table style="width:100%"><tr><th>SGST</th></tr><tr><th>Rate</th><th>Amount</th></tr></table></th>
+                                    <th><table style="width:100%"><tr><th>IGST</th></tr><tr><th>Rate</th><th>Amount</th></tr></table></th>-->
+                                </tr>
+
+                                    <?php
+                                    $i = 1;
+                                    if ($this->storeid == -1) {
+                                        $iquery = "select r.*, c.store_name  from it_codes c,it_store_redeem_points r where  $dQuery  and r.active=1 and r.store_id=c.id order by c.store_name ";
+                                    } else {
+
+                                        $iquery = "select r.*, c.store_name  from it_codes c,it_store_redeem_points r where  $dQuery  and r.active=1 and r.store_id= $this->storeid and r.store_id=c.id";
+                                    }
+                                    $items = $db->fetchObjectArray($iquery);
+
+                                    $totalPoints = 0;
+                                    foreach ($items as $obj) {
+                                        $totalPoints += $obj->points_to_upload;
+                                        ?>
+                                    <tr>
+                                        <td><?php echo $i; ?></td>
+                                        <td><?php echo $obj->store_name; ?></td>
+
+                                        <td><?php echo $obj->points_to_upload; ?></td>
+                                        <td><?php echo $obj->points_upload_date; ?></td>
                     <?php if ($obj->is_reddeme == 0) { ?>
-                                        <td>No</td>
-                                        <td> - </td>
-                                        <td> - </td>
-                                        <td> - </td>
+                                            <td>No</td>
+                                            <td> - </td>
+                                            <td> - </td>
 
-                    <?php } else { ?>
-                                        <td>Yes</td>
-                                        <td><?php echo $obj->points_redeemdate; ?></td>
-                                        <td><?php echo $obj->invoice_no; ?></td>
-                                        <td style="width: 100"><?php if (isset($obj->points_to_upload)) {
-                                                ?>(<?php echo $obj->points_to_upload; ?>)-><?php echo $obj->points_used; ?>
-                                                <?php } else { ?>
-                                                    -
-                                                <?php } ?></td>
-                    <?php } ?>
+                                        <?php } else { ?>
+                                            <td>Yes</td>
+                                            <td><?php echo $obj->points_redeemdate; ?></td>
+                                            <td><?php echo $obj->invoice_no; ?></td>
 
-                                    <td><?php echo $obj->remark; ?></td>
+                                        <?php } ?>
+
+                                        <td><?php echo $obj->remark; ?></td>
 
                     <?php if (($obj->is_reddeme == 0 ) && ($this->currStore->usertype == UserType::CKAdmin )) { ?>
-                                        <td>
+                                            <td>
 
-                                            <!--<form method="POST" action="">-->
-                                            <form method="POST" action="formpost/viewEditCreditpoint.php">
-                                                <input type="hidden" name="id" value='<?php echo $obj->id; ?>'>
-                                                <input type="hidden" name="store_id" value='<?php echo $obj->store_id; ?>'>
-                                                <input type="hidden" name="active" value='<?php echo $obj->active; ?>'>
-                                                <input type="submit" style="background-color: #EC311B;   border: none;  color: white;   text-align: center; padding:5px; font-size: 14px; font-style: bold" 
-                                                <?php
-                                                       if (isset($obj->is_redeem) && $obj->is_redeem == 1) {
-                                                           echo "abcf";
-                                                           ?> disabled <?php }; ?> value="Remove" onclick="return is_confirm('<?php echo $obj->points_to_upload; ?>', '<?php echo $obj->store_name; ?>')"></form>
-                                        </td>
-                                    <?php }//else{  ?>
-                            <!--<td>-</td>-->
-                                <?php //}    ?>
+                                                <!--<form method="POST" action="">-->
+                                                <form method="POST" action="formpost/viewEditCreditpoint.php">
+                                                    <input type="hidden" name="id" value='<?php echo $obj->id; ?>'>
+                                                    <input type="hidden" name="store_id" value='<?php echo $obj->store_id; ?>'>
+                                                    <input type="hidden" name="active" value='<?php echo $obj->active; ?>'>
+                                                    <input type="submit" style="background-color: #EC311B;   border: none;  color: white;   text-align: center; padding:5px; font-size: 14px; font-style: bold" 
+                        <?php if (isset($obj->is_redeem) && $obj->is_redeem == 1) {
+                            echo "abcf"; ?> disabled <?php }; ?> value="Remove" onclick="return is_confirm('<?php echo $obj->points_to_upload; ?>', '<?php echo $obj->store_name; ?>')"></form>
+                                            </td>
+                    <?php }//else{  ?>
+                                        <!--<td>-</td>-->
+                                                       <?php //}  ?>
 
-                                </tr>
-                                <?php
-                                $i++;
-                            }
-                            ?>
-                <?php $remainingPoints = $totalPoints - $totalUsedPoints; ?>
-
-                            <tr><td></td><td><b>Total-</b></td><td><b><?php echo $totalPoints; ?></b></td><td></td><td></td><td></td><td></td><td><b><?php echo $totalUsedPoints; ?></b></td><td></td></tr>
-                            <tr><td></td><td><b>Remaining-</b></td><td><b><?php echo $remainingPoints; ?></b></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                            <?php
-                            if ($this->storeid == -1) {
-//                            $iquery = "select  c.store_name ,r.points_to_upload,r.points_upload_date,if(r.is_reddeme =1,'Yes','No' ) as Is_Redeem,if(r.is_reddeme =1,r.points_redeemdate,'-' ) as points_redeemdate,if(r.is_reddeme =1,r.invoice_no,'-' ) as invoice_no,r.remark from it_codes c,it_store_redeem_points r where  $dQuery  and r.active=1 and r.store_id=c.id order by c.store_name ";
-//                            $iquery = "select  c.store_name ,r.points_to_upload,r.points_upload_date,if(r.is_reddeme =1,'Yes','No' ) as Is_Redeem,if(r.is_reddeme =1,rp.points_redeemdate,'-' ) as points_redeemdate,if(r.is_reddeme =1,rp.invoice_no,'-' ) as invoice_no,rp.points_used,r.remark from it_codes c,it_store_redeem_points r,it_store_redeem_points_partial rp where  $dQuery  and r.active=1 and r.store_id=c.id and r.id=rp.it_store_redeem_points_id order by c.store_name ";
-                                $iquery = "select c.store_name ,r.points_to_upload,r.points_upload_date,if(r.is_reddeme =1,'Yes','No' ) as Is_Redeem,if(r.is_reddeme =1,rp.points_redeemdate,'-' ) as points_redeemdate,if(r.is_reddeme =1,rp.invoice_no,'-' ) as invoice_no,rp.points_used,r.remark from it_codes c inner join it_store_redeem_points r on r.store_id=c.id left join it_store_redeem_points_partial rp on r.id=rp.it_store_redeem_points_id where $dQuery and r.active=1 order by c.store_name ";
-                            } else {
-
-//                            $iquery = "select c.store_name ,r.points_to_upload,r.points_upload_date,if(r.is_reddeme =1,'Yes','No' ) as Is_Redeem,if(r.is_reddeme =1,r.points_redeemdate,'-' ) as points_redeemdate,if(r.is_reddeme =1,r.invoice_no,'-' ) as invoice_no,r.remark from it_codes c,it_store_redeem_points r where  $dQuery  and r.active=1 and r.store_id= $this->storeid and r.store_id=c.id";
-//                            $iquery = "select c.store_name ,r.points_to_upload,r.points_upload_date,if(r.is_reddeme =1,'Yes','No' ) as Is_Redeem,if(r.is_reddeme =1,rp.points_redeemdate,'-' ) as points_redeemdate,if(r.is_reddeme =1,rp.invoice_no,'-' ) as invoice_no,rp.points_used,r.remark from it_codes c,it_store_redeem_points r,it_store_redeem_points_partial rp where  $dQuery  and r.active=1 and r.store_id= $this->storeid and r.store_id=c.id and r.id=rp.it_store_redeem_points_id";
-                                $iquery = "select c.store_name ,r.points_to_upload,r.points_upload_date,if(r.is_reddeme =1,'Yes','No' ) as Is_Redeem,if(r.is_reddeme =1,rp.points_redeemdate,'-' ) as points_redeemdate,if(r.is_reddeme =1,rp.invoice_no,'-' ) as invoice_no,rp.points_used,r.remark from it_codes c inner join it_store_redeem_points r on r.store_id=c.id left join it_store_redeem_points_partial rp on r.id=rp.it_store_redeem_points_id where $dQuery and r.active=1 and r.store_id= $this->storeid";
-                            }
-                            $items = $db->fetchObjectArray($iquery);
-
-                            if (isset($items)) {
-
-
-                                $fp = fopen('tmp1/CreditPointReportNew.csv', 'w');
-
-                                if ($write_htm) {
-                                    $fp2 = fopen('tmp1/CreditPointReportNew.htm', 'w');
-                                }
-                                if ($fp) {
-                                    $trow = array();
-                                    $tcell = array();
-                                    //write header info   
-                                    if ($write_htm) {
-                                        fwrite($fp2, "<table width='100%' style='overflow:auto;'><thead><tr>");
+                                    </tr>
+                                        <?php
+                                        $i++;
                                     }
+                                    ?>
+                                <tr><td></td><td><b>Total-</b></td><td><b><?php echo $totalPoints; ?></b></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <?php
+                                if ($this->storeid == -1) {
+                                    $iquery = "select  c.store_name ,r.points_to_upload,r.points_upload_date,if(r.is_reddeme =1,'Yes','No' ) as Is_Redeem,if(r.is_reddeme =1,r.points_redeemdate,'-' ) as points_redeemdate,if(r.is_reddeme =1,r.invoice_no,'-' ) as invoice_no,r.remark from it_codes c,it_store_redeem_points r where  $dQuery  and r.active=1 and r.store_id=c.id order by c.store_name ";
+                                } else {
 
-                                    $tableheaders = "Store Name:Points:Points Upload Date:Is Redeem:Points Redeem Date:Redeem in (Invoice No):Points Used:Remark";
+                                    $iquery = "select c.store_name ,r.points_to_upload,r.points_upload_date,if(r.is_reddeme =1,'Yes','No' ) as Is_Redeem,if(r.is_reddeme =1,r.points_redeemdate,'-' ) as points_redeemdate,if(r.is_reddeme =1,r.invoice_no,'-' ) as invoice_no,r.remark from it_codes c,it_store_redeem_points r where  $dQuery  and r.active=1 and r.store_id= $this->storeid and r.store_id=c.id";
+                                }
+                                $items = $db->fetchObjectArray($iquery);
 
-                                    $headerarr = explode(":", $tableheaders);
-                                    foreach ($headerarr as $harr) {
-                                        if ($harr != "") {
-                                            $tcell[] .= $harr;
-                                            if ($write_htm) {
-                                                fwrite($fp2, "<th>$harr</th>");
+                                if (isset($items)) {
+
+
+                                    $fp = fopen('tmp1/CreditPointReport.csv', 'w');
+
+                                    if ($write_htm) {
+                                        $fp2 = fopen('tmp1/CreditPointReport.htm', 'w');
+                                    }
+                                    if ($fp) {
+                                        $trow = array();
+                                        $tcell = array();
+                                        //write header info   
+                                        if ($write_htm) {
+                                            fwrite($fp2, "<table width='100%' style='overflow:auto;'><thead><tr>");
+                                        }
+
+                                        $tableheaders = "Store Name:Points:Points Upload Date:Is Redeem:Points Redeem Date:Redeem in (Invoice No):Remark";
+
+                                        $headerarr = explode(":", $tableheaders);
+                                        foreach ($headerarr as $harr) {
+                                            if ($harr != "") {
+                                                $tcell[] .= $harr;
+                                                if ($write_htm) {
+                                                    fwrite($fp2, "<th>$harr</th>");
+                                                }
                                             }
                                         }
-                                    }
 
 
 
-                                    fputcsv($fp, $tcell, ',', chr(0));
-                                    if ($write_htm) {
-                                        fwrite($fp2, "</tr></thead><tbody>");
-                                    }
-                                    // $value="";
-                                    //write body
-                                    foreach ($items as $order) {
-                                        $tcell = null;
+                                        fputcsv($fp, $tcell, ',', chr(0));
                                         if ($write_htm) {
-                                            fwrite($fp2, "<tr>");
+                                            fwrite($fp2, "</tr></thead><tbody>");
                                         }
-                                        foreach ($order as $field => $value) {
-//                    echo $value;
-                                          
-                                                $tcell[] .= trim($value);
-                                                if ($write_htm) {
-                                                    fwrite($fp2, "<td>" . trim($value) . "</td>");
-                                                }
-                                      
+                                        //write body
+                                        foreach ($items as $order) {
+                                            $tcell = null;
+                                            if ($write_htm) {
+                                                fwrite($fp2, "<tr>");
+                                            }
+                                            foreach ($order as $field => $value) {
 
 
 //                    
@@ -779,38 +533,266 @@ class cls_viewedit_creditpoint extends cls_renderer {
 //                       $t_str = ddmmyy2($value);
 //                       $value = $t_str;
 //                   }
+
+
+
+                                                $tcell[] .= trim($value);
+                                                if ($write_htm) {
+                                                    fwrite($fp2, "<td>" . trim($value) . "</td>");
+                                                }
+                                            }
+                                            fputcsv($fp, $tcell, ',', chr(0));
+                                            if ($write_htm) {
+                                                fwrite($fp2, "</tr>");
+                                            }
                                         }
-                                        fputcsv($fp, $tcell, ',', chr(0));
-                                        if ($write_htm) {
-                                            fwrite($fp2, "</tr>");
-                                        }
-                                    }
 //            if($this->gen==1){
 //                $totTotalValue=$totAmt;
-                                    //    }
-                                    if ($write_htm) {
-                                        // fwrite($fp2,"<tr><td><b></b></td><td><b></b></td></tr>");
-                                        fwrite($fp2, "");
-                                        fwrite($fp2, "</tbody></table>");
-                                        fclose($fp2);
-                                    }
-                                    fclose($fp);
-                                    if ($write_htm) {
-                                        $table = file_get_contents("tmp1/CreditPointReport.htm");
+                                        //    }
+                                        if ($write_htm) {
+                                            // fwrite($fp2,"<tr><td><b></b></td><td><b></b></td></tr>");
+                                            fwrite($fp2, "");
+                                            fwrite($fp2, "</tbody></table>");
+                                            fclose($fp2);
+                                        }
+                                        fclose($fp);
+                                        if ($write_htm) {
+                                            $table = file_get_contents("tmp1/CreditPointReport.htm");
 //                echo $table;
+                                        }
+                                    } else {
+                                        echo "<br/>Unable to create file. Contact Intouch.";
                                     }
-                                } else {
-                                    echo "<br/>Unable to create file. Contact Intouch.";
+                                }
+                                ?>    
+                                <tbody id="scrl" style="overflow-y: auto;height: 20px;overflow-x: hidden">
+
+                            </table>
+                        </div>
+
+
+
+
+
+
+
+
+
+
+
+                        <!--for new uploaded credit points-->
+
+                        <div class="grid_12" style="overflow-y: scroll;" id="newCP">
+
+                            <div class="grid_12" >
+                                <div id="dwnloadbtn" style='margin-left:15px;  height:24px;width:130px;border: solid gray 1px;background:#F5F5F5;padding-top:4px;'>
+                                    <a href='<?php echo "tmp1/credit_point_New.php?output=$newfname"; ?>' title='Export table to CSV'><img src="images/excel.png" width='20' hspace='3' style='margin-bottom:-6px;' /> Export To Excel New</a>
+                                </div>
+                            </div> 
+
+                            <table style="width:100%" >
+                                <tr>
+                                    <th colspan="18"  align="center" style="font-size:14px">View Edit Creditpoint</th>
+                                </tr>
+
+                                <tr>
+
+                                    <th>Sr.No.:</th>
+                                    <th>Store Name</th>
+                                    <th>Points </th>
+                                    <th>Points Upload Date</th>
+                                    <th>Is Redeem</th>
+                                    <th>Points Redeem Date</th>
+                                    <th>Redeem in (Invoice No)</th>
+                                    <th>Points Used</th>
+                                    <th>Remark</th>
+                <?php if ($this->currStore->usertype == UserType::CKAdmin) { ?>
+                                        <th> Action </th>
+                <?php } ?>
+                    <!--                            <th><table style="width:100%" border="0"><tr><th>CGST</th></tr><tr><th>Rate</th><th>Amount</th></tr></table><tbody  style="overflow-y: auto;height: 20px;overflow-x: hidden"></th>
+                                    <th><table style="width:100%"><tr><th>SGST</th></tr><tr><th>Rate</th><th>Amount</th></tr></table></th>
+                                    <th><table style="width:100%"><tr><th>IGST</th></tr><tr><th>Rate</th><th>Amount</th></tr></table></th>-->
+                                </tr>
+
+                                    <?php
+                                    $i = 1;
+                                    if ($this->storeid == -1) {
+//                            $iquery = "select r.*, c.store_name  from it_codes c,it_store_redeem_points r where  $dQuery  and r.active=1 and r.store_id=c.id order by c.store_name ";
+                                        $iquery = "select r.id,r.store_id,r.points_to_upload,r.points_upload_date,r.is_reddeme,rp.points_redeemdate,rp.invoice_no, rp.points_used,r.active,r.remark, c.store_name from it_codes c inner join it_store_redeem_points r on r.store_id=c.id left join  it_store_redeem_points_partial rp on r.id=rp.it_store_redeem_points_id where  $dQuery  and r.active=1 order by c.store_name ";
+                                    } else {
+
+//                            $iquery = "select r.*, c.store_name  from it_codes c,it_store_redeem_points r where  $dQuery  and r.active=1 and r.store_id= $this->storeid and r.store_id=c.id";
+                                        $iquery = "select r.id,r.store_id,r.points_to_upload,r.points_upload_date,r.is_reddeme,rp.points_redeemdate,rp.invoice_no, rp.points_used,r.active,r.remark, c.store_name from it_codes c inner join it_store_redeem_points r on r.store_id=c.id left join it_store_redeem_points_partial rp on r.id=rp.it_store_redeem_points_id where  $dQuery  and r.active=1 and r.store_id= $this->storeid";
+                                    }
+                                    $items = $db->fetchObjectArray($iquery);
+                                    $pointsToUploadIdArrayForTotal = array();
+                                    $pointsToUploadIdArray = array();
+                                    $totalPoints = 0;
+                                    $totalUsedPoints = 0;
+                                    foreach ($items as $obj) {
+
+                                        if (!in_array($obj->id, $pointsToUploadIdArrayForTotal)) {
+                                            array_push($pointsToUploadIdArrayForTotal, $obj->id);
+                                            $totalPoints += $obj->points_to_upload;
+                                        }
+                                        $totalPoints += $obj->points_to_upload;
+                                        ?>
+                                    <tr>
+                                        <td><?php echo $i; ?></td>
+                                        <td><?php echo $obj->store_name; ?></td>
+
+                                        <td><?php
+                                    if (!in_array($obj->id, $pointsToUploadIdArray)) {
+                                        echo $obj->points_to_upload;
+                                        array_push($pointsToUploadIdArray, $obj->id);
+                                    } else {?>-<?php } ?>
+                                        </td>
+                                        <td><?php echo $obj->points_upload_date; ?></td>
+                    <?php if ($obj->is_reddeme == 0) { ?>
+                                            <td>No</td>
+                                            <td> - </td>
+                                            <td> - </td>
+                                            <td> - </td>
+
+                                            <?php } else { ?>
+                                            <td>Yes</td>
+                                            <td><?php echo $obj->points_redeemdate; ?></td>
+                                            <td><?php echo $obj->invoice_no; ?></td>
+                                            <td style="width: 100"><?php if (isset($obj->points_used)) {
+                                                    ?>(<?php echo $obj->points_to_upload; ?>)-><?php echo $obj->points_used; ?>
+                        <?php } else { ?>
+                                                    -
+                        <?php } ?></td>
+
+                                        <?php } ?>
+
+
+                                        <td><?php echo $obj->remark; ?></td>
+
+                                            <?php if (($obj->is_reddeme == 0 ) && ($this->currStore->usertype == UserType::CKAdmin )) { ?>
+                                            <td>
+
+                                                <!--<form method="POST" action="">-->
+                                                <form method="POST" action="formpost/viewEditCreditpoint.php">
+                                                    <input type="hidden" name="id" value='<?php echo $obj->id; ?>'>
+                                                    <input type="hidden" name="store_id" value='<?php echo $obj->store_id; ?>'>
+                                                    <input type="hidden" name="active" value='<?php echo $obj->active; ?>'>
+                                                    <input type="submit" style="background-color: #EC311B;   border: none;  color: white;   text-align: center; padding:5px; font-size: 14px; font-style: bold" 
+                                            <?php if (isset($obj->is_redeem) && $obj->is_redeem == 1) {
+                                                echo "abcf"; ?> disabled <?php }; ?> value="Remove" onclick="return is_confirm('<?php echo $obj->points_to_upload; ?>', '<?php echo $obj->store_name; ?>')"></form>
+                                            </td>
+                    <?php }//else{  ?>
+                                        <!--<td>-</td>-->
+                    <?php //}  ?>
+
+                                    </tr>
+                    <?php
+                    $i++;
+                }
+                ?>
+                                    <?php $remainingPoints = $totalPoints - $totalUsedPoints; ?>
+                                <tr><td></td><td><b>Total-</b></td><td><b><?php echo $totalPoints; ?></b></td><td></td><td></td><td></td><td></td><td><b><?php echo $totalUsedPoints; ?></b></td></tr>
+                                <tr><td></td><td><b>Remaining-</b></td><td><b><?php echo $remainingPoints; ?></b></td><td></td><td></td><td></td><td></td><td></td></tr>
+                <?php
+                if ($this->storeid == -1) {
+//                                    $iquery = "select  c.store_name ,r.points_to_upload,r.points_upload_date,if(r.is_reddeme =1,'Yes','No' ) as Is_Redeem,if(r.is_reddeme =1,r.points_redeemdate,'-' ) as points_redeemdate,if(r.is_reddeme =1,r.invoice_no,'-' ) as invoice_no,r.remark from it_codes c,it_store_redeem_points r where  $dQuery  and r.active=1 and r.store_id=c.id order by c.store_name ";
+                    $iquery = "select c.store_name ,r.points_to_upload,r.points_upload_date,if(r.is_reddeme =1,'Yes','No' ) as Is_Redeem,if(r.is_reddeme =1,rp.points_redeemdate,'-' ) as points_redeemdate,if(r.is_reddeme =1,rp.invoice_no,'-' ) as invoice_no,rp.points_used,r.remark from it_codes c inner join it_store_redeem_points r on r.store_id=c.id left join it_store_redeem_points_partial rp on r.id=rp.it_store_redeem_points_id where $dQuery and r.active=1 order by c.store_name ";
+                } else {
+
+//                                    $iquery = "select c.store_name ,r.points_to_upload,r.points_upload_date,if(r.is_reddeme =1,'Yes','No' ) as Is_Redeem,if(r.is_reddeme =1,r.points_redeemdate,'-' ) as points_redeemdate,if(r.is_reddeme =1,r.invoice_no,'-' ) as invoice_no,r.remark from it_codes c,it_store_redeem_points r where  $dQuery  and r.active=1 and r.store_id= $this->storeid and r.store_id=c.id";
+                    $iquery = "select c.store_name ,r.points_to_upload,r.points_upload_date,if(r.is_reddeme =1,'Yes','No' ) as Is_Redeem,if(r.is_reddeme =1,rp.points_redeemdate,'-' ) as points_redeemdate,if(r.is_reddeme =1,rp.invoice_no,'-' ) as invoice_no,rp.points_used,r.remark from it_codes c inner join it_store_redeem_points r on r.store_id=c.id left join it_store_redeem_points_partial rp on r.id=rp.it_store_redeem_points_id where $dQuery and r.active=1 and r.store_id= $this->storeid";
+                }
+                $items = $db->fetchObjectArray($iquery);
+
+                if (isset($items)) {
+
+
+                    $fp = fopen('tmp1/CreditPointReportNew.csv', 'w');
+
+                    if ($write_htm) {
+                        $fp2 = fopen('tmp1/CreditPointReportNew.htm', 'w');
+                    }
+                    if ($fp) {
+                        $trow = array();
+                        $tcell = array();
+                        //write header info   
+                        if ($write_htm) {
+                            fwrite($fp2, "<table width='100%' style='overflow:auto;'><thead><tr>");
+                        }
+
+                        $tableheaders = "Store Name:Points:Points Upload Date:Is Redeem:Points Redeem Date:Redeem in (Invoice No):Points Used:Remark";
+
+                        $headerarr = explode(":", $tableheaders);
+                        foreach ($headerarr as $harr) {
+                            if ($harr != "") {
+                                $tcell[] .= $harr;
+                                if ($write_htm) {
+                                    fwrite($fp2, "<th>$harr</th>");
                                 }
                             }
-                            ?>    
-                            <tbody id="scrl" style="overflow-y: auto;height: 20px;overflow-x: hidden">
+                        }
 
-                        </table>
+
+
+                        fputcsv($fp, $tcell, ',', chr(0));
+                        if ($write_htm) {
+                            fwrite($fp2, "</tr></thead><tbody>");
+                        }
+                        //write body
+                        foreach ($items as $order) {
+                            $tcell = null;
+                            if ($write_htm) {
+                                fwrite($fp2, "<tr>");
+                            }
+                            foreach ($order as $field => $value) {
+
+
+//                    
+//                   if ($field=="Store Name") {
+//                       $value = $order;
+//                   } else if($field == "date"){                                              
+//                       $t_str = ddmmyy2($value);
+//                       $value = $t_str;
+//                   }
+
+
+
+                                $tcell[] .= trim($value);
+                                if ($write_htm) {
+                                    fwrite($fp2, "<td>" . trim($value) . "</td>");
+                                }
+                            }
+                            fputcsv($fp, $tcell, ',', chr(0));
+                            if ($write_htm) {
+                                fwrite($fp2, "</tr>");
+                            }
+                        }
+//            if($this->gen==1){
+//                $totTotalValue=$totAmt;
+                        //    }
+                        if ($write_htm) {
+                            // fwrite($fp2,"<tr><td><b></b></td><td><b></b></td></tr>");
+                            fwrite($fp2, "");
+                            fwrite($fp2, "</tbody></table>");
+                            fclose($fp2);
+                        }
+                        fclose($fp);
+                        if ($write_htm) {
+                            $table = file_get_contents("tmp1/CreditPointReport.htm");
+//                echo $table;
+                        }
+                    } else {
+                        echo "<br/>Unable to create file. Contact Intouch.";
+                    }
+                }
+                ?>    
+                                <tbody id="scrl" style="overflow-y: auto;height: 20px;overflow-x: hidden">
+
+                            </table>
+                        </div>
+               <br><br>
+
                     </div>
-                    <br><br>
-
-                </div>
 
                 <?php
                 //    }
