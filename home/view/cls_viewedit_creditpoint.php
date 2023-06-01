@@ -487,10 +487,10 @@ class cls_viewedit_creditpoint extends cls_renderer {
                             if (isset($items)) {
 
 
-                                $fp = fopen('tmp1/CreditPointReport.csv', 'w');
+                                $fp = fopen('tmp1/CreditPointReports.csv', 'w');
 
                                 if ($write_htm) {
-                                    $fp2 = fopen('tmp1/CreditPointReport.htm', 'w');
+                                    $fp2 = fopen('tmp1/CreditPointReports.htm', 'w');
                                 }
                                 if ($fp) {
                                     $trow = array();
@@ -558,7 +558,7 @@ class cls_viewedit_creditpoint extends cls_renderer {
                                     }
                                     fclose($fp);
                                     if ($write_htm) {
-                                        $table = file_get_contents("tmp1/CreditPointReport.htm");
+                                        $table = file_get_contents("tmp1/CreditPointReports.htm");
 //                echo $table;
                                     }
                                 } else {

@@ -7,4 +7,4 @@ require_once "lib/db/DBConn.php";
 header('Content-type: text/csv');
 header('Content-disposition: attachment;filename='.$_GET['output']);
 
-print file_get_contents("CreditPointReport.csv");
+print file_get_contents("CreditPointReports.csv");
