@@ -53,8 +53,13 @@ if (count($errors) == 0) {
 
         if (isset($sc->Rel_sent_temp) == 1 || $Release_time == '00:00:00') {
 
+                  if (isset($sc) && trim($sc->Rel_sent_temp) != "") {
+                      
+                  
             $du = "update release_orders set Rel_sent_temp=0 where id=$id and Rel_sent_temp=1";
             $db->execUpdate($du);
+            
+                  }
 
             foreach ($designid as $darrobj) {
 //        print "<br><br>Design OBJ begins: ";
@@ -198,9 +203,9 @@ if (count($errors) == 0) {
                                         $stkobj = $db->fetchObject($squery);
 
                                         if (!isset($stkobj)) {
-                                            $checkcore = "select core from it_ck_designs where id= $design_id";
-
-                                            $core = $db->fetchObject($checkcore);
+//                                            $checkcore = "select core from it_ck_designs where id= $design_id";
+//
+//                                            $core = $db->fetchObject($checkcore);
 
                                             $squery = "select ratio from it_store_ratios where store_id = $sobj->id and ctg_id = $iobj->ctg_id "
                                                     . "and design_id = -1 and style_id = $iobj->style_id and size_id = $iobj->size_id and ratio_type = " . RatioType::Standing . " and core=$core->core";
@@ -250,7 +255,8 @@ if (count($errors) == 0) {
 
                                             if (!isset($isv[$sobj->id])) {
 
-                                                $stock_intransit_new = $db->fetchObject("select sum(i.MRP*oi.quantity) as intransit_stock_value_new from it_sp_invoices o , it_sp_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6 ) and o.store_id =$sobj->id   and o.is_procsdForRetail = 0 and oi.item_code = i.barcode");
+                                                 $stock_intransit_new = $db->fetchObject("select sum(i.MRP*oi.quantity) as intransit_stock_value_new from it_sp_invoices o , it_sp_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6 ) and o.store_id =$sobj->id   and o.is_procsdForRetail = 0 and oi.barcode = i.barcode");
+                                                 
 
                                                 if (isset($stock_intransit_new) && trim($stock_intransit_new->intransit_stock_value_new) != "") {
                                                     $intransit_stock_value_new = $stock_intransit_new->intransit_stock_value_new;
@@ -451,7 +457,8 @@ if (count($errors) == 0) {
                     //step 3: fetch store's stock in transit
 
                     $db = new DBConn();
-                    $stock_intransit_new = $db->fetchObject("select sum(i.MRP*oi.quantity) as intransit_stock_value_new from it_sp_invoices o , it_sp_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6 ) and o.store_id =$store_id  and o.is_procsdForRetail = 0 and oi.item_code = i.barcode");
+                    //$stock_intransit_new = $db->fetchObject("select sum(i.MRP*oi.quantity) as intransit_stock_value_new from it_sp_invoices o , it_sp_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6 ) and o.store_id =$store_id  and o.is_procsdForRetail = 0 and oi.item_code = i.barcode");
+                      $stock_intransit_new = $db->fetchObject("select sum(i.MRP*oi.quantity) as intransit_stock_value_new from it_sp_invoices o , it_sp_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6 ) and o.store_id =$store_id  and o.is_procsdForRetail = 0 and oi.barcode = i.barcode");
                     $db->closeConnection();
 
                     if (isset($stock_intransit_new) && trim($stock_intransit_new->intransit_stock_value_new) != "") {
@@ -650,7 +657,7 @@ if (count($errors) > 0) {
 //print "<br><br>SDNO: $sdno";
 // print "REDIRECT: ".$redirect;
 
-session_write_close();
+//session_write_close();
 header("Location: " . DEF_SITEURL . $redirect);
 exit;
 
@@ -668,7 +675,7 @@ function cancelOrder($order_id) {
     $count = 0;
     $objs = $db->fetchObjectArray("select item_id,order_qty from it_ck_orderitems where order_id = $order_id");
     foreach ($objs as $oi) {
-//        $query = "select * from it_ck_items where ctg_id='$oi->ctg_id' and style_id='$oi->style_id' and size_id='$oi->size_id' and design_no='$oi->design_no' and MRP=$oi->MRP";
+//        $query = "select  from it_ck_items where ctg_id='$oi->ctg_id' and style_id='$oi->style_id' and size_id='$oi->size_id' and design_no='$oi->design_no' and MRP=$oi->MRP";
         $query = "select barcode,grn_qty,curr_qty,ctg_id,design_id,style_id,size_id,design_no,id,MRP from it_items where id = $oi->item_id ";
         $obj = $db->fetchObject($query);
         if (!$obj) {
@@ -803,7 +810,7 @@ function insertItems($sobj, $qty, $iobj, $order_id, $release_bal_qty, $item_grn_
     $clsLogger = new clsLogger();
     $order_qty_bal = $qty;
     //step 1 fetch order details
-//    $oquery = "select * from it_ck_orders where id = $order_id ";
+//    $oquery = "select  from it_ck_orders where id = $order_id ";
 //    $oobj = $oquery;
 //    $order_no_db = $db->safe(trim($oobj->order_no));
 //        print "<br> IN INSERT ITEMS: ITEMS GRN QTY : $item_grn_qty and to order qty: $qty <br>";

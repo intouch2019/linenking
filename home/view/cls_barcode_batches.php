@@ -72,7 +72,7 @@ class cls_barcode_batches extends cls_renderer {
             <!--<div class="box" style="clear:both1;">-->
             <!--<fieldset class="login">-->
             <div class="grid_12" id="tablebox" class="ui-widget-content ui-corner-bottom" style="overflow:auto;">
-                <legend>Barcode Batches</legend>
+                <legend>Barcode Batches <button type="button" id="resyncbtn" style="float: right;" onclick="myFunction()">Resync</button> </legend>
                 <table align="center" border="1" cellpadding="0" cellspacing="0" border="0" class="display" id="tb_allinvoices">
                     <thead>
                         <tr>
@@ -94,6 +94,13 @@ class cls_barcode_batches extends cls_renderer {
             <!--</div>  class=box -->
         </div>
 
+          <script> function myFunction() {
+        <?php
+        $db->execQuery("update it_new_barcode_batch set is_sent=0 where status='UPLOADED'");
+        echo $db;
+        ?>
+            }</script>
+        
         <?php
     }
 
