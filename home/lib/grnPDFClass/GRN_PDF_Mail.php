@@ -1,7 +1,7 @@
 <?php
 //@set_magic_quotes_runtime(false);
 //ini_set('magic_quotes_runtime', 0);
-//require_once "../../../it_config.php";
+require_once "../../../it_config.php";
 require_once 'lib/db/DBConn.php';
 require_once 'lib/core/Constants.php';
 require_once "lib/grnPDFClass/EmailHelper.php";
@@ -29,7 +29,8 @@ function sendMail()//$pdfidarr)
 //        }
 //    }
     
-    $date = date('Y-m-d');
+   // $date = date('Y-m-d');
+    $date='2023-06-15';
      $query= "select * from it_grn_pdfs where is_mailed=0 and createtime >= '$date 00:00:00' and createtime <= '$date 23:59:59'";
 //     echo $query;
         $pdfobjs= $db->fetchObjectArray($query);
@@ -45,29 +46,30 @@ function sendMail()//$pdfidarr)
 //        echo "PDF IDS: ".$pdf_id_list;
         //email to all dealers
 //        $query = "select id,email,email2 from it_codes where id not in(select id from  it_codes where usertype = ".UserType::Dealer." and is_autorefill = 1 and is_closed = 0 and inactive = 0 and sbstock_active = 1 and sequence is not null and sequence > 0 order by sequence) and usertype=".UserType::Dealer." and inactive=0 and is_closed=0 or id in (68)";
-        $query="select id,email,email2 from it_codes where usertype=".UserType::Dealer." and inactive=0 and is_closed=0 or id in (68)";
-        // $query = "select * from it_codes where id in (68,90,70)";
-        $objs = $db->fetchObjectArray($query);
+//        $query="select id,email,email2 from it_codes where usertype=".UserType::Dealer." and inactive=0 and is_closed=0 or id in (68)";
+//        // $query = "select * from it_codes where id in (68,90,70)";
+//        $objs = $db->fetchObjectArray($query);
         
-         foreach($objs as $obs){
-            if(trim($obs->email)!=""){
-              $arr = explode(",", $obs->email);
-              foreach($arr as $key => $email){
-                 array_push($toArray,$email);   
-              }
-//              array_push($toArray,$obs->email);  
-            }
-            if(trim($obs->email2)!=""){
-               $arr2 = explode(",", $obs->email2);
-              foreach($arr2 as $key => $email2){
-                 array_push($toArray,$email2);   
-              } 
-              //array_push($toArray,$obs->email2);  
-            }
-        }
-        array_push($toArray,"pradip.marathe@kinglifestyle.com");        
-	array_push($toArray,"samir.joshi@kinglifestyle.com");
-        array_push($toArray,"ranjeet.mundekar@kinglifestyle.com");
+//         foreach($objs as $obs){
+//            if(trim($obs->email)!=""){
+//              $arr = explode(",", $obs->email);
+//              foreach($arr as $key => $email){
+//                 array_push($toArray,$email);   
+//              }
+////              array_push($toArray,$obs->email);  
+//            }
+//            if(trim($obs->email2)!=""){
+//               $arr2 = explode(",", $obs->email2);
+//              foreach($arr2 as $key => $email2){
+//                 array_push($toArray,$email2);   
+//              } 
+//              //array_push($toArray,$obs->email2);  
+//            }
+//        }
+        array_push($toArray,"djagtap@intouchrewards.com");  
+       // array_push($toArray,"pradip.marathe@kinglifestyle.com");        
+//	array_push($toArray,"samir.joshi@kinglifestyle.com");
+//        array_push($toArray,"ranjeet.mundekar@kinglifestyle.com");
         
       //  print_r($fpatharr);
       if(count($fpatharr)>0){
