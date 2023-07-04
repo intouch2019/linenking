@@ -27,6 +27,7 @@ $err = "";
 $err = "";
 $totalcreditpoints=0;
 $i=0;
+$ozze_storecnt = 0;
 if ($_FILES["file"]["error"] > 0) {
     $errors['err'] = "Error: " . $_FILES["file"]["error"] . "<br>";
 } else {
@@ -57,7 +58,7 @@ if ($_FILES["file"]["error"] > 0) {
             //$fname="formpost/genTdCnNew.php?from=$startdate&to=$enddate";
             // $success = "File ($textname) is successfully uploaded for Qtr.:$qt1 of year $dated. </br><span>Please click here to</span><br/><a href='$fname' class='btn btn-primary btn-lg active' role='button'>Generate TD Credit Note</a>";
 //            $success = "<div> File successfully uploaded and entries done</div>";
-              $success =  "<div style='font-size:14px;background-color:white'> Total $i Stores Credit Points Uploaded Successfully with Amount - $totalcreditpoints/-</div>";
+              $success =  "<div style='font-size:14px;background-color:white'> Total $ozze_storecnt Stores Credit Points Uploaded Successfully with Amount - $totalcreditpoints/-</div>";
             unlink($newdir);
         }
     } else {
@@ -167,7 +168,9 @@ function updatecreditpoints($newdir) {
     //$i = 0;
     global $i;
     global $totalcreditpoints;
+     global $ozze_storecnt;
     $i++;
+    $credit_points_present = "";
     foreach ($objWorksheet->getRowIterator() as $row) {
         if ($flg == 0) {
             $flg++;
@@ -200,15 +203,15 @@ function updatecreditpoints($newdir) {
             $colno++;
         }
         //print_r($array_seq);
-        print "<br> ID: " . $id . " STORE NAME: " . $store_name . " CREDITPOINT: " . $creditpoint;
+      //  print "<br> ID: " . $id . " STORE NAME: " . $store_name . " CREDITPOINT: " . $creditpoint;
         if (trim($id) != "" && trim($store_name) != "" && trim($creditpoint) != "") {
 
             $no_space = str_replace(" ", "", $store_name);
             $store_name_db = $db->safe(trim($no_space));
             $check = " replace(store_name ,' ','') = $store_name_db ";
-            $query = "select * from it_codes where id = $id and $check ";
-            print_r($query);
-            echo $query;
+            $query = "select usertype from it_codes where id = $id and $check ";
+//            print_r($query);
+//            echo $query;
             $objcode = $db->fetchObject($query);
 
             if (!$objcode) {
@@ -216,20 +219,29 @@ function updatecreditpoints($newdir) {
             }
             
             
-             $all_points_to_upload="select sum(points_to_upload) as ptu from it_store_redeem_points where store_id=$id and active =1;";
-             $total_points_upload=$db->fetchObject($all_points_to_upload);
-             
-            $all_points_used="select sum(rp.points_used) as pu from it_store_redeem_points r inner join it_store_redeem_points_partial rp on r.id=rp.it_store_redeem_points_id where store_id=$id and r.active =1;";
-             $total_points_used=$db->fetchObject($all_points_used);
+//             $all_points_to_upload="select sum(points_to_upload) as ptu from it_store_redeem_points where store_id=$id and active =1;";
+//             $total_points_upload=$db->fetchObject($all_points_to_upload);
+//             
+//            $all_points_used="select sum(rp.points_used) as pu from it_store_redeem_points r inner join it_store_redeem_points_partial rp on r.id=rp.it_store_redeem_points_id where store_id=$id and r.active =1;";
+//             $total_points_used=$db->fetchObject($all_points_used);
+//            
+//
+//             
+//            if($total_points_upload->ptu != $total_points_used->pu){
+//                $tott= $total_points_upload->ptu-$total_points_used->pu;
+//                $credit_points_present.= "Store - $store_name already have $tott credit points available<br> <br>";
+//                   
+//               continue;
+//            }
             
-
-             
-            if($total_points_upload->ptu != $total_points_used->pu){
-                $tott= $total_points_upload->ptu-$total_points_used->pu;
-                $credit_points_present.= "Store - $store_name already have $tott credit points available<br> <br>";
-                   
-               continue;
-            }
+            
+            $is_cp_used = $db->fetchObject("select sum(points_to_upload) as cu from it_store_redeem_points where store_id=$id and is_completely_used=0");
+               
+       if(isset($is_cp_used) && trim($is_cp_used->cu)){
+           $credit_points_present .= "Store - $store_name already have credit points available<br> <br>";
+           continue;
+       }
+            
              
 //            if (isset($objcode) && $objcode->usertype == 4) {
 //                $query = "INSERT INTO it_store_redeem_points (store_id,points_to_upload,remark,points_upload_date)VALUES ($id,$creditpoint,'$remark',now()); ";
@@ -284,6 +296,9 @@ function updatecreditpoints($newdir) {
         //print_r($array_seq);
 //        print "<br> ID: " . $id . " STORE NAME: " . $store_name . " CREDITPOINT: " . $creditpoint;
         if (trim($id) != "" && trim($store_name) != "" && trim($creditpoint) != "") {
+            if($id=='ID'){
+                continue;
+            }
 
 //            $no_space = str_replace(" ", "", $store_name);
 //            $store_name_db = $db->safe(trim($no_space));
@@ -319,6 +334,7 @@ function updatecreditpoints($newdir) {
                 $totalcreditpoints+=$creditpoint;
                 $ii+=count($id);
                 $i=$ii;
+                 $ozze_storecnt++;
                 $return = "values inserted successfully";
             }
         }

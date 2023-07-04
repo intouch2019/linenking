@@ -11,7 +11,6 @@ extract($_POST);
 try {
     $db = new DBConn();
 
-
     $cust_name = isset($cust_name) && trim($cust_name) != "" ? $db->safe($cust_name) : false;
     $cust_namequery = "customer_name=$cust_name";
     if (!$cust_name) {
@@ -59,11 +58,7 @@ try {
     }
 
     $exchange_given_at_store = isset($exchange_given_at_store) && trim($exchange_given_at_store) != "" ? $db->safe($exchange_given_at_store) : false;
-//    print_r($exchange_given_at_store);
-//    exit();
     $exchange_given_at_storequery = ",exchange_given_at_store=$exchange_given_at_store";
-//    print_r($exchange_given_at_storequery);
-//    exit();
     if (!$exchange_given_at_store) {
         $exchange_given_at_storequery = "";
     }
@@ -99,9 +94,36 @@ try {
         $design_noquery = "";
     }
 
+    $size = isset($size) && trim($size) != "" ? $db->safe($size) : false;
+    $sizequery = ",size=$size ";
+    if (!$size) {
+        $sizequery = "";
+    }
+
+
+    $barcode = isset($barcode) && trim($barcode) != "" ? $db->safe($barcode) : false;
+    $barcodequery = ",barcode=$barcode ";
+    if (!$barcode) {
+        $barcodequery = "";
+    }
     
+
+    $mrp = isset($mrp) && trim($mrp) != "" ? $db->safe($mrp) : false;
+    $mrpquery = ",mrp=$mrp ";
+    if (!$mrp) {
+        $mrpquery = "";
+    }
+
+
+    $style = isset($style) && trim($style) != "" ? $db->safe($style) : false;
+    $stylequery = ",style=$style";
+    if (!$style) {
+        $stylequery = "";
+    }
+
+
     //Emppty string to store defects as string
-    $defectStrInitial="";
+    $defectStrInitial = "";
 
     if (isset($_POST['color_fade']) && trim($_POST['color_fade']) != "") {
         $defectStrInitial .= $_POST['color_fade'] . ", ";
@@ -130,8 +152,8 @@ try {
     if (isset($_POST['other']) && trim($_POST['other']) != "") {
         $defectStrInitial .= $_POST['other'] . ", ";
     }
-    
-    
+
+
     $remarkTxtArea = isset($remarkTxtArea) && trim($remarkTxtArea) != "" ? $db->safe($remarkTxtArea) : false;
     $remarkTxtAreaquery = ",remark_for_other_defects=$remarkTxtArea";
     if (!$remarkTxtArea) {
@@ -140,31 +162,29 @@ try {
     } else {
         $defectStrInitial = rtrim($defectStrInitial, ", ");
     }
-    
-    $defectStringquery = ",defects=".$db->safe($defectStrInitial);
 
+    $defectStringquery = ",defects=" . $db->safe($defectStrInitial);
 
-    
     $insertQuery = "insert into defective_garment_form set $cust_namequery $c_mobile_noquery"
             . " $c_old_bill_noquery $c_old_bill_no_datequery"
             . " $og_purchase_store_namequery $exg_bill_noquery $exg_bill_no_datequery"
             . " $exchange_given_at_storequery $st_addressquery $st_manager_namequery"
-            . " $st_manager_mob_noquery $prodquery $design_noquery $defectStringquery $remarkTxtAreaquery";
+            . " $st_manager_mob_noquery $prodquery $design_noquery $defectStringquery"
+            . " $remarkTxtAreaquery $sizequery $stylequery $barcodequery $mrpquery";
 
-    
-//    print_r("<br><br>");
+    //    print_r("<br><br>");
 //    print_r($insertQuery);
+//    exit();
 //    print_r("<br><br>");
 //    print_r($db);
-//    exit();
     
-    
-    if($db->execInsert($insertQuery)){
+
+
+    if ($db->execInsert($insertQuery)) {
         $success = "Form has been saved successfully.";
     } else {
         $errors['status'] = "There was a problem saving form. Please contact Intouch.";
     }
-    
 } catch (Exception $ex) {
     $clsLogger = new clsLogger();
     $clsLogger->logError("Failed to save form details" . $ex->getMessage());
