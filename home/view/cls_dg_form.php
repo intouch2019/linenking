@@ -13,13 +13,10 @@ class cls_dg_form extends cls_renderer {
 
     function __construct() {
 
-//        if (isset($params['selectedStoreId'])) {
-//            $this->selectedStoreId = $params['selectedStoreId'];
-//        }
         if (isset($_SESSION['selectedStoreId'])) {
             $this->selectedStoreId = $_SESSION['selectedStoreId'];
         }
-//        echo $this->selectedStoreId;
+
 
         $this->currStore = getCurrUser();
         $this->storeid = $this->currStore->id;
@@ -30,6 +27,7 @@ class cls_dg_form extends cls_renderer {
             return;
         }
         ?>
+
 
 
         <script type="text/javascript" src="jqueryui/js/jquery-ui-1.7.1.custom.min.js"></script>
@@ -61,18 +59,72 @@ class cls_dg_form extends cls_renderer {
 
             function getSelectedStoreId() {
                 const selectedStoreId = document.getElementById('exchange_given_at_store').value;
-//                                alert(selectedStoreId);
+                //                                alert(selectedStoreId);
                 $.ajax({
                     url: "ajax/getstoreaddress.php?storeid=" + selectedStoreId,
 
                     success: function (response) {
+
                         if (response !== "") {
                             document.getElementById("st_address").value = response;
+
                         }
                     }
                 });
             }
 
+
+
+            function getMRP() {
+                const designNo = document.getElementById('design_no').value;
+                const size = document.getElementById('size').value;
+                const style = document.getElementById('style').value;
+                if (size === "" || size === null) {
+                    document.getElementById('size_error').innerHTML = "Please Enter size first!";
+                    document.getElementById('size_error').focus();
+                    return false;
+                } else {
+                    document.getElementById('size_error').innerHTML = "";
+                }
+                if (designNo === "" || designNo === null) {
+                    document.getElementById('design_no_error').innerHTML = "Please Enter Design No first!";
+                    document.getElementById('design_no_error').focus();
+                    return false;
+                } else {
+                    document.getElementById('design_no_error').innerHTML = "";
+                }
+                const values = designNo + "/" + size + "/" + style;
+                $.ajax({
+                    url: "ajax/getMRPBarcode.php?values=" + values,
+
+                    success: function (response) {
+                        if (response !== "") {
+                            document.getElementById('barcode').value = response.slice(0, 13);
+                            const barcode = response.slice(0, 13);
+                            if (!validateNumber(barcode)) {
+                                document.getElementById('barcode_error').innerHTML = "Make sure value entered for Design no, size and style is correct !";
+                                document.getElementById('barcode_error').focus();
+                                return false;
+                            } else {
+                                document.getElementById('barcode_error').innerHTML = "";
+                            }
+                            if (response.slice(13) !== "") {
+                                document.getElementById('mrp').value = response.slice(13);
+                                const mrp = response.slice(13);
+                                if (!validateNumber(mrp)) {
+                                    document.getElementById('mrp_error').innerHTML = "Make sure value entered for Design no, size and style is correct !";
+                                    document.getElementById('mrp_error').focus();
+                                    return false;
+                                } else {
+                                    document.getElementById('mrp_error').innerHTML = "";
+                                }
+                            } else {
+                                document.getElementById('mrp').value = "Not Found";
+                            }
+                        }
+                    }
+                });
+            }
 
 
 
@@ -87,7 +139,29 @@ class cls_dg_form extends cls_renderer {
             }
 
 
-            function validatePhoneNumber(phoneNumber) {
+            function checkBarcode() {
+                const barcode = document.getElementById('barcode').value;
+                const mrp = document.getElementById('mrp').value;
+                if (!validateNumber(barcode)) {
+                    alert("inside barcode if condition");
+                    document.getElementById('barcode_error').innerHTML = "Make sure value entered for Design no, size and style is correct !";
+                    document.getElementById('barcode_error').focus();
+                    return false;
+                } else {
+                    document.getElementById('barcode_error').innerHTML = "";
+                }
+
+                if (!validateNumber(mrp)) {
+                    document.getElementById('mrp_error').innerHTML = "Make sure value entered for Design no, size and style is correct !";
+                    document.getElementById('mrp_error').focus();
+                    return false;
+                } else {
+                    document.getElementById('mrp_error').innerHTML = "";
+                }
+            }
+
+
+            function validateNumber(phoneNumber) {
                 // Regular expression pattern for phone number validation (numbers only)
                 var pattern = /^\d+$/;
 
@@ -99,38 +173,63 @@ class cls_dg_form extends cls_renderer {
             function checkFormValidations() {
                 const custMobNo = document.getElementById('c_mobile_no').value;
                 const storeManagerMobNo = document.getElementById('store_manager_mob_no').value;
-                const exchangeGivenAtStore=document.getElementById('exchange_given_at_store').value;
-//                alert("exchange given at store-->"+exchangeGivenAtStore);
-                
-                
-                if(exchangeGivenAtStore==="0"){
-//                    alert("exchange given at store not selected-->"+exchangeGivenAtStore);
-                    document.getElementById('storeError').innerHTML="Please select value from dropdown !";
+                const exchangeGivenAtStore = document.getElementById('exchange_given_at_store').value;
+                const size = document.getElementById('size').value;
+
+                if (exchangeGivenAtStore === "0") {
+                    //                    alert("exchange given at store not selected-->"+exchangeGivenAtStore);
+                    document.getElementById('storeError').innerHTML = "Please select value from dropdown !";
                     document.getElementById('storeError').focus();
                     return false;
-                }else{
-                    document.getElementById('storeError').innerHTML="";
+                } else {
+                    document.getElementById('storeError').innerHTML = "";
                 }
-                
-                
-                if (!validatePhoneNumber(custMobNo)) {
-                document.getElementById('c_mobile_no_error').innerHTML = "Please enter numbers only !";
-                document.getElementById('c_mobile_no_error').focus();
+
+
+                if (!validateNumber(custMobNo)) {
+                    document.getElementById('c_mobile_no_error').innerHTML = "Please enter numbers only !";
+                    document.getElementById('c_mobile_no_error').focus();
                     return false;
                 } else {
                     document.getElementById('c_mobile_no_error').innerHTML = "";
                 }
-                
-                
-                if (!validatePhoneNumber(storeManagerMobNo)) {
+
+
+                if (!validateNumber(storeManagerMobNo)) {
                     document.getElementById('store_manager_mob_no_error').innerHTML = "Please enter numbers only !";
                     document.getElementById('store_manager_mob_no_error').focus();
                     return false;
                 } else {
                     document.getElementById('store_manager_mob_no_error').innerHTML = "";
                 }
+
+
+                if (!validateNumber(size)) {
+                    document.getElementById('size_error').innerHTML = "Please enter numbers only !";
+                    document.getElementById('size_error').focus();
+                    return false;
+                } else {
+                    document.getElementById('size_error').innerHTML = "";
+                }
+
+
+                const barcode = document.getElementById('barcode').value;
+                const mrp = document.getElementById('mrp').value;
+                    if (!validateNumber(barcode)) {
+                    document.getElementById('barcode_error').innerHTML = "Make sure value entered for Design no, size and style is correct !";
+                    document.getElementById('barcode_error').focus();
+                    return false;
+                } else {
+                    document.getElementById('barcode_error').innerHTML = "";
+                }
                 
-                
+                if (!validateNumber(mrp)) {
+                    document.getElementById('mrp_error').innerHTML = "Make sure value entered for Design no, size and style is correct !";
+                    document.getElementById('mrp_error').focus();
+                    return false;
+                } else {
+                    document.getElementById('mrp_error').innerHTML = "";
+                }
                 
 
                 var checkboxes = document.querySelectorAll('input[type="checkbox"]');
@@ -217,7 +316,7 @@ class cls_dg_form extends cls_renderer {
                                 <input type="date" name="dg_form_date"  value="<?php echo $today; ?>" disabled > <br><br>
                             </div>
 
-                <!--<p class="grid_7"></p>-->
+                                                        <!--<p class="grid_7"></p>-->
 
                             <p class="grid_7">
                                 <label for="cust_name">*Customer Name: </label>
@@ -239,7 +338,6 @@ class cls_dg_form extends cls_renderer {
 
                             <p class="grid_7">
                                 <label for="og_purchase_store_name">Original Purchase Store Name: </label>                        
-         <!--<input type="text" name="og_purchase_store_name"  value=""  >-->
                                 <select name="og_purchase_store_name" id="og_purchase_store_name" 
                                         data-placeholder="Choose Store" 
                                         class="chzn-select" 
@@ -253,7 +351,7 @@ class cls_dg_form extends cls_renderer {
                                     }
 
                                     $db = new DBConn();
-                                    if ($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::CKAdmin || $this->currStore->usertype == UserType::Accounts || $this->currStore->usertype == UserType::Dispatcher) {
+                                    if ($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::CKAdmin || $this->currStore->usertype == UserType::Accounts || $this->currStore->usertype == UserType::Dispatcher || $this->currStore->usertype == UserType::Picker || $this->currStore->usertype == UserType::Dealer || $this->currStore->usertype == UserType::Manager) {
                                         $objs = $db->fetchObjectArray("select id,store_name from it_codes where usertype=4 order by store_name");
                                     } else {
                                         $objs = $db->fetchObjectArray("select id,store_name from it_codes where id=" . $this->currStore->id);
@@ -299,10 +397,10 @@ class cls_dg_form extends cls_renderer {
                                     } else {
                                         $defaultSel = "";
                                     }
-                                    
+
 
 //                                    $db = new DBConn();
-                                    if ($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::CKAdmin || $this->currStore->usertype == UserType::Accounts || $this->currStore->usertype == UserType::Dispatcher) {
+                                    if ($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::CKAdmin || $this->currStore->usertype == UserType::Accounts || $this->currStore->usertype == UserType::Dispatcher || $this->currStore->usertype == UserType::Picker || $this->currStore->usertype == UserType::Dealer || $this->currStore->usertype == UserType::Manager) {
                                         $objs = $db->fetchObjectArray("select id,store_name from it_codes where usertype=4 order by store_name");
                                     } else {
                                         $objs = $db->fetchObjectArray("select id,store_name from it_codes where id=" . $this->currStore->id);
@@ -320,7 +418,7 @@ class cls_dg_form extends cls_renderer {
                                     <?php } ?>
                                 </select>
                                 <span tabindex="0" id="storeError" style="color:#FFCCCB; font-size: 14px;"></span>
-                                
+
                             </p> 
 
                             <p class="grid_7">
@@ -345,6 +443,7 @@ class cls_dg_form extends cls_renderer {
                                     <option value="">Select Category</option>
                                     <option value="Formal Shirt">Formal Shirt</option>
                                     <option value="Semi Formal">Semi Formal</option>
+                                    <option value="Slim Formal">Slim Formal</option>
                                     <option value="T-Shirt">T-Shirt</option>
                                     <option value="Trouser">Trouser</option>
                                     <option value="Narrow Trouser">Narrow Trouser</option>
@@ -357,11 +456,45 @@ class cls_dg_form extends cls_renderer {
                             <p class="grid_3">
                                 <label for="prod">*Design No: </label>                        
                                 <input type="text" required name="design_no" id="design_no"  value="" >
+                                <span tabindex="0" id="design_no_error" style="color:#FFCCCB; font-size: 14px;"></span>
                             </p> 
 
 
+                            <p class="grid_3">
+                                <label for="size">*Size: </label>                        
+                                <input maxlength="2" minlength="2" type="text" required name="size" id="size"  value="" >
+                                <span tabindex="0" id="size_error" style="color:#FFCCCB; font-size: 14px;"></span>
+                            </p>
 
-                            <h3 class="grid_7">*Defects:</h3>
+
+                            <p class="grid_7">
+                                <label for="style">*Style: </label>                        
+                                <select name="style" required id="style" onchange="getMRP()">
+                                    <option value="">Select Style</option>
+                                    <option value="HS">Half Sleeve</option>
+                                    <option value="FS">Full Sleeve</option>
+                                    <option value="NP">NP</option>
+                                    <option value="PL">PL</option>
+                                </select>
+                            </p>
+
+
+                            <p class="grid_3">
+                                <label for="barcode">Barcode: </label>                        
+                                <input style="background-color:lightgrey;" type="text" readonly="true" required name="barcode" id="barcode"  maxlength="13" minlength="13" value="">
+                                <span tabindex="0" id="barcode_error" style="color:#FFCCCB; font-size: 14px;"></span>
+                            </p>
+
+
+                            <p class="grid_3">
+                                <label for="mrp">MRP: </label>                        
+                                <input style="background-color:lightgrey;" type="text" name="mrp" id="mrp" readonly="true"  value="" >
+                                <span tabindex="0" id="mrp_error" style="color:#FFCCCB; font-size: 14px;"></span> <br><br><br><br>
+                            </p>
+
+                             
+                            
+                                 <h3 class="grid_7">*Defects:</h3>
 
                             <div class="grid_7 checkbox" style="font-size: 16px;">
                                 <input type="checkbox" name="color_fade" value="Color Fade" id="color_fade" >
@@ -392,15 +525,19 @@ class cls_dg_form extends cls_renderer {
                                 <label for="other">9.Other</label><br>
 
                                 <span tabindex="0" id="checkBoxError" style="color:#FFCCCB; font-size: 14px;"></span>
-
-                                <!--<p class="grid_7" id="remark"  style="display: none;">-->
+                                
+                                
+                          
+                            
+                            
+                                                                        <!--<p class="grid_7" id="remark"  style="display: none;">-->
                                 <p class="grid_7" style="display: none;" id="remarkTextField">
                                     <label for="remark">Remark: </label>                        
                                     <textarea id="remarkTxtArea" name="remarkTxtArea" rows="5" cols="100"></textarea>
                                     <span tabindex="0" id="remarkTextFieldError" style="color:#FFCCCB; font-size: 14px;"></span>
                                 </p> 
                             </div> 
-
+                               
 
                             <p class="grid_7"  style="margin-left: 15%;">
                                 <input type="submit" value="Submit" style="width:25%" >

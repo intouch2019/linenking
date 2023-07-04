@@ -15,7 +15,6 @@ class cls_dg_form_report extends cls_renderer {
     var $storeid;
     var $dtrange;
     var $page;
-    
 
     function __construct($params = null) {
         $this->currStore = getCurrUser();
@@ -56,28 +55,28 @@ class cls_dg_form_report extends cls_renderer {
         <script type="text/javascript" src="js/sidebar/jquery.sidebar.js"></script>
         <style>
             #pagination_div{
-                
+
                 margin-left: 35%;
-                
-                
+
+
             }
             .button_element{
-                
+
                 display: block;
                 color: black;
                 text-align: center;
                 padding: 6px 6px 6px 6px;
-                
+
                 text-decoration: none;
-                
+
             }
 
             .li_element{
                 float: left;
                 margin-top:2%;
             }
-            
-            
+
+
         </style>
         <script type="text/javascript">
 
@@ -186,6 +185,22 @@ class cls_dg_form_report extends cls_renderer {
 
             }
 
+
+            function thermalReceipt(id) {
+                $.ajax({
+                    url: "ajax/printThermalDGReport.php?id="+id,
+
+                    success: function (response) {
+                        if (response !== "") {
+                            var popupWin = window.open(' ');
+                            popupWin.document.open();
+                            popupWin.document.write(response);
+                            popupWin.document.close();
+                        }
+                    }
+                });
+            }
+
         </script>
 
         <?php
@@ -222,13 +237,13 @@ class cls_dg_form_report extends cls_renderer {
                                 }
 
 
-                                if ($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::CKAdmin || $this->currStore->usertype == UserType::Accounts || $this->currStore->usertype == UserType::Dispatcher) {
+                                if ($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::CKAdmin || $this->currStore->usertype == UserType::Accounts || $this->currStore->usertype == UserType::Dispatcher || $this->currStore->usertype == UserType::Picker || $this->currStore->usertype == UserType::Manager) {
                                     ?>
                                     <option value="-1" <?php echo $defaultSel; ?>>All Stores</option> 
                                 <?php } ?>
 
                                 <?php
-                                if ($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::CKAdmin || $this->currStore->usertype == UserType::Accounts || $this->currStore->usertype == UserType::Dispatcher) {
+                                if ($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::CKAdmin || $this->currStore->usertype == UserType::Accounts || $this->currStore->usertype == UserType::Dispatcher || $this->currStore->usertype == UserType::Picker || $this->currStore->usertype == UserType::Manager) {
                                     $objs = $db->fetchObjectArray("select id,store_name from it_codes where usertype=4  order by store_name");
                                 } else {
                                     $objs = $db->fetchObjectArray("select id,store_name from it_codes where id=" . $this->currStore->id);
@@ -312,13 +327,17 @@ class cls_dg_form_report extends cls_renderer {
 
                 try {
                     ?>
+                    <div id="thermalPrint" style="display:none;">
+                      
+                    </div>
                     <div class="grid_12" >
                         <button name="dwnDGReturn" id="dwnDGReturn" onclick="DownloadDGReturnExcel();">Export to Excel</button>
                     </div> 
                     <div class="grid_12" style="overflow-y: scroll;">
                         <table style="width:100%" >
                             <tr>
-                                <th colspan="18"  align="center" style="font-size:14px">Defective Garment Report</th>
+                                <th colspan="18"  align="center" style="font-size:14px;">Defective Garment Report</th>
+                                <th></th><th></th><th></th><th></th>
                             </tr>
 
                             <tr>
@@ -337,9 +356,13 @@ class cls_dg_form_report extends cls_renderer {
                                 <th>Store Manager Mobile No</th>
                                 <th>Product</th>
                                 <th>Design No</th>
-                                <th>Defects</th>
+                                <th>Size</th>
+                                <th>Style</th>
+                                <th>Defective Garment MRP</th>
+                                <th>Defective Garment Barcode</th>
+                                <th>Defects</th>    
                                 <th>Remark</th>
-
+                                <th>Print Receipts</th>
                             </tr>
 
                             <?php
@@ -348,23 +371,27 @@ class cls_dg_form_report extends cls_renderer {
                             $start_from = ($this->page - 1) * $limit;
 //                print_r($start_from);
 //                exit();
-                            
-                                $sr_no =($limit*($this->page-1)) +1;
-                           
+
+                            $sr_no = ($limit * ($this->page - 1)) + 1;
+
                             if ($this->storeid == -1) {
-                                $iquery = "select d.createdate, d.customer_name, d.customer_mobile_no, d.cust_old_bill_no, "
+                                $iquery = "select d.id,d.createdate, d.customer_name, d.customer_mobile_no, d.cust_old_bill_no, "
                                         . "d.old_bill_date, d.orignal_purchase_store_name, d.exchange_bill_no, d.exchange_bill_date, "
                                         . "c.store_name as exchange_given_at_store, d.store_address, d.store_manager_name, d.store_manager_mob_no, "
-                                        . "d.product, d.design_no, d.defects, d.remark_for_other_defects from "
+                                        . "d.product, d.design_no, d.defects, d.remark_for_other_defects, d.size, d.style, "
+                                        . "d.barcode, d.mrp from "
                                         . "defective_garment_form d inner join it_codes c on d.exchange_given_at_store=c.id "
                                         . "where $dQuery order by d.createdate desc limit $start_from, $limit";
+                                
+                               
 //                    print_r($iquery);
 //                    exit();
                             } else {
-                                $iquery = "select d.createdate, d.customer_name, d.customer_mobile_no, d.cust_old_bill_no, "
+                                $iquery = "select d.id,d.createdate, d.customer_name, d.customer_mobile_no, d.cust_old_bill_no, "
                                         . "d.old_bill_date, d.orignal_purchase_store_name, d.exchange_bill_no, d.exchange_bill_date, "
                                         . "c.store_name as exchange_given_at_store, d.store_address, d.store_manager_name, d.store_manager_mob_no, "
-                                        . "d.product, d.design_no, d.defects, d.remark_for_other_defects from "
+                                        . "d.product, d.design_no, d.defects, d.remark_for_other_defects, d.size, d.style, "
+                                        . "d.barcode, d.mrp from "
                                         . "defective_garment_form d inner join it_codes c on d.exchange_given_at_store=c.id "
                                         . "where $dQuery and d.exchange_given_at_store=$this->storeid order by d.createdate desc limit $start_from, $limit";
 //                    print_r($iquery);
@@ -381,17 +408,17 @@ class cls_dg_form_report extends cls_renderer {
 
                                         <td><?php echo $obj->customer_name; ?></td>
                                         <td><?php echo $obj->customer_mobile_no; ?></td>
-                                        <?php if ($obj->cust_old_bill_no == null || $obj->cust_old_bill_no == "") { ?>
+                        <?php if ($obj->cust_old_bill_no == null || $obj->cust_old_bill_no == "") { ?>
                                             <td> - </td>
                                         <?php } else { ?><td><?php echo $obj->cust_old_bill_no; ?></td><?php } ?>
 
 
-                                        <?php if ($obj->old_bill_date == null || $obj->old_bill_date == "") { ?>
+                        <?php if ($obj->old_bill_date == null || $obj->old_bill_date == "") { ?>
                                             <td> - </td>
                                         <?php } else { ?><td><?php echo $obj->old_bill_date; ?></td><?php } ?>
 
 
-                                        <?php if ($obj->orignal_purchase_store_name == null || $obj->orignal_purchase_store_name == "") { ?>
+                        <?php if ($obj->orignal_purchase_store_name == null || $obj->orignal_purchase_store_name == "") { ?>
                                             <td> - </td>
                                         <?php } else { ?><td><?php echo $obj->orignal_purchase_store_name; ?></td><?php } ?>
 
@@ -404,107 +431,112 @@ class cls_dg_form_report extends cls_renderer {
                                         <td><?php echo $obj->store_manager_mob_no; ?></td>
                                         <td><?php echo $obj->product; ?></td>
                                         <td><?php echo $obj->design_no; ?></td>
+                                        <td><?php echo $obj->size; ?></td>
+                                        <td><?php echo $obj->style; ?></td>
+                                        <td><?php echo $obj->mrp; ?></td>
+                                        <td><?php echo $obj->barcode; ?></td>
                                         <td><?php echo $obj->defects; ?></td>
 
 
-                                        <?php if ($obj->remark_for_other_defects == null || $obj->remark_for_other_defects == "") { ?>
+                        <?php if ($obj->remark_for_other_defects == null || $obj->remark_for_other_defects == "") { ?>
                                             <td> - </td>
                                         <?php } else { ?><td><?php echo $obj->remark_for_other_defects; ?></td><?php } ?>
-
+                                        <td> 
+                                            <button name="print_thermal" value="<?php echo $obj->id ?>" type="button" style="width:100px;" onclick="thermalReceipt(this.value);">Print Receipt</button>
+                                        </td>
                                     </tr>
 
-                                    <?php
-                                    $sr_no++;
-                                }
-                            }
-                            ?>    
+                        <?php
+                        $sr_no++;
+                    }
+                }
+                ?>    
                             <tbody id="scrl" style="overflow-y: auto;overflow-x: hidden;">
 
                         </table>
 
 
-                      
+
 
                     </div>
                     <br><br>
-                            <div id="pagination_div">
-                            <ul style="list-style-type: none;">
-                                <?php
-                                $sql = "SELECT COUNT(*) as count FROM defective_garment_form d inner join it_codes c on d.exchange_given_at_store=c.id where $dQuery";
-                                $row = $db->fetchObject($sql);
+                    <div id="pagination_div">
+                        <ul style="list-style-type: none;">
+                <?php
+                $sql = "SELECT COUNT(*) as count FROM defective_garment_form d inner join it_codes c on d.exchange_given_at_store=c.id where $dQuery";
+                $row = $db->fetchObject($sql);
 //                                $total_records = $row;
-                                $total_records = $row->count;
+                $total_records = $row->count;
 //                                print_r($total_records);
 //                                exit();
-                                $total_pages = ceil($total_records / $limit);
+                $total_pages = ceil($total_records / $limit);
 //                                print_r($total_pages);
 //                                exit();
-                                if($total_pages<5){
+                if ($total_pages < 5) {
 //                                    $k = (($this->page+2>5)?5-2:(($this->page-2<1)?3:$this->page));
-                                    $k=3;
-                                }else{
-                                    $k = (($this->page+2>$total_pages)?$total_pages-2:(($this->page-2<1)?3:$this->page)); 
+                    $k = 3;
+                } else {
+                    $k = (($this->page + 2 > $total_pages) ? $total_pages - 2 : (($this->page - 2 < 1) ? 3 : $this->page));
+                }
+                $pagLink = "";
+                ?>
 
+
+                            <script type="text/javascript">
+                                function go2Page() {
+                                    var storeid = $('#store').val();
+                                    var dtrange = $("#dateselect").val();//SET DATE TO PARAMS
+                                    var pn = document.getElementById("pn").value;
+                                    pn = ((pn ><?php echo $total_pages; ?>) ?<?php echo $total_pages; ?> : ((pn < 1) ? 1 : pn));
+                                    window.location.href = "dg/form/report/page=" + pn + "/sid=" + storeid + "/dtrange=" + dtrange;
                                 }
-                                $pagLink = "";
-                                ?>
+
+                                function pageClick(val) {
+                                    var storeid = $('#store').val();
+                                    var dtrange = $("#dateselect").val();//SET DATE TO PARAMS
+                                    var pn = val;
+                                    window.location.href = "dg/form/report/page=" + pn + "/sid=" + storeid + "/dtrange=" + dtrange;
+                                }
+
+                            </script>
 
 
-                                <script type="text/javascript">
-                                    function go2Page() {
-                                        var storeid = $('#store').val();
-                                        var dtrange = $("#dateselect").val();//SET DATE TO PARAMS
-                                        var pn = document.getElementById("pn").value;
-                                        pn = ((pn ><?php echo $total_pages; ?>) ?<?php echo $total_pages; ?> : ((pn < 1) ? 1 : pn));
-                                        window.location.href = "dg/form/report/page=" + pn + "/sid=" + storeid + "/dtrange=" + dtrange;
-                                    }
-
-                                    function pageClick(val) {
-                                        var storeid = $('#store').val();
-                                        var dtrange = $("#dateselect").val();//SET DATE TO PARAMS
-                                        var pn = val;
-                                        window.location.href = "dg/form/report/page=" + pn + "/sid=" + storeid + "/dtrange=" + dtrange;
-                                    }
-
-                                </script>
-
-
-                                <?php
+                <?php
 //                                print_r($pn);
 //                                exit();
-                                if ($this->page >= 2) {
-                                    echo "<li class='li_element'><button class='button_element' type='button' value='1' id='page1' onclick='pageClick(this.value)'> First </button></li>";
-                                    echo "<li class='li_element'><button class='button_element' type='button' value='".($this->page - 1)."' id='prev' onclick='pageClick(this.value)'> Prev </button></li>";
-                                }
+                if ($this->page >= 2) {
+                    echo "<li class='li_element'><button class='button_element' type='button' value='1' id='page1' onclick='pageClick(this.value)'> First </button></li>";
+                    echo "<li class='li_element'><button class='button_element' type='button' value='" . ($this->page - 1) . "' id='prev' onclick='pageClick(this.value)'> Prev </button></li>";
+                }
 //                                print_r($pn);
 //                                exit();
-                                for ($i=-2; $i<=2; $i++) {
-                                    if ($k+$i==$this->page) {
-                                        $pagLink .= "<li class='li_element'><button class='button_element' style='background-color:powderblue;' type='button' value='" . ($k+$i) . "' id='pgNum1' onclick='pageClick(this.value)'>".($k+$i)."</button></li>";
+                for ($i = -2; $i <= 2; $i++) {
+                    if ($k + $i == $this->page) {
+                        $pagLink .= "<li class='li_element'><button class='button_element' style='background-color:powderblue;' type='button' value='" . ($k + $i) . "' id='pgNum1' onclick='pageClick(this.value)'>" . ($k + $i) . "</button></li>";
 //                                        print_r($i);
 //                                        exit();
-                                    } else {
-                                        $pagLink .= "<li class='li_element'><button class='button_element' type='button' value='".($k+$i)."' id='pgNum2' onclick='pageClick(this.value)'>".($k+$i)."</button></li>";
-                                    }
-                                }
-                                echo $pagLink;
-                                if ($this->page < $total_pages) {
-                                    echo "<li class='li_element'><button class='button_element' type='button' value='" . ($this->page + 1) . "' id='next' onclick='pageClick(this.value)'> Next </button></li>";
-                                    echo "<li class='li_element'><button class='button_element' type='button' value='" . $total_pages . "' id='total_pages' onclick='pageClick(this.value)'> Last </button></li>";
-                                }
+                    } else {
+                        $pagLink .= "<li class='li_element'><button class='button_element' type='button' value='" . ($k + $i) . "' id='pgNum2' onclick='pageClick(this.value)'>" . ($k + $i) . "</button></li>";
+                    }
+                }
+                echo $pagLink;
+                if ($this->page < $total_pages) {
+                    echo "<li class='li_element'><button class='button_element' type='button' value='" . ($this->page + 1) . "' id='next' onclick='pageClick(this.value)'> Next </button></li>";
+                    echo "<li class='li_element'><button class='button_element' type='button' value='" . $total_pages . "' id='total_pages' onclick='pageClick(this.value)'> Last </button></li>";
+                }
 //                                print_r($this->page);
 //                                exit();
-                                ?>
-                                <li class='li_element'>
-                                    <input class='button_element' id="pn" type="number" min="1" max="<?php echo $total_pages ?>" 
-                                           placeholder="<?php echo $this->page . "/" . $total_pages; ?>" required>
-                                </li>
-                                <li class='li_element'>
-                                    <button class='button_element' onclick="go2Page();">Go</button>
-                                </li>
-                            </ul>
+                ?>
+                            <li class='li_element'>
+                                <input class='button_element' id="pn" type="number" min="1" max="<?php echo $total_pages ?>" 
+                                       placeholder="<?php echo $this->page . "/" . $total_pages; ?>" required>
+                            </li>
+                            <li class='li_element'>
+                                <button class='button_element' onclick="go2Page();">Go</button>
+                            </li>
+                        </ul>
 
-                        </div> 
+                    </div> 
                 </div>
 
                 <?php

@@ -52,7 +52,7 @@ if (count($dtarr) == 1) {
                                         . "as Original_Purchase_Store_Name, d.exchange_bill_no, d.exchange_bill_date, "
                                         . "c.store_name as exchange_given_at_store, d.store_address, "
                                         . "d.store_manager_name, d.store_manager_mob_no, "
-                                        . "d.product, d.design_no, d.defects, "
+                                        . "d.product, d.design_no ,d.size,d.style,d.barcode, d.mrp, d.defects, "
                                         . "if(d.remark_for_other_defects!='',d.remark_for_other_defects,'-') as "
                                         . "remark from defective_garment_form d inner join it_codes c on "
                                         . "d.exchange_given_at_store=c.id "
@@ -65,7 +65,7 @@ if (count($dtarr) == 1) {
                                         . "as Original_Purchase_Store_Name, d.exchange_bill_no, d.exchange_bill_date, "
                                         . "c.store_name as exchange_given_at_store, d.store_address, "
                                         . "d.store_manager_name, d.store_manager_mob_no, "
-                                        . "d.product, d.design_no, d.defects, "
+                                        . "d.product, d.design_no, d.defects,d.size,d.style,d.barcode, d.mrp, "
                                         . "if(d.remark_for_other_defects!='',d.remark_for_other_defects,'-') as "
                                         . "remark from defective_garment_form d inner join it_codes c on "
                                         . "d.exchange_given_at_store=c.id "
@@ -104,8 +104,12 @@ function createexcel($items, $objPHPExcel) {
     $objPHPExcel->getActiveSheet()->setCellValue('L1', 'Store Manager Mobile No');
     $objPHPExcel->getActiveSheet()->setCellValue('M1', 'Product');
     $objPHPExcel->getActiveSheet()->setCellValue('N1', 'Design No');
-    $objPHPExcel->getActiveSheet()->setCellValue('O1', 'Defects');
-    $objPHPExcel->getActiveSheet()->setCellValue('P1', 'Remark');
+    $objPHPExcel->getActiveSheet()->setCellValue('O1', 'Size');
+    $objPHPExcel->getActiveSheet()->setCellValue('P1', 'Style');
+    $objPHPExcel->getActiveSheet()->setCellValue('Q1', 'Defective Garment Barcode');
+    $objPHPExcel->getActiveSheet()->setCellValue('R1', 'Defective Garment MRP');
+    $objPHPExcel->getActiveSheet()->setCellValue('S1', 'Defects');
+    $objPHPExcel->getActiveSheet()->setCellValue('T1', 'Remark');
 
     $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(20);
     $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(20);
@@ -123,6 +127,10 @@ function createexcel($items, $objPHPExcel) {
     $objPHPExcel->getActiveSheet()->getColumnDimension('N')->setWidth(20);
     $objPHPExcel->getActiveSheet()->getColumnDimension('O')->setWidth(20);
     $objPHPExcel->getActiveSheet()->getColumnDimension('P')->setWidth(20);
+    $objPHPExcel->getActiveSheet()->getColumnDimension('Q')->setWidth(20);
+    $objPHPExcel->getActiveSheet()->getColumnDimension('R')->setWidth(20);
+    $objPHPExcel->getActiveSheet()->getColumnDimension('S')->setWidth(20);
+    $objPHPExcel->getActiveSheet()->getColumnDimension('T')->setWidth(20);
 
     $rowCount = 2;
     
@@ -145,6 +153,10 @@ function createexcel($items, $objPHPExcel) {
         $store_manager_mob_no = trim($item->store_manager_mob_no);
         $product = trim($item->product);
         $design_no = trim($item->design_no);
+        $size = trim($item->size);
+        $style = trim($item->style);
+        $barcode = trim($item->barcode);
+        $mrp = trim($item->mrp);
         $defects = trim($item->defects);
         $remark = trim($item->remark);
 
@@ -165,8 +177,12 @@ function createexcel($items, $objPHPExcel) {
         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(11, $rowCount, $store_manager_mob_no);
         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(12, $rowCount, $product);
         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(13, $rowCount, $design_no);
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(14, $rowCount, $defects);
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(15, $rowCount, $remark);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(14, $rowCount, $size);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(15, $rowCount, $style);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(16, $rowCount, $barcode);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(17, $rowCount, $mrp);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(18, $rowCount, $defects);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(19, $rowCount, $remark);
         $rowCount++;
     }
 }
