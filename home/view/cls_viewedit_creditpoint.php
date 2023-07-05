@@ -636,7 +636,7 @@ class cls_viewedit_creditpoint extends cls_renderer {
                                     array_push($pointsToUploadIdArrayForTotal, $obj->id);
                                     $totalPoints += $obj->points_to_upload;
                                 }
-                                $totalPoints += $obj->points_to_upload;
+                                $totalUsedPoints += $obj->points_used;
                                 ?>
                                 <tr>
                                     <td><?php echo $i; ?></td>
