@@ -352,20 +352,13 @@ class cls_dg_form extends cls_renderer {
 
                                     $db = new DBConn();
                                     if ($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::CKAdmin || $this->currStore->usertype == UserType::Accounts || $this->currStore->usertype == UserType::Dispatcher || $this->currStore->usertype == UserType::Picker || $this->currStore->usertype == UserType::Dealer || $this->currStore->usertype == UserType::Manager) {
-                                        $objs = $db->fetchObjectArray("select id,store_name from it_codes where usertype=4 order by store_name");
+                                        $objs = $db->fetchObjectArray("select id,store_name from it_codes where usertype=4 and is_closed=0 order by store_name");
                                     } else {
-                                        $objs = $db->fetchObjectArray("select id,store_name from it_codes where id=" . $this->currStore->id);
+                                        $objs = $db->fetchObjectArray("select id,store_name from it_codes where id=" . $this->currStore->id." and is_closed=0");
                                     }
                                     foreach ($objs as $obj) {
-                                        $selected = "";
-                                        //	if (isset($this->storeidreport) && $obj->id==$this->storeidreport) { $selected = "selected"; }
-                                        if ($this->storeid != - 1) {
-                                            if ($obj->id == $this->storeid) {
-                                                $selected = "selected";
-                                            }
-                                        }
                                         ?>
-                                        <option value="<?php echo $obj->store_name; ?>" <?php echo $selected; ?> > <?php echo $obj->store_name; ?></option> 
+                                        <option value="<?php echo $obj->store_name; ?>" <?php echo $defaultSel; ?> > <?php echo $obj->store_name; ?></option> 
                                     <?php }
                                     ?>
                                 </select>
@@ -400,21 +393,14 @@ class cls_dg_form extends cls_renderer {
 
 
 //                                    $db = new DBConn();
-                                    if ($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::CKAdmin || $this->currStore->usertype == UserType::Accounts || $this->currStore->usertype == UserType::Dispatcher || $this->currStore->usertype == UserType::Picker || $this->currStore->usertype == UserType::Dealer || $this->currStore->usertype == UserType::Manager) {
-                                        $objs = $db->fetchObjectArray("select id,store_name from it_codes where usertype=4 order by store_name");
+                                    if ($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::CKAdmin || $this->currStore->usertype == UserType::Accounts || $this->currStore->usertype == UserType::Dispatcher || $this->currStore->usertype == UserType::Picker || $this->currStore->usertype == UserType::Manager) {
+                                        $objs = $db->fetchObjectArray("select id,store_name from it_codes where usertype=4 and is_closed=0 order by store_name");
                                     } else {
-                                        $objs = $db->fetchObjectArray("select id,store_name from it_codes where id=" . $this->currStore->id);
+                                        $objs = $db->fetchObjectArray("select id,store_name from it_codes where id=" . $this->currStore->id." and is_closed=0");
                                     }
                                     foreach ($objs as $obj) {
-                                        $selected = "";
-                                        //	if (isset($this->storeidreport) && $obj->id==$this->storeidreport) { $selected = "selected"; }
-                                        if ($this->storeid != - 1) {
-                                            if ($obj->id == $this->storeid) {
-                                                $selected = "selected";
-                                            }
-                                        }
                                         ?>
-                                        <option value="<?php echo $obj->id; ?>" <?php echo $selected; ?> > <?php echo $obj->store_name; ?></option> 
+                                        <option value="<?php echo $obj->id; ?>" <?php echo $defaultSel; ?> > <?php echo $obj->store_name; ?></option> 
                                     <?php } ?>
                                 </select>
                                 <span tabindex="0" id="storeError" style="color:#FFCCCB; font-size: 14px;"></span>
