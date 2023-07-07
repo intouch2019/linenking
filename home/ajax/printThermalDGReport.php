@@ -61,7 +61,7 @@ try{
                 . "</style>"
                 . "<body onload='window.print()'>"
                 . "<div class='thermal'>
-                    <img src='http://linenking.intouchrewards.com/home/images/LKLogo.png.png' width='100%' alt='LinenKing'><br><br>          
+                    <img src='http://linenking.intouchrewards.com/home/images/LKLogo.png' width='100%' alt='LinenKing'><br><br>          
                     <h2>Customer Defect Return Form</h2><br>
                     <label>Date : $obj->createdate</label><br><br>
                     <label>Customer Name : $obj->customer_name</label><br><br>
