@@ -61,7 +61,7 @@ try{
                 . "</style>"
                 . "<body onload='window.print()'>"
                 . "<div class='thermal'>
-                    <img src='http://linenking.intouchrewards.com/home/images/LKLogo.png' width='100%' alt='LinenKing'><br><br>          
+                    <img src='http://linenking.intouchrewards.com/images/LKLogo.png' width='100%' alt='LinenKing'><br><br>          
                     <h2>Customer Defect Return Form</h2><br>
                     <label>Date : $obj->createdate</label><br><br>
                     <label>Customer Name : $obj->customer_name</label><br><br>
@@ -85,7 +85,7 @@ try{
                     <label>Remark : $obj->remark_for_other_defects</label><br><br>
                     <div>------------------------------------------------------------</div>
                     <h3 style='margin-left:22px;'>PRODUCT COMPLAIN GUIDE</h3>    
-                    <img src='http://linenking.intouchrewards.com/home/images/DGFormImg.jpeg' width='95%' height='400px' alt='Mark defect area on the diagram'>
+                    <img src='http://linenking.intouchrewards.com/images/DGFormImg.jpeg' width='95%' height='400px' alt='Mark defect area on the diagram'>
                     <div>MARK THE DEFECT AREA ON THE DIAGRAM</div>  
                 </div>"
             . "</html>";
