@@ -430,12 +430,19 @@ class cls_dg_form extends cls_renderer {
                                     <option value="Formal Shirt">Formal Shirt</option>
                                     <option value="Semi Formal">Semi Formal</option>
                                     <option value="Slim Formal">Slim Formal</option>
+                                    <option value="Slim Casual">Slim Casual</option>
+                                    <option value="Slim Shirt">Slim Shirt</option>
+                                    <option value="Salwar">Salwar</option>
                                     <option value="T-Shirt">T-Shirt</option>
                                     <option value="Trouser">Trouser</option>
                                     <option value="Narrow Trouser">Narrow Trouser</option>
                                     <option value="Stylized Trouser">Stylized Trouser</option>
                                     <option value="Casual Shirt">Casual Shirt</option>
                                     <option value="Jeans">Jeans</option>
+                                    <option value="Jacket">Jacket</option>
+                                    <option value="Pajama">Pajama</option>
+                                    <option value="Long Kurta">Long Kurta</option>
+                                    <option value="Short Kurta">Short Kurta</option>
                                 </select>
                             </p>
 
