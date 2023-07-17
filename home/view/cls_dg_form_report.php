@@ -142,7 +142,7 @@ class cls_dg_form_report extends cls_renderer {
                     window.location.href = "dg/form/report/sid=" + storeid + "/dtrange=" + dtrange;
                     setfocus();
                 } else {
-                    alert('Please Fill All Values');
+//                    alert('Please Fill All Values');
 
                     if (storeid == 0) {
                         document.getElementById('storelabel').style.display = 'inline';
