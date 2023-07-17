@@ -82,6 +82,7 @@ class cls_dg_form extends cls_renderer {
                 if (size === "" || size === null) {
                     document.getElementById('size_error').innerHTML = "Please Enter size first!";
                     document.getElementById('size_error').focus();
+                    document.getElementById('style').value="";
                     return false;
                 } else {
                     document.getElementById('size_error').innerHTML = "";
@@ -89,6 +90,7 @@ class cls_dg_form extends cls_renderer {
                 if (designNo === "" || designNo === null) {
                     document.getElementById('design_no_error').innerHTML = "Please Enter Design No first!";
                     document.getElementById('design_no_error').focus();
+                    document.getElementById('style').value="";
                     return false;
                 } else {
                     document.getElementById('design_no_error').innerHTML = "";
@@ -143,7 +145,7 @@ class cls_dg_form extends cls_renderer {
                 const barcode = document.getElementById('barcode').value;
                 const mrp = document.getElementById('mrp').value;
                 if (!validateNumber(barcode)) {
-                    alert("inside barcode if condition");
+//                    alert("inside barcode if condition");
                     document.getElementById('barcode_error').innerHTML = "Make sure value entered for Design no, size and style is correct !";
                     document.getElementById('barcode_error').focus();
                     return false;
@@ -167,6 +169,11 @@ class cls_dg_form extends cls_renderer {
 
                 // Check if the phone number matches the pattern
                 return pattern.test(phoneNumber);
+            }
+            
+            function setStyleDefault()
+            {
+                document.getElementById('style').value="";
             }
 
 
@@ -448,14 +455,14 @@ class cls_dg_form extends cls_renderer {
 
                             <p class="grid_3">
                                 <label for="prod">*Design No: </label>                        
-                                <input type="text" required name="design_no" id="design_no"  value="" >
+                                <input type="text" required name="design_no" id="design_no"  value="" onkeypress="setStyleDefault()">
                                 <span tabindex="0" id="design_no_error" style="color:#FFCCCB; font-size: 14px;"></span>
                             </p> 
 
 
                             <p class="grid_3">
                                 <label for="size">*Size: </label>                        
-                                <input maxlength="2" minlength="2" type="text" required name="size" id="size"  value="" >
+                                <input maxlength="2" minlength="2" type="text" required name="size" id="size"  value="" onkeypress="setStyleDefault()">
                                 <span tabindex="0" id="size_error" style="color:#FFCCCB; font-size: 14px;"></span>
                             </p>
 
@@ -473,15 +480,15 @@ class cls_dg_form extends cls_renderer {
 
 
                             <p class="grid_3">
-                                <label for="barcode">Barcode: </label>                        
-                                <input style="background-color:lightgrey;" type="text" readonly="true" required name="barcode" id="barcode"  maxlength="13" minlength="13" value="">
+                                <label for="barcode">*Barcode: </label>                        
+                                <input type="text" required name="barcode" id="barcode"  maxlength="13" minlength="13" value="">
                                 <span tabindex="0" id="barcode_error" style="color:#FFCCCB; font-size: 14px;"></span>
                             </p>
 
 
                             <p class="grid_3">
-                                <label for="mrp">MRP: </label>                        
-                                <input style="background-color:lightgrey;" type="text" name="mrp" id="mrp" readonly="true"  value="" >
+                                <label for="mrp">*MRP: </label>                        
+                                <input type="text" required name="mrp" id="mrp" value="" >
                                 <span tabindex="0" id="mrp_error" style="color:#FFCCCB; font-size: 14px;"></span> <br><br><br><br>
                             </p>
 
