@@ -63,7 +63,7 @@ class cls_editcontactdetails extends cls_renderer {
                         
                         <form action="formpost/editcontactdetails.php" method="POST">
                          <?php    if(isset($this->id) && $this->id!==""){
-                            $query=" select id,Name,designation,contactno from contactdetails where id=$this->id " ;
+                            $query=" select id,Name,designation,contactno,email from contactdetails where id=$this->id " ;
                          $result=$db->fetchObject($query) ; 
                          }?>
                              <?php if(isset($this->id)){ ?>
@@ -81,6 +81,14 @@ class cls_editcontactdetails extends cls_renderer {
 
                             <div class="grid_2"><label>  Contact Number:   </label>  </div>
                             <input type="text" name="Contactno" value="<?php if(isset($result) && $result !==""){echo $result->contactno; }else{echo "";} ?>">
+                            <br><br>
+                            
+                            <div class="grid_2"><label>  Email:   </label>  </div>
+                            <input type="email" name="Email" value="<?php if (isset($result) && $result !== "") {
+            echo $result->email;
+        } else {
+            echo "";
+        } ?>">
                             <br><br>
                             <input type="submit" value="<?php if(isset($this->id)&& ($this->id!=="")){ echo "Save";}else{echo "Add";}?>">
                             <br><br>

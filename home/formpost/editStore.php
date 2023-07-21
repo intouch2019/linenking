@@ -21,7 +21,26 @@ if (!$storeid) {
     print "Missing parameter. Please report this error.";
     return;
 }
+if($selectRight){
 
+$db->execQuery("delete from executive_assign where store_id=$storeid");
+    foreach ($selectRight as $uniqid){
+        $assnexecutive="INSERT INTO executive_assign (store_id,exe_id) values ($storeid,$uniqid)";
+         $order_id = $db->execInsert($assnexecutive);
+    }
+      //exit;
+    //$assnexecutive="UPDATE it_codes SET executive_assign=\"$trimst\" WHERE id=$storeid";
+          // $res=$db->execUpdate($assnexecutive,true); 
+//           print_r($assnexecutive);
+//           exit;
+}
+if($selectLeft){
+    foreach ($selectLeft as $uniqidleft){
+        $db->execQuery("delete from executive_assign where exe_id=$uniqidleft and store_id=$storeid");
+         
+    }
+    
+}
 $storees = "select  discountset from it_codes where id = $storeid ";
 //      print "***************$query1********************";
 $store_check = $db->fetchObject($storees);

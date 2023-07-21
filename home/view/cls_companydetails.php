@@ -36,7 +36,6 @@ class cls_companydetails extends cls_renderer {
         <script src="js/prettyPhoto/jquery.prettyPhoto.js" type="text/javascript" charset="utf-8"></script>
         <script type="text/javascript">
         <!--//--><![CDATA[//>
-         
          function deleteEmployee(code)
             {
                 var r = confirm("Are you sure to Deactivate Employeecode "+code+" ?");
@@ -144,15 +143,14 @@ class cls_companydetails extends cls_renderer {
                         </div>
                         <div class="grid_12">
 
-                          
-                            <input type="radio" id="cn" name="cn" value="1"  <?php if ($this->id == 1) { ?>checked <?php } ?> onchange="reload()" ><b>Company Details</b>
-                            <input type="radio" id="cn1" name="cn" value="2"   <?php if ($this->id == 2) { ?>checked <?php } ?>  onchange="reload()"><b>Bank Details</b>
-                            <input type="radio" id="cn2" name="cn" value="3"   <?php if ($this->id == 3) { ?>checked <?php } ?>  onchange="reload()"><b>Company Contacts</b>
+                            <input type="radio" id="cn" name="cn" value="1"   <?php if ($this->id == 1) { ?>checked <?php } ?>  onchange="reload()"><b>Company Contacts</b>
+                            <input type="radio" id="cn1" name="cn" value="2"  <?php if ($this->id == 2) { ?>checked <?php } ?> onchange="reload()" ><b>Company Details</b>
+                            <input type="radio" id="cn2" name="cn" value="3"   <?php if ($this->id == 3) { ?>checked <?php } ?>  onchange="reload()"><b>Bank Details</b>
                             <input type="radio" id="cn3" name="cn" value="4"   <?php if ($this->id == 4) { ?>checked <?php } ?>  onchange="reload()"><b>Store Stock Limit</b>
                            <br><br>
 
 
-                            <?php if ($this->id == 1) { ?>
+                            <?php if ($this->id == 2) { ?>
                              
                                 <div class="grid_10">
                                     <table>
@@ -193,7 +191,7 @@ class cls_companydetails extends cls_renderer {
 
                             <?php } ?>
 
-                            <?php if ($this->id == 2) { ?>
+                            <?php if ($this->id == 3) { ?>
 
                                 <div class="grid_10">
                                     <table>
@@ -221,7 +219,7 @@ class cls_companydetails extends cls_renderer {
 
 
 
-                            <?php if ($this->id == 3) {
+                            <?php if ($this->id == 1) {
                                 ?>
 <!--                                <div class="grid_2">&nbsp;</div>-->
                                 <div class="grid_8">
@@ -231,20 +229,23 @@ class cls_companydetails extends cls_renderer {
                                             <th>Name</th>
                                             <th>Designation</th>
                                             <th>Contact Number</th>
+                                            <th>E-mail</th>
                                           <?php if ($currUser->usertype == UserType::Admin || $currUser->usertype == UserType::CKAdmin) { ?> 
                                                 <th></th>
                                                 <th></th>
                                             <?php } ?>
                                         </tr>
                                         <?php
-                                        $query = "Select id,name,contactno,designation from contactdetails where inactive=0";
+                                        $query = "Select id,name,contactno,designation,email from contactdetails where inactive=0";
                                         $qresult = $db->fetchObjectArray($query);
+                                        
                                         foreach ($qresult as $details) {
                                             ?>
                                             <tr>
                                                 <td><?php echo "Mr. ".$details->name ?></td>
                                                 <td><?php echo $details->designation ?></td> 
                                                 <td><?php echo $details->contactno ?></td>
+                                                <td><?php echo $details->email ?></td>
                                                 <?php if ($currUser->usertype == UserType::Admin || $currUser->usertype == UserType::CKAdmin) { ?>        
                                                     <td><a  href="editcontactdetails/ids=<?php echo $details->id ?>"> Edit </a></td> 
                                                     <td><button onclick='deleteEmployee(<?php echo $details->id ?>)'>Delete</button></td> 

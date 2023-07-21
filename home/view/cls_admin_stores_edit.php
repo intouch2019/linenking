@@ -40,8 +40,83 @@ class cls_admin_stores_edit extends cls_renderer {
        // print "select c.*,d.* from it_codes c left outer join it_ck_storediscount d on c.id=d.store_id where c.id=$this->storeid and usertype=".UserType::Dealer;
         if (!$store) { print "Store not found [$this->storeid]. Please report this error"; return; }
         ?>
+
  <script>
-               
+                var storeid;
+            function moveToRightOrLeft(side) {
+                var listLeft = document.getElementById('selectLeft');
+                var selectedAllStoreleft = listLeft.options.selectedIndex;
+                var listRight = document.getElementById('selectRight');
+                var selectedAllStoreright = listRight.options.selectedIndex;
+                if (listRight.options.selectedIndex == -1 && listLeft.options[selectedAllStoreleft].text == "All Users") {
+        //console.log(listLeft);
+
+                    var selectElement = document.getElementById('selectLeft');
+                    var allOptions = selectElement.querySelectorAll('option');
+                    let selectedStoreCount;
+                    for (selectedStoreCount = 0; selectedStoreCount <= allOptions.length - 1; selectedStoreCount++) {
+                        move(listRight, allOptions[selectedStoreCount].value, allOptions[selectedStoreCount].textContent);
+                        listLeft.remove(0);
+        //console.log(allOptions[1].value);
+        //      if(listLeft.length>0){
+        //      //allOptions[selectedStoreCount].selected=true;
+        //      }
+                    }
+
+                } else if (listLeft.options.selectedIndex == -1 && listRight.options[selectedAllStoreright].text == "All Users") {
+
+                    var selectElement = document.getElementById('selectRight');
+                    var allOptions = selectElement.querySelectorAll('option');
+                    let selectedStoreCount;
+                    for (selectedStoreCount = 0; selectedStoreCount <= allOptions.length - 1; selectedStoreCount++) {
+                        move(listLeft, allOptions[selectedStoreCount].value, allOptions[selectedStoreCount].textContent);
+                        listRight.remove(0);
+
+                    }
+
+                } else if (side == 1) {
+                    if (listLeft.options.length == 0) {
+                        alert('You have already moved all fields to Right');
+                        return false;
+                    } else {
+                        var selectedCountry = listLeft.options.selectedIndex;
+
+                        move(listRight, listLeft.options[selectedCountry].value, listLeft.options[selectedCountry].text);
+                        listLeft.remove(selectedCountry);
+
+                        if (listLeft.options.length > 0) {
+                            listLeft.options[selectedCountry].selected = true;
+                        }
+                    }
+                } else if (side == 2) {
+                    var selectedCountry = listRight.options.selectedIndex;
+                    let selectedStore;
+                    move(listLeft, listRight.options[selectedCountry].value, listRight.options[selectedCountry].text);
+                    listRight.remove(selectedCountry);
+
+                    if (listRight.options.length > 0) {
+                        listRight.options[selectedCountry].selected = true;
+                    }
+                      for (selectedStore = 0; selectedStore <= listRight.options.length - 1; selectedStore++) {
+                       listRight.options[selectedStore].selected = true;
+                }
+
+                }
+            }
+
+            function move(listBoxTo, optionValue, optionDisplayText) {
+        //     alert(optionValue);
+
+                var newOption = document.createElement("option");
+                newOption.value = optionValue;
+                newOption.text = optionDisplayText;
+
+        //alert(newOption.value);
+                newOption.selected = true;
+                listBoxTo.add(newOption, null);
+                return true;
+            }
+
                         function Hidenatch() {
                                              //alert(document.getElementByName('is_natch').value);
                                             
@@ -83,12 +158,7 @@ class cls_admin_stores_edit extends cls_renderer {
 //        show(val);
 ////       window.location.href ="admin/stores/edit/id="+store_id+"/state_id="+val;
 //}
-// $(document).ready(function() {
-//     var state_id = '<?php// echo $this->state_id; ?>';
-//     if(state_id == ""){
-//         show1();
-//     }
-//    });
+
     
     
     
@@ -214,7 +284,8 @@ if(discval>0){
             }
             
     
-    
+      
+
                        
                         </script>
 <div class="grid_10">
@@ -522,7 +593,122 @@ if(discval>0){
                         <label>Maximum Stock Level: </label><br>
                         <input type="text" name="maxsl" style='width:30%' value="<?php echo $this->getFieldValue('maxsl',$store->max_stock_level); ?>">
                     </p> 
-                    
+                           <!--		user assign store start-->
+                                <div class="grid_12" id="itemselection">
+                                    <!--		<div class="grid_12" >-->
+                                    <div class="grid_7">
+                                        <table border="0" colspan="4">
+                                            <tr>
+                                                <td colspan="5">Assign the store to user:</td><?php
+                                ?>
+                                            </tr>
+
+                                            <tr>
+                                                <td colspan="2">All Users </td>
+                                                <td colspan="1">&nbsp;</td>
+                                                <td colspan="2">Store Assigned Users</td>
+                                            </tr>
+                                            <tr>
+                                                <td rowspan="3" colspan="2" align="right"><label>
+                                                        <select name="selectLeft[]" multiple size="10" width="100%" style="width:200px;" id="selectLeft"> 
+            <?php
+            $asgnexe = "select exe_id from executive_assign where store_id in (" . $this->storeid . ")";
+
+            $fasnid = $db->fetchObjectArray($asgnexe);
+            if (!empty($fasnid)) {
+                $query = "select id,store_name,roles from it_codes  where usertype not in(9,10,4) and store_name!='NULL' and id not in ($rmvcoln)";
+            }
+            $obj_aRegion = $db->fetchObjectArray($query);
+            if (!empty($obj_aRegion)) {
+                echo '<option value="allstore">All Users</option>';
+            }
+            ?>  
+                                                            <?php
+                                                            if (true) {
+                                                                $asgnexe = "select exe_id from executive_assign where store_id in (" . $this->storeid . ")";
+
+                                                                $fasnid = $db->fetchObjectArray($asgnexe);
+                                                                //print_r($fasnid);
+                                                                $st = "";
+                                                                foreach ($fasnid as $exe) {
+                                                                    $fasnid = $exe->exe_id;
+                                                                    //print_r($fasnid);
+                                                                    $st = $st . $fasnid . ",";
+                                                                }
+                                                                $rmvcoln = substr($st, 0, -1);
+                                                                if (!empty($fasnid)) {
+                                                                    $query = "select id,store_name,roles from it_codes  where usertype not in(9,10,4) and store_name!='NULL' and id not in ($rmvcoln)";
+                                                                } else {
+                                                                    $query = "select id,store_name,roles from it_codes  where usertype not in(9,10,4) and store_name!='NULL'";
+                                                                }
+                                                                $obj_aRegion = $db->fetchObjectArray($query);
+                                                                if (empty($obj_aRegion)) {
+                                                                    
+                                                                }
+                                                            } $count = 0;
+                                                            foreach ($obj_aRegion as $region) {
+
+                                                                $count++;
+                                                                ?>
+                                                                <option value="<?php echo $region->id; ?>"><?php echo $region->store_name; ?></option>
+                                                            <?php } ?> 
+                                                        </select>
+                                                    </label></td>
+                                                <td colspan="1" rowspan="3" style="vertical-align:middle;">
+                                                    <input name="btnRight" type="button" id="btnRight" value="&gt;&gt;" onClick="javaScript:moveToRightOrLeft(1);">
+                                                    <br/><br/>
+                                                    <input name="btnLeft" type="button" id="btnLeft" value="&lt;&lt;" onClick="javaScript:moveToRightOrLeft(2);">
+                                                </td>
+                                                <td rowspan="3" colspan="2" align="left">
+                                                    <select name="selectRight[]"  multiple size="10" style="width:200px;" id="selectRight">
+            <?php
+            $asgnexe = "select exe_id from executive_assign where store_id in (" . $this->storeid . ")";
+
+            $fasnid = $db->fetchObjectArray($asgnexe);
+            //print_r($fasnid);
+            $st = "";
+            foreach ($fasnid as $exe) {
+                $fasnid = $exe->exe_id;
+                //print_r($fasnid);
+                $st = $st . $fasnid . ",";
+            }
+            $rmvcoln = substr($st, 0, -1);
+
+            $query = "select * from it_codes where id in ($rmvcoln)";
+            $obj_aRegion = $db->fetchObjectArray($query);
+            if (!empty($obj_aRegion)) {
+                echo '<option value="allstore">All Users</option>';
+            }
+            ?>
+                                                        <?php
+                                                        $asgnexe = "select exe_id from executive_assign where store_id in (" . $this->storeid . ")";
+
+                                                        $fasnid = $db->fetchObjectArray($asgnexe);
+                                                        //print_r($fasnid);
+                                                        $st = "";
+                                                        foreach ($fasnid as $exe) {
+                                                            $fasnid = $exe->exe_id;
+                                                            //print_r($fasnid);
+                                                            $st = $st . $fasnid . ",";
+                                                        }
+                                                        $rmvcoln = substr($st, 0, -1);
+
+                                                        $query = "select * from it_codes where id in ($rmvcoln)";
+                                                        $obj_aRegion = $db->fetchObjectArray($query);
+
+                                                        foreach ($obj_aRegion as $region) {
+                                                            ?>
+
+                                                            <option selected="selected" value="<?php echo $region->id; ?>"><?php echo $region->store_name; ?></option>
+                                                        <?php } ?>
+
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                    <!--		user assign store end-->
                     
                     <p class="grid_12">
                         <label>Is Store Closed: </label><br>

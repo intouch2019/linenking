@@ -11,7 +11,14 @@ try{
     $db = new DBConn();
     $cnt=0;
     $dealersList = array();
-    $alldealersobj = $db->fetchObjectArray("select id,store_name,min_stock_level,max_stock_level  from it_codes where usertype = ".UserType::Dealer."   and is_closed = 0 and min_stock_level is not null" );  //and inactive = 0
+      if(getCurrUser()->usertype==UserType::Dealer){
+      				
+       	$alldealersobj = $db->fetchObjectArray("select id,store_name,min_stock_level,max_stock_level  from it_codes where usertype = ".UserType::Dealer." and id= ".getCurrUser()->id." and is_closed = 0 and min_stock_level is not null" );
+       
+     }else{
+            $alldealersobj = $db->fetchObjectArray("select id,store_name,min_stock_level,max_stock_level  from it_codes where usertype= ".UserType::Dealer." and id in (select store_id from executive_assign where exe_id=".getCurrUser()->id." )  and is_closed = 0 and min_stock_level is not null;" );
+        }
+    //$alldealersobj = $db->fetchObjectArray("select id,store_name,min_stock_level,max_stock_level  from it_codes where usertype = ".UserType::Dealer."   and is_closed = 0 and min_stock_level is not null" );  //and inactive = 0
     foreach($alldealersobj as $dealerobj){ 
 //        if(trim($dealerobj->min_stock_level)!=""){
 //     

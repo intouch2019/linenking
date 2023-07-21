@@ -86,14 +86,18 @@ if ($sWhere == "") {
 } else {
     $sWhere .= " and ";
 }
-if ($currStore->usertype == UserType::BHMAcountant) {
-    $sWhere .= " usertype = " . UserType::Dealer . "   and is_closed = 0 and  min_stock_level is not null  and  (is_bhmtallyxml=1 or store_type=3) "; //and inactive = 0
-} elseif ($currStore->usertype == UserType::Dealer) {
+//if ($currStore->usertype == UserType::BHMAcountant) {
+//    $sWhere .= " usertype = " . UserType::Dealer . "   and is_closed = 0 and  min_stock_level is not null  and  (is_bhmtallyxml=1 or store_type=3) "; //and inactive = 0
+//} elseif ($currStore->usertype == UserType::Dealer) {
+//    $sWhere .= " usertype = " . UserType::Dealer . "   and is_closed = 0 and  min_stock_level is not null and id =$currStore->id  "; //and inactive = 0   
+//} else {
+//    $sWhere .= " usertype = " . UserType::Dealer . "   and is_closed = 0 and  min_stock_level is not null "; //and inactive = 0   
+//}
+if ($currStore->usertype == UserType::Dealer) {
     $sWhere .= " usertype = " . UserType::Dealer . "   and is_closed = 0 and  min_stock_level is not null and id =$currStore->id  "; //and inactive = 0   
 } else {
-    $sWhere .= " usertype = " . UserType::Dealer . "   and is_closed = 0 and  min_stock_level is not null "; //and inactive = 0   
+    $sWhere .= " usertype = " . UserType::Dealer . "   and is_closed = 0 and id in(select store_id from executive_assign where exe_id=$currStore->id) and  min_stock_level is not null ";
 }
-
 $sQuery = "
 	select SQL_CALC_FOUND_ROWS c.id,c.store_name,c.min_stock_level,c.max_stock_level
 	from it_codes c
@@ -244,9 +248,17 @@ foreach ($objs as $obj) {
             }
         }
         //min_difference
-        else if ($aColumns[$i] == 'min_difference') {
-            $row[] = $appreal_tot_stock_incl_intransit - $obj->min_stock_level;
-            // $row[] = $tot_stk - $obj->min_stock_level;
+//        else if ($aColumns[$i] == 'min_difference') {
+//            $row[] = $appreal_tot_stock_incl_intransit - $obj->min_stock_level;
+//            // $row[] = $tot_stk - $obj->min_stock_level;
+//        }
+         else if ($aColumns[$i] == 'min_difference') {
+            $difference = $appreal_tot_stock_incl_intransit - $obj->min_stock_level;
+            if ($difference < 0) {
+                $row[] = '<span style="color: red;">' . $difference . '</span>';
+            } else {
+                $row[] = $difference;
+            }
         }
         //max_difference
         else if ($aColumns[$i] == 'max_difference') {
