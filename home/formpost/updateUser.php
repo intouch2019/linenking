@@ -35,6 +35,27 @@ try {
                 
 		if ($password != $password2) { $errors['password2'] = "Confirm Password does not match the value entered in the Password field"; }
 	}
+        
+         //assign user start
+        if($selectRight){
+    $db->execQuery("delete from executive_assign where exe_id=$userid");
+    foreach ($selectRight as $uniqid){
+        $assnexecutive="INSERT INTO executive_assign (store_id,exe_id) values ($uniqid,$userid)";
+        //print_r($assnexecutive);         
+$order_id = $db->execInsert($assnexecutive);
+    }
+}
+if($selectLeft){
+    foreach ($selectLeft as $uniqidleft){
+       
+        
+        $db->execQuery("delete from executive_assign where store_id=$uniqidleft and exe_id=$userid");
+         // print_r("delete from executive_assign where store_id=$uniqidleft");
+    }
+   // exit;
+    
+}
+        //assign user end
 	if (count($errors) == 0) {
 		$query = "update it_codes set store_name=$fullname, phone=$mobile, roles=$rolltype";
 		if ($email) { $query .= ", email=$email"; }

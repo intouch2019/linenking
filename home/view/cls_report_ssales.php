@@ -247,36 +247,79 @@ function move(listBoxTo,optionValue,optionDisplayText){
                 <?php if( $this->storeidreport == -1 ){
                                    $defaultSel = "selected";
                              }else{ $defaultSel = ""; } ?>
-                <option value="-1" <?php echo $defaultSel;?>>All Stores</option> 
+                <option value="9" <?php echo $defaultSel;?>>All Stores</option> 
 <?php
  $objs = array();
- if($this->currUser->usertype == UserType::BHMAcountant ) {
-$objs = $db->fetchObjectArray("select * from it_codes where usertype=4 and  (is_bhmtallyxml=1 or store_type=3) order by store_name");
- }else{
-     $objs = $db->fetchObjectArray("select * from it_codes where usertype=4 order by store_name");
- }
+// if($this->currUser->usertype == UserType::BHMAcountant ) {
+//$objs = $db->fetchObjectArray("select * from it_codes where usertype=4 and  (is_bhmtallyxml=1 or store_type=3) order by store_name");
+// }else{
+//     $objs = $db->fetchObjectArray("select * from it_codes where usertype=4 order by store_name");
+// }
+$usrid=$this->currUser->id;
+                                
+                                 $asgnexe="select store_id from executive_assign where exe_id in ($usrid)";
+                                
+                                                  //print_r("select exe_id from executive_assign where store_id in (".$this->currUser->id."));
+                                                    $fasnid = $db->fetchObjectArray($asgnexe);
+                                                     //print_r($fasnid);
+                                                     $st="";
+                                                foreach ($fasnid as $exe) {
+                                                      $fasnid=$exe->store_id;   
+                                                      $st=$st.$fasnid.",";
+                                                        }
+                                                        $rmvcoln=substr($st, 0, -1);
+                    $objs = $db->fetchObjectArray("select id,store_name from it_codes where usertype=4 and id in ($rmvcoln) order by store_name");
+                    
 
 //$objs = $db->fetchObjectArray("select * from it_codes where usertype=4 order by store_name");
 
-if($this->storeidreport == "-1"){
-    $storeid = array(); 
-    if($this->a==0){ //means 'all stores report is req only in excel'
-     $write_htm = false;   
-    }
-     $allstoreArrays=array();
-    if($this->currUser->usertype == UserType::BHMAcountant ) {
-    $allstoreArrays=$db->fetchObjectArray("select id from it_codes where usertype = 4 and  (is_bhmtallyxml=1 or store_type=3)");
-     }else
-         { 
-      $allstoreArrays=$db->fetchObjectArray("select id from it_codes where usertype = 4");
-      }
-//    $allstoreArrays=$db->fetchObjectArray("select id from it_codes where usertype = 4");
-    foreach($allstoreArrays as $storeArray){
-        foreach($storeArray as $store){
-            array_push($storeid,$store);
-        }
-    }
-}else{
+//if($this->storeidreport == "-1"){
+//    $storeid = array(); 
+//    if($this->a==0){ //means 'all stores report is req only in excel'
+//     $write_htm = false;   
+//    }
+//     $allstoreArrays=array();
+//    if($this->currUser->usertype == UserType::BHMAcountant ) {
+//    $allstoreArrays=$db->fetchObjectArray("select id from it_codes where usertype = 4 and  (is_bhmtallyxml=1 or store_type=3)");
+//     }else
+//         { 
+//      $allstoreArrays=$db->fetchObjectArray("select id from it_codes where usertype = 4");
+//      }
+////    $allstoreArrays=$db->fetchObjectArray("select id from it_codes where usertype = 4");
+//    foreach($allstoreArrays as $storeArray){
+//        foreach($storeArray as $store){
+//            array_push($storeid,$store);
+//        }
+//    }
+//}
+if ($this->storeidreport == "9") {
+                             $usrid=$this->currUser->id;
+                                 $asgnexe="select store_id from executive_assign where exe_id in ($usrid)";
+                                                    $fasnid = $db->fetchObjectArray($asgnexe); 
+                                                    if(empty($fasnid)){
+                                                        echo '<script language="javascript">';
+                                                        echo 'alert("You are not assign any store. Please contact to IT team.")';
+                                                        echo '</script>';
+                                                        exit;
+                                                        //alert("You are not assign any store. Please contact to IT team.");
+                                                    }
+                                                     $st="";
+                                                foreach ($fasnid as $exe) {
+                                                      $fasnid=$exe->store_id;   
+                                                      $st=$st.$fasnid.",";
+                                                        }
+                                                        $rmvcoln=substr($st, 0, -1);
+                    $result = $db->fetchObjectArray("select id,store_name from it_codes where usertype=4 and id in ($rmvcoln) order by store_name");
+                           //$result = $db->fetchObjectArray("select id from it_codes where usertype=4 and region_id=$fidd order by store_name");
+                            $b = "";
+                            foreach ($result as $re) {
+                                $a = $re->id;
+                                $b .= $a . ",";
+                            }
+
+                            $fnl = rtrim($b, ",");
+                            $storeClause = " o.store_id in ( $fnl ) ";
+                        }else{
   $storeid = explode(",",$this->storeidreport);  
 }
 //print_r($allst);
@@ -495,14 +538,42 @@ foreach ($objs as $obj) {
             $tableheaders.="Total Value:"; $queryfields .= "sum(case when (o.discount_pct is not NULL) then ((((100-o.discount_pct)/100)*oi.price) * (case when (o.tickettype in (0,1,6)) then (oi.quantity) else 0 end )) else oi.price*(case when (o.tickettype in (0,1,6)) then (oi.quantity) else 0 end ) end) as totalvalue,";  
             $queryfields = substr($queryfields, 0, -1);
             $storeClause="";
-            if($this->storeidreport == "-1"){               
-                 if($this->currUser->usertype == UserType::BHMAcountant ) {
-                $storeClause = " c.usertype = ".UserType::Dealer." and  (is_bhmtallyxml=1 or store_type=3)" ;
-                }else{
-                    $storeClause = " c.usertype = ".UserType::Dealer ;
-                }
-//                $storeClause = " c.usertype = ".UserType::Dealer ;
-            }else{              
+//            if($this->storeidreport == "-1"){               
+//                 if($this->currUser->usertype == UserType::BHMAcountant ) {
+//                $storeClause = " c.usertype = ".UserType::Dealer." and  (is_bhmtallyxml=1 or store_type=3)" ;
+//                }else{
+//                    $storeClause = " c.usertype = ".UserType::Dealer ;
+//                }
+////                $storeClause = " c.usertype = ".UserType::Dealer ;
+//            }
+            if ($this->storeidreport == "9") {
+                             $usrid=$this->currUser->id;
+                                 $asgnexe="select store_id from executive_assign where exe_id in ($usrid)";
+                                                    $fasnid = $db->fetchObjectArray($asgnexe); 
+                                                    if(empty($fasnid)){
+                                                        echo '<script language="javascript">';
+                                                        echo 'alert("You are not assign any store. Please contact to IT team.")';
+                                                        echo '</script>';
+                                                        exit;
+                                                        //alert("You are not assign any store. Please contact to IT team.");
+                                                    }
+                                                     $st="";
+                                                foreach ($fasnid as $exe) {
+                                                      $fasnid=$exe->store_id;   
+                                                      $st=$st.$fasnid.",";
+                                                        }
+                                                        $rmvcoln=substr($st, 0, -1);
+                    $result = $db->fetchObjectArray("select id,store_name from it_codes where usertype=4 and id in ($rmvcoln) order by store_name");
+                           //$result = $db->fetchObjectArray("select id from it_codes where usertype=4 and region_id=$fidd order by store_name");
+                            $b = "";
+                            foreach ($result as $re) {
+                                $a = $re->id;
+                                $b .= $a . ",";
+                            }
+
+                            $fnl = rtrim($b, ",");
+                            $storeClause = " o.store_id in ( $fnl ) ";
+                        }else{              
                 $storeClause = " o.store_id in ( $this->storeidreport ) ";
             }
             
@@ -518,14 +589,42 @@ foreach ($objs as $obj) {
             $totTotalValue="";$totAmt=0;
             $storeClause="";
             $total_td .= "<td></td><td></td><td></td>";
-            if($this->storeidreport == "-1"){   
-                 if($this->currUser->usertype == UserType::BHMAcountant ) {
-                $storeClause = " c.usertype = ".UserType::Dealer." and  (is_bhmtallyxml=1 or store_type=3)" ;
-                }else{
-                    $storeClause = " c.usertype = ".UserType::Dealer ;
-                }
-//                $storeClause = " c.usertype = ".UserType::Dealer ;
-            }else{                
+//            if($this->storeidreport == "-1"){   
+//                 if($this->currUser->usertype == UserType::BHMAcountant ) {
+//                $storeClause = " c.usertype = ".UserType::Dealer." and  (is_bhmtallyxml=1 or store_type=3)" ;
+//                }else{
+//                    $storeClause = " c.usertype = ".UserType::Dealer ;
+//                }
+////                $storeClause = " c.usertype = ".UserType::Dealer ;
+//            }
+            if ($this->storeidreport == "9") {
+                             $usrid=$this->currUser->id;
+                                 $asgnexe="select store_id from executive_assign where exe_id in ($usrid)";
+                                                    $fasnid = $db->fetchObjectArray($asgnexe); 
+                                                    if(empty($fasnid)){
+                                                        echo '<script language="javascript">';
+                                                        echo 'alert("You are not assign any store. Please contact to IT team.")';
+                                                        echo '</script>';
+                                                        exit;
+                                                        //alert("You are not assign any store. Please contact to IT team.");
+                                                    }
+                                                     $st="";
+                                                foreach ($fasnid as $exe) {
+                                                      $fasnid=$exe->store_id;   
+                                                      $st=$st.$fasnid.",";
+                                                        }
+                                                        $rmvcoln=substr($st, 0, -1);
+                    $result = $db->fetchObjectArray("select id,store_name from it_codes where usertype=4 and id in ($rmvcoln) order by store_name");
+                           //$result = $db->fetchObjectArray("select id from it_codes where usertype=4 and region_id=$fidd order by store_name");
+                            $b = "";
+                            foreach ($result as $re) {
+                                $a = $re->id;
+                                $b .= $a . ",";
+                            }
+
+                            $fnl = rtrim($b, ",");
+                            $storeClause = " o.store_id in ( $fnl ) ";
+                        }else{                
                 $storeClause = " o.store_id in ( $this->storeidreport ) ";
             }
             $tableheaders = "Date:Bill No:Bill Type:Bill Quantity:Bill Amount:Tax:Bill Discount Value:Bill Discount %:Voucher:Store Name:Area:city:Location:State:Region:Status";

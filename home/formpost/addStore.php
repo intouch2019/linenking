@@ -284,6 +284,18 @@ if (!$storec || !$dealer_name || !$address || !$city || !$zip || !$name || !$pho
                 //   print "insert into it_ck_storediscount set store_id = 125 , dealer_discount = $effecteddisc $discquery";
                 // exit;
                 $inscode = $db->execInsert($qry);
+                 //assign user to store start
+                
+             
+if($selectRight){
+    foreach ($selectRight as $uniqid){
+        $assnexecutive="INSERT INTO executive_assign (store_id,exe_id) values ($inscode,$uniqid)";
+         $order_id = $db->execInsert($assnexecutive);
+         
+         
+    }
+}
+//assign user to store end
                 if ($inscode) {
                     //print "<br>NEW STORE ID: $inscode";
                     $discquery = "insert into it_ck_storediscount set store_id = $inscode , dealer_discount = $effecteddisc $discquery ";

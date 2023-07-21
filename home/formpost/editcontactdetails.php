@@ -19,6 +19,7 @@ $db = new DBConn();
 $designation = $db->safe($_POST['Designation']);
 $name = $db->safe($_POST['Name']);
 $contactno = $db->safe($_POST['Contactno']);
+$email= $db->safe($_POST['Email']);
 $user = getCurrUser();
 $db = new DBConn();
 $userpage = new clsUsers();
@@ -43,9 +44,9 @@ try {
         $record = $db->fetchObject("select * from contactdetails where id = $id");
     }
     if (isset($record) && $record !== "" && isset($id) && $id !== "") {
-        $db->execUpdate("update contactdetails set Name=$name, contactno=$contactno, designation=$designation where id=$id");
+        $db->execUpdate("update contactdetails set Name=$name, contactno=$contactno, designation=$designation, email=$email where id=$id");
     } else if ($addnew == 1) {
-        $db->execInsert("insert into contactdetails set Name=$name, contactno=$contactno, designation=$designation, inactive=0");
+        $db->execInsert("insert into contactdetails set Name=$name, contactno=$contactno, designation=$designation, email=$email, createtime=now(), inactive=0");
     }
 } catch (Exception $xcp) {
     $clsLogger = new clsLogger();
