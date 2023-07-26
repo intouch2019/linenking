@@ -9,7 +9,7 @@ $menu = array();
 $currUser = getCurrUser();
 
 try{   
-if($currUser->usertype == UserType::Dealer){$sClause = " order by menuhead,sequence desc ";}else{$sClause ="";}
+if($currUser->usertype == UserType::Dealer){$sClause = "and menuhead != 'RELEASED CATALOG' order by menuhead,sequence desc ";}else{$sClause ="";}
 $query = "select distinct menuhead, sequence from it_pages where id in (select page_id from it_user_pages where user_id = $currUser->id ) and sequence > 0 $sClause";
 //error_log("\nsidemenu qry:\n".$query,3,"ajax/tmp.txt");
 $objs = $db->fetchObjectArray($query);
