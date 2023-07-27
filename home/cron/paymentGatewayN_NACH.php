@@ -32,7 +32,7 @@ if ($date_arr[1] < 4) {
 
 
 
-$squery = "select i.id,i.invoice_no,i.invoice_amt,i.store_id,c.phone,c.email,c.store_name,inactive from it_sp_invoices i ,it_codes c where i.store_id=c.id and c.is_natch_required=0 and i.is_procsdForRetail = 0 and i.non_nach_p=0 and c.inactive=0 and store_type !=3  and invoice_dt >= '$date_arr[0]-04-01 00:00:00' order by i.invoice_no asc ";
+$squery = "select i.id,i.invoice_no,i.invoice_amt,i.store_id,c.phone,c.email,c.store_name,inactive from it_sp_invoices i ,it_codes c where i.store_id=c.id and c.is_natch_required=0 and i.is_procsdForRetail = 0 and i.non_nach_p=0 and c.inactive=0 and c.store_type !=3  and invoice_dt >= '$date_arr[0]-04-01 00:00:00' order by i.invoice_no asc ";
 
 $storeobjs = $db->fetchObjectArray($squery);
 
