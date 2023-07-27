@@ -84,7 +84,7 @@ class cls_header {
                                                             <br> To make payment click this link <a href="<?php echo $this->storeinfo->paymentlink; ?>" target="_blank" style="color:blue"><?php echo $this->storeinfo->paymentlink; ?> </a>
 
                                                             <?php } ?>
-                                                        <br>Please <a href="<?php echo DEF_SITEURL; ?>home/login">TRY AGAIN</a> later. Thank you for your patience.</div>
+                                                        <br>Please <a href="<?php echo DEF_SITEURL; ?>home/login">TRY AGAIN</a> later .After successful payment (use Only UPI or Netbanking) is done using the above link , your portal will be enabled automatically after sometimes...</div>
                                                             </div><?php
                                             }
                                             ?>
