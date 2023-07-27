@@ -29,9 +29,9 @@ class cls_admin_payment_gateway extends cls_renderer {
     function extraHeaders() {
         ?>
 
-        <link rel="stylesheet" href="<?php Url('js/chosen/chosen.css'); ?>" />
-        <script type="text/javascript" src="<?php Url('js/ajax.js'); ?>"></script>
-        <script type="text/javascript" src="<?php Url('js/ajax-dynamic-list.js'); ?>">
+        <link rel="stylesheet" href='js/chosen/chosen.css'/>
+        <script type="text/javascript" src='js/ajax.js'></script>
+        <script type="text/javascript" src='js/ajax-dynamic-list.js'>
             /************************************************************************************************************
              (C) www.dhtmlgoodies.com, April 2006
              
@@ -49,7 +49,7 @@ class cls_admin_payment_gateway extends cls_renderer {
              ************************************************************************************************************/
 
         </script>
-        <link rel="stylesheet" href="<?php Url('css/bigbox.css'); ?>" type="text/css" />
+        <link rel="stylesheet" href='css/bigbox.css' type="text/css" />
         <script type="text/javascript">
             function enterPressed() {
                 var key = window.event.keyCode;
@@ -241,7 +241,7 @@ class cls_admin_payment_gateway extends cls_renderer {
         </div> <!-- class=box -->
         </div>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
-        <script src="<?php Url('js/chosen/chosen.jquery.js'); ?>" type="text/javascript"></script>
+        <script src='js/chosen/chosen.jquery.js' type="text/javascript"></script>
         <script type="text/javascript"> $(".chzn-select").chosen();
                                 $(".chzn-select-deselect").chosen({allow_single_deselect: true});</script>
 
