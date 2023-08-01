@@ -116,11 +116,11 @@ var mrp = '<?php echo $this->mrp; ?>';
                              }else{ $defaultSel = ""; } ?>
                             <option value="-1" <?php echo $defaultSel; ?>>All Stores</option> 
                             <?php
-                            $objs = $db->fetchObjectArray("select * from it_codes where usertype= ".UserType::Dealer." and id in (select distinct store_id from it_current_stock ) order by store_name");
+                            $objs = $db->fetchObjectArray("select * from it_codes where usertype= ".UserType::Dealer." and id in (select distinct store_id from it_current_stock ) and id in (select store_id from executive_assign where exe_id=".getCurrUser()->id." ) order by store_name");
 
                             if ($this->storeidreport == "-1") {
                                 $storeid = array();
-                                $allstoreArrays = $db->fetchObjectArray("select id from it_codes where usertype = ".UserType::Dealer );
+                                $allstoreArrays = $db->fetchObjectArray("select id from it_codes where usertype = ".UserType::Dealer." and id in (select store_id from executive_assign where exe_id=".getCurrUser()->id." )" );
                                 foreach ($allstoreArrays as $storeArray) {
                                     foreach ($storeArray as $store) {
                                         array_push($storeid, $store);
@@ -190,6 +190,8 @@ var mrp = '<?php echo $this->mrp; ?>';
                 if(isset($this->storeidreport) && trim($this->storeidreport) != ""){
                    if( $this->storeidreport != -1 ){ 
                     $storeClause = " and c.store_id in ( $this->storeidreport ) ";
+                   }else if($this->storeidreport == "-1"){
+                       $storeClause = " and c.store_id in ( select store_id from executive_assign where exe_id=".getCurrUser()->id." ) ";
                    }else{ $storeClause = ""; }
                    $query = " select c.barcode, sum(c.quantity) as currqty,i.barcode,i.ctg_id,i.MRP,i.style_id,i.size_id,i.prod_type_id from it_current_stock c, it_items i  where c.barcode = i.barcode  $storeClause  $mrpqry $ptypeqry  group by i.ctg_id ";
                    //print $query;

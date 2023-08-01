@@ -120,7 +120,7 @@ if(isset($storeid) && trim($storeid)!="" && trim($storeid) != "-1"){
    
 }else{ $sClause="" ;}
 
-$sWhere .= " s.store_id = c.id  $dtClause $sClause"; 
+$sWhere .= " s.store_id = c.id and c.id in (select store_id from executive_assign where exe_id=".getCurrUser()->id." )  $dtClause $sClause"; 
 $sQuery = "
 	select SQL_CALC_FOUND_ROWS s.*,c.store_name,c.min_stock_level
 	from it_store_stock_summary s, it_codes c

@@ -1,4 +1,3 @@
-
 <?php
 ini_set('max_execution_time', -1);
 require_once "view/cls_renderer.php";
@@ -181,7 +180,7 @@ class cls_store_audit extends cls_renderer {
                         if ($currUser->usertype == 4) {
                             $storeqry = " and id=$currUser->id";
                         } else {
-                            $storeqry = "";
+                            $storeqry = " and id in (select store_id from executive_assign where exe_id=".getCurrUser()->id." ) ";
                         }
                         $objs = $db->fetchObjectArray("select id,store_name from it_codes where usertype=" . UserType::Dealer . "  and is_closed=0 $storeqry order by store_name");
                         if ($objs) {
@@ -219,7 +218,13 @@ class cls_store_audit extends cls_renderer {
                 if ($currUser->usertype == UserType::Admin || $currUser->usertype == UserType::CKAdmin) { ?>
                 <div class="grid_6">
                     <br /><div id="dwnloadbtn" style='margin-left:40px; padding-left:15px; height:24px;width:130px;border: solid gray 1px;background:#F5F5F5;padding-top:4px;'>
-                        <a href='<?php echo "util/auditDetails.php?dtrange=$this->dtrange"; ?>' title='Export table to CSV'><img src='images/excel.png' width='20' hspace='3' style='margin-bottom:-6px;' /> Export To Excel</a>
+                        <?php
+                        $reportid=0;
+                        foreach ($this->params as $key => $value) {
+                                $reportid=$value;
+                            }
+                        ?>
+                        <a href='<?php echo "util/auditDetails.php?dtrange=$this->dtrange&userid=$this->userid&report=$reportid"; ?>' title='Export table to CSV'><img src='images/excel.png' width='20' hspace='3' style='margin-bottom:-6px;' /> Export To Excel</a>
                     </div><br />
                 </div>
                 <?php } ?>
@@ -271,7 +276,7 @@ class cls_store_audit extends cls_renderer {
                         
                       
                         if (isset($this->sid) && $this->sid !== "" && $this->sid == -1) {
-                            $qsid = "order by s.store_name desc";
+                            $qsid = "and a.store_id in (select store_id from executive_assign where exe_id=".getCurrUser()->id." ) order by a.id desc";
                         } else if (isset($this->sid) && $this->sid !== "") {
                             $qsid = "and a.store_id=$this->sid order by a.id desc";
                         } else {

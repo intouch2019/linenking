@@ -112,7 +112,7 @@ $objPHPExcel->getActiveSheet()->getStyle('G')->applyFromArray($cellstyleArray);
 
 $rowCount=2;
 
-$query = "select  s.*,c.store_name,c.min_stock_level from it_store_stock_summary s, it_codes c where s.store_id = c.id  $dtClause $sClause";
+$query = "select  s.*,c.store_name,c.min_stock_level from it_store_stock_summary s, it_codes c where s.store_id = c.id and c.id in (select store_id from executive_assign where exe_id=".getCurrUser()->id.") $dtClause $sClause";
 $objs = $db->fetchObjectArray($query);
 
 foreach ($objs as $obj) {    
@@ -135,5 +135,3 @@ header('Cache-Control: max-age=0');
 $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
 $objWriter->save('php://output');    
 	
-
-

@@ -150,6 +150,10 @@ Your session has expired. Click <a href="">here</a> to login.
                if(isset($this->storeidreport) && trim($this->storeidreport) != "" && $this->storeidreport != -1 ){
                    $storeClause = " and c.store_id in ( $this->storeidreport ) ";
                    $sClause = " and o.store_id in ( $this->storeidreport ) ";
+               }else if($this->storeidreport == "-1" || $this->storeidreport == ""){
+                       $storeClause = " and o.store_id in ( select store_id from executive_assign where exe_id=".getCurrUser()->id." ) ";
+                    $sClause = " and o.store_id in ( select store_id from executive_assign where exe_id=".getCurrUser()->id." ) ";
+                       
                }else{ $storeClause = "";$sClause = "";}
                if($this->ptype != 0){
                   $ptab  = " ,it_items i";
@@ -177,11 +181,11 @@ Your session has expired. Click <a href="">here</a> to login.
                 ?>
                 <option value="-1" <?php echo $defaultSel;?> >All Stores</option> 
                 <?php
-                $objs = $db->fetchObjectArray("select * from it_codes where usertype= ".UserType::Dealer." and inactive = 0 ");
+                $objs = $db->fetchObjectArray("select * from it_codes where usertype= ".UserType::Dealer." and inactive = 0 and id in (select store_id from executive_assign where exe_id=".getCurrUser()->id." )");
 
                 if ($this->storeidreport == "-1") {
                     $storeid = array();
-                    $allstoreArrays = $db->fetchObjectArray("select id from it_codes where usertype = ".UserType::Dealer );
+                    $allstoreArrays = $db->fetchObjectArray("select id from it_codes where usertype = ".UserType::Dealer." and id in (select store_id from executive_assign where exe_id=".getCurrUser()->id." )" );
                     foreach ($allstoreArrays as $storeArray) {
                         foreach ($storeArray as $store) {
                             array_push($storeid, $store);
@@ -280,6 +284,7 @@ if ($this->param_design_no != "" && count($allDesigns) == 0) { ?>
 
                 <div class="block grid_10">
                     <label>Current Stock</label>
+                    
                     <table>
                                     <?php
                                     $styleobj = $db->fetchObjectArray("select s1.style_id, s2.name as style_name from it_ck_styles s1, it_styles s2 where s1.style_id=s2.id and s2.is_active = 1 and  ctg_id=$ctg_id order by sequence");
@@ -316,6 +321,7 @@ if ($this->param_design_no != "" && count($allDesigns) == 0) { ?>
                                                        // $currstkqry = "select c.id,sum(c.quantity) as qty from it_current_stock c, it_items i where c.barcode = i.barcode and c. barcode = $barcode and i.style_id = $stylcod and i.size_id = $sizeid $storeClause";
                                                         //print $currstkqry;
                                                         $currstkqry = "select sum(c.quantity) as qty from it_current_stock c, it_items i  where c.barcode = i.barcode $storeClause and i.ctg_id = $ctg_id and i.style_id = ".$stylcod." and i.size_id = ".$sizeid."  $pClause ";
+                                                        
                                                         $getitm = $db->fetchObject($currstkqry);
 
                                                         //check to see if specific item exists in store stock, if exist -> stores qty in order_qty  
@@ -398,4 +404,3 @@ if ($this->param_design_no != "" && count($allDesigns) == 0) { ?>
     }
 }
 ?>
-

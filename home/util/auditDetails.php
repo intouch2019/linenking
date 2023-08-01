@@ -13,9 +13,15 @@ require_once 'Classes/PHPExcel/Writer/Excel2007.php';
 $table = "it_auditdetails,it_codes";
 if (isset($_GET["dtrange"]) && $_GET["dtrange"] != "") {
   $dtrange = $_GET["dtrange"]; }
+  
+    if (isset($_GET["userid"]) && $_GET["userid"] != "") {
+  $userid = $_GET["userid"]; }
+  
+  if (isset($_GET["report"]) && $_GET["report"] != "") {
+  $report = $_GET["report"]; }
 $db = new DBConn();
 $dtarr = explode(" - ", $dtrange);
-//print_r($dtrange);
+//print_r($_GET);
 //exit;
 
 
@@ -33,7 +39,12 @@ $dtarr = explode(" - ", $dtrange);
                                 $dQuery = "";
                         } 
                         
-                        
+                        if (isset($report) && $report !== "" && $report == -1) {
+                            $qsid = "and a.store_id in (select store_id from executive_assign where exe_id=".getCurrUser()->id." )";
+                        } 
+                        else if (isset($report) && $report !== "-1") {
+                            $qsid = "and a.store_id=$report";
+                        } 
                         
                         
                       
@@ -46,7 +57,7 @@ $dtarr = explode(" - ", $dtrange);
 //                        }
 $query = "select a.*,s.store_name ,(select count(*)as score from it_auditresponse where "
                                 . "audit_id = a.id and is_opted=1)as score,(select count(*)as score from it_auditresponse where audit_id = a.id )as outof from "
-                                . "it_auditdetails a, it_codes s  where a.store_id= s.id $dQuery order by s.store_name desc  ";
+                                . "it_auditdetails a, it_codes s  where a.store_id= s.id $dQuery $qsid order by s.store_name desc  ";
 $objsdetails = $db->fetchObjectArray($query);
 //print $query;
 //exit;

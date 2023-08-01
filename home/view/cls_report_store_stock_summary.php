@@ -154,11 +154,11 @@ function genExcelRep(){
                              }else{ $defaultSel = ""; } ?>
                 <option value="-1" <?php echo $defaultSel;?>>All Stores</option> 
 <?php
-$objs = $db->fetchObjectArray("select * from it_codes where usertype= ".UserType::Dealer." order by store_name");
+$objs = $db->fetchObjectArray("select * from it_codes where usertype= ".UserType::Dealer." and id in (select store_id from executive_assign where exe_id=".getCurrUser()->id." ) order by store_name");
 
 if($this->storeid== "-1"){
     $storeid = array();     
-    $allstoreArrays=$db->fetchObjectArray("select id from it_codes where usertype = 4");
+    $allstoreArrays=$db->fetchObjectArray("select id from it_codes where usertype = 4 ");
     foreach($allstoreArrays as $storeArray){
         foreach($storeArray as $store){
             array_push($storeid,$store);

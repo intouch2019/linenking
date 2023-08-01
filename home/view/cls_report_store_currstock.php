@@ -180,22 +180,27 @@ function move(listBoxTo,optionValue,optionDisplayText){
                     <option value="-1" <?php echo $defaultSel;?>>All Stores</option> 
 <?php
  $objs = array();
- if($this->currUser->usertype == UserType::BHMAcountant ) {
-$objs = $db->fetchObjectArray("select * from it_codes where usertype=".UserType::Dealer." and  (is_bhmtallyxml=1 or store_type=3) order by store_name");
+// if($this->currUser->usertype == UserType::BHMAcountant ) {
+//$objs = $db->fetchObjectArray("select * from it_codes where usertype=".UserType::Dealer." and  (is_bhmtallyxml=1 or store_type=3) order by store_name");
+// }else{
+//     $objs = $db->fetchObjectArray("select * from it_codes where usertype=".UserType::Dealer." order by store_name");
+// }
+if($this->currUser->usertype == UserType::Dealer ) {
+$objs = $db->fetchObjectArray("select * from it_codes where usertype=".UserType::Dealer." and  id= ".getCurrUser()->id." order by store_name");
  }else{
-     $objs = $db->fetchObjectArray("select * from it_codes where usertype=".UserType::Dealer." order by store_name");
+     $objs = $db->fetchObjectArray("select id,store_name from it_codes where usertype=4 and id in (select store_id from executive_assign where exe_id=".getCurrUser()->id." ) order by store_name");    
  }
-
 if($this->storeidreport == "-1"){
     $storeid = array();
     $allstoreArrays=array();
-     if($this->currUser->usertype == UserType::BHMAcountant ) {
-     $allstoreArrays=$db->fetchObjectArray("select id from it_codes where usertype = ".UserType::Dealer." and  (is_bhmtallyxml=1 or store_type=3)") ;
-      }
-      else{
-        $allstoreArrays=$db->fetchObjectArray("select id from it_codes where usertype = ".UserType::Dealer);  
-      } 
-    
+//     if($this->currUser->usertype == UserType::BHMAcountant ) {
+//     $allstoreArrays=$db->fetchObjectArray("select id from it_codes where usertype = ".UserType::Dealer." and  (is_bhmtallyxml=1 or store_type=3)") ;
+//      }
+//      else{
+//        $allstoreArrays=$db->fetchObjectArray("select id from it_codes where usertype = ".UserType::Dealer);  
+//      } 
+    $allstoreArrays = $db->fetchObjectArray("select id from it_codes where usertype = " . UserType::Dealer ."and id in (select store_id from executive_assign where exe_id=".getCurrUser()->id." )");
+                
     foreach($allstoreArrays as $storeArray){
         foreach($storeArray as $store){
             array_push($storeid,$store);
@@ -295,11 +300,9 @@ foreach ($objs as $obj) {
             $group_by = array();$gClause="";
             $storeClause="";
             if($this->storeidreport == "-1"){
-                 if($this->currUser->usertype == UserType::BHMAcountant ) { 
-              $storeClause = " select id from it_codes c where usertype = ".UserType::Dealer." and  (is_bhmtallyxml=1 or store_type=3)" ;
-                }else{
-                    $storeClause = " select id from it_codes c where usertype = ".UserType::Dealer ;
-                } 
+             
+              $storeClause = "select store_id from executive_assign where exe_id=".getCurrUser()->id." " ;
+               
             }else{
                 $storeClause = $this->storeidreport;
             }
@@ -335,8 +338,10 @@ foreach ($objs as $obj) {
             //echo $query2;
             $query = "select $queryfields";
             $query .= " from it_codes c,it_current_stock cs, it_items i, it_categories ctg, it_brands br, it_styles st, it_sizes si, it_fabric_types fb, it_materials mt, it_prod_types pr, it_mfg_by mfg  where c.id = cs.store_id and cs.store_id in ( $storeClause ) and cs.barcode = i.barcode and  ctg.id=i.ctg_id and br.id=i.brand_id and st.id=i.style_id and si.id=i.size_id and pr.id=i.prod_type_id and mt.id=i.material_id and fb.id=i.fabric_type_id and mfg.id=i.mfg_id and cs.store_id = c.id and cs.quantity !=0 $gClause ";
-//            echo $query;
+           // echo $query;
+            
             $result = $db->execQuery($query);
+                    
 
 ?>
         <br /><div style='margin-left:40px; padding-left:15px; height:24px;width:130px;border: solid gray 1px;background:#F5F5F5;padding-top:4px;'>
