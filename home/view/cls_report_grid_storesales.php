@@ -157,11 +157,11 @@ var mrp = '<?php echo $this->mrp; ?>';
                             <option value="-1" <?php echo $defaultSel;?>>All Stores</option> 
                             <?php
 //                            $objs = $db->fetchObjectArray("select * from it_codes where usertype= ".UserType::Dealer." and id in (select distinct store_id from it_orders ) order by store_name");
-                            $objs = $db->fetchObjectArray("select id,store_name from it_codes where usertype= ".UserType::Dealer." and id in (select distinct store_id from it_orders ) order by store_name");
+                            $objs = $db->fetchObjectArray("select id,store_name from it_codes where usertype= ".UserType::Dealer." and id in (select distinct store_id from it_orders ) and id in (select store_id from executive_assign where exe_id=".getCurrUser()->id." ) order by store_name");
 
                             if ($this->storeidreport == "-1") {
                                 $storeid = array();
-                                $allstoreArrays = $db->fetchObjectArray("select id from it_codes where usertype = ".UserType::Dealer );
+                                $allstoreArrays = $db->fetchObjectArray("select id from it_codes where usertype = ".UserType::Dealer." and id in (select store_id from executive_assign where exe_id=".getCurrUser()->id." )");
                                 foreach ($allstoreArrays as $storeArray) {
                                     foreach ($storeArray as $store) {
                                         array_push($storeid, $store);
@@ -254,10 +254,12 @@ var mrp = '<?php echo $this->mrp; ?>';
                if(isset($this->storeidreport) && trim($this->storeidreport) != "" ){
                    if($this->storeidreport != "-1"){
                     $storeClause = " and oi.store_id in ( $this->storeidreport ) ";
+                   }else if($this->storeidreport == "-1"){
+                       $storeClause = " and oi.store_id in ( select store_id from executive_assign where exe_id=".getCurrUser()->id." ) ";
                    }else{$storeClause="";}
                    //$query = "select oi.store_id, sum( oi.quantity ) as salesqty , oi.item_id , i.id , i.style_id , i.ctg_id, c.name,i.prod_type_id, p.name,i.size_id from it_order_items oi , it_orders o , it_items i ,it_categories c , it_prod_types p , it_ck_designs d where oi.order_id = o.id and oi.item_id = i.id and i.ctg_id = c.id and i.prod_type_id = p.id and i.design_id = d.id and d.active = 1 and oi.quantity > 0  $storeClause $mrpqry $ptypeqry $dQuery group by  i.ctg_id  ";
                    $query = "select oi.store_id, (case when (o.tickettype = 0 ) then sum(oi.quantity) else 0 end) as salesqty , oi.item_id , i.id , i.style_id , i.ctg_id, c.name,i.prod_type_id, p.name,i.size_id from it_order_items oi , it_orders o , it_items i ,it_categories c , it_prod_types p , it_ck_designs d where oi.order_id = o.id and oi.item_id = i.id and i.ctg_id = c.id and i.prod_type_id = p.id and i.design_id = d.id  $storeClause $mrpqry $ptypeqry $dQuery group by  i.ctg_id  ";  //and d.active = 1 and oi.quantity > 0 
-//                   print $query;
+                   //print $query;
                    $storeSalesObjs = $db->fetchObjectArray($query);
               
                 if($storeSalesObjs){
