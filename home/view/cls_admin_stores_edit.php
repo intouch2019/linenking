@@ -42,7 +42,18 @@ class cls_admin_stores_edit extends cls_renderer {
         ?>
 
  <script>
-                var storeid;
+               
+    function selectall(){
+
+                let selectedStore;
+                var listRight = document.getElementById('selectRight');
+                    for (selectedStore = 0; selectedStore <= listRight.options.length - 1; selectedStore++) {
+                       listRight.options[selectedStore].selected = true;
+                }
+            }
+    
+    
+    var storeid;
             function moveToRightOrLeft(side) {
                 var listLeft = document.getElementById('selectLeft');
                 var selectedAllStoreleft = listLeft.options.selectedIndex;
@@ -290,7 +301,7 @@ if(discval>0){
                         </script>
 <div class="grid_10">
     <fieldset>
-        <legend>Edit Store</legend>
+        <legend>Edit Stores</legend>
         <div class="grid_12">
             <div class="addstore">
                 <input type="hidden"   value="< Back" id="back" onclick="backtoedit();"><br>
@@ -792,7 +803,7 @@ if(discval>0){
                         <span id="statusMsg" class="<?php echo $formResult->cssClass; ?>" style="display:<?php echo $formResult->showhide; ?>;"><?php echo $formResult->status; ?></span>
                     </p>
                     <p class="grid_12" align="center">
-                    <input type="submit" value="Update" style="width:35%">
+                    <input type="submit" value="Update" style="width:35%" onClick="javaScript:selectall();">
                     </p>
                 </form>
             </div>

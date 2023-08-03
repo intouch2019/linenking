@@ -37,7 +37,7 @@ $(function() {
       oTable = $('#tb_allinvoices').dataTable({
                     "bProcessing": true,
                     "bServerSide": true,
-                    "aoColumns": [null,null, null, null, null, {"bSortable": false},{"bSortable": false}, {"bSortable": false}],                     
+                    "aoColumns": [null,null, null, null,null, null, {"bSortable": false},{"bSortable": false}, {"bSortable": false}],                     
                     "aaSorting": [[0,"desc"]],                    
                     "sAjaxSource": url,
                     "iDisplayLength": 50
@@ -89,6 +89,7 @@ function showCKInvoiceDetails( invid){
 						<th>Date</th>
 						<th style="text-align:right;">Amount</th>
 						<th style="text-align:right;">Quantity</th>
+                                                <th style="text-align:right;">Iorn No</th>
 						<th>Sync Date</th>
                                                 <th>Store Name</th>
 						<th>SP Invoice</th>

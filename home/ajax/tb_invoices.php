@@ -14,7 +14,7 @@ if (!$currStore) {
 }
 //$logger = new clsLogger();
 
-$aColumns = array( 'id','invoice_no', 'invoice_dt', 'invoice_amt', 'invoice_qty','sync_date', 'store_name', 'details');
+$aColumns = array( 'id','invoice_no', 'invoice_dt', 'invoice_amt', 'invoice_qty','iorn_no','sync_date', 'store_name', 'details');
 $sColumns = array('i.id','i.invoice_no', 'i.invoice_dt', 'i.invoice_amt','i.invoice_qty','i.createtime');
 /* Indexed column (used for fast and accurate table cardinality) */
 //$sIndexColumn = "iid";
