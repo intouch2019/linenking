@@ -25,6 +25,14 @@ Your session has expired. Click <a href="">here</a> to login.
         }
         ?>
 <script>
+    function selectall(){
+
+                let selectedStore;
+                var listRight = document.getElementById('selectRight');
+                    for (selectedStore = 0; selectedStore <= listRight.options.length - 1; selectedStore++) {
+                       listRight.options[selectedStore].selected = true;
+                }
+            }
             function moveToRightOrLeft(side) {
                 var listLeft = document.getElementById('selectLeft');
                 var selectedAllStoreleft = listLeft.options.selectedIndex;
@@ -281,7 +289,7 @@ Your session has expired. Click <a href="">here</a> to login.
                     <span id="statusMsg" class="<?php echo $formResult->cssClass; ?>" style="display:<?php echo $formResult->showhide; ?>;"><?php echo $formResult->status; ?></span>
                 </p>
                         <?php } ?>
-                <input type="submit" value="Update">
+                <input type="submit" value="Update" onClick="javaScript:selectall();">
                 <a href="admin/users"><Button>Cancel</Button></a>                
             </form>
         </fieldset>
