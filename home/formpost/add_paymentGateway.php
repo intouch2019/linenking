@@ -148,7 +148,7 @@ echo "$currentDate: " . $threeMonthsLater;
                 $updatequery = "update it_payment_gateway set Invoice_amtid='$id', reference_id='$reference_id', Send_response='$response',Paymenturl='$short_url',status='$status',is_sent=1, updatetime = now() where id=$inserted_id ";
                 $updatedresponse = $db->execUpdate($updatequery);
 
-                $query = "update it_codes set inactive=1, inactivated_by = $storeid , inactivating_reason = '$description',paymentlink='$short_url',  inactive_dttm = now() where id =$storeid";
+                $query = "update it_codes set inactive=1, inactivated_by =100, inactivating_reason = '$description',paymentlink='$short_url',  inactive_dttm = now() where id =$storeid";
                 $rowaffected = $db->execUpdate($query);
 
                 $success = "Payment request sent to store - .'$obj->store_name";
