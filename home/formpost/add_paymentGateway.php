@@ -53,6 +53,10 @@ $serverCh = new clsServerChanges();
 if (count($errors) == 0) {
     try {
 
+        $currentDate = time();
+$threeMonthsLater = strtotime("+3 months", $currentDate);
+echo "$currentDate: " . $threeMonthsLater;
+        
 
         $query = "select id,store_name from it_codes where id = $storeid";
         $obj = $db->fetchObject($query);
@@ -83,7 +87,7 @@ if (count($errors) == 0) {
   "currency": "INR",
   "accept_partial": false,
   "first_min_partial_amount": ' . $mrp2 . ',
-  "expire_by": 1691097057,
+  "expire_by":'.$threeMonthsLater.',
   "reference_id": "' . $invoiceid . '",
   "description": " ' . $description . '",
   "customer": {
