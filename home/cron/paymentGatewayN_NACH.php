@@ -139,7 +139,7 @@ if (isset($storeobjs)) {
 
                     $updatedresponse = $db->execUpdate($updatequery);
 
-                    $query = "update it_codes set inactive=1, inactivated_by = $inv->store_id ,paymentlink='$short_url',inactivating_reason='Payment for the following invoice no :  $inv->invoice_no. of amount of : $mrp',  inactive_dttm = now() where id = $inv->store_id";
+                    $query = "update it_codes set inactive=1, inactivated_by =100 ,paymentlink='$short_url',inactivating_reason='Payment for the following invoice no :  $inv->invoice_no. of amount of : $mrp',  inactive_dttm = now() where id = $inv->store_id";
 
                     $rowaffected = $db->execUpdate($query);
 

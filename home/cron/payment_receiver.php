@@ -1,11 +1,11 @@
 <?php
+
 ini_set('memory_limit', '-1');
 ini_set('max_execution_time', '-1');
 require_once("/var/www/html/linenking/it_config.php");
 require_once("session_check.php");
 require_once "lib/db/DBConn.php";
 require_once "lib/serverChanges/clsServerChanges.php";
-
 
 $db = new DBConn();
 $stats = "";
@@ -41,10 +41,9 @@ if (isset($pay_done)) {
         $var = json_decode($response, true);
 
         print_r($response);
-    
-        if (isset($var['status'])) {
-          $stats = $var['status'];
 
+        if (isset($var['status'])) {
+            $stats = $var['status'];
         }
 
         if (isset($var['amount_paid'])) {
@@ -52,7 +51,7 @@ if (isset($pay_done)) {
         }
 
 
-        if ($stats == "created" || $stats == "paid" || $stats == "failed") {
+        if ($stats == "created" || $stats == "paid" || $stats == "failed" || $stats == "expired") {
 
             if ($stats == "paid") {
                 $updatequery = "update it_payment_gateway set Receive_response='$response',status='$stats',  amount_paid='$Amt_paid',is_sent=2, updatetime = now() where id=$paysep->id";
@@ -64,7 +63,7 @@ if (isset($pay_done)) {
                 $invoice_done = $db->fetchObject("select id,store_name from it_codes where id=$paysep->store_id and is_natch_required=0 and store_type !=3");
 
                 if (isset($invoice_done) && $invoice_done->id) {
-                
+
                     $inv_ups = "update it_sp_invoices set non_nach_p=2 where store_id=$invoice_done->id and invoice_no=$paysep->invoice_nos";
                     $inv_up = $db->execUpdate($inv_ups);
                 }
@@ -74,6 +73,13 @@ if (isset($pay_done)) {
                 $updatedre = $db->execUpdate($updatequ);
                 $query4 = "update it_codes set inactivating_reason='Payment failed please try again later' where id =$paysep->store_id";
                 $quu = $db->execUpdate($query4);
+                
+            } elseif ($stats == "expired") {
+
+                $updatequery = "update it_payment_gateway set Receive_response='$response',is_sent=3,status='$stats', updatetime = now() where id=$paysep->id";
+                $updatedresponse = $db->execUpdate($updatequery);
+                $query3 = "update it_codes set inactivating_reason='Payment link is expired please contact Account Team',paymentlink='' where id =$paysep->store_id";
+                $qu = $db->execUpdate($query3);
             } else {
                 continue;
             }
