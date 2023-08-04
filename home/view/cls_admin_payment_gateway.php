@@ -122,7 +122,7 @@ class cls_admin_payment_gateway extends cls_renderer {
                                 <option value=""></option> 
                                 <?php
                                 $form_value = $this->getFieldValue('store');
-                                $objs = $db->fetchObjectArray("select id,store_name from it_codes where usertype=" . UserType::Dealer . " and is_closed=0 and is_natch_required=1 order by store_name");
+                                $objs = $db->fetchObjectArray("select id,store_name from it_codes where usertype=" . UserType::Dealer . " and is_closed=0 order by store_name");
                                 foreach ($objs as $obj) {
                                     $selected = "";
                                     if ($obj->id == $this->sid) {
