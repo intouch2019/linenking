@@ -86,7 +86,6 @@ echo "$currentDate: " . $threeMonthsLater;
   "amount":' . $mrp2 . ',
   "currency": "INR",
   "accept_partial": false,
-  "first_min_partial_amount": ' . $mrp2 . ',
   "expire_by":'.$threeMonthsLater.',
   "reference_id": "' . $invoiceid . '",
   "description": " ' . $description . '",
