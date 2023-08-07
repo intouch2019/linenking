@@ -75,7 +75,6 @@ if (isset($storeobjs)) {
   "amount":' . $mrp2 . ',
   "currency": "INR",
   "accept_partial": false,
-  "first_min_partial_amount": ' . $mrp2 . ',
   "expire_by":'.$threeMonthsLater.',
    "reference_id": "' . $inv->invoice_no . '",
   "description": "Payment for the following invoice no :'.$inv->invoice_no.' of amount of : '.$mrp.'",
