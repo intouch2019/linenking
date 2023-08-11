@@ -18,6 +18,69 @@ class cls_admin_stores_add extends cls_renderer {
 <script type="text/javascript" src="js/expand.js"></script>
 <script language="JavaScript" src="js/tigra/validator.js"></script>
 <script type="text/javascript">
+     var floorCount = 0; // Initialize the floor count
+
+            function removeTextbox(event) {
+                const clickedButtonId = event.target.id;
+        //alert("Button with ID '" + clickedButtonId + "' was clicked.");
+
+                const flcount = floorCount;
+                for (let i = clickedButtonId; i <= flcount; i++) {
+                    document.getElementById("lbl" + i).remove();
+                    document.getElementById("textbx" + i).remove();
+                    document.getElementById("addbtn" + i).remove();
+                    document.getElementById(i).remove();
+                    document.getElementById("rmtag" + i).remove();
+                    document.getElementById("rmtagn" + i).remove();
+                    floorCount--;
+                }
+        //alert(floorCount);
+
+
+            }
+            function addNewTextbox() {
+                var container = document.getElementById("textboxContainer");
+
+                // Create a new descriptive label
+                var label = document.createElement("label");
+                label.textContent = "Floor " + (++floorCount) + " Carpet Area (Sq Ft): ";
+                label.id = "lbl" + floorCount;
+        //alert(floorCount);
+                // Create a new input textbox
+                var newTextbox = document.createElement("input");
+                newTextbox.type = "text";
+                newTextbox.name = "carpetarea[]";
+                newTextbox.placeholder = "Enter floor " + floorCount + " area";
+                newTextbox.id = "textbx" + floorCount;
+
+                // Create a new "Add" button
+                var addButton = document.createElement("button");
+                addButton.type = "button";
+                addButton.textContent = "+";
+                addButton.onclick = addNewTextbox; // Assign the function to the button's click event
+                addButton.id = "addbtn" + floorCount;
+
+                var removebtn = document.createElement("button");
+                removebtn.id = (floorCount);
+                removebtn.type = "button";
+                removebtn.textContent = "-";
+                removebtn.onclick = removeTextbox; // Assign the function to the button's click event
+
+                var brTag = document.createElement("br");
+                brTag.id = "rmtag" + floorCount;
+                var brTagg = document.createElement("br");
+                brTagg.id = "rmtagn" + floorCount; //
+
+                // Append the new elements to the container
+                container.appendChild(brTag);
+                container.appendChild(label);
+                container.appendChild(newTextbox);
+                container.appendChild(addButton);
+                container.appendChild(removebtn);
+
+                container.appendChild(brTagg);
+
+            }
      function moveToRightOrLeft(side) {
                 var listLeft = document.getElementById('selectLeft');
                 var selectedAllStoreleft = listLeft.options.selectedIndex;
@@ -657,6 +720,26 @@ if(discval>0){
                                     </div>
                                 </div>
                                 <!-- assign user to store end-->
+                                 <!--		store carpet and fasal start-->
+
+<p class="grid_12">
+                                    <br><label>Store Facade  (Ft): </label>
+                                    <input type="text" name="facade" style='width:30%' placeholder="Enter facade (Ft) Area">
+
+                                </p>
+
+                                <div class="grid_12">
+                                    <label style="font-size: 13px; font-weight: bold;">Store Carpet Area (Sq Ft): </label><br>
+                                    <div id="textboxContainer">
+                                        <br><label>Carpet Area (Sq Ft): </label>
+                                        <input type="text" name="carpetarea[]" placeholder="Enter carpet area">
+                                        <button type="button" onclick="addNewTextbox()">+</button>
+
+                                        <br>
+                                    </div>
+                                </div>
+                                
+                                <!--		store carpet and fasal End-->
                   <p class="grid_12">
                                     <label>Is Store Closed: </label><br>
                                     <input type ="radio" name="is_closed" id="is_closed" style="width:5%"  value="0" checked="checked">No

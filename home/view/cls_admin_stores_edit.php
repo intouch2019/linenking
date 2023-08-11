@@ -42,6 +42,118 @@ class cls_admin_stores_edit extends cls_renderer {
         ?>
 
  <script>
+     
+
+            var floorCount = 0; // Initialize the floor count
+            var lastremoved = 0;
+            var j = 0;
+
+            function removeTextbox(evnid) {
+        //    alert("hii");
+
+ var flor = document.getElementById('hiddenField').value;
+                if (floorCount != flor && flor > floorCount && j == 0) {
+                    j++;
+                    floorCount = flor;
+                }
+                const clickedButtonId = evnid;
+//        alert("Button with ID '" + clickedButtonId + "' was clicked.");
+//        alert(floorCount);
+        
+
+                const flcount = floorCount;
+                for (let i = clickedButtonId; i <= flcount; i++) {
+                    //alert(i);
+                    document.getElementById("lbl" + i).remove();
+                    document.getElementById("textbx" + i).remove();
+                    document.getElementById("addbtn" + i).remove();
+                    document.getElementById(i).remove();
+                    document.getElementById("rmtag" + i).remove();
+                    document.getElementById("rmtagn" + i).remove();
+                    floorCount--;
+                }
+                lastremoved = floorCount + 1;
+        //alert(floorCount);
+
+
+            }
+            function removeTextboxx(event) {
+                const clickedButtonId = event.target.id;
+        //alert("Button with ID '" + clickedButtonId + "' was clicked.");
+         var flor = document.getElementById('hiddenField').value;
+                if (floorCount != flor && flor > floorCount && j == 0) {
+                    j++;
+                    floorCount = flor;
+                }
+
+                const flcount = floorCount;
+                for (let i = clickedButtonId; i <= flcount; i++) {
+                    document.getElementById("lbl" + i).remove();
+                    document.getElementById("textbx" + i).remove();
+                    document.getElementById("addbtn" + i).remove();
+                    document.getElementById(i).remove();
+                    document.getElementById("rmtag" + i).remove();
+                    document.getElementById("rmtagn" + i).remove();
+                    floorCount--;
+                }
+        //alert(floorCount);
+
+
+            }
+            function addNewTextbox() {
+                var flor = document.getElementById('hiddenField').value;
+                if (floorCount != flor && flor > floorCount && j == 0) {
+                    j++;
+                    floorCount = flor;
+                }
+
+                var container = document.getElementById("textboxContainer");
+
+                // Create a new descriptive label
+                var label = document.createElement("label");
+                label.textContent = "Floor " + (++floorCount) + " Carpet Area (Sq Ft): ";
+                label.id = "lbl" + floorCount;
+
+                // Create a new input textbox
+                var newTextbox = document.createElement("input");
+                newTextbox.type = "text";
+                newTextbox.name = "carpetarea[]";
+                newTextbox.placeholder = "Enter floor " + floorCount + " area";
+                newTextbox.id = "textbx" + floorCount;
+
+                // Create a new "Add" button
+                var addButton = document.createElement("button");
+                addButton.type = "button";
+                addButton.textContent = "+";
+                addButton.onclick = addNewTextbox; // Assign the function to the button's click event
+                addButton.id = "addbtn" + floorCount;
+
+                var removebtn = document.createElement("button");
+                removebtn.id = (floorCount);
+                removebtn.type = "button";
+                removebtn.textContent = "-";
+                //alert(floorCount);
+                removebtn.onclick = removeTextboxx; // Assign the function to the button's click event
+//                removebtn.onclick = function () {
+//                    removeTextbox(floorCount);
+//                };
+
+
+                var brTag = document.createElement("br");
+                brTag.id = "rmtag" + floorCount;
+                var brTagg = document.createElement("br");
+                brTagg.id = "rmtagn" + floorCount; //
+
+                // Append the new elements to the container
+                container.appendChild(brTag);
+                container.appendChild(label);
+                container.appendChild(newTextbox);
+                container.appendChild(addButton);
+                container.appendChild(removebtn);
+                container.appendChild(brTagg);
+
+            }
+
                
     function selectall(){
 
@@ -139,7 +251,7 @@ class cls_admin_stores_edit extends cls_renderer {
                                         }
                                         
                         function Shownatch() {
-                            
+                            //alert("Hii");
                                             document.getElementById("natch").style.display = "block";
                                         }
                                         
@@ -720,6 +832,50 @@ if(discval>0){
                                     </div>
                                 </div>
                                     <!--		user assign store end-->
+                                    <!--		store carpet and fasal start-->
+                                <p class="grid_12">
+                                    <br><label>Store Facade  (Ft): </label>
+                                    <input type="text" name="facade" style='width:30%' placeholder="Enter facade (Ft) Area" value="<?php echo $this->getFieldValue('facade', $store->facade); ?>">
+
+                                </p>
+                               
+                                <?php
+                                $dataArray = explode(",", $store->carpet);
+                                ?>
+                                <div class="grid_12">
+                                    <label style="font-size: 13px; font-weight: bold;">Store Carpet Area (Sq Ft): </label><br>
+                                    <div id="textboxContainer">
+                                        <?php
+                                        foreach ($dataArray as $index => $value) {
+                                            $floorNumber = $index ;
+                                            ?>
+                                            <br id="rmtag<?php echo $floorNumber; ?>">
+                                            
+                                             <?php if ($floorNumber==0) { ?>
+                                            <label id="lbl<?php echo $floorNumber; ?>">Store Carpet Area (Sq Ft): </label>
+                                  <input type="text" id="textbx<?php echo $floorNumber; ?>" name="carpetarea[]" placeholder="Enter Carpet area" value="<?php echo $value; ?>">
+                            <?php } else { ?>
+
+<label id="lbl<?php echo $floorNumber; ?>">Floor <?php echo $floorNumber; ?> Carpet Area (Sq Ft): </label>
+  <input type="text" id="textbx<?php echo $floorNumber; ?>" name="carpetarea[]" placeholder="Enter floor <?php echo $floorNumber; ?> area" value="<?php echo $value; ?>">
+
+
+                            <?php } ?>
+                                          
+                                            <button type="button" id="addbtn<?php echo $floorNumber; ?>" onclick="addNewTextbox()">+</button>
+                                            <button type="button" id="<?php echo $floorNumber; ?>"  onclick="removeTextbox(<?php echo $floorNumber; ?>)">-</button>
+
+
+                                            <br id="rmtagn<?php echo $floorNumber; ?>">
+                <?php
+            }
+            ?>
+                                        <input type="hidden" id="hiddenField" value="<?php echo $floorNumber; ?>" />
+                                    </div>
+                                </div>
+
+                                
+                                <!--		store carpet and fasal End-->
                     
                     <p class="grid_12">
                         <label>Is Store Closed: </label><br>
