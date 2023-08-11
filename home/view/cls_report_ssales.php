@@ -86,6 +86,18 @@ class cls_report_ssales extends cls_renderer{
                     $this->storeidreport = $this->currUser->id;
                     $this->storeloggedin = 1;                    
                 }
+                //facade start
+        if (isset($params['facade'])) {
+
+            $this->fields['facade'] = $params['facade'];
+            $this->facade = $params['facade'];
+        } else
+            $this->fields['facade'] = "0";
+        if (isset($params['carpet'])) {
+            $this->fields['carpet'] = $params['carpet'];
+            $this->carpet = $params['carpet'];
+        } else
+            $this->fields['carpet'] = "0";
 //                if (isset($params['loyalty'])){ $this->fields['loyalty'] =$params['loyalty']; $this->loyalty = $params['loyalty']; }else{ $this->fields['loyalty'] = "0"; }
                 
                 if (isset($params['area'])) { $this->fields['area']=$params['area']; $this->area = $params['area']; } else $this->fields['area']="0";
@@ -365,6 +377,8 @@ foreach ($objs as $obj) {
                                 <td rowspan="3" colspan="2" align="right"><label>
                                     <select name="selectLeft" size="10" width="100%" style="width:200px;" id="selectLeft"> 
                                           <option value="store">Store Name</option> 
+                                           <option value="facade">Facade Area</option>
+                                                    <option value="carpet">Carpet Area</option>
 <!--                                          <option value="transaction">Transaction Type</option>-->
                                           <option value="itemctg">Item Category</option>
                                           <option value="hsncode">HSN Code</option>
@@ -503,7 +517,37 @@ foreach ($objs as $obj) {
                         if ($field=="month") {$tableheaders.="Month:"; $queryfields .= " CONCAT(monthname(o.bill_datetime),'-',year(o.bill_datetime)) as month , ";$group_by[] = "month"; $total_td .= "<td></td>";}
                         if ($field=="custname") {$tableheaders.="Customer Name:"; $queryfields .= " o.cust_name as customername , ";$group_by[] = "customername"; $total_td .= "<td></td>";}
                         if ($field=="custphone") {$tableheaders.="Customer Phone:"; $queryfields .= "LEFT(o.cust_phone,10) as customerphone , ";$group_by[] = "customerphone"; $total_td .= "<td></td>";}
-                       
+                       if ($field == "facade") {
+                                        $tableheaders .= "Store Facade Area:";
+                                        $queryfields .= "c.facade,";
+                                        //$group_by[] = "o.store_id";
+                                        $total_td .= "<td></td>";
+                                    }if ($field == "carpet") {
+                                        //strat
+                                        $alldealersobj = $db->fetchObjectArray("select carpet from it_codes where usertype=4");
+                                        $maxCarpetLength = 0;
+                                        foreach ($alldealersobj as $dealer) {
+                                            $carpetArray = explode(',', $dealer->carpet); // Split the string by comma
+                                            $numberOfValues = count($carpetArray);
+                                            if ($numberOfValues > $maxCarpetLength) {
+                                                $maxCarpetLength = $numberOfValues;
+                                            }
+
+//        }       
+                                        }
+
+                                        //end
+                                        $tableheaders .= "Store Carpet Area:";
+
+                                        for ($k = 1; $k < $maxCarpetLength; $k++) {
+                                            $tableheaders .= "Store Floor " . $k . " Area:";
+                                            $total_td .= "<td></td>";
+                                        } $tableheaders .= "Total Carpet Area:";
+                                        $total_td .= "<td></td>";
+                                        $queryfields .= " c.carpet,";
+                                        //$group_by[] = "o.store_id";
+                                        $total_td .= "<td></td>";
+                                    }
                    //   if ($field=="cust") {$tableheaders.="Customer:"; $queryfields .= " CONCAT(cust_name,' : ',cust_phone) as customer , ";$group_by[] = "customer"; $total_td .= "<td></td>";}
                         /*if ($field=="store") { $tableheaders.="Store Name:"; $queryfields .= "c.store_name,"; $group_by[] = "o.store_id"; $total_td .= "<td></td>"; }
                         if ($field=="itemctg") {$tableheaders.="Category:"; $queryfields .= "i.ctg_id as itemctg,"; $group_by[] = "i.ctg_id"; $total_td .= "<td></td>"; }
@@ -737,7 +781,34 @@ foreach ($objs as $obj) {
                            $t_str = $statusname;
                        }
                        $value = $t_str;
-                   }
+                   }else if ($field == "carpet") {
+                                        $numberArray = explode(",", $value);
+                                        //$contarry=count($numberArray);
+//                                print_r(count($numberArray));
+//                                exit;
+                                        $value = '';
+                                        for ($k = 0; $k < $maxCarpetLength; $k++) {
+//                                     echo $contarry;
+//                                     echo "??";
+                                            //echo $numberArray[$k];
+                                            if (!isset($numberArray[$k])) {
+                                                $value .= "<td>-</td>";
+                                                $tcell[] .= trim("");
+                                            } else if ((!isset($numberArray[$k])) && $numberArray[$k] == "") {
+                                                $value .= "<td>-</td>";
+                                                $tcell[] .= trim("");
+                                            } else {
+                                                $value .= "<td>" . $numberArray[$k] . "</td>";
+                                                $tcell[] .= trim($numberArray[$k]);
+                                            }
+                                        }
+                                        $sum = 0;
+                                        foreach ($numberArray as $number) {
+                                            $sum += intval($number);
+                                        }
+                                        $value .= "<td>" . $sum . "</td>";
+                                        $tcell[] .= trim($sum);
+                                    } 
                    else if($field == "salesman_code"){
                        $salesman_code="";
                        if ($value=="" || $value==null) {
@@ -749,9 +820,16 @@ foreach ($objs as $obj) {
                        //$t_str = $mfg_by[$value];
                        $value = $salesman_code;
                    }
-                   $tcell[] .= trim($value);
+                   if ($field != "carpet") {
+                                        $tcell[] .= trim($value);
+                                    }
+                   //$tcell[] .= trim($value);
                    if($write_htm){
+                        if ($field == "carpet") {
+                                            fwrite($fp2, trim($value));
+                                        } else {
                     fwrite($fp2,"<td>".trim($value)."</td>");
+                                        }
                    }
                 }
                 fputcsv($fp, $tcell,',',chr(0));
