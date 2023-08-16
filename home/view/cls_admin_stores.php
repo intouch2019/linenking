@@ -106,7 +106,7 @@ class cls_admin_stores extends cls_renderer {
     </div>
 <div class="grid_10">
                 <?php
-                if($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::CKAdmin || $this->currStore->usertype == UserType::Accounts || $this->currStore->id==100 || $this->currStore->id==103 ){
+                if($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::CKAdmin || $this->currStore->usertype == UserType::Accounts || $this->currStore->id==100 || $this->currStore->id==103 || $this->currStore->usertype == UserType::Manager){
             $objs = $db->fetchObjectArray("select * from it_codes where usertype=4 and is_closed=0 order by createtime desc");
                 }else{
                      echo '<script>alert("You are not allowed to edit the stores.");</script>';
