@@ -134,6 +134,10 @@ function checkfile($newdir) {
                     $imltpflag = true;
                     $return = "Creditpoint must be Numeric";
                 }
+                if ($creditpoint < 0){
+                    $imltpflag = true;
+                    $return = "Creditpoint can not be Negative";
+                }
             }
             if ($colno == 3) {
                 $remark = $value;
