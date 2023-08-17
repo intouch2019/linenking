@@ -23,7 +23,7 @@ if(isset($store_id) && $store_id !="")
 try{
     $db = new DBConn();
    // $dquery="delete from it_store_redeem_points where id=$itemid and store_id=$store_id";
-   $dquery=" update it_store_redeem_points set active=0 where id=$id and store_id=$store_id";
+   $dquery=" update it_store_redeem_points set active=0, is_completely_used=1 where id=$id and store_id=$store_id";
 //    echo $dquery;
     $db->execUpdate($dquery);
     
