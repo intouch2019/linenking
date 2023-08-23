@@ -953,7 +953,7 @@ class cls_admin_stores_edit extends cls_renderer {
                                 <span id="statusMsg" class="<?php echo $formResult->cssClass; ?>" style="display:<?php echo $formResult->showhide; ?>;"><?php echo $formResult->status; ?></span>
                             </p>
                             <p class="grid_12" align="center">
-        <?php if (!$this->currStore->usertype == UserType::Manager) { ?>
+        <?php if ($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::CKAdmin) { ?>
                                     <input type="submit" value="Update" style="width:35%" onClick="javaScript:selectall();">
         <?php } ?>
                             </p>
