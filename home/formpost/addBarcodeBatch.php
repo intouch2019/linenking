@@ -150,6 +150,11 @@ try {
         fputs($fp, "Batch Id,Barcode,Manufacturer,Product,Design,MRP,Brand,Style,Size,Production Type,Material,Fabric Type,Units\n");
         while ($item = $result->fetch_object()) {
             fputs($fp, "$item->batch_id,$item->barcode,$item->mfg_by,$item->category,$item->design_no,$item->MRP,$item->brand,$item->style,$item->size,$item->prod_type,$item->material,$item->fabric_type,$item->num_units\n");
+       
+             $queryyy= "insert into it_new_barcode_batch_items set  bar_id=$new_bar_batch , batch_id='$batch_id',Barcode='$item->barcode', Manufacturer='$item->mfg_by',Product='$item->category',Design='$item->design_no',MRP='$item->MRP',Brand='$item->brand' ,Style='$item->style',Size ='$item->size',Production_Type = '$item->prod_type',Material = '$item->material',Fabric_Type = '$item->fabric_type',Units='$item->num_units'";
+       
+                 $new_bar_batchh = $db->execInsert($queryyy);
+            
         }
 
         fclose($fp);
