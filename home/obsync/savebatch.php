@@ -324,6 +324,11 @@ foreach ($arr as $orderinfo) {
          }else{
          $lastname = "";    
          }
+         
+         if(isset($tobj->isdg) && trim($tobj->isdg)!=""){
+            $sClause .= " , isdg = $tobj->isdg "; 
+         }
+         
          $phoneno = $tobj->custPhone;
          $email = $tobj->custEmail;
          if(trim($phoneno)!=""){
