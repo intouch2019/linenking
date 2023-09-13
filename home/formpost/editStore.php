@@ -308,6 +308,11 @@ if (!$store_name || !$address || !$city || !$zip || !$owner || !$phone || !$emai
                 } else {
                     $aClause = "";
                 }
+                if(isset($monthlyrent) && $monthlyrent!=""){
+                            $monthrent=$monthlyrent;
+                        }else{
+                             $monthrent=0;
+                        }
                 if(isset($facade) && $facade!=""){
                             $facad=$facade;
                         }else{
@@ -320,7 +325,7 @@ if (!$store_name || !$address || !$city || !$zip || !$owner || !$phone || !$emai
                             }
                         }
                         $resfloor = trim($multifloor, ',');
-                $query = "update it_codes set store_name=$store_name,carpet='$resfloor',facade=$facad, address=$address, city=$city, zipcode = $zipcode , owner=$owner, phone=$phone, phone2=$phone2, email=$email, email2=$email2,gstin_no=$gstin_no, tax_type = $taxtype , tally_name=$tally_name,distance= $distance,UMRN=$umrn,cust_tobe_debited=$cust_tobe_debtd,cust_ifsc_or_mcr=$cust_ifsc_mcr,cust_debit_account=$cust_debit_account,is_natch_required=$is_natch1,Area=$area,Location=$location,is_tallyxml=$is_tallyxml,state_id=$nstate,region_id=$region $aClause $sClause $addquery ";  //, tally_name=$tallyname
+                $query = "update it_codes set store_name=$store_name,carpet='$resfloor',monthlyrent=$monthrent,facade=$facad, address=$address, city=$city, zipcode = $zipcode , owner=$owner, phone=$phone, phone2=$phone2, email=$email, email2=$email2,gstin_no=$gstin_no, tax_type = $taxtype , tally_name=$tally_name,distance= $distance,UMRN=$umrn,cust_tobe_debited=$cust_tobe_debtd,cust_ifsc_or_mcr=$cust_ifsc_mcr,cust_debit_account=$cust_debit_account,is_natch_required=$is_natch1,Area=$area,Location=$location,is_tallyxml=$is_tallyxml,state_id=$nstate,region_id=$region $aClause $sClause $addquery ";  //, tally_name=$tallyname
 //                   
                 if ($password) {
                     $query .= ",password=" . $db->safe(md5($password));

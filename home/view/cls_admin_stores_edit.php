@@ -827,6 +827,10 @@ class cls_admin_stores_edit extends cls_renderer {
                                 </div>
                                 <!--		user assign store end-->
                                 <!--		store carpet and fasal start-->
+                                    <p class="grid_12">
+                                <label id="t_email">Stores Monthly Rent (Rs.): </label>
+                                <input type="text" name="monthlyrent" style='width:30%' value="<?php echo $this->getFieldValue('rent', $store->monthlyrent); ?>">
+                            </p>
                                 <p class="grid_12">
                                     <br><label>Store Facade  (Ft): </label>
                                     <input type="text" name="facade" style='width:30%' placeholder="Enter facade (Ft) Area" value="<?php echo $this->getFieldValue('facade', $store->facade); ?>">
