@@ -12,7 +12,7 @@ require_once 'Classes/PHPExcel/Writer/Excel2007.php';
 $table = "it_codes";
 $db = new DBConn();
 //$query = "select id,store_name,tally_name,IF(is_autorefill = 1, 'Yes', 'No') AS is_autorefill, IF(is_closed = 1, 'Yes', 'No') AS is_closed,IF(sbstock_active = 1, 'Yes', 'No') AS Standing_Base_Stock,owner,address,city,zipcode,phone,phone2,email,email2,vat,store_number,pancard_no,min_stock_level,server_change_id,createtime as Store_Create_Time, IF(inactive = 1, 'Yes', 'No') AS inactive,gstin_no from $table where usertype=4 order by createtime";
-$query = "select c.id,c.store_name,c.retail_saletally_name,c.retail_sale_cash_name,c.retail_sale_card_name,c.UMRN,c.facade,c.carpet,c.cust_tobe_debited,c.cust_ifsc_or_mcr,c.cust_debit_account,c.is_natch_required,c.tally_name,IF(c.is_autorefill = 1, 'Yes', 'No') AS is_autorefill, IF(c.is_closed = 1, 'Yes', 'No') AS is_closed,IF(c.sbstock_active = 1, 'Yes', 'No') AS Standing_Base_Stock,c.owner,c.address,c.city,c.zipcode,c.phone,c.phone2,c.email,c.email2,c.vat,c.store_number,c.pancard_no,c.min_stock_level,c.max_stock_level,c.server_change_id,c.createtime as Store_Create_Time, IF(c.inactive = 1, 'Yes', 'No') AS inactive,c.gstin_no,sd.dealer_discount as Dealer_Discount,(select state from states where id=c.state_id)as state,(select region from region where id=c.region_id) as region ,c.status,c.area,c.location,c.distance,IF(c.is_claim = 1, 'Yes', 'No') as is_claim,IF(c.is_cash = 1, 'Yes', 'No') as is_cash,IF(c.tax_type=1, 'Within Maharashtra','Outside Maharashtra')as tax_type,IF(c.mask_margin=0, 'Regular','55% margin')as mask_margin,IF(c.composite_billing_opted = 1, 'Yes', 'No') AS composite_billing_opted,IF(c.is_tallyxml = 1, 'Yes', 'No') AS is_tallyxml,c.store_type from $table c,it_ck_storediscount sd where usertype=4 and is_closed=0 and c.id=sd.store_id order by createtime";
+$query = "select c.id,c.store_name,c.monthlyrent,c.retail_saletally_name,c.retail_sale_cash_name,c.retail_sale_card_name,c.UMRN,c.facade,c.carpet,c.cust_tobe_debited,c.cust_ifsc_or_mcr,c.cust_debit_account,c.is_natch_required,c.tally_name,IF(c.is_autorefill = 1, 'Yes', 'No') AS is_autorefill, IF(c.is_closed = 1, 'Yes', 'No') AS is_closed,IF(c.sbstock_active = 1, 'Yes', 'No') AS Standing_Base_Stock,c.owner,c.address,c.city,c.zipcode,c.phone,c.phone2,c.email,c.email2,c.vat,c.store_number,c.pancard_no,c.min_stock_level,c.max_stock_level,c.server_change_id,c.createtime as Store_Create_Time, IF(c.inactive = 1, 'Yes', 'No') AS inactive,c.gstin_no,sd.dealer_discount as Dealer_Discount,(select state from states where id=c.state_id)as state,(select region from region where id=c.region_id) as region ,c.status,c.area,c.location,c.distance,IF(c.is_claim = 1, 'Yes', 'No') as is_claim,IF(c.is_cash = 1, 'Yes', 'No') as is_cash,IF(c.tax_type=1, 'Within Maharashtra','Outside Maharashtra')as tax_type,IF(c.mask_margin=0, 'Regular','55% margin')as mask_margin,IF(c.composite_billing_opted = 1, 'Yes', 'No') AS composite_billing_opted,IF(c.is_tallyxml = 1, 'Yes', 'No') AS is_tallyxml,c.store_type from $table c,it_ck_storediscount sd where usertype=4 and is_closed=0 and c.id=sd.store_id order by createtime";
 $alldealersobj = $db->fetchObjectArray($query);
 //print_r($alldealersobj);
 //return;
@@ -77,7 +77,9 @@ function createexcel($alldealersobj, $objPHPExcel) {
     $objPHPExcel->getActiveSheet()->setCellValue('AQ1', 'Cust. To Be Debited');
     $objPHPExcel->getActiveSheet()->setCellValue('AR1', 'Cust. IFSC/MCR');
     $objPHPExcel->getActiveSheet()->setCellValue('AS1', 'Cust. Debit Acc');
-    $objPHPExcel->getActiveSheet()->setCellValue('AT1', 'Store Facade Area');
+    $objPHPExcel->getActiveSheet()->setCellValue('AT1', 'Stores Monthly Rent');
+    $objPHPExcel->getActiveSheet()->setCellValue('AU1', 'Store Facade Area');
+    
 
     $maxCarpetLength = 0;
     foreach ($alldealersobj as $dealer) {
@@ -91,7 +93,7 @@ function createexcel($alldealersobj, $objPHPExcel) {
 
 
 
-    $startCombination = "AU";
+    $startCombination = "AV";
     $numberOfCombinations = $maxCarpetLength + 1; // Change this to the desired number of combinations
 
     $currentCombination = $startCombination;
@@ -174,6 +176,7 @@ function createexcel($alldealersobj, $objPHPExcel) {
     $objPHPExcel->getActiveSheet()->getColumnDimension('AR')->setWidth(20);
     $objPHPExcel->getActiveSheet()->getColumnDimension('AS')->setWidth(20);
     $objPHPExcel->getActiveSheet()->getColumnDimension('AT')->setWidth(20);
+     $objPHPExcel->getActiveSheet()->getColumnDimension('AU')->setWidth(20);
 
     foreach ($combinations as $combination) {
 
@@ -261,6 +264,7 @@ function createexcel($alldealersobj, $objPHPExcel) {
         $cust_tobe_debited = trim($dealer->cust_tobe_debited);
         $cust_ifsc_or_mcr = trim($dealer->cust_ifsc_or_mcr);
         $cust_debit_account = trim($dealer->cust_debit_account);
+        $monthlyrent = trim($dealer->monthlyrent);
         $facade = trim($dealer->facade);
         $carpet = trim($dealer->carpet);
         $carpetarr = explode(",", $carpet);
@@ -314,9 +318,10 @@ function createexcel($alldealersobj, $objPHPExcel) {
         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(42, $rowCount, $cust_tobe_debited);
         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(43, $rowCount, $cust_ifsc_or_mcr);
         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(44, $rowCount, $cust_debit_account);
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(45, $rowCount, $facade);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(45, $rowCount, $monthlyrent);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(46, $rowCount, $facade);
 
-        $colcount = 46;
+        $colcount = 47;
         $sumcarpet = 0;
 
         for ($i = 0; $i < $numberOfCombinations; $i++) {

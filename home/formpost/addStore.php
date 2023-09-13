@@ -279,6 +279,12 @@ if (!$storec || !$dealer_name || !$address || !$city || !$zip || !$name || !$pho
                     $store_number = intval($obj->store_number) + 1;
                 }
                 $new_store_number = $db->safe(sprintf("%03d", $store_number));
+                
+                if(isset($monthlyrent) && $monthlyrent!=""){
+                            $monthrent=$monthlyrent;
+                        }else{
+                             $monthrent=0;
+                        }
                 if(isset($facade) && $facade!=""){
                             $facad=$facade;
                         }else{
@@ -291,10 +297,10 @@ if (!$storec || !$dealer_name || !$address || !$city || !$zip || !$name || !$pho
                             }
                         }
                         $resfloor = trim($multifloor, ',');
-                $qry = "insert into it_codes set  created_by=$store->id,carpet='$resfloor',facade=$facad, code=$storec, password=$pass,license=md5(concat($id,'$license')), store_name=$dealer_name, store_number=$new_store_number, address=$address, state_id=$nstate, region_id=$region, city=$city, zipcode = $zipcode , owner=$name, phone=$phone, phone2=$phone2, email=$email, email2=$email2, status=$status, upi_name =$upi_name, upi_id =$upi_id, vat=$vat,gstin_no=$gstin_no, usertype=" . UserType::Dealer . " , tally_name = $tally_name ,UMRN=$umrn,cust_tobe_debited=$cust_tobe_debtd,cust_ifsc_or_mcr=$cust_ifsc_mcr,cust_debit_account=$cust_debit_account,Area=$area,Location=$location,is_natch_required=$is_natch1,sequence=$maxseq,tax_type = $taxtype $sClause $addquery ";
+                $qry = "insert into it_codes set  created_by=$store->id,monthlyrent=$monthlyrent,carpet='$resfloor',facade=$facad, code=$storec, password=$pass,license=md5(concat($id,'$license')), store_name=$dealer_name, store_number=$new_store_number, address=$address, state_id=$nstate, region_id=$region, city=$city, zipcode = $zipcode , owner=$name, phone=$phone, phone2=$phone2, email=$email, email2=$email2, status=$status, upi_name =$upi_name, upi_id =$upi_id, vat=$vat,gstin_no=$gstin_no, usertype=" . UserType::Dealer . " , tally_name = $tally_name ,UMRN=$umrn,cust_tobe_debited=$cust_tobe_debtd,cust_ifsc_or_mcr=$cust_ifsc_mcr,cust_debit_account=$cust_debit_account,Area=$area,Location=$location,is_natch_required=$is_natch1,sequence=$maxseq,tax_type = $taxtype $sClause $addquery ";
                 // print "<br>QUERY: $qry";
-                //   print "insert into it_ck_storediscount set store_id = 125 , dealer_discount = $effecteddisc $discquery";
-                // exit;
+                 //  print "insert into it_ck_storediscount set store_id = 125 , dealer_discount = $effecteddisc $discquery";
+//                 exit;
                 $inscode = $db->execInsert($qry);
                  //assign user to store start
                 

@@ -721,6 +721,11 @@ if(discval>0){
                                 </div>
                                 <!-- assign user to store end-->
                                  <!--		store carpet and fasal start-->
+                                  <p class="grid_12">
+                                    <br><label>Stores Monthly Rent (Rs.): </label>
+                                    <input type="text" name="monthlyrent" style='width:30%' placeholder="Enter Stores Monthly Rent (Rs.)">
+
+                                </p>
 
 <p class="grid_12">
                                     <br><label>Store Facade  (Ft): </label>

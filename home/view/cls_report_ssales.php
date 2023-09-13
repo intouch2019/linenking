@@ -87,6 +87,12 @@ class cls_report_ssales extends cls_renderer{
                     $this->storeloggedin = 1;                    
                 }
                 //facade start
+                if (isset($params['monthlyrent'])) {
+
+            $this->fields['monthlyrent'] = $params['monthlyrent'];
+            $this->monthlyrent = $params['monthlyrent'];
+        } else
+            $this->fields['monthlyrent'] = "0";
         if (isset($params['facade'])) {
 
             $this->fields['facade'] = $params['facade'];
@@ -379,6 +385,7 @@ foreach ($objs as $obj) {
                                           <option value="store">Store Name</option> 
                                            <option value="facade">Facade Area</option>
                                                     <option value="carpet">Carpet Area</option>
+                                                    <option value="monthlyrent">Monthly Rent</option>
 <!--                                          <option value="transaction">Transaction Type</option>-->
                                           <option value="itemctg">Item Category</option>
                                           <option value="hsncode">HSN Code</option>
@@ -439,7 +446,7 @@ foreach ($objs as $obj) {
             <div class="grid_12" id="generalselection" style="display:none;">
 		<div class="grid_12" >
 		Fields in the report:<br />
-                (Date/Bill no/Bill quantity/Bill amount/Tax/Bill discount value/Bill discount %//Voucher/Store name/Area/City/Location/State/Region/Status)
+                (Date/Bill no/Bill quantity/Bill amount/Tax/Bill discount value/Monthly Rent/Bill discount %//Voucher/Store name/Area/City/Location/State/Region/Status)
 		</div>
             </div>
 		<div class="grid_12" id="submitbutton" style="padding:10px;">
@@ -517,7 +524,13 @@ foreach ($objs as $obj) {
                         if ($field=="month") {$tableheaders.="Month:"; $queryfields .= " CONCAT(monthname(o.bill_datetime),'-',year(o.bill_datetime)) as month , ";$group_by[] = "month"; $total_td .= "<td></td>";}
                         if ($field=="custname") {$tableheaders.="Customer Name:"; $queryfields .= " o.cust_name as customername , ";$group_by[] = "customername"; $total_td .= "<td></td>";}
                         if ($field=="custphone") {$tableheaders.="Customer Phone:"; $queryfields .= "LEFT(o.cust_phone,10) as customerphone , ";$group_by[] = "customerphone"; $total_td .= "<td></td>";}
-                       if ($field == "facade") {
+                        if ($field == "monthlyrent") {
+                                        $tableheaders .= "Stores Monthly Rent:";
+                                        $queryfields .= "c.monthlyrent,";
+                                        //$group_by[] = "o.store_id";
+                                        $total_td .= "<td></td>";
+                                    }
+                        if ($field == "facade") {
                                         $tableheaders .= "Store Facade Area:";
                                         $queryfields .= "c.facade,";
                                         //$group_by[] = "o.store_id";
