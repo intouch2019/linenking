@@ -162,9 +162,8 @@ Your session has expired. Click <a href="">here</a> to login.
                     <button onclick="javascript:printOrder(<?php echo $this->pickgroup_id; ?>);">Print Order</button>
                     <button onclick='window.location="formpost/orderRevert.php?pid=<?php echo $this->pickgroup_id; ?>"'>Change back to Active</button>
                     <button onclick='window.location="dispatch/shipped/pid=<?php echo $this->pickgroup_id; ?>"'>Picking Complete</button>
-                     &nbsp;&nbsp;
-                   <button onclick='window.location="dispatch/droporder/pid=<?php echo $this->pickgroup_id; ?>"'>Drops and Extra Products</button>
-<?php } elseif ($this->currStore->usertype == UserType::Admin || $this->currStore->usertype ==UserType::Dispatcher) { ?>
+                    
+<?php } elseif ( $order->status == OrderStatus::Shipped && $this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::Dispatcher) { ?>
                     <button onclick='window.location = "formpost/orderRevert.php?pid=<?php echo $this->pickgroup_id; ?>"'>Change back to Active</button>
                      &nbsp;&nbsp;
                    <button onclick='window.location="dispatch/droporder/pid=<?php echo $this->pickgroup_id; ?>"'>Drops and Extra Products</button>
