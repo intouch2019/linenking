@@ -1,4 +1,5 @@
 <?php
+
 //ini_set('max_execution_time', 300);
 include "../../it_config.php";
 require_once "session_check.php";
@@ -14,8 +15,8 @@ if (!$currStore) {
 }
 //$logger = new clsLogger();
 
-$aColumns = array( 'id','invoice_no', 'invoice_dt', 'invoice_amt', 'invoice_qty','sync_date', 'store_name', 'details');
-$sColumns = array('i.id','i.invoice_no', 'i.invoice_dt', 'i.invoice_amt','i.invoice_qty','i.createtime');
+$aColumns = array('id', 'invoice_no', 'invoice_dt', 'invoice_amt', 'invoice_qty', 'store_name', 'is_sb_transit_complete', 'details');
+$sColumns = array('i.id', 'i.invoice_no', 'i.invoice_dt', 'i.invoice_amt', 'i.invoice_qty', 'i.createtime');
 /* Indexed column (used for fast and accurate table cardinality) */
 //$sIndexColumn = "iid";
 //$sTable = "it_invoices";
@@ -57,7 +58,7 @@ if (isset($_GET['iSortCol_0'])) {
  * on very large tables, and MySQL's regex functionality is very limited
  */
 $sWhere = "";
-if ( isset($_GET['sSearch']) &&  $_GET['sSearch'] != "") {
+if (isset($_GET['sSearch']) && $_GET['sSearch'] != "") {
     $sWhere = "Where (";
     for ($i = 0; $i < count($sColumns); $i++) {
         $sWhere .= $sColumns[$i] . " LIKE '%" . $db->getConnection()->real_escape_string($_GET['sSearch']) . "%' OR ";
@@ -69,7 +70,7 @@ if ( isset($_GET['sSearch']) &&  $_GET['sSearch'] != "") {
 /* Individual column filtering */
 for ($i = 0; $i < count($sColumns); $i++) {
     //if ($_GET['bSearchable_' . $i] == "true" && $_GET['sSearch_' . $i] != '') {
-    if ( isset($_GET['bSearchable_'.$i]) && $_GET['bSearchable_'.$i] == "true" && isset($_GET['sSearch_'.$i]) && $_GET['sSearch_'.$i] != '' ){
+    if (isset($_GET['bSearchable_' . $i]) && $_GET['bSearchable_' . $i] == "true" && isset($_GET['sSearch_' . $i]) && $_GET['sSearch_' . $i] != '') {
         if ($sWhere == "") {
             $sWhere = "WHERE ";
         } else {
@@ -88,8 +89,8 @@ if ($sWhere == "") {
 
 
 
- $sWhere .= "  i.invoice_type in (7)";
- 
+$sWhere .= "  i.invoice_type in (7)";
+
 //	if ($sOrder == "") { $sOrder = " order by iid desc "; }
 //$logger->logInfo("sOrder=$sOrder");
 
@@ -122,38 +123,40 @@ foreach ($objs as $obj) {
     for ($i = 0; $i < count($aColumns); $i++) {
         if ($aColumns[$i] == "id") {
             $row[] = trim($obj->id);
-            
-        }else if ($aColumns[$i] == "invoice_no") {
+        } else if ($aColumns[$i] == "invoice_no") {
             $str = "";
             $str = trim($obj->invoice_no);
-            $str .= '<br> [ <a onclick="showInvoiceDetails('. $obj->id.')" href="javascript:void(0);"><u>View</u></a> ] ';
+            $str .= '<br> [ <a onclick="showInvoiceDetails(' . $obj->id . ')" href="javascript:void(0);"><u>View</u></a> ] ';
             $row[] = $str;
-            
-        } else if ($aColumns[$i] == "invoice_dt") {            
-                $row[] = $obj->invoice_dt;            
-        } else if ($aColumns[$i] == "invoice_amt") {  
-               $inv_amt = sprintf("%0.02f", $obj->invoice_amt);
-                $row[] = $inv_amt;            
-        }else if ($aColumns[$i] == "invoice_qty") {            
-                $row[] = $obj->invoice_qty;            
-        }else if ($aColumns[$i] == "sync_date") {            
-                $row[] = mmddyy($obj->createtime);            
-        }else if ($aColumns[$i] == "store_name") { 
-                $obj1 = $db->fetchObject("select store_name from it_codes where id = $obj->store_id ");
-                if(isset($obj1)){
-                 $st_name = $obj1->store_name;
-                }else{ $st_name="-";}
-                $row[] = "$st_name";            
-        }else if ($aColumns[$i] == "details") {    
-                $row[] = '<a onclick="showInvoiceDetails('.$obj->id.')" href="javascript:void(0);"><u>View</u></a>';            
-        }
-        
-         else {         
+        } else if ($aColumns[$i] == "invoice_dt") {
+            $row[] = $obj->invoice_dt;
+        } else if ($aColumns[$i] == "invoice_amt") {
+            $inv_amt = sprintf("%0.02f", $obj->invoice_amt);
+            $row[] = $inv_amt;
+        } else if ($aColumns[$i] == "invoice_qty") {
+            $row[] = $obj->invoice_qty;
+        } else if ($aColumns[$i] == "store_name") {
+            $obj1 = $db->fetchObject("select store_name from it_codes where id = $obj->store_id ");
+            if (isset($obj1)) {
+                $st_name = $obj1->store_name;
+            } else {
+                $st_name = "-";
+            }
+            $row[] = "$st_name";
+        } else if ($aColumns[$i] == "is_sb_transit_complete") {
+            if ($obj->is_sb_transit_complete == 0) {
+                $row[] = 'In Transit';
+            } else if ($obj->is_sb_transit_complete == 1) {
+                $row[] = 'Completed';
+            }
+        } else if ($aColumns[$i] == "details") {
+            $row[] = '<a onclick="showInvoiceDetails(' . $obj->id . ')" href="javascript:void(0);"><u>View</u></a>';
+        } else {
             /* General output */
             $row[] = $obj->$aColumns[$i];
         }
     }
-   
+
     $rows[] = $row;
     $iTotal++;
 }
