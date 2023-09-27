@@ -220,7 +220,11 @@ function updateSeq($newdir) {
             if ($productgroup == 1 || $productgroup == 5) {
                 $query = "select i.design_no,s.name as sz_name , s.wip_shirt_id as wip_szid from it_items i join it_sizes s on i.size_id=s.id where i.barcode=$barcode ";
 //                $query = "select i.design_no, i.size_id ,s.wip_shirt_id as wip_szid from it_items i join it_sizes s on i.size_id=s.id where barcode=$barcode ";
-            } else {
+            } else if($productgroup == 4)
+            {
+               $query = "select i.design_no,s.name as sz_name , s.wip_salwarpyjama_id as wip_szid from it_items i join it_sizes s on i.size_id=s.id where i.barcode=$barcode "; 
+            }
+            else{
                 $query = "select i.design_no,s.name as sz_name , s.wip_trouser_id as wip_szid from it_items i join it_sizes s on i.size_id=s.id where i.barcode=$barcode ";
 //                $query = "select i.design_no, i.size_id ,s.wip_trouser_id as wip_szid from it_items i join it_sizes s on i.size_id=s.id where barcode=$barcode ";
             }
