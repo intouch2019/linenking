@@ -13,13 +13,16 @@ class cls_report_task_manager extends cls_renderer {
 
     function __construct($params = null) {
 //	parent::__construct(array(UserType::Admin, UserType::CKAdmin, UserType::Manager));//
-        $this->params = $params;
         $this->currStore = getCurrUser();
 
         if (isset($_SESSION['id'])) {
             $this->id = $_SESSION['id'];
         } else {
-            $this->id = "1";
+             if($this->currStore->usertype==UserType::CKAdmin){
+                $this->id = "1";
+            }else{
+            $this->id = "2";
+            }
         }
         
         if(isset($_SESSION['status'])){
@@ -101,6 +104,11 @@ class cls_report_task_manager extends cls_renderer {
             }
             );
             
+            
+    function reopenTask(rid){
+    window.location = "formpost/task_manager_status.php?rid=" + rid;
+    exit;
+    }
  
  </script>
             <style>
@@ -201,7 +209,7 @@ class cls_report_task_manager extends cls_renderer {
                                             <th>Progress</th>
                                             <th>Start Date</th>
                                             <th>Finished Date</th>
-                                           
+                                            <th>Action</th>
 
                                         </tr>
                                         <?php
@@ -228,6 +236,9 @@ class cls_report_task_manager extends cls_renderer {
                                                     <td>   <progress id="file" max="100" value="<?php echo $details->progress; ?>"> 70% </progress> </td> 
                                                     <td><?php echo $details->startdate ?></td><!-- comment -->
                                                     <td><?php echo $details->finisheddate ?></td>
+                                                     <?php if ($details->status == 3 && $details->progress == 100) { ?>
+                                                    <td><button type="button" style="width: 100px; background-color: #D7A4A3; border-radius: 4px; border: 1px solid black;  cursor: pointer;" onclick="reopenTask(<?php echo $details->id  ?>)">Reopen Task</button></td>
+                                                      <?php } else { ?><td></td><?php } ?>
                                         
                                             </tr>
                                    <?php }} ?>
@@ -274,10 +285,16 @@ class cls_report_task_manager extends cls_renderer {
                                                     <td><?php echo RollType::getName($details->r_department); ?></td>
                                                     <td><?php echo $details->receivername ?></td>
                                                    <!--<td><?php // echo $details->r_department ?></td>-->
-                                                      <td><a  href="showtaskmanager/ids=<?php echo $details->id ?>">Info</a></td>      
+                                                      <td><a  href="showtaskmanager/ids=<?php echo $details->id ?>">Info</a></td>
+                                                      
+                                                      <?php if($details->progress=='0'){?>
                                                     <td><button onclick='progressbar(<?php echo $details->id ?>)'>Start</button>
-                                                    <progress id="file" max="100" value="<?php echo $details->progress; ?>"> 70% </progress>
-                                                    <?php if($details->progress=='50'){?>
+                                                     <?php }else{?>
+                                                    <td>
+                                                    <?php }?>
+                                                    <progress id="file" max="100" value="<?php echo $details->progress; ?>"> 75% </progress>
+                                                    <?php if($details->progress=='50' || $details->progress=='75'){?>
+                                                    
                                                     <button onclick='progressbar(<?php echo $details->id ?>)'>Finished</button>
                                                     <?php }?>
                                                     </td> 
@@ -343,10 +360,7 @@ class cls_report_task_manager extends cls_renderer {
                                 </div>
                             <?php }
                             ?>        
-
-
                         </div>
-
                     </div>
                     <?php
                 }

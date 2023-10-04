@@ -35,7 +35,47 @@ class cls_header {
 <!--[if IE 7]><link rel="stylesheet" type="text/css" href="fluid960gs/css/ie.css" media="screen" /><![endif]-->
 <script type="text/javascript" src="fluid960gs/js/jquery-1.4.2.min.js"></script>
 <link rel="stylesheet" type="text/css" href="css/intouch.css" media="screen" />
-<?php echo $renderObj->extraHeaders(); ?>
+                <script type="text/javascript">
+                    function taskReceived() {
+                         $.ajax({
+                            url: "savesession.php?name=id&value=" + 2,
+                            success: function () {
+                                 window.location.href = "report/task/manager";
+                            }
+                        });
+                    }
+                </script>
+                <style>
+
+                    .notification-container {
+                        display: inline-block;
+                        position: relative;
+                    }
+
+
+                    .notification-number {
+                        position: absolute;
+                        top: -10px;
+                        right: -10px;
+                        background-color: red;
+                        color: white;
+                        border-radius: 50%;
+                        padding: 1px 7px;
+                        font-size: 14px;
+
+                    }
+
+                    @keyframes blink {
+                        0% {
+                            opacity: 0;
+                        }
+                        100% {
+                            opacity: 1;
+                        }
+                    }
+                </style>
+                <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+                    <?php echo $renderObj->extraHeaders(); ?>
 </head>
 <body>
 <div id="topcolor" class="container_12"></div>
@@ -44,7 +84,28 @@ class cls_header {
 	<div class="grid_12" id="banner" style="">
 	<div class="grid_8" style="font-size:32px;font-weight:bold;color:#eeeeee;text-align:right;margin:50px 0px 0px 0px;">Corporate Portal</div>
 <?php if (getCurrUser()) { ?>
-	<div class="grid_4 loggeduser"><?php echo getCurrUser()->code; ?> [ <a href="logout.php">Logout</a> ]</div>
+	<div class="grid_3 loggeduser"><?php echo getCurrUser()->code; ?> [ <a href="logout.php">Logout</a> ]
+                                <!--<i class="material-icons" style="font-size:24px;color:white;">notifications</i>-->
+                                <div class="notification-container" role="button" onclick="taskReceived()" style="cursor: pointer;">
+                                    <i class="material-icons">notifications</i>
+                                    <span class="notification-number" 
+                                    <?php
+                                    $user = getCurrUser();
+                                    $db = new DBConn();
+                                    $activeTask = $db->fetchObject("select count(*) as count, s_department  from it_task_manager where status=1 and r_department =$user->roles");
+                                    $noOfActiveTask = 0;
+                                    if (isset($activeTask) && $activeTask != null && $activeTask != "") {
+                                        $noOfActiveTask = $activeTask->count;
+                                    }
+                                    if ($noOfActiveTask > 0) {
+                                        ?>style="animation: blink 1s infinite alternate;"
+                                          <?php } else {
+                                              ?>style=""
+                                          <?php } ?>
+                                          ><?php echo $noOfActiveTask; ?></span>
+                                </div>
+                            </div>
+                            <span></span>
 <?php } ?>
         </div>
 	<div class="grid_12">&nbsp;</div>
@@ -91,7 +152,6 @@ class cls_header {
                                                         </div>
                                                         <div class="grid_12">&nbsp;</div>
 
-                               
 <?php
 	}
 }
