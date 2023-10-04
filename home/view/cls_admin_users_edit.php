@@ -169,7 +169,7 @@ Your session has expired. Click <a href="">here</a> to login.
                                                         $rmvcoln = substr($st, 0, -1);
 
                                                         if (!empty($fasnid)) {
-                                                            $query = "select id,store_name,roles from it_codes  where usertype =4 and is_closed=0 and id not in ($rmvcoln)";
+                                                            $query = "select id,store_name,roles from it_codes  where usertype =4 and id not in ($rmvcoln)";
                                                         }
                                                         $obj_aRegion = $db->fetchObjectArray($query);
                                                         if (!empty($obj_aRegion)) {
@@ -190,9 +190,9 @@ Your session has expired. Click <a href="">here</a> to login.
                                                             }
                                                             $rmvcoln = substr($st, 0, -1);
                                                             if (!empty($fasnid)) {
-                                                                $query = "select id,store_name,roles from it_codes  where usertype =4 and is_closed=0 and id not in ($rmvcoln)";
+                                                                $query = "select id,store_name,roles from it_codes  where usertype =4 and id not in ($rmvcoln)";
                                                             } else {
-                                                                $query = "select id,store_name,roles from it_codes  where usertype =4 and is_closed=0";
+                                                                $query = "select id,store_name,roles from it_codes  where usertype =4";
                                                             }
                                                             $obj_aRegion = $db->fetchObjectArray($query);
                                                         } $count = 0;
