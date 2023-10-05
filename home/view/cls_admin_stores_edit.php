@@ -705,11 +705,11 @@ class cls_admin_stores_edit extends cls_renderer {
         <?php if ($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::CKAdmin || $this->currStore->id == 128) { ?>
                                 <p class="grid_12">
                                     <label>Minimum Stock Level: </label><br>
-                                    <input type="text" name="msl" style='width:30%' value="<?php echo $this->getFieldValue('msl', $store->min_stock_level); ?>">
+                                    <input type="text" name="msl"  id="msl" style='width:30%' value="<?php echo $this->getFieldValue('msl', $store->min_stock_level); ?>">
                                 </p>     
                                 <p class="grid_12">
                                     <label>Maximum Stock Level: </label><br>
-                                    <input type="text" name="maxsl" style='width:30%' value="<?php echo $this->getFieldValue('maxsl', $store->max_stock_level); ?>">
+                                    <input type="text" name="maxsl" id="maxsl" style='width:30%' value="<?php echo $this->getFieldValue('maxsl', $store->max_stock_level); ?>">
                                 </p> 
                                 <!--		user assign store start-->
                                 <div class="grid_12" id="itemselection">
@@ -966,6 +966,14 @@ class cls_admin_stores_edit extends cls_renderer {
                 </div>
             </fieldset>
         </div>
+          <script>
+    var mslInput = document.getElementById("msl");
+ var maxslInput = document.getElementById("maxsl");        
+    mslInput.addEventListener("input", function() {
+ // Update maxslInput with the same value
+ maxslInput.value = mslInput.value*1.20;
+ });
+        </script>
         <?php
     }
 
