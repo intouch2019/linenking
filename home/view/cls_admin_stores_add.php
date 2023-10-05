@@ -602,8 +602,12 @@ if(discval>0){
                 <?php if ($this->currStore->usertype==UserType::Admin || $this->currStore->usertype==UserType::CKAdmin) { ?>
                 <p class="grid_12">
                     <label>Minimum Stock Level: </label><br>
-                    <input type="text" name="msl" style='width:30%' value="<?php echo $this->getFieldValue('msl'); ?>">
+                    <input type="text" name="msl"  id="msl" style='width:30%' value="<?php echo $this->getFieldValue('msl'); ?>">
                 </p>
+                 <p class="grid_12">
+                                    <label>Maximum Stock Level: </label><br>
+                                    <input type="text" name="maxsl"  id="maxsl" style='width:30%' value="<?php echo $this->getFieldValue('maxsl'); ?>">
+                                </p>
                 <!-- assign user to store start-->
                                 <div class="grid_12" id="itemselection">
                                     <!--		<div class="grid_12" >-->
@@ -846,6 +850,14 @@ if(discval>0){
 
 
 </div>
+  <script>
+    var mslInput = document.getElementById("msl");
+ var maxslInput = document.getElementById("maxsl");        
+    mslInput.addEventListener("input", function() {
+ // Update maxslInput with the same value
+ maxslInput.value = mslInput.value*1.20;
+ });
+        </script>
     <?php
     }
 }

@@ -163,7 +163,10 @@ if (!$storec || !$dealer_name || !$address || !$city || !$zip || !$name || !$pho
         if ($store->usertype == UserType::Admin || $store->usertype == UserType::CKAdmin) {
             //add msl permission to=>it-admin,koushik,kunal
             if (trim($msl) != "") {
-                $sClause = ", min_stock_level = " . doubleval($msl);
+                $sClause .= ", min_stock_level = " . doubleval($msl);
+            }
+             if (trim($maxsl) != "") {
+                $sClause .= ", max_stock_level = " . doubleval($maxsl);
             }
             if (isset($storetype) && trim($storetype) != "") {
                 $sClause .= " , store_type = $storetype";
