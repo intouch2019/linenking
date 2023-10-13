@@ -85,7 +85,12 @@ class cls_header {
 	<div class="grid_8" style="font-size:32px;font-weight:bold;color:#eeeeee;text-align:right;margin:50px 0px 0px 0px;">Corporate Portal</div>
 <?php if (getCurrUser()) { ?>
 	<div class="grid_3 loggeduser"><?php echo getCurrUser()->code; ?> [ <a href="logout.php">Logout</a> ]
-                                <!--<i class="material-icons" style="font-size:24px;color:white;">notifications</i>-->
+                                <!--<i class="material-icons" style="font-size:24px;color:white;">notifications</i>-->                 
+            
+                                <?php 
+                                    $user=getCurrUser();
+                                    if($user->usertype!=4){
+                                ?>
                                 <div class="notification-container" role="button" onclick="taskReceived()" style="cursor: pointer;">
                                     <i class="material-icons">notifications</i>
                                     <span class="notification-number" 
@@ -104,6 +109,7 @@ class cls_header {
                                           <?php } ?>
                                           ><?php echo $noOfActiveTask; ?></span>
                                 </div>
+                                <?php } ?>
                             </div>
                             <span></span>
 <?php } ?>
