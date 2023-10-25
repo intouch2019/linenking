@@ -93,6 +93,11 @@ class cls_admin_stores extends cls_renderer {
         ?>
 <div id="storeinfo"></div>
     <div style="float:right;margin-right:15px;">
+         <?php
+        if($this->currStore->usertype == UserType::Admin){  ?>
+        <a href="admin/stores/stocklimitupdate"><button>Update Stocklimit</button></a>
+        
+        <?php }  ?>
         <button name="dwnFile" id="dwnFile" onclick="DownloadNonclaimExcel();">Download Nonclaim Store Details</button>
         <button name="dwnFile" id="dwnFile" onclick="DownloadStoreExcel();">Download Store Details</button>
         <button name="dwnFile" id="dwnFile" onclick="DownloadExcel();">Download Disable Store Report</button>
