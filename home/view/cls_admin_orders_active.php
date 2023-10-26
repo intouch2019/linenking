@@ -80,6 +80,28 @@ Your session has expired. Click <a href="">here</a> to login.
                             <th>Number Of Designs</th>
                             <th>View Order</th>
                         </tr>
+                        
+                         <?php
+                                        $tq =0;
+                                        $ta =0;
+                                    foreach ($orders as $order) {
+                                        $tq += $order->order_qty;
+                                        $ta += $order->order_amount;
+                                    }
+                                 ?>
+
+                         <tr style="font-weight:bold;">
+                            <td></td>
+                            <td>TOTAL</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td><?php echo $tq; ?></td>
+                            <td><?php echo $ta; ?></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        
                             <?php
 				$count=0;
 				$tot_qty=0;
@@ -109,6 +131,7 @@ Your session has expired. Click <a href="">here</a> to login.
                             <td></td>
                             <td><?php echo $tot_qty; ?></td>
                             <td><?php echo $tot_amount; ?></td>
+                            <td></td>
                             <td></td>
                         </tr>
                     </table>
