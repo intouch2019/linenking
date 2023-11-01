@@ -15,7 +15,6 @@ echo "Delete Data till date before :".$getdate;
 //$getdate = '2014-05-05 00:00:00';
 echo "<br>";
 
-exit();
 $sql = "select max(id) as maxid from it_logs where createtime < '$getdate' ";
 $maxidobj = $db->fetchObject($sql);
 if (isset($maxidobj->maxid) && !empty($maxidobj) && $maxidobj->maxid > 0) {
