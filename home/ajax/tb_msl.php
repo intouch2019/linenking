@@ -178,7 +178,7 @@ foreach ($objs as $obj) {
 
         //appreal_stock_intransit
         else if ($aColumns[$i] == 'appreal_stock_intransit') {//---------------------------1
-            $tquery2 = "select sum(i.MRP*oi.quantity) as appreal_stock_intransit from it_invoices o , it_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6, 7) and o.store_id = $obj->id and o.is_procsdForRetail = 0 and oi.item_code = i.barcode and i.ctg_id not in (42,43)";
+            $tquery2 = "select sum(i.MRP*oi.quantity) as appreal_stock_intransit from it_sp_invoices o , it_sp_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6, 7) and o.store_id = $obj->id and o.is_procsdForRetail = 0 and oi.barcode = i.barcode and i.ctg_id not in (42,43)";
             $tobj = $db->fetchObject($tquery2);
             if (isset($tobj) && trim($tobj->appreal_stock_intransit) != "") {
                 $intransit_appreal_val = $tobj->appreal_stock_intransit;
@@ -188,7 +188,7 @@ foreach ($objs as $obj) {
             //$row[] = $intransit_appreal_val;
             //$tot_mask_stk += $intransit_appreal_val;
             //mask stock intransit
-            $tquery2 = "select sum(i.MRP*oi.quantity) as mask_stock_intransit from it_invoices o , it_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6, 7) and o.store_id = $obj->id and o.is_procsdForRetail = 0 and oi.item_code = i.barcode and i.ctg_id in(42,43)";
+            $tquery2 = "select sum(i.MRP*oi.quantity) as mask_stock_intransit from it_sp_invoices o , it_sp_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6, 7) and o.store_id = $obj->id and o.is_procsdForRetail = 0 and oi.barcode = i.barcode and i.ctg_id in(42,43)";
             $tobj = $db->fetchObject($tquery2);
             if (isset($tobj) && trim($tobj->mask_stock_intransit) != "") {
                 $intransit_mask_val = $tobj->mask_stock_intransit;
@@ -196,11 +196,11 @@ foreach ($objs as $obj) {
                 $intransit_mask_val = 0;
             }
             $row[] = $intransit_mask_val + $intransit_appreal_val;
-            $tot_mask_stk += $intransit_mask_val + $intransit_appreal_val;
+            $tot_intransit_stk += $intransit_mask_val + $intransit_appreal_val;
         }
         //mask_stock_intransit  
         else if ($aColumns[$i] == 'mask_stock_intransit') {
-            $tquery2 = "select sum(i.MRP*oi.quantity) as mask_stock_intransit from it_invoices o , it_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6, 7) and o.store_id = $obj->id and o.is_procsdForRetail = 0 and oi.item_code = i.barcode and i.ctg_id in(42,43)";
+            $tquery2 = "select sum(i.MRP*oi.quantity) as mask_stock_intransit from it_sp_invoices o , it_sp_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6, 7) and o.store_id = $obj->id and o.is_procsdForRetail = 0 and oi.barcode = i.barcode and i.ctg_id in(42,43)";
             $tobj = $db->fetchObject($tquery2);
             if (isset($tobj) && trim($tobj->mask_stock_intransit) != "") {
                 $intransit_mask_val = $tobj->mask_stock_intransit;
