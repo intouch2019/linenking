@@ -50,7 +50,7 @@ $(function(){
     oTable = $('#tb_msl').dataTable( {
 	"bProcessing": true,
 	"bServerSide": true,
-        "aoColumns": [ null, null, {bSortable:false}, {bSortable:false}, {bSortable:false}, {bSortable:false}, {bSortable:false}, {bSortable:false}, {bSortable:false}], //, {bSortable:false},{bSortable:false},{bSortable:false} ,{bSortable:false} 
+        "aoColumns": [ null, null, {bSortable:false}, {bSortable:false}, {bSortable:false}, {bSortable:false}, {bSortable:false}, {bSortable:false}, {bSortable:false}, {bSortable:false}], //, {bSortable:false},{bSortable:false},{bSortable:false} ,{bSortable:false} 
 	"sAjaxSource": url,
         "iDisplayLength":10
     } );
@@ -92,6 +92,7 @@ function genRep(){
                 <th>Store Apparels Current Stock</th>
                 <!--<th>Store mask Current Stock</th>-->
                 <!--<th>Store Total Current Stock</th>-->
+                <th>Active Orders</th>
                 <th>Store Apparels Stock Intransit</th>
                 <!--<th>Store Mask Stock in Transit</th>-->
                 <!--<th>Store Total in Transit</th>-->

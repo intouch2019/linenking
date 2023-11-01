@@ -19,10 +19,6 @@ $is_inactive=0;
 $picking_complete_amt=0;
 $picking_amt=0;
 $active_amt=0;
-        
-$picking_complete_amt=0;
-$picking_amt=0;
-$active_amt=0;
 $total_orderamt_pickcomplete=0;
 $difference=0;
 $min_stock=0;
@@ -147,7 +143,7 @@ if ($cartinfo->quantity > 0 && strpos($currUri,"/store/checkout") !== false){
 //      echo 'maximum'.$max_stock.'<br>';
      if($max_stock!=null && $max_stock!="" )
      {
-        if($curr_stock_val+$cartinfo->amount+$intransit_stock_value_new>=$max_stock)
+        if($curr_stock_val+$cartinfo->amount+$intransit_stock_value_new + $active_amt >=$max_stock)
         {
           //echo '<br>';
           //  echo 'not place to due to max stock value '.'<br>';
