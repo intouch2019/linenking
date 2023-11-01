@@ -10,7 +10,7 @@ $currStore = getCurrUser();
 //$aColumns = array( 'id', 'store_name', 'curr_stock','stock_intransit', 'tot_stock','min_stock_level','difference');
 //$aColumns = array('id', 'store_name', 'appreal_curr_stock', 'mask_curr_stock', 'total_curr_stock', 'appreal_stock_intransit', 'mask_stock_intransit', 'total_stock_intransit', 'appreal_tot_stock', 'mask_tot_stock', 'tot_stock', 'min_stock_level', 'difference');
 //$aColumns = array('id', 'store_name', 'appreal_curr_stock', 'total_curr_stock', 'appreal_stock_intransit', 'total_stock_intransit', 'appreal_tot_stock', 'tot_stock', 'min_stock_level', 'max_stock_level', 'difference');
-$aColumns = array('id', 'store_name', 'appreal_curr_stock', 'appreal_stock_intransit', 'appreal_tot_stock', 'min_stock_level', 'max_stock_level', 'min_difference', 'max_difference');
+$aColumns = array('id', 'store_name', 'appreal_curr_stock', 'active_orders', 'appreal_stock_intransit', 'appreal_tot_stock', 'min_stock_level', 'max_stock_level', 'min_difference', 'max_difference');
 
 //$sColumns = array('c.id', 'c.store_name', 'c.min_stock_level');
 $sColumns = array('c.id', 'c.store_name');
@@ -122,6 +122,7 @@ foreach ($objs as $obj) {
     $tot_curr_stk = 0;
     $tot_intransit_stk = 0;
     $tot_mask_stk = 0;
+    $active_amt=0;
     $appreal_tot_stock_incl_intransit = 0;
     $row = array();
     for ($i = 0; $i < count($aColumns); $i++) {
@@ -175,6 +176,19 @@ foreach ($objs as $obj) {
             $row[] = $tot_curr_stk;
         }
 
+                
+         //active_orders
+        else if($aColumns[$i] == 'active_orders'){
+            $active_amount = $db->fetchObject("select sum(order_amount) as active_amount from it_ck_orders where status=1 and store_id=$obj->id");
+            if(isset($active_amount) && trim($active_amount->active_amount)!=""){
+                $active_amt=$active_amount->active_amount;
+            }
+            else{
+                $active_amt=0;
+            }
+            $row[]=$active_amt;
+        }
+        
 
         //appreal_stock_intransit
         else if ($aColumns[$i] == 'appreal_stock_intransit') {//---------------------------1
@@ -262,7 +276,7 @@ foreach ($objs as $obj) {
         }
         //max_difference
         else if ($aColumns[$i] == 'max_difference') {
-            $row[] = $appreal_tot_stock_incl_intransit - $obj->max_stock_level;
+            $row[] = $appreal_tot_stock_incl_intransit + $active_amt - $obj->max_stock_level;
             //$row[] = $tot_stk - $obj->max_stock_level;
         } else {
             $row[] = "-";

@@ -89,10 +89,17 @@ try{
             } else {
                 $intransit_stock_val = 0;
             }
+            
+            $active_amount = $db->fetchObject("select sum(order_amount) as active_amount from it_ck_orders where status=1 and store_id=$dealerobj->id");
+            if (isset($active_amount) && $active_amount->active_amount != "" && $active_amount->active_amount != null) {
+                $activeamt = $active_amount->active_amount;
+            } else {
+                $activeamt = 0;
+            }
 
             $tot_stk_val = $store_stock_val + $intransit_stock_val;
 //            if($tot_stk_val < $dealerobj->min_stock_level){
-            $dealersList[$dealerobj->id] = $dealerobj->store_name . "::" . $store_stock_val . "::" . $intransit_stock_val . "::" . $tot_stk_val . "::" . $dealerobj->min_stock_level . "::" . $dealerobj->max_stock_level;
+            $dealersList[$dealerobj->id] = $dealerobj->store_name . "::" . $store_stock_val . "::" . $intransit_stock_val . "::" . $tot_stk_val . "::" . $dealerobj->min_stock_level . "::" . $dealerobj->max_stock_level. "::" . $activeamt;
 //            }
         }
     } 
@@ -116,12 +123,13 @@ function createexcel($dealersList){
     $objPHPExcel->getActiveSheet()->setCellValue('A1', 'Store ID');
     $objPHPExcel->getActiveSheet()->setCellValue('B1', 'Store Name');
     $objPHPExcel->getActiveSheet()->setCellValue('C1', 'Store Apparels Current Stock');
-    $objPHPExcel->getActiveSheet()->setCellValue('D1', 'Store Apparels Stock in Transit');
-    $objPHPExcel->getActiveSheet()->setCellValue('E1', 'Store Apparels Total Stock Including Intransit');
-    $objPHPExcel->getActiveSheet()->setCellValue('F1', 'Store Minimum Stock Level');
-    $objPHPExcel->getActiveSheet()->setCellValue('G1', 'Store Maximum Stock Level');
-    $objPHPExcel->getActiveSheet()->setCellValue('H1', 'Min_Difference');
-    $objPHPExcel->getActiveSheet()->setCellValue('I1', 'Max_Difference');
+    $objPHPExcel->getActiveSheet()->setCellValue('D1', 'Active Order Stock');
+    $objPHPExcel->getActiveSheet()->setCellValue('E1', 'Store Apparels Stock in Transit');
+    $objPHPExcel->getActiveSheet()->setCellValue('F1', 'Store Apparels Total Stock Including Intransit');
+    $objPHPExcel->getActiveSheet()->setCellValue('G1', 'Store Minimum Stock Level');
+    $objPHPExcel->getActiveSheet()->setCellValue('H1', 'Store Maximum Stock Level');
+    $objPHPExcel->getActiveSheet()->setCellValue('I1', 'Min_Difference');
+    $objPHPExcel->getActiveSheet()->setCellValue('J1', 'Max_Difference');
 
     $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
     $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(20);
@@ -132,6 +140,7 @@ function createexcel($dealersList){
     $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(20);
     $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(20);
     $objPHPExcel->getActiveSheet()->getColumnDimension('I')->setWidth(20);
+    $objPHPExcel->getActiveSheet()->getColumnDimension('J')->setWidth(20);
     
     
     $styleArray = array(
@@ -175,6 +184,7 @@ function createexcel($dealersList){
     $objPHPExcel->getActiveSheet()->getStyle('G1')->applyFromArray($styleArray);
     $objPHPExcel->getActiveSheet()->getStyle('H1')->applyFromArray($styleArray);
     $objPHPExcel->getActiveSheet()->getStyle('I1')->applyFromArray($styleArray);
+    $objPHPExcel->getActiveSheet()->getStyle('J1')->applyFromArray($styleArray);
 
     $objPHPExcel->getActiveSheet()->getStyle('A')->applyFromArray($cellstyleArray);
     $objPHPExcel->getActiveSheet()->getStyle('B')->applyFromArray($cellstyleArray);
@@ -185,6 +195,7 @@ function createexcel($dealersList){
     $objPHPExcel->getActiveSheet()->getStyle('G')->applyFromArray($cellstyleArray);
     $objPHPExcel->getActiveSheet()->getStyle('H')->applyFromArray($cellstyleArray);
     $objPHPExcel->getActiveSheet()->getStyle('I')->applyFromArray($cellstyleArray);
+    $objPHPExcel->getActiveSheet()->getStyle('J')->applyFromArray($cellstyleArray);
 
     $colCount=0;
     $rowCount=3;
@@ -199,19 +210,21 @@ function createexcel($dealersList){
         $tot_stk = trim($arr[3]);
         $minsl = trim($arr[4]);
         $maxsl = trim($arr[5]);
+        $activeamt=trim($arr[6]);
         $min_diff = $tot_stk - $minsl;
-        $max_diff = $tot_stk - $maxsl;
+        $max_diff = $tot_stk - $maxsl + $activeamt;
         
         
     $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, $rowCount, $key);
         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(1, $rowCount, $store_name);
         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(2, $rowCount, $curr_stock);
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(3, $rowCount, $stock_intransit);
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(4, $rowCount, $tot_stk);
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(5, $rowCount, $minsl);
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(6, $rowCount, $maxsl);
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(7, $rowCount, $min_diff);
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(8, $rowCount, $max_diff);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(3, $rowCount, $activeamt);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(4, $rowCount, $stock_intransit);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(5, $rowCount, $tot_stk);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(6, $rowCount, $minsl);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(7, $rowCount, $maxsl);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(8, $rowCount, $min_diff);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(9, $rowCount, $max_diff);
         $rowCount++;
     }    
     
