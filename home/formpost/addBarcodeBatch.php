@@ -83,7 +83,8 @@ try {
                 }
               
         }
-    
+        $num_units= trim($num_units);
+        $design_no= trim($design_no);
 	$design_no=$db->safe($design_no);
         //$hsncode_db = $db->safe(trim($hsncode));
 	$query = "insert into it_barcode_batches set mfg_by_id=$mfg_by, category_id=$category, design_no=$design_no, MRP=$mrp";
