@@ -93,6 +93,9 @@ function apisender($m_batchname) {
 
         $finalup = "update it_new_barcode_batch set response='$response',status='$stats',is_sent=1,productUploadHistId='$productid',updatetime=now() where main_file='$m_batchname'";
         $inserted = $db->execUpdate($finalup);
+    }else {
+           $updateq= "update it_new_barcode_batch set main_file=null where main_file='$m_batchname'";
+           $db->execUpdate($updateq);
     }
 
     $end_date = date('Y-m-d H:i:s');
