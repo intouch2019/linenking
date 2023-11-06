@@ -26,7 +26,8 @@ $result = $db->execQuery("select bar_id, batch_id,barcode,Manufacturer,Product ,
 
 if (isset($result) && $result->num_rows != 0) {
 
-    $fp = fopen("../cron/b_batch/$barcode_batch.csv", "w");
+    $fp = fopen("/var/www/html/linenking/home/cron/b_batch/$barcode_batch.csv", "w");
+//    $fp = fopen("../cron/b_batch/$barcode_batch.csv", "w");
     fputs($fp, "Batch Id,Barcode,Manufacturer,Product,Design,MRP,Brand,Style,Size,Production Type,Material,Fabric Type,Units\n");
 
     while ($item = $result->fetch_object()) {
@@ -36,7 +37,8 @@ if (isset($result) && $result->num_rows != 0) {
         $insert_idd = $db->execUpdate($mainbatchid);
     }
     fclose($fp);
-    system("../cron/b_batch/$barcode_batch.csv");
+    system("/var/www/html/linenking/home/cron/b_batch/$barcode_batch.csv");
+//    system("../cron/b_batch/$barcode_batch.csv");
     $m_batchname = $barcode_batch . '.csv';
 
     apisender($m_batchname);
