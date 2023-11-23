@@ -163,6 +163,44 @@ class cls_orders_shipped extends cls_renderer {
                             <th></th>
                             <th></th>
                         </tr>
+                        
+                        
+                                <?php
+                                    $cnt = 0;
+                                    $t_qty = 0;
+                                    $t_shipped_qty = 0;
+                                    $t_shipped_mrp = 0;
+                                    $t_cheque_amt = 0;
+                                    foreach ($orders as $order) {
+                                        $cnt++;
+                                        $t_qty += $order->order_qty;
+                                        $t_shipped_qty += $order->shipped_qty;
+                                        $t_shipped_mrp += $order->shipped_mrp;
+                                        $t_cheque_amt += intval($order->cheque_amt);
+                                    }
+                                ?>
+                        
+                        
+                          <tr style="font-weight:bold;">
+                            <td></td>
+                            <td>TOTALS</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td><?php echo $t_qty; ?></td>
+                            <td><?php echo $t_shipped_qty; ?></td>
+                            <td><?php echo $t_shipped_mrp; ?></td>
+                            <td></td>
+                            <td><?php echo $t_cheque_amt; ?></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        
+                        
                             <?php
 				$count=0; $tot_qty=0; $tot_shipped_qty=0; $tot_shipped_mrp=0; $tot_cheque_amt=0;
 				foreach ($orders as $order) {
