@@ -15,6 +15,7 @@ const BHMAcountant =7;
 const Supervisor =8;
 const Operator =9;
 const OfficeBoy =10;
+const DesignSearchPicker=11;
 
 public static function getAll() {
 	return array(
@@ -29,7 +30,8 @@ public static function getAll() {
                 //new addition
                 UserType::Supervisor => "Supervisor",
                 UserType::Operator => "Operator",
-                UserType::OfficeBoy => "Office Boy"
+                UserType::OfficeBoy => "Office Boy",
+                UserType::DesignSearchPicker => "Design Search Picker"
 //                UserType::Customer_corporate => "Corporate Customer"
 	);
 }
