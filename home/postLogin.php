@@ -60,6 +60,8 @@ if (count($errors) > 0) {
                 $redirect = "report/accounts";
         }  else if ($userInfo->usertype == 7) {  // BHM accounts manager
         $redirect = "report/ssales";
+        }else if($userInfo->usertype==11){  // Design Search Picker
+        $redirect = "designs/search";
         } else {
 		$redirect = "home";
 	}
