@@ -83,7 +83,7 @@ try {
     $debit_notechallan_to_approve_obj = $db->fetchObjectArray($debit_notechallan_to_approve);
     
     
-    print_r($debit_notechallan_to_approve_obj);
+   // print_r($debit_notechallan_to_approve_obj);
     foreach ($debit_notechallan_to_approve_obj as $object) {
         //debit advoice number
         $Q_cur_debitnote_num = "select dbnum from it_debitnote_num";
@@ -418,6 +418,7 @@ $AckNo="";
 $Qr_Image="";
 $irncn_query="select irn,AckDate,AckNo,Qr_Image from  it_irndebitnote where DebitNote_ID=$pdfobj->id";
 //$irncn_query="select irn,AckDate,AckNo,Qr_Image from  it_irndebitnote where DebitNote_ID=236";
+    //print_r($irncn_query);    exit();
 $irn_obj= $db->fetchObject($irncn_query);
 //print_r($irn_obj);
 if(isset($irn_obj))
@@ -478,7 +479,7 @@ $AckDate= date("Y-m-d", $datetime);
                     
             $html .= '<br/><b>Fashionking Brands Pvt. Ltd.</b>';
                     
-                    
+          
             $html .= '<br/>Plot No.21,22,23 <br/>Hi-Tech Textile Park,'
                     .'<br/> MIDC, Baramati, Dist. Pune- 413133'
                     .'<br/>Phone : 02112-244121'
@@ -881,12 +882,14 @@ function callDebitNoteAPI()
             $totalTax2=0.0;
             $totalTax3=0.0;
             $totalInvoiceVal=0.0;
+            $totassamt=0.0;
              $pdfitemsQuery1="select *,sum(quantity) as finalqty from it_debit_advice_items where debit_id=$pdfobj->id group by hsncode,rate,disc_of_goods";
        // echo $pdfitemsQuery."</br>";//exit();
             $pdfitems1=$db->fetchObjectArray($pdfitemsQuery1);
             $cnt=count($pdfitems1);
             $frt_ins_itemwise=($pdfobj->frt_ins)/$cnt;
             foreach($pdfitems1 as $dai){
+           
                    $value=round(($dai->finalqty*$dai->rate), 2, PHP_ROUND_HALF_EVEN)+$frt_ins_itemwise;
             $disc=$dai->discount_val;
             $taxable=round(($value), 2, PHP_ROUND_HALF_EVEN);
@@ -918,6 +921,7 @@ function callDebitNoteAPI()
        // echo $pdfitemsQuery."</br>";//exit();
             $pdfitems=$db->fetchObjectArray($pdfitemsQuery);
             foreach($pdfitems as $dai){
+                      $item_cnt++;
             $value=round(($dai->finalqty*$dai->rate), 2, PHP_ROUND_HALF_EVEN)+$frt_ins_itemwise;
             $disc=$dai->discount_val;
             $taxable=round(($value), 2, PHP_ROUND_HALF_EVEN);
@@ -926,11 +930,11 @@ function callDebitNoteAPI()
             
             
             
-                $item_cnt++;
+               
                        $dnoi = new debitNoteEinvItems();
                 
-                        $dnoi->set_GSTIN("27AAACW3775F007"); //for testing
-//                        $dnoi->set_GSTIN("27AAACC7418H1ZQ"); //for live
+//                        $dnoi->set_GSTIN("27AAACW3775F007"); //for testing
+                        $dnoi->set_GSTIN("27AAACC7418H1ZQ"); //for live
                         $dnoi->set_Irn("");
                         $dnoi->set_Tran_SupTyp("B2B");
                         if ($store->state_id == 22) {
@@ -962,8 +966,8 @@ function callDebitNoteAPI()
                         
                         //NOTE: check all credential when we tested it from local otherwiaw it directly affect live data so do carefully while calling api from local
                 
-        //                $dnoi->set_BillFrom_Gstin("27AAACC7418H1ZQ");  //for ck live gstn,  
-                        $dnoi->set_BillFrom_Gstin("27AAACW3775F007");  //for testing gstin
+                        $dnoi->set_BillFrom_Gstin("27AAACC7418H1ZQ");  //for ck live gstn,  
+//                        $dnoi->set_BillFrom_Gstin("27AAACW3775F007");  //for testing gstin
 
                         $dnoi->set_BillFrom_LglNm("Fashionking Brands Pvt.Ltd.");
                         $dnoi->set_BillFrom_TrdNm("Fashionking Brands Pvt.Ltd.");
@@ -1015,7 +1019,7 @@ function callDebitNoteAPI()
 //                       $dnoi->set_Item_Discount($dai->discount_val);
                        $dnoi->set_Item_Discount("");
                        $dnoi->set_Item_PreTaxVal("");
-                       $dnoi->set_Item_AssAmt("");
+                       $dnoi->set_Item_AssAmt($taxable);
                        // $rate
                       $tax_per=($dai->tax_rate*100);
                       $dnoi->set_Item_GstRt($tax_per);
@@ -1051,7 +1055,7 @@ function callDebitNoteAPI()
 //                            irn.setItem_Bch_ExpDt("");
 //                            irn.setItem_Bch_WrDt("");
                              
-                             $dnoi->set_Val_AssVal($taxable);
+                             $dnoi->set_Val_AssVal($totalTaxable);
                              $total_item_value=0;
                              if($dai->igst==null)
                              {
@@ -1153,20 +1157,20 @@ function callDebitNoteAPI()
                             
 //---------------------------------------------------------------------------------------------------------
                 //for Live credentials uncomment when deploy on live
-            //              $dnoi-> set_CDKey("1695383");
-            //              $dnoi-> set_EInvUserName("FASHIONKIN_API_CKP");
-            //              $dnoi-> set_EInvPassword("Fashionking@29");
-            //              $dnoi-> set_EFUserName("B4FFC421-D76D-406D-9F09-8ACEC72BD3C1");
-            //              $dnoi-> set_EFPassword("3689CEA7-5DE2-41E7-A696-28F9FB3852B7");
+                          $dnoi-> set_CDKey("1695383");
+                          $dnoi-> set_EInvUserName("FASHIONKIN_API_CKP");
+                          $dnoi-> set_EInvPassword("Fashionking@29");
+                          $dnoi-> set_EFUserName("B4FFC421-D76D-406D-9F09-8ACEC72BD3C1");
+                          $dnoi-> set_EFPassword("3689CEA7-5DE2-41E7-A696-28F9FB3852B7");
 
                             //---------------------------------------------------------------------------------------------------------
                 //for testing credential comment when deploy on live
 
-                           $dnoi-> set_CDKey("1000687");
-                           $dnoi-> set_EInvUserName("27AAACW3775F007");
-                           $dnoi-> set_EInvPassword("Admin!23");
-                           $dnoi-> set_EFUserName("29AAACW3775F000");
-                           $dnoi-> set_EFPassword("Admin!23.."); 
+//                           $dnoi-> set_CDKey("1000687");
+//                           $dnoi-> set_EInvUserName("27AAACW3775F007");
+//                           $dnoi-> set_EInvPassword("Admin!23");
+//                           $dnoi-> set_EFUserName("29AAACW3775F000");
+//                           $dnoi-> set_EFPassword("Admin!23.."); 
                           
                      
                        
@@ -1175,24 +1179,28 @@ function callDebitNoteAPI()
                 
                 
                 $dn_items[$i]=$dnoi;
-                
+                $i++;
             }
      }
     
     $data_array['Data']=$dn_items;
     $Push_Data_List_array['Push_Data_List']=$data_array;
-    echo json_encode($Push_Data_List_array);
-    $fields_string=json_encode($Push_Data_List_array);
+    //echo json_encode($Push_Data_List_array);
+    $fields_string=json_encode($Push_Data_List_array,JSON_UNESCAPED_SLASHES);
     
    
-    
-       $url = "http://einvSandbox.webtel.in/v1.03/GenIRN";//for testing
-//       $url = "http://einvlive.webtel.in/v1.03/GenIRN";    //for live
+   // print_r($fields_string);
+//       $url = "http://einvSandbox.webtel.in/v1.03/GenIRN";//for testing
+       $url = "http://einvlive.webtel.in/v1.03/GenIRN";    //for live
        $ch = curl_init();
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_URL, $url);
 //        curl_setopt($ch, CURLOPT_POST, count($fields));
+         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Content-Type: application/json',
+            'Content-Length: ' . strlen($fields_string)
+        ));
         curl_setopt($ch, CURLOPT_POSTFIELDS, $fields_string);
 
         $output = curl_exec($ch);
