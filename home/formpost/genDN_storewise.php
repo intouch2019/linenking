@@ -141,7 +141,22 @@ $html2.='<page>';
 if(isset($pdfobj)){
 
     
-    
+    $irn="";
+$AckDate="";
+$AckNo="";
+//$Qr_Image="";
+$irncn_query="select irn,AckDate,AckNo from  it_irndebitnote where DebitNote_ID=$pdfobj->id";
+//$irncn_query="select irn,AckDate,AckNo,Qr_Image from  it_irndebitnote where DebitNote_ID=236";
+$irn_obj= $db->fetchObject($irncn_query);
+//print_r($irn_obj);
+if(isset($irn_obj))
+{
+$irn=$irn_obj->irn;
+$AckDate=$irn_obj->AckDate;
+$AckNo=$irn_obj->AckNo;
+//$Qr_Image=$irn_obj->Qr_Image;  
+}
+
 
     
 
@@ -424,20 +439,20 @@ if(isset($pdfobj)){
                             .'<td align="center" width="37%" colspan="6">'.sprintf ("%.2f",$totalTax2).'</td>';      
                             $printHtml .= '</tr>'   
                                  .'<tr>'
-                            .'<td align="center" width="13%" colspan="2"></td>'
-                            .'<td align="center" width="37%" colspan="6"></td>' 
+                            .'<td align="center" width="13%" colspan="2"><b>Ack Date:</b></td>'
+                            .'<td align="center" width="37%" colspan="6">'.$AckDate.'</td>' 
                             .'<td align="center" width="13%" colspan="2">TOTAL OF IGST </td>'
                             .'<td align="center" width="37%" colspan="6">'.sprintf ("%.2f",$totalTax3).'</td>';      
                             $printHtml .= '</tr>'
                                     .'<tr>'
-                            .'<td align="center" width="13%" colspan="2"></td>'
-                            .'<td align="center" width="37%" colspan="6"></td>'
+                            .'<td align="center" width="13%" colspan="2"><b>Ack No.:</b></td>'
+                            .'<td align="center" width="37%" colspan="6">'.$AckNo.'</td>'
                             .'<td align="center" width="13%" colspan="2">ROUND OFF </td>'
                             .'<td align="center" width="37%" colspan="6">'.sprintf ("%.2f",$roundoff).'</td>';      
                             $printHtml .= '</tr>'
                                     .'<tr>'
-                            .'<td align="center" width="13%" colspan="2"></td>'
-                            .'<td align="center" width="37%" colspan="6"><b></b> </td>'
+                            .'<td align="center" width="13%" colspan="2"><b>Irn No.:</b></td>'
+                            .'<td align="center" width="37%" colspan="6">'.$irn.'</td>'
                             .'<th align="center" width="13%" colspan="2"><b>INVOICE VALUE</b> </th>'
                             //.'<th align="center" width="37%" colspan="6"><b>'.sprintf ("%.2f",$totalInvoiceVal).'</b> </th>';      
                             .'<th align="center" width="37%" colspan="6"><b>'.sprintf ("%.2f",$roundTotalInvoiceVal).'</b> </th>';              
