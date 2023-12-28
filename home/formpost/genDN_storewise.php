@@ -144,8 +144,8 @@ if(isset($pdfobj)){
     $irn="";
 $AckDate="";
 $AckNo="";
-//$Qr_Image="";
-$irncn_query="select irn,AckDate,AckNo from  it_irndebitnote where DebitNote_ID=$pdfobj->id";
+$Qr_Image="";
+$irncn_query="select irn,AckDate,AckNo,Qr_Image from  it_irndebitnote where DebitNote_ID=$pdfobj->id";
 //$irncn_query="select irn,AckDate,AckNo,Qr_Image from  it_irndebitnote where DebitNote_ID=236";
 $irn_obj= $db->fetchObject($irncn_query);
 //print_r($irn_obj);
@@ -154,11 +154,11 @@ if(isset($irn_obj))
 $irn=$irn_obj->irn;
 $AckDate=$irn_obj->AckDate;
 $AckNo=$irn_obj->AckNo;
-//$Qr_Image=$irn_obj->Qr_Image;  
+$Qr_Image=$irn_obj->Qr_Image;  
 }
 
 
-    
+
 
   $html .= '<table width="100%" border="1px" align="center" style="border-collapse: collapse;">'
               
@@ -166,16 +166,17 @@ $AckNo=$irn_obj->AckNo;
                             <tr>';
             
             
-            $html .= '<td align="center" colspan="4" style="font-size:14px;" class="fixed">&nbsp;&nbsp;&nbsp;&nbsp;<b>DEBIT NOTE</b>&nbsp;&nbsp;&nbsp;&nbsp;</td>';
+            $html .= '<td align="center" colspan="6" style="font-size:14px;" class="fixed">&nbsp;&nbsp;&nbsp;&nbsp;<b>DEBIT NOTE</b>&nbsp;&nbsp;&nbsp;&nbsp;</td>';
                         
             
             
             
             $html .= '</tr>'
                     . '<tr>'
-                    . '<td align="left" colspan="2" class="fixed">&nbsp;Debit Note No.:DN' .$pdfobj->debit_no.'</td> '
+                    . '<td align="left" colspan="2" width="40%">&nbsp;Debit Note No.:DN' .$pdfobj->debit_no.'</td> '
                     
-                    . '<td align="left" colspan="2" class="fixed1">&nbsp;Date Of Debit: ' . $pdfobj->debit_dt . '</td>';
+                   . '<td align="left" colspan="2"  width="30%">&nbsp;Date Of Debit: ' . $pdfobj->debit_dt . '</td>'
+                    . '<td align="left" colspan="2" width="30%" >&nbsp;Ack Date: ' . $AckDate . '</td>';
            
              
             $storequery="select * from it_codes where id=$pdfobj->store_id";
@@ -183,12 +184,13 @@ $AckNo=$irn_obj->AckNo;
             
             $html .= '</tr>'
                     . '<tr>'
-                    . '<td align="left" colspan="2" class="fixed">To,<br/><b>'.$store->store_name .'</b><br/>' 
+                    . '<td align="left" colspan="2" >To,<br/><b>'.$store->store_name .'</b><br/>'
                     .$store->address.'<br/>' .
-                    'Contact No.: ' . $store->phone2
+                    'Contact No.: ' . $store->phone2.'<br/>' .
+                    'Dealer Discount.: ' . $store->discountset."%"
                    .'</td>'
                    
-                   .'<td align="left" colspan="2" class="fixed1">From,';
+                   .'<td align="left" colspan="2">From,';
                     
             $html .= '<br/><b>Fashionking Brands Pvt. Ltd.</b>';
                     
@@ -197,6 +199,9 @@ $AckNo=$irn_obj->AckNo;
                     .'<br/> MIDC, Baramati, Dist. Pune- 413133'
                     .'<br/>Phone : 02112-244121'
                     .'</td>'
+                    . '<td align="center" colspan="2">'
+                    .'<img src="../images/QR_code/'.$Qr_Image.'" width="130" height="130">'
+                    . '</td>'
                     .'</tr>'
                     //.'</table>'
                     //.'<table width="100%" border="1px" align="center" style="border-collapse: collapse;">'
@@ -209,6 +214,7 @@ $AckNo=$irn_obj->AckNo;
 //                    .'<td align="left" colspan="4" style=\"font-size:12px;>&nbsp;PAN No  :&nbsp;&nbsp;AAACC7418H&nbsp;</td>'
                     .'<td align="left"><span style=\"font-size:14px; padding:12px 0 0px 0\">&nbsp;&nbsp;&nbsp;&nbsp;GSTIN NO  :&nbsp;&nbsp;27AAACC7418H1ZQ&nbsp;</span></td>'
                     .'<td align="left"><span style=\"font-size:14px; padding:12px 0 0px 0\">&nbsp;&nbsp;&nbsp;&nbsp;PAN No  :&nbsp;&nbsp;AAACC7418H&nbsp;</span></td>'
+                    .'<td align="left" colspan="1"><span style=\"font-size:14px; padding:12px 0 0px 0\">&nbsp;&nbsp;&nbsp;&nbsp;ACK No : '.$AckNo.'&nbsp;</span></td>'
                     .'</tr>'
                    .'</table>';
             
@@ -433,8 +439,8 @@ $AckNo=$irn_obj->AckNo;
                             .'<td align="center" width="37%" colspan="6">'.sprintf ("%.2f",$totalTax1).'</td>';      
                             $printHtml .= '</tr>'
                                  .'<tr>'
-                            .'<td align="center" width="13%" colspan="2"> Total TAX Value (In Figure):</td>'
-                            .'<td align="center" width="37%" colspan="6">'.sprintf ("%.2f",$totalTaxValue).' </td>'
+                            .'<td align="center" width="13%" colspan="2"> Total TAX Value (In Words):</td>'
+                            .'<td align="center" width="37%" colspan="6">'.$conv->getIndianCurrency($totalTaxValue).' </td>'
                             .'<td align="center" width="13%" colspan="2">TOTAL OF SGST </td>'
                             .'<td align="center" width="37%" colspan="6">'.sprintf ("%.2f",$totalTax2).'</td>';      
                             $printHtml .= '</tr>'   
@@ -472,9 +478,9 @@ $AckNo=$irn_obj->AckNo;
 $html.='</page>';
 
 //echo $html;
-$fname="../debitnote/DN".$pdfobj->debit_no."_CK.pdf";
+$fname="../debitnote/DN".$pdfobj->debit_no."_LK.pdf";
 $html2fpdf->writeHTML($html);
-$html2fpdf->Output("../debitnote/DN".$pdfobj->debit_no."_CK.pdf", "F");
+$html2fpdf->Output("../debitnote/DN".$pdfobj->debit_no."_LK.pdf", "F");
  
 
 

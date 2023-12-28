@@ -120,6 +120,7 @@ function SendMail(){
                 <input type ="radio" name="tallytype" id="tallytype" value="6"  required>GST SaleBack Purchase Voucher
                 <input type ="radio" name="tallytype" id="tallytype" value="7"  required>GST Credit Voucher 2019
                <input type ="radio" name="tallytype" id="tallytype" value="8"  required>GST DG Credit Voucher
+                <input type ="radio" name="tallytype" id="tallytype" value="9"  required>Debit Note Voucher Saleback
                 <br/><br/>
                 <div class="grid_5" id="storeDiv" name="storeDiv">
                     Select date range from below :*<br/>                                         

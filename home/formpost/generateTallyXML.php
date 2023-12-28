@@ -45,7 +45,10 @@ if($page){
  else if($tallytype == "8"){ // means  gst sales voucher for defective garmentss   
      $redirect = "formpost/generateGSTDGCreditVoucherXML2019.php?d1=$from&d2=$to";
      header("Location: ".DEF_SITEURL."$redirect");  
- }
+ 
+ }else if($tallytype == "9"){ // means  Debitnote voucher xml     
+     $redirect = "formpost/genDebitnoteXML.php?d1=$from&d2=$to";
+ header("Location: ".DEF_SITEURL."$redirect");}
  else{  
    // means receipt voucher xml
     $envelope = new SimpleXMLElement('<ENVELOPE/>');    
