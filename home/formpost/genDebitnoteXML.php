@@ -11,9 +11,9 @@ require_once 'lib/users/clsUsers.php';
 
 
 extract($_GET);
-$dtarr = explode(" - ", $var);
-$d1=$dtarr[0];
-$d2=$dtarr[1];
+
+$d1=$_GET['d1'];
+$d2=$_GET['d2'];
 
 
 
@@ -78,7 +78,7 @@ if($page){
 
                         $tallymsg1 = $reqdata->addChild("TALLYMESSAGE");
                             $voucher = $tallymsg1->addChild("VOUCHER");
-                            $voucher->addAttribute("VCHTYPE", "Debit Note");
+                            $voucher->addAttribute("VCHTYPE", "Debit Note Sale Back");
                             $voucher->addAttribute("ACTION", "Create");
                             $voucher->addAttribute("OBJVIEW", "Accounting Voucher View");
                             $Addlist1 = $voucher->addChild("ADDRESS.LIST");
