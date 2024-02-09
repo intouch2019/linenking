@@ -431,27 +431,17 @@ class cls_dg_form extends cls_renderer {
                             </p> 
 
                             <p class="grid_7">
-                                <label for="prod">*Product: </label>                        
-                                <select name="prod" id="prod" required>
-                                    <option value="">Select Category</option>
-                                    <option value="Formal Shirt">Formal Shirt</option>
-                                    <option value="Semi Formal">Semi Formal</option>
-                                    <option value="Slim Formal">Slim Formal</option>
-                                    <option value="Slim Casual">Slim Casual</option>
-                                    <option value="Slim Shirt">Slim Shirt</option>
-                                    <option value="Salwar">Salwar</option>
-                                    <option value="T-Shirt">T-Shirt</option>
-                                    <option value="Trouser">Trouser</option>
-                                    <option value="Narrow Trouser">Narrow Trouser</option>
-                                    <option value="Stylized Trouser">Stylized Trouser</option>
-                                    <option value="Casual Shirt">Casual Shirt</option>
-                                    <option value="Jeans">Jeans</option>
-                                    <option value="Jacket">Jacket</option>
-                                    <option value="Pajama">Pajama</option>
-                                    <option value="Long Kurta">Long Kurta</option>
-                                    <option value="Short Kurta">Short Kurta</option>
-                                </select>
-                            </p>
+            <label for="prod">*Product: </label>                        
+            <select name="prod" id="prod" required>
+                <option value="">Select product</option>  
+                <?php  
+                    $objs = $db->fetchObjectArray("select name from it_categories where name in ('Formal Shirt','Regular Shirt','Semi Formal','Slim Formal','Slim Casual','Slim Shirt','Salwar','T-Shirt','Trouser','Narrow Trouser','Stylized Trouser','Casual Shirt','Jeans','Jacket','Pajama','Long Kurta','Short Kurta')");
+                    foreach ($objs as $obj) {
+                        echo '<option value="' . $obj->name . '">' . $obj->name . '</option>';
+                    }
+                ?>
+            </select>
+        </p>
 
                             <p class="grid_3">
                                 <label for="prod">*Design No: </label>                        
