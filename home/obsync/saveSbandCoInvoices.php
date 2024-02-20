@@ -97,6 +97,7 @@ $is_tyson=false;
                             if(trim($sgst_total)!=""){ $iClause .= " , sgst_total = $sgst_total "; }
                             if(trim($igst_total)!=""){ $iClause .= " , igst_total = $igst_total "; }
 
+                            $invoice_amt= round($invoice_amt);
                             $sqlquery = "update it_saleback_invoices set invoice_text = $invoice_text , invoice_amt = $invoice_amt , "
                                     . "invoice_qty=$invoice_qty , total_mrp = $total_mrp , updatetime = now()  $iClause "
                                     . " where id = $exists->id ";
@@ -245,7 +246,8 @@ $is_tyson=false;
                         $errflg=1; break;
                     }
 //                    $store_nm = $invRecord[5];
-                    $store_nm = $invRecord[2];                  
+                    $store_nm = $invRecord[2];   
+                    $invoice_amt= round($invoice_amt);
                         $query = "insert into it_saleback_invoices set invoice_text = $invoice_text,invoice_no=$invoice_no, "
                                 . "invoice_dt=$invoice_dt, invoice_type=$invoice_type, invoice_amt=$invoice_amt, "
                                 . "store_name='$store_nm', invoice_qty=$invoice_qty , total_mrp = $total_mrp ,"
