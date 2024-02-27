@@ -276,13 +276,13 @@ class cls_report_discountschemecalculations extends cls_renderer {
                             $sr_no = ($limit * ($this->page - 1)) + 1;
 
                             if ($this->storeid == -1) {
-                                $iquery = "select Row_Labels,Store_ID,Credit_Point_Heading,Dealer_Margin,Scheme_Discount,MRP_Sale_p12_s12,
+                                $iquery = "select id, Row_Labels,Store_ID,Credit_Point_Heading,Dealer_Margin,Scheme_Discount,MRP_Sale_p12_s12,
                                            Sale_Without_Discount_p12_s12,Discount_p12_s12, Total_Value_p12_s12,MRP_Sale_p12_s5,
                                            Sale_Without_Discount_p12_s5,Discount_p12_s5,Total_Value_p12_s5,MRP_Sale_p5_s5,
                                            Sale_Without_Discount_p5_s5,Discount_p5_s5,Total_Value_p5_s5 from cp_calculations 
                                            order by CreateTime desc limit $start_from, $limit";
                             } else {
-                                $iquery = "select Row_Labels,Store_ID,Credit_Point_Heading,Dealer_Margin,Scheme_Discount,MRP_Sale_p12_s12,
+                                $iquery = "select id, Row_Labels,Store_ID,Credit_Point_Heading,Dealer_Margin,Scheme_Discount,MRP_Sale_p12_s12,
                                            Sale_Without_Discount_p12_s12,Discount_p12_s12, Total_Value_p12_s12,MRP_Sale_p12_s5,
                                            Sale_Without_Discount_p12_s5,Discount_p12_s5,Total_Value_p12_s5,MRP_Sale_p5_s5,
                                            Sale_Without_Discount_p5_s5,Discount_p5_s5,Total_Value_p5_s5 from cp_calculations where Store_ID=$this->storeid order by CreateTime desc limit $start_from, $limit";
@@ -300,20 +300,20 @@ class cls_report_discountschemecalculations extends cls_renderer {
                                         <td><?php echo $obj->Credit_Point_Heading; ?></td>
                                         <td><?php echo $obj->Dealer_Margin * 100; ?>%</td>
                                         <td><?php echo $obj->Scheme_Discount * 100; ?>%</td>
-                                        <td><?php echo $obj->MRP_Sale_p12_s12; ?></td>
-                                        <td><?php echo $obj->Sale_Without_Discount_p12_s12; ?></td>
-                                        <td><?php echo $obj->Discount_p12_s12; ?></td>
-                                        <td><?php echo $obj->Total_Value_p12_s12; ?></td>
-                                        <td><?php echo $obj->MRP_Sale_p12_s5; ?></td>
-                                        <td><?php echo $obj->Sale_Without_Discount_p12_s5; ?></td>
-                                        <td><?php echo $obj->Discount_p12_s5; ?></td>
-                                        <td><?php echo $obj->Total_Value_p12_s5; ?></td>
-                                        <td><?php echo $obj->MRP_Sale_p5_s5; ?></td>
-                                        <td><?php echo $obj->Sale_Without_Discount_p5_s5; ?></td>
-                                        <td><?php echo $obj->Discount_p5_s5; ?></td>
-                                        <td><?php echo $obj->Total_Value_p5_s5; ?></td>
+                                        <td><?php echo round($obj->MRP_Sale_p12_s12) ?></td>
+                                        <td><?php echo round($obj->Sale_Without_Discount_p12_s12) ?></td>
+                                        <td><?php echo round($obj->Discount_p12_s12) ?></td>
+                                        <td><?php echo round($obj->Total_Value_p12_s12) ?></td>
+                                        <td><?php echo round($obj->MRP_Sale_p12_s5) ?></td>
+                                        <td><?php echo round($obj->Sale_Without_Discount_p12_s5) ?></td>
+                                        <td><?php echo round($obj->Discount_p12_s5) ?></td>
+                                        <td><?php echo round($obj->Total_Value_p12_s5) ?></td>
+                                        <td><?php echo round($obj->MRP_Sale_p5_s5) ?></td>
+                                        <td><?php echo round($obj->Sale_Without_Discount_p5_s5) ?></td>
+                                        <td><?php echo round($obj->Discount_p5_s5) ?></td>
+                                        <td><?php echo round($obj->Total_Value_p5_s5) ?></td>
                                         <td>
-                                            <a href='formpost/genCP_storewiseDS.php?storeid=<?php echo $obj->Store_ID; ?>' > <button class="view-button">Download</button></a>
+                                            <a href='formpost/genCP_storewiseDS.php?storeid=<?php echo $obj->Store_ID; ?>&id=<?php echo $obj->id; ?>' target="_blank"><button class="view-button">Download</button></a>
                                         </td>
                                     </tr>
 

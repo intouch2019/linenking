@@ -18,13 +18,13 @@ require_once('Classes/FPDF/fpdf.php');
 
         
 extract($_GET);
-//print_r($storeid);exit();
+//print_r($id);exit();
 $db = new DBConn();
 $conv = new CurrencyConv();
 $errors = array();
 $success = array();
 
-$query="select * from cp_calculations where Store_ID=$storeid";
+$query="select * from cp_calculations where Store_ID=$storeid and id=$id";
 $obj=$db->fetchObject($query);
 //print_r($obj);exit();
 if (!$obj) {
@@ -103,26 +103,34 @@ $html3= '<style type="text/css">
 </style>';
 
 // Generate the first HTML content section
-  $actualSale_p12s12 = round($obj->MRP_Sale_p12_s12 - $obj->Discount_p12_s12);
-  $actualSale_p12s12_int = (int)$actualSale_p12s12;
-  $dealerDiscountAC_p12s12 = $actualSale_p12s12*0.2;
-  $dealerDiscountAC_p12s12_int = (int)$dealerDiscountAC_p12s12;
-  $priceByCK_p12s12= $actualSale_p12s12 - $dealerDiscountAC_p12s12;
-  $priceByCK_p12s12_int = (int)$priceByCK_p12s12;
-  $originalMrp_p12s12 = round($obj->MRP_Sale_p12_s12);
-  $dealerDiscount_p12s12= $originalMrp_p12s12*0.24;
-  $dealerDiscount_p12s12_int = (int)$dealerDiscount_p12s12;
-  $actualPricePurchase_p12s12 =  $originalMrp_p12s12 - $dealerDiscount_p12s12;
-  $actualPricePurchase_p12s12_int = (int)$actualPricePurchase_p12s12;
-  $reimbursement_p12s12 = $actualPricePurchase_p12s12 - $priceByCK_p12s12;
-  $reimbursement_p12s12_int = (int)$reimbursement_p12s12;
-  
-   if ($obj->Sale_Without_Discount_p12_s12 == 0){
-       $saleWoDiscount_p12s12 = "-";
+  if ($obj->Sale_Without_Discount_p12_s12 == 0){
+       $saleWoDiscount_p12s12 = "0";
    }
    else{
-       $saleWoDiscount_p12s12 = $obj->Sale_Without_Discount_p12_s12;
+       $saleWoDiscount_p12s12 = trim($obj->Sale_Without_Discount_p12_s12);
    }
+  $soldunserdiscschem_p12s12 = trim($obj->MRP_Sale_p12_s12)-$saleWoDiscount_p12s12;
+  $soldunserdiscschem_p12s12_int = round((float)$soldunserdiscschem_p12s12);
+  
+  $actualSale_p12s12 = $soldunserdiscschem_p12s12_int - round($obj->Discount_p12_s12);
+  $actualSale_p12s12_int = round((float)$actualSale_p12s12);
+  
+  $dealerDiscountAC_p12s12 = $actualSale_p12s12_int * trim($obj->Scheme_Discount);
+  $dealerDiscountAC_p12s12_int = round((float)$dealerDiscountAC_p12s12);
+  
+  $priceByCK_p12s12= $actualSale_p12s12_int - $dealerDiscountAC_p12s12_int;
+  $priceByCK_p12s12_int = round((float)$priceByCK_p12s12);
+  
+  $originalMrpUnderDiscSchm_p12s12 = $soldunserdiscschem_p12s12_int;
+  
+  $dealerDiscount_p12s12= $originalMrpUnderDiscSchm_p12s12 * trim($obj->Dealer_Margin);
+  $dealerDiscount_p12s12_int = round((float)$dealerDiscount_p12s12);
+  
+  $actualPricePurchase_p12s12 =  $originalMrpUnderDiscSchm_p12s12 - $dealerDiscount_p12s12_int;
+  $actualPricePurchase_p12s12_int = round((float)$actualPricePurchase_p12s12);
+  
+  $reimbursement_p12s12 = $actualPricePurchase_p12s12_int - $priceByCK_p12s12_int;
+  $reimbursement_p12s12_int = round((float)$reimbursement_p12s12);
 
 $html1 .='<page>';
 
@@ -144,7 +152,7 @@ $html1 .= "<table style=\"margin-top: 50px;\" width=\"70%\" align=\"center\" bor
     //fields
     $html1 .= "<tr><td width=50% align='center'>1</td>"
             . "<td>Original MRP sale during sale period.</td>"
-            . "<td width=50% align='center'>" . trim($obj->MRP_Sale_p12_s12) . "</td></tr>";
+            . "<td width=50% align='center'>" . round((float)trim($obj->MRP_Sale_p12_s12)) . "</td></tr>";
     
     $html1 .= "<tr><td width=50% align='center'>2</td>"
             . "<td>Sales of garment without discount.</td>"
@@ -152,31 +160,31 @@ $html1 .= "<table style=\"margin-top: 50px;\" width=\"70%\" align=\"center\" bor
    
     $html1 .= "<tr><td width=50% align='center'>3</td>"
             . "<td>Original MRP of Garments sold under discount scheme.</td>"
-            . "<td width=50% align='center'>" . trim($obj->MRP_Sale_p12_s12) . "</td></tr>";
+            . "<td width=50% align='center'>" . round($soldunserdiscschem_p12s12_int) . "</td></tr>";
    
     $html1 .= "<tr><td width=50% align='center'>4</td>"
             . "<td>Discount passed on to customers as per your report.</td>"
-            . "<td width=50% align='center'>" . trim($obj->Discount_p12_s12) . "</td></tr>";
+            . "<td width=50% align='center'>" . round((float)trim($obj->Discount_p12_s12)) . "</td></tr>";
     
     $html1 .= "<tr><td width=50% align='center'>5</td>"
             . "<td>Actual sale of dealer ( or revised MRP sale ) after discount.( 3 - 4 )</td>"
-            . "<td width=50% align='center'>$actualSale_p12s12_int</td></tr>";
+            . "<td width=50% align='center'>".round($actualSale_p12s12_int)."</td></tr>";
     
     $html1 .= "<tr><td width=50% align='center'>6</td>"
             . "<td>Dealer discount applicable on actual sale.( 5 x 20% )</td>"
-            . "<td width=50% align='center'>$dealerDiscountAC_p12s12_int</td></tr>";
+            . "<td width=50% align='center'>".round($dealerDiscountAC_p12s12_int)."</td></tr>";
     
     $html1 .= "<tr><td width=50% align='center'>7</td>"
             . "<td>This should be the price at which dealer should buy from C.K. ( 5 - 6 = 7 )</td>"
-            . "<td width=50% align='center'>$priceByCK_p12s12_int</td></tr>";
+            . "<td width=50% align='center'>".round($priceByCK_p12s12_int)."</td></tr>";
 
     $html1 .= "<tr><td width=50% align='center'>8</td>"
             . "<td>Actual price at which dealer has made his purchases. ( 3 MRP - Dealer discount )</td>"
-            . "<td width=50% align='center'>$actualPricePurchase_p12s12_int</td></tr>";
+            . "<td width=50% align='center'>".round($actualPricePurchase_p12s12_int)."</td></tr>";
  
     $html1 .= "<tr><td width=50% align='center'>9</td>"
             . "<td><b>Reimbursement of difference.  ( 7 - 8 ) ( Inclusive of Tax Amt )</b></td>"
-            . "<td width=50% align='center'>$reimbursement_p12s12_int</td></tr>";
+            . "<td width=50% align='center'>".round($reimbursement_p12s12_int)."</td></tr>";
     
     //blank space
     $html1 .= "<tr><th width=70% align='center' colspan=3></th></tr>";   
@@ -200,28 +208,37 @@ $html1 .= "<table style=\"margin-top: 50px;\" width=\"70%\" align=\"center\" bor
  
  
 // Generate the second HTML content section
-  $actualSale_p12s5 = round($obj->MRP_Sale_p12_s5 - $obj->Discount_p12_s5);
-  $actualSale_p12s5_int = (int)$actualSale_p12s5;
-  $dealerDiscountAC_p12s5 = $actualSale_p12s5*0.2;
-  $dealerDiscountAC_p12s5_int = (int)$dealerDiscountAC_p12s5;
-  $priceByCK_p12s5= $actualSale_p12s5 - $dealerDiscountAC_p12s5;
-  $priceByCK_p12s5_int = (int)$priceByCK_p12s5;
-  $originalMrp_p12s5 = round($obj->MRP_Sale_p12_s5);
-  $dealerDiscount_p12s5= $originalMrp_p12s5*0.24;
-  $dealerDiscount_p12s5_int = (int)$dealerDiscount_p12s5;
-  $actualPricePurchase_p12s5 =  $originalMrp_p12s5 - $dealerDiscount_p12s5;
-  $actualPricePurchase_p12s5_int = (int)$actualPricePurchase_p12s5;
-  $diffofTaxcredit_p12s5 = $originalMrp_p12s5*0.07;
-  $diffofTaxcredit_p12s5_int = (int)$diffofTaxcredit_p12s5;
-  $reimbursement_p12s5 = $actualPricePurchase_p12s5 - $priceByCK_p12s5 - $diffofTaxcredit_p12s5;
-  $reimbursement_p12s5_int = (int)$reimbursement_p12s5;
-  
-   if ($obj->Sale_Without_Discount_p12_s5 == 0){
-       $saleWoDiscount_p12s5 = "-";
-   }
-   else{
+  if ($obj->Sale_Without_Discount_p12_s5 == 0){
+       $saleWoDiscount_p12s5 = "0";
+   } else {
        $saleWoDiscount_p12s5 = $obj->Sale_Without_Discount_p12_s5;
    }
+  $soldunserdiscschem_p12s5 = trim($obj->MRP_Sale_p12_s5)-$saleWoDiscount_p12s5;
+  $soldunserdiscschem_p12s5_int = round((float)$soldunserdiscschem_p12s5);
+  
+  $actualSale_p12s5 = $soldunserdiscschem_p12s5 - round($obj->Discount_p12_s5);
+  $actualSale_p12s5_int = round((float)$actualSale_p12s5);
+  
+  $dealerDiscountAC_p12s5 = $actualSale_p12s5_int * trim($obj->Scheme_Discount);
+  $dealerDiscountAC_p12s5_int = round((float)$dealerDiscountAC_p12s5);
+  
+  $priceByCK_p12s5= $actualSale_p12s5_int - $dealerDiscountAC_p12s5_int;
+  $priceByCK_p12s5_int = round((float)$priceByCK_p12s5);
+  
+  $originalMrpUnderDiscSchm_p12s5 = $soldunserdiscschem_p12s5_int;
+  $originalMrp_p12s5 = round($obj->MRP_Sale_p12_s5);
+  
+  $dealerDiscount_p12s5= $originalMrpUnderDiscSchm_p12s5 * trim($obj->Dealer_Margin);
+  $dealerDiscount_p12s5_int = round((float)$dealerDiscount_p12s5);
+  
+  $actualPricePurchase_p12s5 =  $originalMrpUnderDiscSchm_p12s5 - $dealerDiscount_p12s5_int;
+  $actualPricePurchase_p12s5_int = round((float)$actualPricePurchase_p12s5);
+  
+  $diffofTaxcredit_p12s5 = $originalMrp_p12s5 * 0.07;
+  $diffofTaxcredit_p12s5_int = round((float)$diffofTaxcredit_p12s5);
+  
+  $reimbursement_p12s5 = $actualPricePurchase_p12s5_int - $priceByCK_p12s5_int - $diffofTaxcredit_p12s5_int;
+  $reimbursement_p12s5_int = round((float)$reimbursement_p12s5);
  
  $html2 .='<page>';
 
@@ -243,7 +260,7 @@ $html2 .= "<table style=\"margin-top: 50px;\" width=\"70%\" align=\"center\" bor
     //fields
     $html2 .= "<tr><td width=50% align='center'>1</td>"
             . "<td>Original MRP sale during sale period.</td>"
-            . "<td width=50% align='center'>" . trim($obj->MRP_Sale_p12_s5) . "</td></tr>";
+            . "<td width=50% align='center'>" . round((float)trim($obj->MRP_Sale_p12_s5)) . "</td></tr>";
     
     $html2 .= "<tr><td width=50% align='center'>2</td>"
             . "<td>Sales of garment without discount.</td>"
@@ -251,11 +268,11 @@ $html2 .= "<table style=\"margin-top: 50px;\" width=\"70%\" align=\"center\" bor
    
     $html2 .= "<tr><td width=50% align='center'>3</td>"
             . "<td>Original MRP of Garments sold under discount scheme.</td>"
-            . "<td width=50% align='center'>" . trim($obj->MRP_Sale_p12_s5) . "</td></tr>";
+            . "<td width=50% align='center'>$soldunserdiscschem_p12s5_int</td></tr>";
    
     $html2 .= "<tr><td width=50% align='center'>4</td>"
             . "<td>Discount passed on to customers as per your report.</td>"
-            . "<td width=50% align='center'>" . trim($obj->Discount_p12_s5) . "</td></tr>";
+            . "<td width=50% align='center'>" . round((float)trim($obj->Discount_p12_s5)) . "</td></tr>";
     
     $html2 .= "<tr><td width=50% align='center'>5</td>"
             . "<td>Actual sale of dealer ( or revised MRP sale ) after discount.( 3 - 4 )</td>"
@@ -303,26 +320,33 @@ $html2 .= "<table style=\"margin-top: 50px;\" width=\"70%\" align=\"center\" bor
  
  
  // Generate the third HTML content section
-  $actualSale_p5s5 = round($obj->MRP_Sale_p5_s5 - $obj->Discount_p5_s5);
-  $actualSale_p5s5_int = (int)$actualSale_p5s5;
-  $dealerDiscountAC_p5s5 = $actualSale_p5s5*0.2;
-  $dealerDiscountAC_p5s5_int = (int)$dealerDiscountAC_p5s5;
-  $priceByCK_p5s5= $actualSale_p5s5 - $dealerDiscountAC_p5s5;
-  $priceByCK_p5s5_int = (int)$priceByCK_p5s5;
-  $originalMrp_p5s5 = round($obj->MRP_Sale_p5_s5);
-  $dealerDiscount_p5s5= $originalMrp_p5s5*0.24;
-  $dealerDiscount_p5s5_int = (int)$dealerDiscount_p5s5;
-  $actualPricePurchase_p5s5 =  $originalMrp_p5s5 - $dealerDiscount_p5s5;
-  $actualPricePurchase_p5s5_int = (int)$actualPricePurchase_p5s5;
-  $reimbursement_p5s5 = $actualPricePurchase_p5s5 - $priceByCK_p5s5;
-  $reimbursement_p5s5_int = (int)$reimbursement_p5s5;
-  
-   if ($obj->Sale_Without_Discount_p5_s5 == 0){
-       $saleWoDiscount_p5s5 = "-";
-   }
-   else{
+  if ($obj->Sale_Without_Discount_p5_s5 == 0){
+       $saleWoDiscount_p5s5 = "0";
+   } else {
        $saleWoDiscount_p5s5 = $obj->Sale_Without_Discount_p5_s5;
    }
+  $soldunserdiscschem_p5s5 = trim($obj->MRP_Sale_p5_s5)-$saleWoDiscount_p5s5;
+  $soldunserdiscschem_p5s5_int = round((float)$soldunserdiscschem_p5s5);
+  
+  $actualSale_p5s5 = $soldunserdiscschem_p5s5_int - round($obj->Discount_p5_s5);
+  $actualSale_p5s5_int = round((float)$actualSale_p5s5);
+  
+  $dealerDiscountAC_p5s5 = $actualSale_p5s5_int * trim($obj->Scheme_Discount);
+  $dealerDiscountAC_p5s5_int = round((float)$dealerDiscountAC_p5s5);
+  
+  $priceByCK_p5s5= $actualSale_p5s5_int - $dealerDiscountAC_p5s5_int;
+  $priceByCK_p5s5_int = round((float)$priceByCK_p5s5);
+  
+  $originalMrpUnderDiscSchm_p5s5 = $soldunserdiscschem_p5s5_int;
+  
+  $dealerDiscount_p5s5= $originalMrpUnderDiscSchm_p5s5 * trim($obj->Dealer_Margin);
+  $dealerDiscount_p5s5_int = round((float)$dealerDiscount_p5s5);
+  
+  $actualPricePurchase_p5s5 =  $originalMrpUnderDiscSchm_p5s5 - $dealerDiscount_p5s5_int;
+  $actualPricePurchase_p5s5_int = round((float)$actualPricePurchase_p5s5);
+  
+  $reimbursement_p5s5 = $actualPricePurchase_p5s5_int - $priceByCK_p5s5_int;
+  $reimbursement_p5s5_int = round((float)$reimbursement_p5s5);
   
 
 $html3 .='<page>';
@@ -345,7 +369,7 @@ $html3 .= "<table style=\"margin-top: 50px;\" width=\"70%\" align=\"center\" bor
     //fields
     $html3 .= "<tr><td width=50% align='center'>1</td>"
             . "<td>Original MRP sale during sale period.</td>"
-            . "<td width=50% align='center'>" . trim($obj->MRP_Sale_p5_s5) . "</td></tr>";
+            . "<td width=50% align='center'>" . round((float)trim($obj->MRP_Sale_p5_s5)) . "</td></tr>";
     
     $html3 .= "<tr><td width=50% align='center'>2</td>"
             . "<td>Sales of garment without discount.</td>"
@@ -353,11 +377,11 @@ $html3 .= "<table style=\"margin-top: 50px;\" width=\"70%\" align=\"center\" bor
    
     $html3 .= "<tr><td width=50% align='center'>3</td>"
             . "<td>Original MRP of Garments sold under discount scheme.</td>"
-            . "<td width=50% align='center'>" . trim($obj->MRP_Sale_p5_s5) . "</td></tr>";
+            . "<td width=50% align='center'>$soldunserdiscschem_p5s5_int</td></tr>";
    
     $html3 .= "<tr><td width=50% align='center'>4</td>"
             . "<td>Discount passed on to customers as per your report.</td>"
-            . "<td width=50% align='center'>" . trim($obj->Discount_p5_s5) . "</td></tr>";
+            . "<td width=50% align='center'>" . round((float)trim($obj->Discount_p5_s5)) . "</td></tr>";
     
     $html3 .= "<tr><td width=50% align='center'>5</td>"
             . "<td>Actual sale of dealer ( or revised MRP sale ) after discount.( 3 - 4 )</td>"
