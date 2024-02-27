@@ -1,5 +1,6 @@
 <?php
 
+//for live
 ini_set('memory_limit', '-1');
 ini_set('max_execution_time', '-1');
 require_once("/var/www/html/linenking/it_config.php");
@@ -7,8 +8,7 @@ require_once("session_check.php");
 require_once "lib/db/DBConn.php";
 
 
-
-
+//for test
 //require_once("/../../it_config.php");
 //require_once("session_check.php");
 //require_once "lib/db/DBConn.php";
@@ -25,17 +25,15 @@ if (isset($receivedatas)) {
 
     foreach ($receivedatas as $receivedata) {
 
-        $productid = $receivedata->productUploadHistId;
+        $fileId = $receivedata->productUploadHistId;
 
         $start_date = date('Y-m-d H:i:s');
         echo "<br>Execution start of Receiver batch...<br> datetime: " . $start_date . "<br>";
 
-///////////https://bu-fashionking-wc1wyu.truevuecloud.com/api/v1/productUpload/893fdfa9-1197-490a-bd4d-9e1a4938dba0?businessUnitId=61830fe6-e3b5-4553-bda1-cc91944cea19&apikey=eeYNNlKSGf42Aon9pLLN8cZZaw9GE8ub&delimiter=,
-
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://bu-fashionking-wc1wyu.truevuecloud.com//api/v1/productUpload/' . $productid . '?businessUnitId=61830fe6-e3b5-4553-bda1-cc91944cea19&apikey=eeYNNlKSGf42Aon9pLLN8cZZaw9GE8ub',
+            CURLOPT_URL => 'https://bu-fashionking-wc1wyu.truevuecloud.com/api/v1/fileUploader/files/61830fe6-e3b5-4553-bda1-cc91944cea19/'.$fileId.'?apikey=AuHEgeJVhSBrmyNoE9cnUni44Pii4A0AXWNbsc8Kl5FMATMd', // New API Key
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -52,30 +50,22 @@ if (isset($receivedatas)) {
         print_r($var);
         echo "</pre>";
 
-        if (isset($var['status'])) {
-            $stats = $var['status'];
+        if (isset($var['fileStatus'])) {
+            $stats = $var['fileStatus'];
         }
-        if (isset($var['productUploadHistId'])) {
-            $productidd = $var['productUploadHistId'];
-        }
-
-        if (isset($var['totalRecordsWithError'])) {
-            $errar = $var['totalRecordsWithError'];
+        if (isset($var['fileId'])) {
+            $file_id = $var['fileId'];
         }
 
+        if ($stats == "COMPLETE" && $file_id == $fileId) {
 
-
-
-        if ($stats == "COMPLETE" && $productidd == $productid) {
-
-
-            $finalup = "update it_new_barcode_batch set response='$response',status='$stats',is_sent=2,updatetime=now() where productUploadHistId='$productidd'";
+            $finalup = "update it_new_barcode_batch set response='$response',status='$stats',is_sent=2,updatetime=now() where productUploadHistId='$file_id'";
 
             $inserted = $db->execUpdate($finalup);
         }
         if ($stats == "FAILED") {
 
-            $finalup = "update it_new_barcode_batch set response='$response',status='$stats',updatetime=now() where productUploadHistId='$productidd'";
+            $finalup = "update it_new_barcode_batch set response='$response',status='$stats',updatetime=now() where productUploadHistId='$file_id'";
 
             $inserted = $db->execUpdate($finalup);
         }
