@@ -17,7 +17,7 @@ if(!isset($records) || trim($records) == ""){
 	print "1::Missing parameter [records]";
 	return;
 }
-//print $records;
+
 try {
     $db = new DBConn();
     $serverCh = new clsServerChanges();
@@ -33,7 +33,9 @@ try {
             if (trim($record) == "") { continue; }
             $invRecord = explode("<==>", $record);
             if (count($invRecord) == 0) { continue; }
-         //   print_r($invRecord);
+            //print_r($invRecord);
+//                 print_r($invRecord[4]);
+                               
             
             $invHeader = $invRecord[0];
             $EwayBillno = $db->safe(trim($invRecord[5]));
@@ -43,6 +45,11 @@ try {
             $pickingId = "";
             $invoice_no = $db->safe(trim($invfields[0]));
             if ($invfields) {
+                
+                
+                                //$pickNstorearr = explode("<>",$invRecord[4]);
+                           
+                
                     //$invoice_no = $db->safe(trim($invfields[0]));
                     $exists = $db->fetchObject("select * from it_invoices where invoice_no=$invoice_no");   
                     
@@ -336,6 +343,10 @@ try {
             }
 
             $itemlines = explode("<++>", $invRecord[3]);
+            
+            $pickNstorearr = explode("<>",$invRecord[4]);
+           $pickingId = $pickNstorearr[0];
+            $orderType=$pickNstorearr[3];
            
             foreach ($itemlines as $currlineitem) {
                         $currlineitem=trim($currlineitem);
@@ -377,6 +388,12 @@ try {
                                 . "quantity=$quantity $liClause ";                        
                         //echo "<br/>".$query."<br/>";
                         $inserted = $db->execInsert($query);
+                        
+                         if ($orderType == 0 && empty(trim($pickingId)) && $invoice_type == "'0'") {  //ordertype=0 means purchase order
+    $q1 ="update it_items set curr_qty = curr_qty - $quantity , updatetime = now() where barcode = $ck_code";
+     $db->execUpdate($q1);
+}
+                        
 //                        if (!$inserted) { break; }
                         $items[$ck_code] = $quantity;
            }
