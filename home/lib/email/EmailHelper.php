@@ -21,18 +21,18 @@ $mail->Port       = 465;                   // set the SMTP port
 //$mail->Username   = "cottonkingwebmaster@gmail.com";  // GMAIL username
 //$mail->Password   = "hqsehyhriufycvci";            // GMAIL password
     
- $mail->Username   = "webmaster@kinglifestyle.com";  // GMAIL username
+ $mail->Username   = "cottonkingwebmaster0@gmail.com";  // GMAIL username
  //$mail->Password   = "Cottonking@2023";            // GMAIL password
- $mail->Password   = "fvlwktlijlchwvnc";            // App password --gifiudlssrcmihlz
+ $mail->Password   = "Cottonking@321";            // App password --gifiudlssrcmihlz
 
-$mail->From       = "webmaster@kinglifestyle.com";
+$mail->From       = "cottonkingwebmaster0@gmail.com";
 $mail->FromName   = "Linenking  Webmaster";
 $mail->Subject    = $subject;
 $mail->WordWrap   = 50; // set word wrap
 
 $mail->MsgHTML($body);
 
-$mail->AddReplyTo("webmaster@kinglifestyle.com","Linenking Webmaster");
+$mail->AddReplyTo("cottonkingwebmaster0@gmail.com","Linenking Webmaster");
 
 //adding attachement(s)
 if($attachments){
