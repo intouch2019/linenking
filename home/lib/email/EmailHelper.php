@@ -22,8 +22,8 @@ $mail->Port       = 465;                   // set the SMTP port
 //$mail->Password   = "hqsehyhriufycvci";            // GMAIL password
     
  $mail->Username   = "cottonkingwebmaster0@gmail.com";  // GMAIL username
- //$mail->Password   = "Cottonking@2023";            // GMAIL password
- $mail->Password   = "Cottonking@321";            // App password --gifiudlssrcmihlz
+ //$mail->Password   = "Cottonking@321";            // GMAIL password
+ $mail->Password   = "gpwvgfefrhbwrhwf";            // App password --gifiudlssrcmihlz
 
 $mail->From       = "cottonkingwebmaster0@gmail.com";
 $mail->FromName   = "Linenking  Webmaster";
