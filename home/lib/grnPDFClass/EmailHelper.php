@@ -20,8 +20,8 @@ public function send($toArray, $subject, $body,$attachments=false , $ccArray=fal
     //$mail->Password   = "hqsehyhriufycvci";            // GMAIL password(old- cottonking2012) //App Password
     
     $mail->Username   = "cottonkingwebmaster0@gmail.com";  // GMAIL username
-    //$mail->Password   = "Cottonking@2023";            // GMAIL password
-    $mail->Password   = "Cottonking@321";            // App password
+    //$mail->Password   = "Cottonking@321";            // GMAIL password
+    $mail->Password   = "gpwvgfefrhbwrhwf";            // App password
 
     $mail->From       = "cottonkingwebmaster0@gmail.com";
     $mail->FromName   = "LinenKing Webmaster";
