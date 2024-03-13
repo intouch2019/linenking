@@ -417,8 +417,10 @@ foreach ($objs as $obj) {
                                         <option value="month">Month</option>
                                         <!--<option value="cust">Customer Info</option>-->
                                         <!--<option value="loyalty">Loyalty Points</option>-->
-                                         <option value="custname">Customer Name</option>
-                                        <option value="custphone">Customer Phone</option>
+                                        <?php if($this->currUser->usertype != UserType::Dealer){?>
+                                        <option value="custname">Customer name</option>
+                                        <option value="custphone">Customer phone</option>
+                                        <?php } ?>
                                         <option value="area">Area</option>
                                         <option value="city">City</option>
                                         <option value="location">Location</option>
