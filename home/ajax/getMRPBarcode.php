@@ -16,7 +16,8 @@ $size = $valuearray[1];
 $style = $db->safe($valuearray[2]);
 //print_r($designNo);
 //exit();
-$barcodeMRP = $db->fetchObject("select i.barcode, i.MRP from it_items i left outer join it_mfg_by m on i.mfg_id = m.id"
+$query = "select i.barcode, i.MRP from it_items i left outer join it_mfg_by m on i.mfg_id = m.id left outer join it_categories c on i.ctg_id = c.id left outer join it_brands b on i.brand_id = b.id left outer join it_styles st on i.style_id = st.id left outer join it_sizes si on i.size_id = si.id left outer join it_prod_types p on i.prod_type_id = p.id left outer join it_materials mt on i.material_id = mt.id left outer join it_fabric_types f on i.fabric_type_id = f.id where i.design_no =$designNo  and si.name=$size and st.name=$style order by i.batch_id desc limit 2";
+$barcodeMRP = $db->fetchObjectArray("select i.barcode, i.MRP from it_items i left outer join it_mfg_by m on i.mfg_id = m.id"
         . " left outer join it_categories c on i.ctg_id = c.id"
         . " left outer join it_brands b on i.brand_id = b.id"
         . " left outer join it_styles st on i.style_id = st.id"
@@ -24,11 +25,14 @@ $barcodeMRP = $db->fetchObject("select i.barcode, i.MRP from it_items i left out
         . " left outer join it_prod_types p on i.prod_type_id = p.id"
         . " left outer join it_materials mt on i.material_id = mt.id"
         . " left outer join it_fabric_types f on i.fabric_type_id = f.id where"
-        . " i.design_no =$designNo and si.name=$size and st.name=$style order by i.batch_id desc limit 1");
-//print_r($barcodeMRP);
-//exit();
-if (isset($barcodeMRP)) {
-    echo $barcodeMRP->barcode . $barcodeMRP->MRP;
+        . " i.design_no =$designNo and si.name=$size and st.name=$style order by i.batch_id desc limit 2");
+
+if ($barcodeMRP) {
+    foreach ($barcodeMRP as $row) {
+        echo $row->barcode . ';';
+        echo $row->MRP . ';';
+    }
 } else {
-    echo "Not Found";
+       echo "NA"; // 
+
 }
