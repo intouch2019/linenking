@@ -75,58 +75,87 @@ class cls_dg_form extends cls_renderer {
 
 
 
-            function getMRP() {
+            function getBarcode() {
                 const designNo = document.getElementById('design_no').value;
                 const size = document.getElementById('size').value;
                 const style = document.getElementById('style').value;
+                document.getElementById('mrp').value = "";
+                document.getElementById('barcode').innerHTML = "";
+
                 if (size === "" || size === null) {
                     document.getElementById('size_error').innerHTML = "Please Enter size first!";
                     document.getElementById('size_error').focus();
-                    document.getElementById('style').value="";
+                    document.getElementById('style').value = "";
                     return false;
                 } else {
                     document.getElementById('size_error').innerHTML = "";
                 }
+
                 if (designNo === "" || designNo === null) {
                     document.getElementById('design_no_error').innerHTML = "Please Enter Design No first!";
                     document.getElementById('design_no_error').focus();
-                    document.getElementById('style').value="";
+                    document.getElementById('style').value = "";
                     return false;
                 } else {
                     document.getElementById('design_no_error').innerHTML = "";
                 }
+
                 const values = designNo + "/" + size + "/" + style;
+
                 $.ajax({
                     url: "ajax/getMRPBarcode.php?values=" + values,
-
                     success: function (response) {
-                        if (response !== "") {
-                            document.getElementById('barcode').value = response.slice(0, 13);
-                            const barcode = response.slice(0, 13);
-                            if (!validateNumber(barcode)) {
-                                document.getElementById('barcode_error').innerHTML = "Make sure value entered for Design no, size and style is correct !";
-                                document.getElementById('barcode_error').focus();
-                                return false;
-                            } else {
-                                document.getElementById('barcode_error').innerHTML = "";
+        //            alert(response);
+                        if (response !== "NA") {
+                            const barcodesMrps = response.split(';');
+                            const barcodeDropdown = document.getElementById('barcode');
+
+                            barcodeDropdown.innerHTML = ""; // Clear existing options
+
+                            // Create initial "Select Barcode" option
+                            const selectBarcodeOption = document.createElement('option');
+                            selectBarcodeOption.value = ""; // You can set the value to empty string or any default value
+                            selectBarcodeOption.textContent = "Select Barcode";
+                            barcodeDropdown.appendChild(selectBarcodeOption);
+                            selectBarcodeOption.selected = true;
+
+                            for (let i = 0; i < barcodesMrps.length - 1; i += 2) {
+                                const barcode = barcodesMrps[i];
+
+                                const barcodeOption = document.createElement('option');
+                                barcodeOption.value = barcode;
+                                barcodeOption.textContent = barcode;
+                                barcodeDropdown.appendChild(barcodeOption);
+
                             }
-                            if (response.slice(13) !== "") {
-                                document.getElementById('mrp').value = response.slice(13);
-                                const mrp = response.slice(13);
-                                if (!validateNumber(mrp)) {
-                                    document.getElementById('mrp_error').innerHTML = "Make sure value entered for Design no, size and style is correct !";
-                                    document.getElementById('mrp_error').focus();
-                                    return false;
-                                } else {
-                                    document.getElementById('mrp_error').innerHTML = "";
-                                }
-                            } else {
-                                document.getElementById('mrp').value = "Not Found";
-                            }
+                        } else {
+                            alert("Not Found");
                         }
                     }
                 });
             }
+
+            function getMRP() {
+                const barcode = document.getElementById('barcode').value;
+        //    alert(barcode);
+        //    return;
+
+                const values = barcode;
+
+                $.ajax({
+                    url: "ajax/getMRPByBarcode.php?values=" + values,
+                    success: function (response) {
+                        if (response !== "Not Found") {
+        //                alert(response);
+                            // Set the response value to the input field with id "mrp"
+                            document.getElementById('mrp').value = response;
+                        } else {
+                            alert("Barcode Not Found");
+                        }
+                    }
+                });
+            }
+
 
 
 
@@ -145,7 +174,7 @@ class cls_dg_form extends cls_renderer {
                 const barcode = document.getElementById('barcode').value;
                 const mrp = document.getElementById('mrp').value;
                 if (!validateNumber(barcode)) {
-//                    alert("inside barcode if condition");
+        //                    alert("inside barcode if condition");
                     document.getElementById('barcode_error').innerHTML = "Make sure value entered for Design no, size and style is correct !";
                     document.getElementById('barcode_error').focus();
                     return false;
@@ -170,10 +199,10 @@ class cls_dg_form extends cls_renderer {
                 // Check if the phone number matches the pattern
                 return pattern.test(phoneNumber);
             }
-            
+
             function setStyleDefault()
             {
-                document.getElementById('style').value="";
+                document.getElementById('style').value = "";
             }
 
 
@@ -222,14 +251,14 @@ class cls_dg_form extends cls_renderer {
 
                 const barcode = document.getElementById('barcode').value;
                 const mrp = document.getElementById('mrp').value;
-                    if (!validateNumber(barcode)) {
+                if (!validateNumber(barcode)) {
                     document.getElementById('barcode_error').innerHTML = "Make sure value entered for Design no, size and style is correct !";
                     document.getElementById('barcode_error').focus();
                     return false;
                 } else {
                     document.getElementById('barcode_error').innerHTML = "";
                 }
-                
+
                 if (!validateNumber(mrp)) {
                     document.getElementById('mrp_error').innerHTML = "Make sure value entered for Design no, size and style is correct !";
                     document.getElementById('mrp_error').focus();
@@ -237,7 +266,7 @@ class cls_dg_form extends cls_renderer {
                 } else {
                     document.getElementById('mrp_error').innerHTML = "";
                 }
-                
+
 
                 var checkboxes = document.querySelectorAll('input[type="checkbox"]');
                 var isChecked = false;
@@ -323,7 +352,7 @@ class cls_dg_form extends cls_renderer {
                                 <input type="date" name="dg_form_date"  value="<?php echo $today; ?>" disabled > <br><br>
                             </div>
 
-                                                        <!--<p class="grid_7"></p>-->
+                                                                <!--<p class="grid_7"></p>-->
 
                             <p class="grid_7">
                                 <label for="cust_name">*Customer Name: </label>
@@ -361,7 +390,7 @@ class cls_dg_form extends cls_renderer {
                                     if ($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::CKAdmin || $this->currStore->usertype == UserType::Accounts || $this->currStore->usertype == UserType::Dispatcher || $this->currStore->usertype == UserType::Picker || $this->currStore->usertype == UserType::Dealer || $this->currStore->usertype == UserType::Manager) {
                                         $objs = $db->fetchObjectArray("select id,store_name from it_codes where usertype=4 and is_closed=0 order by store_name");
                                     } else {
-                                        $objs = $db->fetchObjectArray("select id,store_name from it_codes where id=" . $this->currStore->id." and is_closed=0");
+                                        $objs = $db->fetchObjectArray("select id,store_name from it_codes where id=" . $this->currStore->id . " and is_closed=0");
                                     }
                                     foreach ($objs as $obj) {
                                         ?>
@@ -403,7 +432,7 @@ class cls_dg_form extends cls_renderer {
                                     if ($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::CKAdmin || $this->currStore->usertype == UserType::Accounts || $this->currStore->usertype == UserType::Dispatcher || $this->currStore->usertype == UserType::Picker || $this->currStore->usertype == UserType::Manager) {
                                         $objs = $db->fetchObjectArray("select id,store_name from it_codes where usertype=4 and is_closed=0 order by store_name");
                                     } else {
-                                        $objs = $db->fetchObjectArray("select id,store_name from it_codes where id=" . $this->currStore->id." and is_closed=0");
+                                        $objs = $db->fetchObjectArray("select id,store_name from it_codes where id=" . $this->currStore->id . " and is_closed=0");
                                     }
                                     foreach ($objs as $obj) {
                                         ?>
@@ -431,17 +460,17 @@ class cls_dg_form extends cls_renderer {
                             </p> 
 
                             <p class="grid_7">
-            <label for="prod">*Product: </label>                        
-            <select name="prod" id="prod" required>
-                <option value="">Select product</option>  
-                <?php  
-                    $objs = $db->fetchObjectArray("select name from it_categories where name in ('Formal Shirt','Regular Shirt','Semi Formal','Slim Formal','Slim Casual','Slim Shirt','Salwar','T-Shirt','Trouser','Narrow Trouser','Stylized Trouser','Casual Shirt','Jeans','Jacket','Pajama','Long Kurta','Short Kurta')");
-                    foreach ($objs as $obj) {
-                        echo '<option value="' . $obj->name . '">' . $obj->name . '</option>';
-                    }
-                ?>
-            </select>
-        </p>
+                                <label for="prod">*Product: </label>                        
+                                <select name="prod" id="prod" required>
+                                    <option value="">Select product</option>  
+                                    <?php
+                                    $objs = $db->fetchObjectArray("select name from it_categories where name in ('Formal Shirt','Regular Shirt','Semi Formal','Slim Formal','Slim Casual','Slim Shirt','Salwar','T-Shirt','Trouser','Narrow Trouser','Stylized Trouser','Casual Shirt','Jeans','Jacket','Pajama','Long Kurta','Short Kurta')");
+                                    foreach ($objs as $obj) {
+                                        echo '<option value="' . $obj->name . '">' . $obj->name . '</option>';
+                                    }
+                                    ?>
+                                </select>
+                            </p>
 
                             <p class="grid_3">
                                 <label for="prod">*Design No: </label>                        
@@ -457,34 +486,34 @@ class cls_dg_form extends cls_renderer {
                             </p>
 
 
-                            <p class="grid_7">
+                        <p class="grid_7">
                                 <label for="style">*Style: </label>                        
-                                <select name="style" required id="style" onchange="getMRP()">
+                                <select name="style" required id="style" onchange="getBarcode()">
                                     <option value="">Select Style</option>
-                                    <option value="HS">Half Sleeve</option>
-                                    <option value="FS">Full Sleeve</option>
+                                    <option value="Half Sleeve">Half Sleeve</option>
+                                    <option value="Full Sleeve">Full Sleeve</option>
                                     <option value="NP">NP</option>
                                     <option value="PL">PL</option>
                                 </select>
-                            </p>
 
 
+                                            
                             <p class="grid_3">
-                                <label for="barcode">*Barcode: </label>                        
-                                <input type="text" required name="barcode" id="barcode"  maxlength="13" minlength="13" value="">
-                                <span tabindex="0" id="barcode_error" style="color:#FFCCCB; font-size: 14px;"></span>
-                            </p>
+                                        <label for="barcode">*Barcode: </label>                        
+                                        <select name="barcode" required id="barcode" onChange="getMRP()">
+                                            <option  value="">Select Barcode</option>
+                                        </select>
+                                    </p> 
+                                    <p class="grid_3">
+                                        <label for="mrp">*MRP: </label>                        
+                                        <input type="text" required name="mrp" required id="mrp" value=""  readonly>
+                                    </p>
+  
 
 
-                            <p class="grid_3">
-                                <label for="mrp">*MRP: </label>                        
-                                <input type="text" required name="mrp" id="mrp" value="" >
-                                <span tabindex="0" id="mrp_error" style="color:#FFCCCB; font-size: 14px;"></span> <br><br><br><br>
-                            </p>
 
-                             
-                            
-                                 <h3 class="grid_7">*Defects:</h3>
+
+                            <h3 class="grid_7">*Defects:</h3>
 
                             <div class="grid_7 checkbox" style="font-size: 16px;">
                                 <input type="checkbox" name="color_fade" value="Color Fade" id="color_fade" >
@@ -515,19 +544,19 @@ class cls_dg_form extends cls_renderer {
                                 <label for="other">9.Other</label><br>
 
                                 <span tabindex="0" id="checkBoxError" style="color:#FFCCCB; font-size: 14px;"></span>
-                                
-                                
-                          
-                            
-                            
-                                                                        <!--<p class="grid_7" id="remark"  style="display: none;">-->
+
+
+
+
+
+                                                    <!--<p class="grid_7" id="remark"  style="display: none;">-->
                                 <p class="grid_7" style="display: none;" id="remarkTextField">
                                     <label for="remark">Remark: </label>                        
                                     <textarea id="remarkTxtArea" name="remarkTxtArea" rows="5" cols="100"></textarea>
                                     <span tabindex="0" id="remarkTextFieldError" style="color:#FFCCCB; font-size: 14px;"></span>
                                 </p> 
                             </div> 
-                               
+
 
                             <p class="grid_7"  style="margin-left: 15%;">
                                 <input type="submit" value="Submit" style="width:25%" >
@@ -541,7 +570,6 @@ class cls_dg_form extends cls_renderer {
         </div>
         <?php
     }
-
 }
 ?>
 </div>
