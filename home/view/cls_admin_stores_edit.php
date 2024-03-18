@@ -949,6 +949,10 @@ class cls_admin_stores_edit extends cls_renderer {
                                     <label>Cust. Debit Acc.</label>
                                     <input type="text" id="cust_dbt_acc" name="cust_debit_account" value="<?php echo $this->getFieldValue('cust_debit_account', $store->cust_debit_account); ?>">
                                 </p>
+                                <p class="grid_3">
+                                    <label>Nach Limit.</label>
+                                    <input type="text" id="cust_nach_lmt" name="cust_nach_limit" value="<?php echo $this->getFieldValue('nach_limit', $store->nach_limit); ?>">
+                                </p>
 
 
 
