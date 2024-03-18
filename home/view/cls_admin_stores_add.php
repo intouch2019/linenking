@@ -832,6 +832,10 @@ if(discval>0){
                         <label>Cust. Debit Acc.</label>
                         <input type="text" id="cust_dbt_acc" name="cust_debit_account" value="">
                     </p>
+                    <p class="grid_3">
+                                    <label>Nach Limit.</label>
+                                    <input type="text" id="cust_nach_lmt" name="cust_nach_limit" value="">
+                    </p>
                         
                     </div>
                     
