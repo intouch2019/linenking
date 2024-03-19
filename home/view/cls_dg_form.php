@@ -490,10 +490,16 @@ class cls_dg_form extends cls_renderer {
                                 <label for="style">*Style: </label>                        
                                 <select name="style" required id="style" onchange="getBarcode()">
                                     <option value="">Select Style</option>
-                                    <option value="Half Sleeve">Half Sleeve</option>
+<!--                                    <option value="Half Sleeve">Half Sleeve</option>
                                     <option value="Full Sleeve">Full Sleeve</option>
                                     <option value="NP">NP</option>
-                                    <option value="PL">PL</option>
+                                    <option value="PL">PL</option>-->
+        <?php
+        $objs = $db->fetchObjectArray("select name from it_styles where name in ('FS','HS','NP','PL')");
+        foreach ($objs as $obj) {
+            echo '<option value="' . $obj->name . '">' . $obj->name . '</option>';
+        }
+        ?>
                                 </select>
 
 
