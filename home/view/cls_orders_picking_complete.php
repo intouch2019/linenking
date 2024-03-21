@@ -80,7 +80,7 @@ Your session has expired. Click <a href="">here</a> to login.
                             <th>Order No(s)</th>
                             <th>Order Date</th>
                             <th>Picking Date</th>
-                            <th>Picking Complete Date</th>
+                            <th>Ready To Bill Date</th>
                             <!--<th>Print Date</th>-->
                             <th>Total Items</th>
                             <th>Total Price</th>

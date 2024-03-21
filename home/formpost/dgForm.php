@@ -177,10 +177,11 @@ try {
 //    exit();
 //    print_r("<br><br>");
 //    print_r($db);
+    $resultid=$db->execInsert($insertQuery);
     
 
 
-    if ($db->execInsert($insertQuery)) {
+    if ($db->execInsert($resultid)) {
         $success = "Form has been saved successfully.";
     } else {
         $errors['status'] = "There was a problem saving form. Please contact Intouch.";
@@ -198,7 +199,7 @@ if (count($errors) > 0) {
 } else {
     unset($_SESSION['form_errors']);
     $_SESSION['form_success'] = $success;
-    $redirect = "form";
+     $redirect = "form/id=$resultid";
 }
 
 session_write_close();
