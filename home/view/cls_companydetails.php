@@ -261,7 +261,7 @@ class cls_companydetails extends cls_renderer {
 
                                 <div class="grid_10">
                                     <table>
-                                        <caption><b>Store Stock Limits</b></caption>
+                                        <caption><b>Store Stock Limits (MRP)</b></caption>
                                         <?php $stocklimit=$db->fetchObject("select min_stock_level ,max_stock_level  from it_codes where id = ". $this->currStore->id);?>
                                         <tr>
                                             <th>Store Maximum Stock Limit </th>

@@ -290,8 +290,8 @@ class cls_viewedit_creditpoint extends cls_renderer {
 
                     <input type="radio" name="cpView" id="ccp" value="Current Credit Points" onclick="showNewCP()" checked>
                     <label for="ccp">Current Credit Points</label>
-                    <input type="radio" name="cpView" id="pcp" value="Previous Credit Points" onclick="showPrevCP()">
-                    <label for="pcp">Previous Credit Points</label><br>
+<!--                    <input type="radio" name="cpView" id="pcp" value="Previous Credit Points" onclick="showPrevCP()">
+                    <label for="pcp">Previous Credit Points</label><br>-->
 
 
 

@@ -91,10 +91,10 @@ class cls_store_tallytransfer extends cls_renderer {
                     <form id="stallytranfer" name="stallytransfer"  method="POST" action="formpost/genStoreTallyXML.php">                                                    
                         <label class="grid_6">Select the type of Tally XML to download from below: </label><br/>
                         <div class="grid_10">
-                        <input type ="radio" name="tallytype" id="tallytype" value="1"  required>Purchase Voucher                 
+<!--                        <input type ="radio" name="tallytype" id="tallytype" value="1"  required>Purchase Voucher                 
                         <input type ="radio" name="tallytype" id="tallytype" value="2"  required>Debit Voucher
                         <input type ="radio" name="tallytype" id="tallytype" value="3"  required>Sales Voucher
-                        <input type ="radio" name="tallytype" id="tallytype" value="4"  required>Purchase Voucher GST
+                        <input type ="radio" name="tallytype" id="tallytype" value="4"  required>Purchase Voucher GST-->
                         <input type ="radio" name="tallytype" id="tallytype" value="5"  required>Purchase Voucher GST 2019
                         <input type ="radio" name="tallytype" id="tallytype" value="6"  required>Sale-Back Voucher GST 2019
                         <input type ="radio" name="tallytype" id="tallytype" value="7"  required>Retail Sale

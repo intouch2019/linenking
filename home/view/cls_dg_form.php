@@ -10,14 +10,19 @@ class cls_dg_form extends cls_renderer {
 
     var $currStore;
     var $storeid;
+    var $params;
 
-    function __construct() {
+    function __construct($params = null) {
 
         if (isset($_SESSION['selectedStoreId'])) {
             $this->selectedStoreId = $_SESSION['selectedStoreId'];
         }
 
-
+        if (isset($params['id'])) {
+            $this->id = $params['id'];
+        } else {
+            $this->id = "";
+        }
         $this->currStore = getCurrUser();
         $this->storeid = $this->currStore->id;
     }
@@ -211,6 +216,7 @@ class cls_dg_form extends cls_renderer {
                 const storeManagerMobNo = document.getElementById('store_manager_mob_no').value;
                 const exchangeGivenAtStore = document.getElementById('exchange_given_at_store').value;
                 const size = document.getElementById('size').value;
+                 var dgformid=document.getElementById('dggarmentreportid').value;
 
                 if (exchangeGivenAtStore === "0") {
                     //                    alert("exchange given at store not selected-->"+exchangeGivenAtStore);
@@ -251,22 +257,7 @@ class cls_dg_form extends cls_renderer {
 
                 const barcode = document.getElementById('barcode').value;
                 const mrp = document.getElementById('mrp').value;
-                if (!validateNumber(barcode)) {
-                    document.getElementById('barcode_error').innerHTML = "Make sure value entered for Design no, size and style is correct !";
-                    document.getElementById('barcode_error').focus();
-                    return false;
-                } else {
-                    document.getElementById('barcode_error').innerHTML = "";
-                }
-
-                if (!validateNumber(mrp)) {
-                    document.getElementById('mrp_error').innerHTML = "Make sure value entered for Design no, size and style is correct !";
-                    document.getElementById('mrp_error').focus();
-                    return false;
-                } else {
-                    document.getElementById('mrp_error').innerHTML = "";
-                }
-
+          
 
                 var checkboxes = document.querySelectorAll('input[type="checkbox"]');
                 var isChecked = false;
@@ -302,6 +293,22 @@ class cls_dg_form extends cls_renderer {
                     return false;
                 }
                 return false;
+            }
+             function thermalReceipt() {
+            const id=document.getElementById('dggarmentreportid').value;    
+            alert("hii");
+                $.ajax({
+                    url: "ajax/printThermalDGReport.php?id="+id,
+
+                success: function (response) {
+                    if (response !== "") {
+                        var popupWin = window.open();
+                        popupWin.document.open();
+                        popupWin.document.write(response);
+                        popupWin.document.close();
+                    }
+                }
+                });
             }
 
 
@@ -339,11 +346,25 @@ class cls_dg_form extends cls_renderer {
                             <p>
                                 <span id="statusMsg" class="<?php echo $formResult->cssClass; ?>" style="display:<?php echo $formResult->showhide; ?>;"><?php echo $formResult->status; ?></span>
                             </p>
+                            <?php if($formResult->status == "Form has been saved successfully."){?>
+                            <script>
+                            // Automatically call thermalReceipt() when page loads
+                            document.addEventListener("DOMContentLoaded", function() {
+                            thermalReceipt();
+                            });
+        </script>
+                           <?php }
+                           else { ?>
+                              <script>
+                              console.log("in else");
+                              </script>
+                          <?php }
+?>
                         <?php } ?>
                         <form action="formpost/dgForm.php" method="POST" name="dgForm" id="dgReturnForm" onsubmit="return checkFormValidations()">
 
 
-
+                            <input type="hidden" value="<?php echo $this->id?>" id="dggarmentreportid">
                             <h1 style="margin-left: 50px">CUSTOMER DEFECT RETURN FORM</h1><br><br>
 
 
