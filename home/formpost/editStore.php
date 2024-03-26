@@ -280,7 +280,9 @@ if (!$store_name || !$address || !$city || !$zip || !$owner || !$phone || !$emai
             }
         }
 
-
+        if(!$cust_nach_limit){
+    $cust_nach_limit=0;
+}
 
         if (isset($pancard_no) && trim($pancard_no) != "") {
             //chk for duplicate

@@ -229,7 +229,9 @@ if (!$storec || !$dealer_name || !$address || !$city || !$zip || !$name || !$pho
 
 
 
-
+        if(!$cust_nach_limit){
+    $cust_nach_limit=0;
+}
 
 
 
