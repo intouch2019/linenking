@@ -110,11 +110,11 @@ if ($objs) {
             $voucher->addChild("VOUCHERTYPENAME", "Sales");
             $voucher->addChild("REFERENCE", $obj->invoice_no);
             $voucher->addChild("VOUCHERNUMBER", $vch_no);
-            $voucher->addChild("PARTYLEDGERNAME", "Cotton King Pvt.Ltd");
+            $voucher->addChild("PARTYLEDGERNAME", "Fashionking Brands Pvt. Ltd.");
             $voucher->addChild("PERSISTEDVIEW", "Accounting Voucher View");
             //$voucher->addChild("PLACEOFSUPPLY", "Maharashtra");
             $allledgerentrieslist1 = $voucher->addChild("ALLLEDGERENTRIES.LIST"); // this node for inv amt
-            $allledgerentrieslist1->addChild("LEDGERNAME", "Cotton King Pvt.Ltd");
+            $allledgerentrieslist1->addChild("LEDGERNAME", "Fashionking Brands Pvt. Ltd.");
             $allledgerentrieslist1->addChild("GSTCLASS");
             $allledgerentrieslist1->addChild("ISDEEMEDPOSITIVE", "YES");
             $allledgerentrieslist1->addChild("AMOUNT", "-" . round($obj->invoice_amt, 2, PHP_ROUND_HALF_DOWN));

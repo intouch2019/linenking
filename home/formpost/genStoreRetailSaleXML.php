@@ -65,7 +65,7 @@ $net_total = "select sum(net_total) as net,o.bill_datetime  from it_orders o,it_
 
 $netobj = $db->fetchObjectArray($net_total);
 //print_r($netobj);
-$storename = "select store_name,tally_name,address,(select state from states where id = (select state_id from it_codes where id = $user->id)) as state,retail_saletally_name,retail_sale_cash_name,retail_sale_card_name from it_codes where id = $user->id";
+$storename = "select store_name,tally_name,address,(select state from states where id = (select state_id from it_codes where id = $user->id)) as state,retail_saletally_name,retail_sale_cash_name,retail_sale_card_name, retail_sale_upi_name from it_codes where id = $user->id";
 $store_obj = $db->fetchObject($storename);
 if (isset($store_obj->retail_saletally_name)) {
     if (isset($netobj)) {
@@ -76,7 +76,7 @@ if (isset($store_obj->retail_saletally_name)) {
         $REQUESTDESC = $IMPORTDATA->addChild("REQUESTDESC");
         $REPORTNAME = $REQUESTDESC->addChild("REPORTNAME", "Vouchers");
         $STATICVARIABLES = $REQUESTDESC->addChild("STATICVARIABLES");
-        $SVCURRENTCOMPANY = $STATICVARIABLES->addChild("SVCURRENTCOMPANY", "BHM Textiles Hub LLP");
+        $SVCURRENTCOMPANY = $STATICVARIABLES->addChild("SVCURRENTCOMPANY", "Fashionking Brands Pvt. Ltd.");
         $REQUESTDATA = $IMPORTDATA->addChild("REQUESTDATA");
         foreach ($netobj as $data) {
             $TALLYMESSAGE_1 = $REQUESTDATA->addChild("TALLYMESSAGE");
@@ -87,11 +87,11 @@ if (isset($store_obj->retail_saletally_name)) {
             $VOUCHER->addChild("DATE", date_format(date_create($data->bill_datetime), "Ymd"));
             $VOUCHER->addChild("STATENAME", $store_obj->state);
             $VOUCHER->addChild("VOUCHERTYPENAME", "Sales");
-            $VOUCHER->addChild("PARTYLEDGERNAME", "Counter Sales $store_obj->retail_saletally_name");
-            $VOUCHER->addChild("BASICBASEPARTYNAME", "Counter Sales $store_obj->retail_saletally_name");
+            $VOUCHER->addChild("PARTYLEDGERNAME", "$store_obj->retail_saletally_name");
+            $VOUCHER->addChild("BASICBASEPARTYNAME", "$store_obj->retail_saletally_name");
             $VOUCHER->addChild("PERSISTEDVIEW", "Accounting Voucher View");
             $VOUCHER->addChild("PLACEOFSUPPLY", $store_obj->state);
-            $VOUCHER->addChild("BASICBUYERNAME", "Counter Sales  $store_obj->retail_saletally_name");
+            $VOUCHER->addChild("BASICBUYERNAME", "$store_obj->retail_saletally_name");
             $converted_date = date_format(date_create($data->bill_datetime), "Y-M-d");
             $converted_time = date_format(date_create($data->bill_datetime), "H:i");
             $VOUCHER->addChild("CONSIGNEESTATENAME", $store_obj->state);
@@ -99,7 +99,7 @@ if (isset($store_obj->retail_saletally_name)) {
 
 
             $ALLLEDGERENTRIES_LIST = $VOUCHER->addChild("ALLLEDGERENTRIES.LIST");
-            $ALLLEDGERENTRIES_LIST->addChild("LEDGERNAME", "Counter Sales $store_obj->retail_saletally_name");
+            $ALLLEDGERENTRIES_LIST->addChild("LEDGERNAME", "$store_obj->retail_saletally_name");
             $ALLLEDGERENTRIES_LIST->addChild("ISDEEMEDPOSITIVE", "Yes");            
             $ALLLEDGERENTRIES_LIST->addChild("AMOUNT",round($data->net * -1) );
             $ALLLEDGERENTRIES_LIST->addChild("VATEXPAMOUNT", round($data->net * -1));
@@ -111,25 +111,36 @@ if (isset($store_obj->retail_saletally_name)) {
             $cash_credit = $db->fetchObject($data_fetch_cash_creditnoteout);
             //print $data_fetch_cash_creditnoteout."\n";
 //change here after jar //            $data_fetch_magcard = "select sum(net_total) as nettotal,o.bill_datetime,p.payment_name from it_orders o,it_order_payments p where p.order_id=o.id and o.store_id=$user->id and o.bill_datetime>$st_dt and o.bill_datetime<=$ed_dt and o.tickettype in (0) and p.payment_name in ('magcard') and is_cashclosed=1 group by DAYOFMONTH(o.bill_datetime)";
-                        $data_fetch_magcard = "select sum(net_total) as nettotal,o.bill_datetime,p.payment_name from it_orders o,it_order_payments p where p.order_id=o.id and o.store_id=$user->id and o.bill_datetime>$st_dt and o.bill_datetime<=$ed_dt and o.tickettype in (0) and p.payment_name in ('magcard')  group by DAYOFMONTH(o.bill_datetime)";
+            $data_fetch_magcard = "select sum(net_total) as nettotal,o.bill_datetime,p.payment_name from it_orders o,it_order_payments p where p.order_id=o.id and o.store_id=$user->id and o.bill_datetime>$st_dt and o.bill_datetime<=$ed_dt and o.tickettype in (0) and p.payment_name in ('magcard')  group by DAYOFMONTH(o.bill_datetime)";
             $card = $db->fetchObject($data_fetch_magcard);
             //print $data_fetch_magcard."\n";
-            if (isset($card)) {
+            $data_fetch_upi = "select sum(net_total) as nettotal,o.bill_datetime,p.payment_name from it_orders o,it_order_payments p where p.order_id=o.id and o.store_id=$user->id and o.bill_datetime>$st_dt and o.bill_datetime<=$ed_dt and o.tickettype in (0) and p.payment_name in ('upi')  group by DAYOFMONTH(o.bill_datetime)";
+            $upi = $db->fetchObject($data_fetch_upi);
+            if (isset($card) && !empty($card)) {
                 $payment_type = "Card Sale";
                 $amt = $card->nettotal;
                 $ALLLEDGERENTRIES_LIST_1 = $VOUCHER->addChild("ALLLEDGERENTRIES.LIST");
-                $ALLLEDGERENTRIES_LIST_1->addChild("LEDGERNAME", "$payment_type $store_obj->retail_sale_card_name");
+                $ALLLEDGERENTRIES_LIST_1->addChild("LEDGERNAME", "$store_obj->retail_sale_card_name");
                 $ALLLEDGERENTRIES_LIST_1->addChild("ISDEEMEDPOSITIVE", "No");                                
                 $ALLLEDGERENTRIES_LIST_1->addChild("AMOUNT",round($amt));
                 $ALLLEDGERENTRIES_LIST_1->addChild("VATEXPAMOUNT", round($amt));
             }
-            if (isset($cash_credit)) {
+            if (isset($cash_credit) && !empty($cash_credit)) {
                 $payment_type = "Cash Sale";
                 $amt = $cash_credit->nettotal;
                 $ALLLEDGERENTRIES_LIST_1 = $VOUCHER->addChild("ALLLEDGERENTRIES.LIST");
-                $ALLLEDGERENTRIES_LIST_1->addChild("LEDGERNAME", "$payment_type $store_obj->retail_sale_cash_name");
+                $ALLLEDGERENTRIES_LIST_1->addChild("LEDGERNAME", "$store_obj->retail_sale_cash_name");
                 $ALLLEDGERENTRIES_LIST_1->addChild("ISDEEMEDPOSITIVE", "No");                                
                 $ALLLEDGERENTRIES_LIST_1->addChild("AMOUNT", round($amt));
+                $ALLLEDGERENTRIES_LIST_1->addChild("VATEXPAMOUNT", round($amt));
+            }
+            if (isset($upi) && !empty($upi)) {
+                $payment_type = "Upi Sale";
+                $amt = $upi->nettotal;
+                $ALLLEDGERENTRIES_LIST_1 = $VOUCHER->addChild("ALLLEDGERENTRIES.LIST");
+                $ALLLEDGERENTRIES_LIST_1->addChild("LEDGERNAME", "$store_obj->retail_sale_upi_name");
+                $ALLLEDGERENTRIES_LIST_1->addChild("ISDEEMEDPOSITIVE", "No");                                
+                $ALLLEDGERENTRIES_LIST_1->addChild("AMOUNT",round($amt));
                 $ALLLEDGERENTRIES_LIST_1->addChild("VATEXPAMOUNT", round($amt));
             }
         }

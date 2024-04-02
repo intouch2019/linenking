@@ -78,11 +78,13 @@ class cls_store_tallytransfer extends cls_renderer {
                     <!--                    <div class="grid_5" > -->
                     <form name="istallyxml" method="post" action="formpost/updatetallyfield.php">
                         <p class="grid_3"><label><b>*Retail Sale Tally Name: </b></label>
-                            <input type="text" name="retail_saletally_name" value="<?php //echo $this->getFieldValue('retail_saletally_name', $storeobj->retail_saletally_name); ?>">
+                            <input type="text" name="retail_saletally_name" value="<?php echo $this->getFieldValue('retail_saletally_name', $storeobj->retail_saletally_name); ?>">
                         </p><p class="grid_3"><label><b>*Retail Sale Cash Name: </b></label>
-                            <input type="text" name="retail_sale_cash_name" value="<?php //echo $this->getFieldValue('retail_sale_cash_name', $storeobj->retail_sale_cash_name); ?>">
+                            <input type="text" name="retail_sale_cash_name" value="<?php echo $this->getFieldValue('retail_sale_cash_name', $storeobj->retail_sale_cash_name); ?>">
                         </p><p class="grid_3"><label><b>*Retail Sale Card Name: </b></label> 
-                            <input type="text" name="retail_sale_card_name" value="<?php //echo $this->getFieldValue('retail_sale_card_name', $storeobj->retail_sale_card_name); ?>"><br/>
+                            <input type="text" name="retail_sale_card_name" value="<?php echo $this->getFieldValue('retail_sale_card_name', $storeobj->retail_sale_card_name); ?>"><br/>
+                        </p><p class="grid_3"><label><b>*Retail Sale UPI Name: </b></label> 
+                        <input type="text" name="retail_sale_upi_name" value="<?php echo $this->getFieldValue('retail_sale_upi_name',$storeobj->retail_sale_upi_name); ?>"><br/>
                         </p> <br/>  
                         <p class="grid_3">
                             <input type="submit" value="Update" style="width:30%">
@@ -95,9 +97,10 @@ class cls_store_tallytransfer extends cls_renderer {
                         <input type ="radio" name="tallytype" id="tallytype" value="2"  required>Debit Voucher
                         <input type ="radio" name="tallytype" id="tallytype" value="3"  required>Sales Voucher
                         <input type ="radio" name="tallytype" id="tallytype" value="4"  required>Purchase Voucher GST-->
-                        <input type ="radio" name="tallytype" id="tallytype" value="5"  required>Purchase Voucher GST 2019
-                        <input type ="radio" name="tallytype" id="tallytype" value="6"  required>Sale-Back Voucher GST 2019
-                        <input type ="radio" name="tallytype" id="tallytype" value="7"  required>Retail Sale
+                        <input type ="radio" name="tallytype" id="tallytype" value="5"  required>GST Purchase Voucher
+                        <input type ="radio" name="tallytype" id="tallytype" value="6"  required>GST Purchase-Back Sales Voucher
+                        <input type ="radio" name="tallytype" id="tallytype" value="7"  required>GST Retail Sales
+                        <input type ="radio" name="tallytype" id="tallytype" value="8"  required>GST Payment Voucher
                         <br/><br/>
                         </div>
                         <div class="grid_5" id="storeDiv" name="storeDiv">

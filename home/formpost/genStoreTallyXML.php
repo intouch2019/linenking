@@ -44,6 +44,9 @@ if($tallytype == "1"){ // means store purchase voucher xml
  }else if ($tallytype == "7") {
     $redirect = "formpost/genStoreRetailSaleXML.php?d1=$from&d2=$to";
      header("Location: ".DEF_SITEURL."$redirect");     
+}else if ($tallytype == "8") {
+    $redirect = "formpost/genGSTPaymentVoucher.php?d1=$from&d2=$to";
+     header("Location: ".DEF_SITEURL."$redirect");     
 }
 
      

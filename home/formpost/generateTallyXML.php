@@ -67,7 +67,7 @@ if($page){
                 $reqdesc = $importdata->addChild("REQUESTDESC");//"REPORTNAME","Vouchers"
                 $reqdesc->addChild("REPORTNAME","Vouchers");
                         $staticvariable = $reqdesc->addChild("STATICVARIABLES");
-                        $staticvariable->addChild("SVCURRENTCOMPANY","Cotton King Pvt. Ltd. 14-15");
+                        $staticvariable->addChild("SVCURRENTCOMPANY","Fashionking Brands Pvt. Ltd.");
                 $reqdata = $importdata->addChild("REQUESTDATA");
                  foreach($objs as $obj){
                         $itemobj = $db->fetchObject("select * from it_sp_invoice_items where invoice_id = $obj->id ");

@@ -37,7 +37,7 @@ if($page){
                 $reqdesc = $importdata->addChild("REQUESTDESC");//"TALLYNAME","Vouchers"
                 $reqdesc->addChild("TALLYNAME","Vouchers");
                         $staticvariable = $reqdesc->addChild("STATICVARIABLES");
-                        $staticvariable->addChild("SVCURRENTCOMPANY","Cotton King Pvt. Ltd. 16-17");
+                        $staticvariable->addChild("SVCURRENTCOMPANY","Fashionking Brands Pvt. Ltd.");
                 $reqdata = $importdata->addChild("REQUESTDATA");
                  foreach($objs as $obj){ 
                     if(isset($obj) && !empty($obj) && $obj != null){

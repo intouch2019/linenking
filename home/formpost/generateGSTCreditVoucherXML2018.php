@@ -53,7 +53,7 @@ if ($objs) {
     $reqdesc = $importdata->addChild("REQUESTDESC"); //"REPORTNAME","Vouchers"
     $reqdesc->addChild("REPORTNAME", "Vouchers");
     $staticvariable = $reqdesc->addChild("STATICVARIABLES");
-    $staticvariable->addChild("SVCURRENTCOMPANY", "Cotton King Pvt. Ltd. 16-17");
+    $staticvariable->addChild("SVCURRENTCOMPANY", "Fashionking Brands Pvt. Ltd.");
     $reqdata = $importdata->addChild("REQUESTDATA");
     foreach ($objs as $obj) {
 
