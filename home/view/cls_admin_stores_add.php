@@ -264,7 +264,7 @@ function discountsets(discval){
        // alert(discval);
         //document.getElementById("discval").value=discval;
         
-        if(discval==12 ||discval==24 ||discval==26)
+        if(discval==12 ||discval==24 ||discval==26 ||discval==0)
         {
          var  newcashval=0.0;
          var  newnonclaim=0.0;

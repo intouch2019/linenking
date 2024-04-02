@@ -297,7 +297,7 @@ class cls_admin_stores_edit extends cls_renderer {
                 //document.getElementById("discval").value=discval;
 
                 //if(discval==12 ||discval==24 ||discval==26)
-                if (discval == 5 || discval == 10 || discval == 12 || discval == 14 || discval == 16 || discval == 18 || discval == 21 || discval == 24 || discval == 26)
+                if (discval == 0 || discval == 5 || discval == 10 || discval == 12 || discval == 14 || discval == 16 || discval == 18 || discval == 21 || discval == 24 || discval == 26)
                 {
 
                     document.getElementById("discval").value = discval;
@@ -621,7 +621,7 @@ class cls_admin_stores_edit extends cls_renderer {
                                     foreach ($obj_deler_disc as $disc) {
                                         $selected = "";
 
-                                        if ($disc->id > 3 && $this->currStore->usertype != UserType::CKAdmin) {
+                                        if ($disc->id > 3 && $disc->discount!=0 && $this->currStore->usertype != UserType::CKAdmin) {
                                             continue;
                                         }
                                         ?>
