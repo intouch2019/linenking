@@ -100,7 +100,7 @@ class cls_store_tallytransfer extends cls_renderer {
                         <input type ="radio" name="tallytype" id="tallytype" value="5"  required>GST Purchase Voucher
                         <input type ="radio" name="tallytype" id="tallytype" value="6"  required>GST Purchase-Back Sales Voucher
                         <input type ="radio" name="tallytype" id="tallytype" value="7"  required>GST Retail Sales
-                        <!--<input type ="radio" name="tallytype" id="tallytype" value="8"  required>GST Payment Voucher-->
+                        <input type ="radio" name="tallytype" id="tallytype" value="8"  required>GST Payment Voucher
                         <br/><br/>
                         </div>
                         <div class="grid_5" id="storeDiv" name="storeDiv">

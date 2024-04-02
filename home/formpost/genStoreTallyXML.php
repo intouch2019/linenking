@@ -45,10 +45,10 @@ if($tallytype == "1"){ // means store purchase voucher xml
     $redirect = "formpost/genStoreRetailSaleXML.php?d1=$from&d2=$to";
      header("Location: ".DEF_SITEURL."$redirect");     
 }
-//else if ($tallytype == "8") {
-//    $redirect = "formpost/genGSTPaymentVoucher.php?d1=$from&d2=$to";
-//     header("Location: ".DEF_SITEURL."$redirect");     
-//}
+else if ($tallytype == "8") {
+    $redirect = "formpost/genGSTPaymentVoucher.php?d1=$from&d2=$to";
+     header("Location: ".DEF_SITEURL."$redirect");     
+}
 
      
 if (count($errors) > 0) {

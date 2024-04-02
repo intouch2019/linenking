@@ -35,7 +35,7 @@ $envelope = new SimpleXMLElement('<ENVELOPE/>');
 $dt1 = str_replace("-", "", $d1);
 $dt2 = str_replace("-", "", $d2);
 $name = "PaymentVoucher_" . $dt1 . "_" . $dt2 . ".xml";
-$query = "select i.brand_type,i.region_id,i.store_name,i.invoice_dt,i.invoice_amt,i.invoice_no,i.payment FROM it_invoices_reports i  WHERE i.store_id='$user->id' and i.invoice_type = 0 and i.invoice_dt >= '2017-07-01 00:00:00' and i.invoice_dt >= '$startdate 00:00:00'  and i.invoice_dt <= '$enddate 23:59:59' order by invoice_no";
+$query = "select i.invoice_dt,i.invoice_amt,i.invoice_no,i.payment FROM it_sp_invoices i  WHERE i.store_id='$user->id' and i.invoice_type = 0 and i.invoice_dt >= '2017-07-01 00:00:00' and i.invoice_dt >= '$startdate 00:00:00'  and i.invoice_dt <= '$enddate 23:59:59' order by invoice_no";
 
 //error_log("\n$query",3,"tmp.txt");
 //print $query;
@@ -55,24 +55,24 @@ if ($objs) {
     foreach ($objs as $obj) {
 
 
-        $brandtype = $obj->brand_type;
-        if ($brandtype == 0) {
+//        $brandtype = $obj->brand_type;
+//        if ($brandtype == 0) {
+//
+//            $brand_name = "Cotton King";
+//        } else if ($brandtype == 1) {
+//            $brand_name = "Linenking";
+//        } else {
+//            $brand_name = "NA";
+//        }
 
-            $brand_name = "Cotton King";
-        } else if ($brandtype == 1) {
-            $brand_name = "Linenking";
-        } else {
-            $brand_name = "NA";
-        }
 
-
-        $region = $obj->region_id;
-        if ($region == 0) {
-            $regions = "NA";
-        } else {
-            $region_name = $db->fetchObject("select region from region where id=$region");
-            $regions = $region_name->region . " " . "Region";
-        }
+//        $region = $obj->region_id;
+//        if ($region == 0) {
+//            $regions = "NA";
+//        } else {
+//            $region_name = $db->fetchObject("select region from region where id=$region");
+//            $regions = $region_name->region . " " . "Region";
+//        }
         $sname = "Fashionking Brands Pvt. Ltd.";
         $tallymsg = $reqdata->addChild("TALLYMESSAGE");
         $voucher = $tallymsg->addChild("VOUCHER");
@@ -105,9 +105,9 @@ if ($objs) {
         $allledgerentrieslist->addChild("ISDEEMEDPOSITIVE", "YES");
         $allledgerentrieslist->addChild("AMOUNT", round($payment_amt, 2, PHP_ROUND_HALF_DOWN));
 
-        $allCATEGORYALLOCATIONSlist = $allledgerentrieslist->addChild("CATEGORYALLOCATIONS.LIST");
-        $allCATEGORYALLOCATIONSlist->addChild("CATEGORY", "$brand_name");
-        $allCATEGORYALLOCATIONSlist->addChild("NAME", "$regions");
+//        $allCATEGORYALLOCATIONSlist = $allledgerentrieslist->addChild("CATEGORYALLOCATIONS.LIST");
+//        $allCATEGORYALLOCATIONSlist->addChild("CATEGORY", "$brand_name");
+//        $allCATEGORYALLOCATIONSlist->addChild("NAME", "$regions");
 
         $bankallocationslist = $allledgerentrieslist->addChild("BANKALLOCATIONS.LIST");
         $bankallocationslist->addChild("DATE", $invdate);
