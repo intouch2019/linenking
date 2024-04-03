@@ -60,7 +60,7 @@ $name = "Store_RetailSale_" . $dt1 . "_" . $dt2 . ".xml";
 //}
 //print "later".$dt1."<>".$dt2;
 //$net_total = "select sum(net_total) as net,o.bill_datetime  from it_orders o,it_order_payments p where o.id=p.order_id and o.store_id=$user->id and o.bill_datetime>$dt1 and o.bill_datetime<=$dt2 and o.tickettype in (1,0) and p.payment_name in ('creditnoteout','cash','magcard') and is_cashclosed=1  group by DAYOFMONTH(o.bill_datetime)";
-$net_total = "select sum(net_total) as net,o.bill_datetime  from it_orders o,it_order_payments p where o.id=p.order_id and o.store_id=$user->id and o.bill_datetime>$dt1 and o.bill_datetime<=$dt2 and o.tickettype in (1,0) and p.payment_name in ('creditnoteout','cash','magcard')   group by DAYOFMONTH(o.bill_datetime)";
+$net_total = "select sum(net_total) as net,o.bill_datetime  from it_orders o,it_order_payments p where o.id=p.order_id and o.store_id=$user->id and o.bill_datetime>$dt1 and o.bill_datetime<=$dt2 and o.tickettype in (1,0) and p.payment_name in ('creditnoteout','cash','magcard', 'upi')   group by DAYOFMONTH(o.bill_datetime)";
 //print  $net_total;
 
 $netobj = $db->fetchObjectArray($net_total);
