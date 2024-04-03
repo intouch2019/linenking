@@ -120,7 +120,7 @@ function move(listBoxTo,optionValue,optionDisplayText){
                    <select name="user" id ="user" data-placeholder="Choose User..." class="chzn-select"  style="width:100%;" onchange="userSelected(this.value);">                        
                             <option value=""></option>   
                              <?php
-                                $query = " select id,code,store_name from it_codes where inactive = 0 and id != 1 order by store_name";
+                                $query = " select id,code,store_name from it_codes where id != 1 order by store_name";
                                 $allUsers = $db->fetchObjectArray($query);
                                 $display = "block";
                                 foreach ($allUsers as $user) {                                    
