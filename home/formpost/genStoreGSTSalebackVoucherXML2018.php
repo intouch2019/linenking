@@ -16,6 +16,8 @@ $startdate = $db->safe(yymmdd($d1));
 $enddate = $db->safe(yymmdd($d2));
 $user = getCurrUser();
 $userpage = new clsUsers();
+$totalTaxAmt=0.0;
+$totalInvAmt=0.0;
 $pagecode = $db->safe($_SESSION['pagecode']);
 $page = $db->fetchObject("select * from it_pages where pagecode = $pagecode");
 if ($page) {
@@ -34,7 +36,7 @@ if ($page) {
 $envelope = new SimpleXMLElement('<ENVELOPE/>');
 $dt1 = str_replace("-", "", $d1);
 $dt2 = str_replace("-", "", $d2);
-$name = "Saleback_Sale_Voucher_" . $dt1 . "_" . $dt2 . ".xml";
+$name = "Store_GST_Purchase-Back_Sale_Voucher_" . $dt1 . "_" . $dt2 . ".xml";
 
 $query = "select i.* FROM it_saleback_invoices i  WHERE  i.invoice_type = 7 and i.invoice_dt >= '2018-01-01 00:00:00' and date(i.invoice_dt) >= $startdate "
         . " and date(i.invoice_dt) <= $enddate and store_id = $user->id and is_procsdForRetail = 1 order by invoice_no";
@@ -66,22 +68,22 @@ if ($objs) {
                     . "sum(cgst) as cgst, sum(sgst) as sgst, sum(igst) as igst,b.tax_rate*100 from it_saleback_invoices a,it_saleback_invoice_items b "
                     . "where a.id=b.invoice_id and b.invoice_id=$obj->id and b.tax_rate*100 = 12 group by b.tax_rate,a.id order by invoice_dt");
             
-            $tax_28_obj = $db->fetchObject("select a.id,a.invoice_no,a.invoice_dt,sum(b.taxable_value+b.cgst+b.sgst+b.igst) as taxable_valwithtax,"
+            $tax_18_obj = $db->fetchObject("select a.id,a.invoice_no,a.invoice_dt,sum(b.taxable_value+b.cgst+b.sgst+b.igst) as taxable_valwithtax,"
                     . "sum(b.quantity) as qty,sum(b.total_price_qty) as total_price_qty,round(sum(b.discount_val),2) as discount_val,a.discount_2,"
                     . "sum(b.cgst+b.sgst+b.igst) as total_tax, a.createtime, round(sum(b.total_rate_qty),2) as Rate, sum(b.taxable_value) as total_taxable_val,"
                     . "sum(cgst) as cgst, sum(sgst) as sgst, sum(igst) as igst,truncate(b.tax_rate*100,0) from it_invoices a,it_invoice_items b "
-                    . "where a.id=b.invoice_id and b.invoice_id=$obj->id and b.tax_rate = 0.28 group by b.tax_rate,a.id order by invoice_dt");
+                    . "where a.id=b.invoice_id and b.invoice_id=$obj->id and b.tax_rate*100 = 18 group by b.tax_rate,a.id order by invoice_dt");
 
             //$itemobj = $db->fetchObject("select * from it_invoice_items_reports where invoice_id = $obj->id ");
 
-            $sname = $obj->store_name;
+//            $sname = $obj->store_name;
 
-            if (isset($obj->round_off) && $obj->round_off != NULL) {
-                //$roundoff=$obj->round_off;
-                $roundoff = 0.0;
-            } else {
-                $roundoff = 0.0;
-            }
+//            if (isset($obj->round_off) && $obj->round_off != NULL) {
+//                //$roundoff=$obj->round_off;
+//                $roundoff = 0.0;
+//            } else {
+//                $roundoff = 0.0;
+//            }
             //$roundoff = round((round($obj->invoice_amt,2,PHP_ROUND_HALF_DOWN)-(round($obj->rate_subtotal,2,PHP_ROUND_HALF_DOWN)-round($obj->discount_val,2,PHP_ROUND_HALF_DOWN)+round($obj->cgst_total,2,PHP_ROUND_HALF_DOWN)+round($obj->sgst_total,2,PHP_ROUND_HALF_DOWN)+round($obj->igst_total,2,PHP_ROUND_HALF_DOWN))),2,PHP_ROUND_HALF_DOWN);
             //$roundoff = round((round($obj->invoice_amt,2,PHP_ROUND_HALF_DOWN)-(round($roundrate,2,PHP_ROUND_HALF_DOWN)-round($rounddiscount,2,PHP_ROUND_HALF_DOWN)+round($roundcgst,2,PHP_ROUND_HALF_DOWN)+round($roundsgst,2,PHP_ROUND_HALF_DOWN)+round($roundigst,2,PHP_ROUND_HALF_DOWN))),2,PHP_ROUND_HALF_DOWN);
             //$roundoff = round((($obj->invoice_amt)-($roundrate)-($rounddiscount)+($roundcgst)+($roundsgst)+($roundigst)),2,PHP_ROUND_HALF_DOWN);
@@ -122,6 +124,7 @@ if ($objs) {
             $allbillallocationslist = $allledgerentrieslist1->addChild("BILLALLOCATIONS.LIST");
             $allbillallocationslist->addChild("NAME", $obj->invoice_no);
             $allbillallocationslist->addChild("AMOUNT", "-" . round($obj->invoice_amt, 2, PHP_ROUND_HALF_DOWN));
+            $totalInvAmt=$totalInvAmt+round($obj->invoice_amt,2,PHP_ROUND_HALF_DOWN);
 
 
             /* -------------------------------------------------------------------------------------- */
@@ -140,11 +143,13 @@ if ($objs) {
                 $allledgerentrieslist2->addChild("GSTCLASS");
                 $allledgerentrieslist2->addChild("ISDEEMEDPOSITIVE", "No");
                 $allledgerentrieslist2->addChild("AMOUNT", round($tax_5_obj->total_price_qty, 2, PHP_ROUND_HALF_DOWN));
+                $totalTaxAmt= $totalTaxAmt+round($tax_5_obj->total_price_qty,2,PHP_ROUND_HALF_DOWN);
                 $allledgerentrieslist3 = $voucher->addChild("ALLLEDGERENTRIES.LIST");
                 $allledgerentrieslist3->addChild("LEDGERNAME", $discount_str);
                 $allledgerentrieslist3->addChild("GSTCLASS");
                 $allledgerentrieslist3->addChild("ISDEEMEDPOSITIVE", "YES");
                 $allledgerentrieslist3->addChild("AMOUNT", "-" . round($tax_5_obj->discount_val, 2, PHP_ROUND_HALF_DOWN));
+                $totalInvAmt=$totalInvAmt+round($tax_5_obj->discount_val,2,PHP_ROUND_HALF_DOWN);
    
                 if (trim($obj->igst_total) == "" || trim($obj->igst_total) == "0") {
                     $allledgerentrieslist5 = $voucher->addChild("ALLLEDGERENTRIES.LIST");
@@ -152,12 +157,14 @@ if ($objs) {
                     $allledgerentrieslist5->addChild("GSTCLASS");
                     $allledgerentrieslist5->addChild("ISDEEMEDPOSITIVE", "No");
                     $allledgerentrieslist5->addChild("AMOUNT", round($tax_5_obj->cgst, 2, PHP_ROUND_HALF_DOWN));
+                    $totalTaxAmt= $totalTaxAmt+round($tax_5_obj->cgst,2,PHP_ROUND_HALF_DOWN);
 
                     $allledgerentrieslist6 = $voucher->addChild("ALLLEDGERENTRIES.LIST");
                     $allledgerentrieslist6->addChild("LEDGERNAME", "CK SGST Collected @ 2.5%");
                     $allledgerentrieslist6->addChild("GSTCLASS");
                     $allledgerentrieslist6->addChild("ISDEEMEDPOSITIVE", "No");
                     $allledgerentrieslist6->addChild("AMOUNT", round($tax_5_obj->sgst, 2, PHP_ROUND_HALF_DOWN));
+                    $totalTaxAmt= $totalTaxAmt+round($tax_5_obj->sgst,2,PHP_ROUND_HALF_DOWN);
                 }
 
                 if (trim($obj->igst_total) != "" && trim($obj->igst_total) != "0") {
@@ -166,6 +173,7 @@ if ($objs) {
                     $allledgerentrieslist7->addChild("GSTCLASS");
                     $allledgerentrieslist7->addChild("ISDEEMEDPOSITIVE", "No");
                     $allledgerentrieslist7->addChild("AMOUNT", round($tax_5_obj->igst, 2, PHP_ROUND_HALF_DOWN));
+                    $totalTaxAmt= $totalTaxAmt+round($tax_5_obj->igst,2,PHP_ROUND_HALF_DOWN);
                 }
             }
             //for tax rate 12 calulations
@@ -182,11 +190,13 @@ if ($objs) {
                 $allledgerentrieslist8->addChild("GSTCLASS");
                 $allledgerentrieslist8->addChild("ISDEEMEDPOSITIVE", "No");
                 $allledgerentrieslist8->addChild("AMOUNT", round($tax_12_obj->total_price_qty, 2, PHP_ROUND_HALF_DOWN));
+                $totalTaxAmt= $totalTaxAmt+round($tax_12_obj->total_price_qty,2,PHP_ROUND_HALF_DOWN);
                 $allledgerentrieslist9 = $voucher->addChild("ALLLEDGERENTRIES.LIST");
                 $allledgerentrieslist9->addChild("LEDGERNAME", $discount_str12);
                 $allledgerentrieslist9->addChild("GSTCLASS");
                 $allledgerentrieslist9->addChild("ISDEEMEDPOSITIVE", "YES");
                 $allledgerentrieslist9->addChild("AMOUNT", "-" . round($tax_12_obj->discount_val, 2, PHP_ROUND_HALF_DOWN));
+                $totalInvAmt=$totalInvAmt+round($tax_12_obj->discount_val,2,PHP_ROUND_HALF_DOWN);
    
                 if (trim($obj->igst_total) == "" || trim($obj->igst_total) == "0") {
                     $allledgerentrieslist10 = $voucher->addChild("ALLLEDGERENTRIES.LIST");
@@ -194,12 +204,14 @@ if ($objs) {
                     $allledgerentrieslist10->addChild("GSTCLASS");
                     $allledgerentrieslist10->addChild("ISDEEMEDPOSITIVE", "No");
                     $allledgerentrieslist10->addChild("AMOUNT", round($tax_12_obj->cgst, 2, PHP_ROUND_HALF_DOWN));
+                    $totalTaxAmt= $totalTaxAmt+round($tax_12_obj->cgst,2,PHP_ROUND_HALF_DOWN);
 
                     $allledgerentrieslist11 = $voucher->addChild("ALLLEDGERENTRIES.LIST");
                     $allledgerentrieslist11->addChild("LEDGERNAME", "CK SGST Collected @ 6%");
                     $allledgerentrieslist11->addChild("GSTCLASS");
                     $allledgerentrieslist11->addChild("ISDEEMEDPOSITIVE", "No");
                     $allledgerentrieslist11->addChild("AMOUNT", round($tax_12_obj->sgst, 2, PHP_ROUND_HALF_DOWN));
+                    $totalTaxAmt= $totalTaxAmt+round($tax_12_obj->sgst,2,PHP_ROUND_HALF_DOWN);
                 }
 
                 if (trim($obj->igst_total) != "" && trim($obj->igst_total) != "0") {
@@ -208,49 +220,55 @@ if ($objs) {
                     $allledgerentrieslist12->addChild("GSTCLASS");
                     $allledgerentrieslist12->addChild("ISDEEMEDPOSITIVE", "No");
                     $allledgerentrieslist12->addChild("AMOUNT", round($tax_12_obj->igst, 2, PHP_ROUND_HALF_DOWN));
+                    $totalTaxAmt= $totalTaxAmt+round($tax_12_obj->igst,2,PHP_ROUND_HALF_DOWN);
                 }
             }
             
-            //for tax rate 28 calulations
-            if (isset($tax_28_obj)) {
+            //for tax rate 18 calulations
+            if (isset($tax_18_obj)) {
                 $allledgerentrieslist13 = $voucher->addChild("ALLLEDGERENTRIES.LIST", " ");
                 if (trim($obj->igst_total) != "" && trim($obj->igst_total) != "0") {
-                    $sales_str28 = "CK GST Sales @28% MRP OMS";
-                    $discount_str28 = "CK Discount for 28% Sales OMS";
+                    $sales_str18 = "CK GST Sales @18% MRP OMS";
+                    $discount_str18 = "CK Discount for 18% Sales OMS";
                 } else {
-                    $sales_str28 = "CK GST Sales @28% MRP MS";
-                    $discount_str28 = "CK Discount for 28% Sales MS";
+                    $sales_str18 = "CK GST Sales @18% MRP MS";
+                    $discount_str18 = "CK Discount for 18% Sales MS";
                 }
-                $allledgerentrieslist13->addChild("LEDGERNAME", $sales_str28);
+                $allledgerentrieslist13->addChild("LEDGERNAME", $sales_str18);
                 $allledgerentrieslist13->addChild("GSTCLASS");
                 $allledgerentrieslist13->addChild("ISDEEMEDPOSITIVE", "No");
-                $allledgerentrieslist13->addChild("AMOUNT", round($tax_28_obj->total_price_qty, 2, PHP_ROUND_HALF_DOWN));
+                $allledgerentrieslist13->addChild("AMOUNT", round($tax_18_obj->total_price_qty, 2, PHP_ROUND_HALF_DOWN));
+                $totalTaxAmt= $totalTaxAmt+round($tax_18_obj->total_price_qty,2,PHP_ROUND_HALF_DOWN);
                 $allledgerentrieslist14 = $voucher->addChild("ALLLEDGERENTRIES.LIST");
-                $allledgerentrieslist14->addChild("LEDGERNAME", $discount_str28);
+                $allledgerentrieslist14->addChild("LEDGERNAME", $discount_str18);
                 $allledgerentrieslist14->addChild("GSTCLASS");
                 $allledgerentrieslist14->addChild("ISDEEMEDPOSITIVE", "YES");
-                $allledgerentrieslist14->addChild("AMOUNT", "-" . round($tax_28_obj->discount_val, 2, PHP_ROUND_HALF_DOWN));
+                $allledgerentrieslist14->addChild("AMOUNT", "-" . round($tax_18_obj->discount_val, 2, PHP_ROUND_HALF_DOWN));
+                $totalInvAmt=$totalInvAmt+round($tax_18_obj->discount_val,2,PHP_ROUND_HALF_DOWN);
    
                 if (trim($obj->igst_total) == "" || trim($obj->igst_total) == "0") {
                     $allledgerentrieslist15 = $voucher->addChild("ALLLEDGERENTRIES.LIST");
                     $allledgerentrieslist15->addChild("LEDGERNAME", "CK CGST Collected @ 14%");
                     $allledgerentrieslist15->addChild("GSTCLASS");
                     $allledgerentrieslist15->addChild("ISDEEMEDPOSITIVE", "No");
-                    $allledgerentrieslist15->addChild("AMOUNT", round($tax_28_obj->cgst, 2, PHP_ROUND_HALF_DOWN));
+                    $allledgerentrieslist15->addChild("AMOUNT", round($tax_18_obj->cgst, 2, PHP_ROUND_HALF_DOWN));
+                    $totalTaxAmt= $totalTaxAmt+round($tax_18_obj->cgst,2,PHP_ROUND_HALF_DOWN);
 
                     $allledgerentrieslist16 = $voucher->addChild("ALLLEDGERENTRIES.LIST");
                     $allledgerentrieslist16->addChild("LEDGERNAME", "CK SGST Collected @ 14%");
                     $allledgerentrieslist16->addChild("GSTCLASS");
                     $allledgerentrieslist16->addChild("ISDEEMEDPOSITIVE", "No");
-                    $allledgerentrieslist16->addChild("AMOUNT", round($tax_28_obj->sgst, 2, PHP_ROUND_HALF_DOWN));
+                    $allledgerentrieslist16->addChild("AMOUNT", round($tax_18_obj->sgst, 2, PHP_ROUND_HALF_DOWN));
+                    $totalTaxAmt= $totalTaxAmt+round($tax_18_obj->sgst,2,PHP_ROUND_HALF_DOWN);
                 }
 
                 if (trim($obj->igst_total) != "" && trim($obj->igst_total) != "0") {
                     $allledgerentrieslist17 = $voucher->addChild("ALLLEDGERENTRIES.LIST");
-                    $allledgerentrieslist17->addChild("LEDGERNAME", "CK IGST Collected @ 28%");
+                    $allledgerentrieslist17->addChild("LEDGERNAME", "CK IGST Collected @ 18%");
                     $allledgerentrieslist17->addChild("GSTCLASS");
                     $allledgerentrieslist17->addChild("ISDEEMEDPOSITIVE", "No");
-                    $allledgerentrieslist17->addChild("AMOUNT", round($tax_28_obj->igst, 2, PHP_ROUND_HALF_DOWN));
+                    $allledgerentrieslist17->addChild("AMOUNT", round($tax_18_obj->igst, 2, PHP_ROUND_HALF_DOWN));
+                    $totalTaxAmt= $totalTaxAmt+round($tax_18_obj->igst,2,PHP_ROUND_HALF_DOWN);
                 }
             }
 
@@ -258,17 +276,20 @@ if ($objs) {
             /* -------------------------------------------------------------------------------------- */
             $allledgerentrieslist18 = $voucher->addChild("ALLLEDGERENTRIES.LIST");
             $allledgerentrieslist18->addChild("LEDGERNAME", "Round Off");
+            $roundoff=round(($totalInvAmt-$totalTaxAmt),2,PHP_ROUND_HALF_DOWN);
             if ($roundoff > 0) {
                 // $roundoff = $roundoff*(-1);
-                $allledgerentrieslist18->addChild("ISDEEMEDPOSITIVE", "No");
+                $allledgerentrieslist18->addChild("ISDEEMEDPOSITIVE", "Yes");
                 $allledgerentrieslist18->addChild("AMOUNT", $roundoff);
             } else if ($roundoff < 0) {
-                $allledgerentrieslist18->addChild("ISDEEMEDPOSITIVE", "Yes");
-                $allledgerentrieslist18->addChild("AMOUNT", $roundoff);
+                $allledgerentrieslist18->addChild("ISDEEMEDPOSITIVE", "No");
+                $allledgerentrieslist18->addChild("AMOUNT", $roundoff *-1);
             } else if ($roundoff == 0) {
-                $allledgerentrieslist18->addChild("ISDEEMEDPOSITIVE", "Yes");
-                $allledgerentrieslist18->addChild("AMOUNT", $roundoff);
+                $allledgerentrieslist18->addChild("ISDEEMEDPOSITIVE", "No");
+                $allledgerentrieslist18->addChild("AMOUNT", abs($roundoff));
             }
+            $totalInvAmt=0.0;
+            $totalTaxAmt=0.0;
         }
     }
 
