@@ -71,7 +71,7 @@ if ($objs) {
             $tax_18_obj = $db->fetchObject("select a.id,a.invoice_no,a.invoice_dt,sum(b.taxable_value+b.cgst+b.sgst+b.igst) as taxable_valwithtax,"
                     . "sum(b.quantity) as qty,sum(b.total_price_qty) as total_price_qty,round(sum(b.discount_val),2) as discount_val,a.discount_2,"
                     . "sum(b.cgst+b.sgst+b.igst) as total_tax, a.createtime, round(sum(b.total_rate_qty),2) as Rate, sum(b.taxable_value) as total_taxable_val,"
-                    . "sum(cgst) as cgst, sum(sgst) as sgst, sum(igst) as igst,truncate(b.tax_rate*100,0) from it_invoices a,it_invoice_items b "
+                    . "sum(cgst) as cgst, sum(sgst) as sgst, sum(igst) as igst,b.tax_rate*100 from it_saleback_invoices a,it_saleback_invoice_items b "
                     . "where a.id=b.invoice_id and b.invoice_id=$obj->id and b.tax_rate*100 = 18 group by b.tax_rate,a.id order by invoice_dt");
 
             //$itemobj = $db->fetchObject("select * from it_invoice_items_reports where invoice_id = $obj->id ");
@@ -283,9 +283,9 @@ if ($objs) {
                 $allledgerentrieslist18->addChild("AMOUNT", $roundoff);
             } else if ($roundoff < 0) {
                 $allledgerentrieslist18->addChild("ISDEEMEDPOSITIVE", "No");
-                $allledgerentrieslist18->addChild("AMOUNT", $roundoff *-1);
+                $allledgerentrieslist18->addChild("AMOUNT", $roundoff);
             } else if ($roundoff == 0) {
-                $allledgerentrieslist18->addChild("ISDEEMEDPOSITIVE", "No");
+                $allledgerentrieslist18->addChild("ISDEEMEDPOSITIVE", "Yes");
                 $allledgerentrieslist18->addChild("AMOUNT", abs($roundoff));
             }
             $totalInvAmt=0.0;

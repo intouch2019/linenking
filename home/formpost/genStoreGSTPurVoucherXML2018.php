@@ -349,13 +349,13 @@ if ($objs) {
             $allledgerentrieslist18->addChild("LEDGERNAME", "Round Off");
              $roundoff=round(($totalInvAmt-$totalTaxAmt),2,PHP_ROUND_HALF_DOWN);//echo '<br>';
             if ($roundoff > 0) {
-                $allledgerentrieslist18->addChild("ISDEEMEDPOSITIVE", "Yes");
+                $allledgerentrieslist18->addChild("ISDEEMEDPOSITIVE", "No");
                 $allledgerentrieslist18->addChild("AMOUNT", "-" . $roundoff);
             } else if ($roundoff < 0) {
-                $allledgerentrieslist18->addChild("ISDEEMEDPOSITIVE", "No");
-                $allledgerentrieslist18->addChild("AMOUNT", $roundoff * -1);
+                $allledgerentrieslist18->addChild("ISDEEMEDPOSITIVE", "Yes");
+                $allledgerentrieslist18->addChild("AMOUNT", $roundoff *-1);
             } else if ($roundoff == 0) {
-                $allledgerentrieslist18->addChild("ISDEEMEDPOSITIVE", "No");
+                $allledgerentrieslist18->addChild("ISDEEMEDPOSITIVE", "Yes");
                 $allledgerentrieslist18->addChild("AMOUNT", abs($roundoff));
             }
             $totalInvAmt=0.0;
