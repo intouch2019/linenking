@@ -85,6 +85,8 @@ class cls_store_tallytransfer extends cls_renderer {
                             <input type="text" name="retail_sale_card_name" value="<?php echo $this->getFieldValue('retail_sale_card_name', $storeobj->retail_sale_card_name); ?>"><br/>
                         </p><p class="grid_3"><label><b>*Retail Sale UPI Name: </b></label> 
                         <input type="text" name="retail_sale_upi_name" value="<?php echo $this->getFieldValue('retail_sale_upi_name',$storeobj->retail_sale_upi_name); ?>"><br/>
+                        </p><p class="grid_3"><label><b>Retail Sale Bank Name: </b></label> 
+                        <input type="text" name="retail_sale_bank_name" value="<?php echo $this->getFieldValue('retail_sale_bank_name',$storeobj->retail_sale_bank_name); ?>"><br/>
                         </p> <br/>  
                         <p class="grid_3">
                             <input type="submit" value="Update" style="width:30%">

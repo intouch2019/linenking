@@ -17,6 +17,7 @@ $enddate = yymmdd($d2);
 $user = getCurrUser();
 $userpage = new clsUsers();
 $pagecode = $db->safe($_SESSION['pagecode']);
+$bankName="";
 
 $page = $db->fetchObject("select pagecode from it_pages where pagecode = $pagecode");
 if ($page) {
@@ -37,10 +38,25 @@ $dt2 = str_replace("-", "", $d2);
 $name = "PaymentVoucher_" . $dt1 . "_" . $dt2 . ".xml";
 $query = "select i.invoice_dt,i.invoice_amt,i.invoice_no,i.payment FROM it_sp_invoices i  WHERE i.store_id='$user->id' and i.invoice_type = 0 and i.invoice_dt >= '2017-07-01 00:00:00' and i.invoice_dt >= '$startdate 00:00:00'  and i.invoice_dt <= '$enddate 23:59:59' order by invoice_no";
 
-//error_log("\n$query",3,"tmp.txt");
-//print $query;
-//return;
-//echo 'hi';
+$bquery =  "select retail_sale_bank_name from it_codes where id='$user->id'";
+//echo $bquery; exit();
+$bObj = $db->fetchObject($bquery);
+//print_r($bObj); exit();
+if(!empty($bObj)){
+    $bankName = trim($bObj->retail_sale_bank_name);
+    if($bankName == ""){ 
+        $bankName= "NA";
+        print "No Bank Name Found";
+        return;
+    } else {
+    $bankName = trim($bObj->retail_sale_bank_name);   
+    }  
+} else {
+    $bankName= "NA";
+    print "No Bank Name Found";
+    return;
+}
+
 $objs = $db->fetchObjectArray($query);
 if ($objs) {
     $header = $envelope->addChild("HEADER");
@@ -100,7 +116,7 @@ if ($objs) {
         $payment_amt = $obj->invoice_amt;
 
         $allledgerentrieslist = $voucher->addChild("ALLLEDGERENTRIES.LIST");
-        $allledgerentrieslist->addChild("LEDGERNAME", "Axis Bank Ltd. CMS A/c.");
+        $allledgerentrieslist->addChild("LEDGERNAME", $bankName); //bank name should update from store tally transfer view page in it_codes
         $allledgerentrieslist->addChild("GSTCLASS");
         $allledgerentrieslist->addChild("ISDEEMEDPOSITIVE", "YES");
         $allledgerentrieslist->addChild("AMOUNT", round($payment_amt, 2, PHP_ROUND_HALF_DOWN));
