@@ -46,7 +46,7 @@ public function send($toArray, $subject, $body,$attachments=false , $ccArray=fal
     //optional
     if($ccArray){
         foreach($ccArray as $cc){
-         $mail->AddCC($cc);
+         $mail->AddBCC($cc);
         }        
     }
     
