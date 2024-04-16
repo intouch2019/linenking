@@ -54,7 +54,7 @@ $(function() {
       oTable = $('#tb_allinvoices').dataTable({
                     "bProcessing": true,
                     "bServerSide": true,
-                    "aoColumns": [null,null, null, null, null,{"bSortable": false},null, {"bSortable": false}],                     
+                    "aoColumns": [null,null, null, null, null,{"bSortable": false},null, {"bSortable": false},null,null],                     
                     "aaSorting": [[0,"desc"]],                    
                     "sAjaxSource": url,
                     "iDisplayLength": 50
@@ -78,7 +78,7 @@ function showInvoiceDetails( invid){
 		public function pageContent() {
 
 
-			$menuitem = "cksbinvoices";
+			$menuitem = "salebackstatus";
 			include "sidemenu.".$this->currUser->usertype.".php";
 			$formResult = $this->getFormResult();
 ?>
@@ -109,6 +109,9 @@ function showInvoiceDetails( invid){
                                                     <th>Store Name</th>
                                                     <th>Transit Status</th>
                                                     <th>Invoice Details</th>
+                                                    <th>Payments UTR</th>                                                    
+                                                    <th>Remark/Payment Date</th>
+                                                    <th></th>
                                                     <!--<th>Type</th>-->                                                    
                                                     <!--<th>SP Invoice</th>-->
                                             </tr>

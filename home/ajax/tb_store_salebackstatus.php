@@ -38,9 +38,8 @@ if (!$currStore) {
 
 
 
-$aColumns = array( 'id','invoice_no', 'invoice_dt', 'invoice_amt', 'invoice_qty', 'store_name', 'is_sb_transit_complete','details');
-
-$sColumns = array('i.id','i.invoice_no', 'i.invoice_dt', 'i.invoice_amt','i.invoice_qty','i.createtime');
+$aColumns = array( 'id','invoice_no', 'invoice_dt', 'invoice_amt', 'invoice_qty', 'store_name', 'is_sb_transit_complete','details','utr','remark');
+$sColumns = array('i.id','i.invoice_no', 'i.invoice_dt', 'i.invoice_amt','i.invoice_qty','i.createtime','i.is_sb_transit_complete','i.remark','c.store_name');
 
 /* Indexed column (used for fast and accurate table cardinality) */
 
@@ -222,9 +221,9 @@ $sQuery = "
 
             select SQL_CALC_FOUND_ROWS  i.*  
 
-            from it_saleback_invoices i 
+            from it_saleback_invoices i ,it_codes c
 
-            $sWhere
+            $sWhere and i.store_id=c.id
 
                  group by i.id
 
@@ -325,13 +324,11 @@ foreach ($objs as $obj) {
         }else if ($aColumns[$i] == "is_sb_transit_complete") {        
 
             if($obj->is_sb_transit_complete==0){
-
                 $row[] = 'In Transit';            
-
             }else if($obj->is_sb_transit_complete==1){
-
-                $row[] = 'Completed';            
-
+                $row[] = 'Received At Warehouse';            
+            }else if($obj->is_sb_transit_complete==2){
+                $row[] = 'Payment Done';            
             }
 
         }else if ($aColumns[$i] == "details") {            
@@ -347,6 +344,25 @@ foreach ($objs as $obj) {
 
 
 
+        }else if($aColumns[$i] == "utr"){
+            if($currStore->usertype==UserType::Dealer){
+            $row[] = $obj->utr; 
+            }else{
+                $row[] = "";
+            }
+
+
+//            $row[] = '<input type="text" name="utr" id="utr'.$obj->id.'" value="' . htmlspecialchars($obj->utr) . '">';
+        }
+        else if($aColumns[$i] == "remark"){
+            if($currStore->usertype==UserType::Dealer){
+                $obj->remark;
+                $row[] = $obj->remark;
+            }else{
+                $row[] = "";
+            }
+
+            //$row[] = '<input type="text" name="remark" id="remark'.$obj->id.'" value="' . htmlspecialchars($obj->remark) . '">';
         }
 
         /*else if (!$obj->$aColumns[$i]) {
