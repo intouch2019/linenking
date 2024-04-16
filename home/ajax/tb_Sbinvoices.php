@@ -15,8 +15,8 @@ if (!$currStore) {
 }
 //$logger = new clsLogger();
 
-$aColumns = array('id', 'invoice_no', 'invoice_dt', 'invoice_amt', 'invoice_qty', 'store_name', 'is_sb_transit_complete', 'details');
-$sColumns = array('i.id', 'i.invoice_no', 'i.invoice_dt', 'i.invoice_amt', 'i.invoice_qty', 'i.createtime');
+$aColumns = array( 'id','invoice_no', 'invoice_dt', 'invoice_amt', 'invoice_qty', 'store_name', 'is_sb_transit_complete', 'details','utr','remark','submit');
+$sColumns = array('i.id','i.invoice_no', 'i.invoice_dt', 'i.invoice_amt','i.invoice_qty','i.createtime','i.is_sb_transit_complete','i.remark','c.store_name');
 /* Indexed column (used for fast and accurate table cardinality) */
 //$sIndexColumn = "iid";
 //$sTable = "it_invoices";
@@ -100,8 +100,8 @@ $sWhere .= "  i.invoice_type in (7)";
  */
 $sQuery = "
             select SQL_CALC_FOUND_ROWS  i.*  
-            from it_saleback_invoices i 
-            $sWhere
+            from it_saleback_invoices i ,it_codes c
+            $sWhere and i.store_id=c.id
                  group by i.id
             $sOrder    
             $sLimit
@@ -144,13 +144,54 @@ foreach ($objs as $obj) {
             }
             $row[] = "$st_name";
         } else if ($aColumns[$i] == "is_sb_transit_complete") {
-            if ($obj->is_sb_transit_complete == 0) {
-                $row[] = 'In Transit';
-            } else if ($obj->is_sb_transit_complete == 1) {
-                $row[] = 'Completed';
+            if($obj->is_sb_transit_complete==0){
+                $row[] = 'In Transit';            
+            }else if($obj->is_sb_transit_complete==1){
+                $row[] = 'Received At Warehouse';            
+            }else if($obj->is_sb_transit_complete==2){
+                $row[] = 'Payment Done';            
             }
         } else if ($aColumns[$i] == "details") {
             $row[] = '<a onclick="showInvoiceDetails(' . $obj->id . ')" href="javascript:void(0);"><u>View</u></a>';
+        }else if($aColumns[$i] == "utr"){
+            if($currStore->usertype==UserType::Accounts || $currStore->id==100){
+                if($obj->utr!=0){
+                $row[] = '<input type="text" name="utr" id="utr'.$obj->id.'" value="' . htmlspecialchars($obj->utr) . '" readonly>';
+            }else{
+                $row[] = '<input type="text" name="utr" id="utr'.$obj->id.'" value="' . htmlspecialchars($obj->utr) . '">';
+            }
+            }else{
+                $row[] = '<input type="text" name="utr" id="utr'.$obj->id.'" value="' . htmlspecialchars($obj->utr) . '" readonly>';
+            }
+
+//            $row[] = '<input type="text" name="utr" id="utr'.$obj->id.'" value="' . htmlspecialchars($obj->utr) . '">';
+        }else if($aColumns[$i] == "remark"){
+            if($currStore->usertype==UserType::Accounts || $currStore->id==100){
+                if($obj->remark!=""){
+
+                $row[] = '<input type="text" name="remark" id="remark'.$obj->id.'" value="' . htmlspecialchars($obj->remark) . '" readonly>';
+            }else{
+                $row[] = '<input type="text" name="remark" id="remark'.$obj->id.'" value="' . htmlspecialchars($obj->remark) . '">';
+            }
+            }else{
+                $row[] = '<input type="text" name="remark" id="remark'.$obj->id.'" value="' . htmlspecialchars($obj->remark) . '" readonly>';
+            }
+
+            //$row[] = '<input type="text" name="remark" id="remark'.$obj->id.'" value="' . htmlspecialchars($obj->remark) . '">';
+        }else if ($aColumns[$i] == "submit") {  
+            if($currStore->usertype==UserType::Accounts || $currStore->id==100){
+                if($obj->utr!=0 && $obj->remark!=""){
+                $row[] = '<button disabled onclick="Saveinvoicedetails('.$obj->id.')" href="javascript:void(0);"><u>Submit</u></a>';
+            }else if($obj->is_sb_transit_complete==0 || $obj->is_sb_transit_complete==2){
+                $row[] = '<button disabled onclick="Saveinvoicedetails('.$obj->id.')" href="javascript:void(0);"><u>Submit</u></a>';
+            }else{
+                $row[] = '<button onclick="Saveinvoicedetails('.$obj->id.')" href="javascript:void(0);"><u>Submit</u></a>';
+            }
+            }else{
+                $row[] = '<button disabled onclick="Saveinvoicedetails('.$obj->id.')" href="javascript:void(0);"><u>Submit</u></a>';
+            }
+
+//                $row[] = '<button onclick="Saveinvoicedetails('.$obj->id.')" href="javascript:void(0);"><u>Submit</u></a>';            
         } else {
             /* General output */
             $row[] = $obj->$aColumns[$i];

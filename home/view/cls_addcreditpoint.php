@@ -17,6 +17,7 @@ class cls_addcreditpoint extends cls_renderer{
         ?>
 
 <link rel="stylesheet" href='js/chosen/chosen.css' />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
 <script type="text/javascript" src= 'js/ajax.js'></script>
 <script type="text/javascript" src= 'js/ajax-dynamic-list.js' >
 	/************************************************************************************************************
@@ -53,7 +54,42 @@ function fetchSampleExcel(){
     window.location.href="formpost/addCreditpointExcel.php";
 }
 
+function uploadfile(event){
+    event.preventDefault(); // Prevent default form submission
+    var fileInput = document.getElementById('file');
+    var file = fileInput.files[0];
+    var reader = new FileReader();
 
+    reader.onload = function(e) {
+        var data = new Uint8Array(e.target.result);
+        var workbook = XLSX.read(data, { type: 'array' });
+        var sheet = workbook.Sheets[workbook.SheetNames[0]];
+        var jsonData = XLSX.utils.sheet_to_json(sheet);
+
+        // Calculate sum of credit points
+        var sum = 0;
+        var storecnt=0;
+        jsonData.forEach(function(row) {
+            if (row["Credit Point"]) {
+                sum += parseFloat(row["Credit Point"]);
+                storecnt++;
+            }
+        });
+
+        // Display sum in an alert
+var confirmation = confirm('Sum of stores: ' + storecnt + '\nSum of credit points: ' + sum + '\n\nDo you want to proceed?');
+
+        // Submit the form after file processing
+        if (confirmation) {
+     document.getElementById("storeseq").submit();
+    } else {
+
+    }
+
+    };
+
+    reader.readAsArrayBuffer(file);
+}
 
 
 </script>
@@ -88,7 +124,7 @@ function fetchSampleExcel(){
             <div class="clsDid" >Add Credit Point File (Excel)</div>
             <div class="clsText"><input type="file" id="file" name="file" ></div>
             <br/>
-            <input type="submit" value="Submit File"/>
+            <input type="submit" onclick="uploadfile(event)" value="Submit File"/>
             <div>
             <label>
             <?php

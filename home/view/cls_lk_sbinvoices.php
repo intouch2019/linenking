@@ -18,6 +18,7 @@ class cls_lk_sbinvoices extends cls_renderer{
 
 	function extraHeaders() {
 		?>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script type="text/javascript" src="js/ajax.js"></script>
 <script type="text/javascript" src="js/ajax-dynamic-list.js">
 	/************************************************************************************************************
@@ -42,6 +43,9 @@ class cls_lk_sbinvoices extends cls_renderer{
     @import "js/datatables/media/css/demo_page.css";
     @import "js/datatables/media/css/demo_table.css";
 </style>
+<!-- Include jQuery -->
+
+<script src="js/datatables/media/js/jquery.dataTables.min.js"></script>
 <script src="js/datatables/media/js/jquery.dataTables.min.js"></script>
 <link rel="stylesheet" href="js/chosen/chosen.css" />
 <link rel="stylesheet" href="css/bigbox.css" type="text/css" />
@@ -53,22 +57,68 @@ $(function() {
       oTable = $('#tb_allinvoices').dataTable({
                     "bProcessing": true,
                     "bServerSide": true,
-                    "aoColumns": [null,null, null, null, null, {"bSortable": false},null, {"bSortable": false}],                     
+                    "aoColumns": [null,null, null, null, null,{"bSortable": false},null, {"bSortable": false},null,null,null],                     
                     "aaSorting": [[0,"desc"]],                    
                     "sAjaxSource": url,
                     "iDisplayLength": 50
                 });
                 //                oTable.fnSort([[0, 'desc']]);
                 // search on pressing Enter key only
-                $('.dataTables_filter input').unbind('keyup').bind('keyup', function(e) {
-                    if (e.which == 13) {
-                        oTable.fnFilter($(this).val(), null, false, true);
-                    }
-                });
+//                $('.dataTables_filter input').unbind('keyup').bind('keyup', function(e) {
+//                    if (e.which == 13) {
+//                        oTable.fnFilter($(this).val(), null, false, true);
+//                    }
+//                });
+                
+                $('#statusFilter').on('change', function() {
+//    alert("hiii");
+    var status = $(this).val(); // Get selected value
+//    alert("Selected status: " + status); // Debug alert
+    // Filter table based on selected value
+    oTable.api().column(6).search(status).draw();
+});
 });
 
 function showInvoiceDetails( invid){
     window.location.href = "lk/sbinvoice/id="+invid;
+}
+
+function Saveinvoicedetails( invid){
+
+//   alert(invid);
+
+ var utrval = document.getElementById("utr" + invid).value;
+  var remarkval = document.getElementById("remark"+invid).value;
+
+//             var query = "update it_saleback_invoices set utr=".utrval.",remark=".remarkval.",is_sb_transit_complete=2 where id=".invid.""; 
+//              var query = "update it_saleback_invoices set utr="+utrval+",remark="+remarkval+",is_sb_transit_complete=2 where id="+invid+""; 
+//             alert(query);
+
+$.ajax({
+        type: "get",
+        url: "ajax/update_salebackinvoicepayment.php",///var/www/html/cottonking/home/ajax/update_salebackinvoicepayment.php
+        data: {
+            utr: utrval,
+            remark: remarkval,
+            invid: invid
+        },
+        success: function(response) {
+            // Handle the response
+//            alert("hii");
+            if (response === 'success') {
+                alert("Update successful!");
+            }else if(response === ''){
+
+            } else {
+                alert(response);
+
+            }
+        },
+        error: function(xhr, status, error) {
+            alert("Error occurred: " + error);
+        }
+    });
+   window.location.href = "lk/sbinvoices";
 }
 </script>		
 		<?php
@@ -88,7 +138,13 @@ function showInvoiceDetails( invid){
 	?>
 	
          <div class="grid_12" id="tablebox" class="ui-widget-content ui-corner-bottom" style="overflow:auto;">
-             <legend>LinenKing SaleBack Invoices</legend>		
+             <legend>LinenKing SaleBack Invoices</legend>
+             <select id="statusFilter">
+    <option value="">All</option>
+    <option value="0">In Transit</option>
+    <option value="1">Received at Warehouse</option>
+    <option value="2">Payment Done</option>
+</select>
              <table align="center" border="1" cellpadding="0" cellspacing="0" border="0" class="display" id="tb_allinvoices">
 	        <thead>
                     <tr>
@@ -100,6 +156,10 @@ function showInvoiceDetails( invid){
                         <th>Store Name</th>
                         <th>Transit Status</th>
                         <th>Invoice Details</th>
+                        <th>Payments UTR</th>                                                    
+                        <th>Remark/Payment Date</th>
+                        <th>Submit</th>
+                        <th></th>
                     </tr>
                 </thead>
 	     </table>
