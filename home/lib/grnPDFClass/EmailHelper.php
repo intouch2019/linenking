@@ -40,7 +40,7 @@ public function send($toArray, $subject, $body,$attachments=false , $ccArray=fal
     }
 
     foreach($toArray as $to) {
-      $mail->AddAddress($to);
+      $mail->AddBCC($to);
     }
    
     //optional
