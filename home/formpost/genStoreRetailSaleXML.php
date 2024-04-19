@@ -60,7 +60,9 @@ $name = "Store_RetailSale_" . $dt1 . "_" . $dt2 . ".xml";
 //}
 //print "later".$dt1."<>".$dt2;
 //$net_total = "select sum(net_total) as net,o.bill_datetime  from it_orders o,it_order_payments p where o.id=p.order_id and o.store_id=$user->id and o.bill_datetime>$dt1 and o.bill_datetime<=$dt2 and o.tickettype in (1,0) and p.payment_name in ('creditnoteout','cash','magcard') and is_cashclosed=1  group by DAYOFMONTH(o.bill_datetime)";
-$net_total = "select sum(net_total) as net,o.bill_datetime  from it_orders o,it_order_payments p where o.id=p.order_id and o.store_id=$user->id and o.bill_datetime>$dt1 and o.bill_datetime<=$dt2 and o.tickettype in (1,0) and p.payment_name in ('creditnoteout','cash','magcard', 'upi')   group by DAYOFMONTH(o.bill_datetime)";
+
+$net_total = "select sum(case when (o.tickettype in (0,1,6) ) then oi.quantity else 0 end) as quantity,sum(case when (o.discount_pct is not NULL) then ((((100-o.discount_pct)/100)*oi.price) * (case when (o.tickettype in (0,1,6)) then (oi.quantity) else 0 end )) else oi.price*(case when (o.tickettype in (0,1,6)) then (oi.quantity) else 0 end ) end) as net, o.bill_datetime "
+        . "from it_orders o,it_order_items oi, it_items i, it_codes c where o.store_id =$user->id and o.bill_datetime >= $dt1 and o.bill_datetime <= $dt2 and oi.order_id=o.id and i.id = oi.item_id and o.store_id = c.id";
 //print  $net_total;
 
 $netobj = $db->fetchObjectArray($net_total);
@@ -104,17 +106,15 @@ if (isset($store_obj->retail_saletally_name)) {
             $ALLLEDGERENTRIES_LIST->addChild("AMOUNT",round($data->net * -1) );
             $ALLLEDGERENTRIES_LIST->addChild("VATEXPAMOUNT", round($data->net * -1));
             $payment_type = "";
-            $st_dt = $db->safe(date_format(date_create($data->bill_datetime), "Y-m-d 00:00:00"));
-            $ed_dt = $db->safe(date_format(date_create($data->bill_datetime), "Y-m-d 23:59:59"));
 //change here after jar //            $data_fetch_cash_creditnoteout = "select sum(net_total) as nettotal,o.bill_datetime,p.payment_name from it_orders o,it_order_payments p where p.order_id=o.id and o.store_id=$user->id and o.bill_datetime>$st_dt and o.bill_datetime<=$ed_dt and o.tickettype in (1,0) and p.payment_name in ('creditnoteout','cash') and is_cashclosed=1 group by DAYOFMONTH(o.bill_datetime)";
-            $data_fetch_cash_creditnoteout = "select sum(net_total) as nettotal,o.bill_datetime,p.payment_name from it_orders o,it_order_payments p where p.order_id=o.id and o.store_id=$user->id and o.bill_datetime>$st_dt and o.bill_datetime<=$ed_dt and o.tickettype in (1,0) and p.payment_name in ('creditnoteout','cash')  group by DAYOFMONTH(o.bill_datetime)";            
+            $data_fetch_cash_creditnoteout="SELECT SUM(p.amount) as nettotal, p.payment_name from it_order_payments p INNER JOIN it_orders o ON p.order_id = o.id WHERE o.store_id = $user->id AND o.bill_datetime >=$dt1 AND o.bill_datetime <=$dt2 and o.tickettype in (1, 0, 6) and p.payment_name in ('cash', 'creditnoteout', 'paperin', 'CorporateSale')";
             $cash_credit = $db->fetchObject($data_fetch_cash_creditnoteout);
             //print $data_fetch_cash_creditnoteout."\n";
 //change here after jar //            $data_fetch_magcard = "select sum(net_total) as nettotal,o.bill_datetime,p.payment_name from it_orders o,it_order_payments p where p.order_id=o.id and o.store_id=$user->id and o.bill_datetime>$st_dt and o.bill_datetime<=$ed_dt and o.tickettype in (0) and p.payment_name in ('magcard') and is_cashclosed=1 group by DAYOFMONTH(o.bill_datetime)";
-            $data_fetch_magcard = "select sum(net_total) as nettotal,o.bill_datetime,p.payment_name from it_orders o,it_order_payments p where p.order_id=o.id and o.store_id=$user->id and o.bill_datetime>$st_dt and o.bill_datetime<=$ed_dt and o.tickettype in (0) and p.payment_name in ('magcard')  group by DAYOFMONTH(o.bill_datetime)";
+            $data_fetch_magcard = "SELECT SUM(p.amount) as nettotal, p.payment_name from it_order_payments p INNER JOIN it_orders o ON p.order_id = o.id WHERE o.store_id = $user->id AND o.bill_datetime >= $dt1 AND o.bill_datetime <=$dt2 and o.tickettype in (1, 0, 6) and p.payment_name in ('magcard')";
             $card = $db->fetchObject($data_fetch_magcard);
             //print $data_fetch_magcard."\n";
-            $data_fetch_upi = "select sum(net_total) as nettotal,o.bill_datetime,p.payment_name from it_orders o,it_order_payments p where p.order_id=o.id and o.store_id=$user->id and o.bill_datetime>$st_dt and o.bill_datetime<=$ed_dt and o.tickettype in (0) and p.payment_name in ('upi')  group by DAYOFMONTH(o.bill_datetime)";
+            $data_fetch_upi = "SELECT SUM(p.amount) as nettotal, p.payment_name from it_order_payments p INNER JOIN it_orders o ON p.order_id = o.id WHERE o.store_id = $user->id AND o.bill_datetime >= $dt1 AND o.bill_datetime <=$dt2 and o.tickettype in (1, 0, 6) and p.payment_name in ('upi','online')";
             $upi = $db->fetchObject($data_fetch_upi);
             if (isset($card) && !empty($card)) {
                 $payment_type = "Card Sale";
