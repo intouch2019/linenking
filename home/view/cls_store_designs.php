@@ -516,7 +516,7 @@ Your session has expired. Click <a href="">here</a> to login.
                    $this->storeinfo = getCurrUser();
           
             $dbProperties = new dbProperties();
-            if ((($dbProperties->getBoolean(Properties::DisableUserLogins)) && isset($this->storeinfo->usertype) && $this->storeinfo->usertype == 4)||((isset($this->storeinfo->inactive) && $this->storeinfo->inactive == 1 && isset($this->storeinfo->usertype) && $this->storeinfo->usertype == 4))) {
+            if ((($dbProperties->getBoolean(Properties::DisableUserLogins)) && isset($this->storeinfo->usertype) && $this->storeinfo->usertype == 4)||((isset($this->storeinfo->inactive) && $this->storeinfo->inactive == 1 && isset($this->storeinfo->usertype) && $this->storeinfo->usertype == 4))  || (isset($this->storeinfo->inactive_bydatasync) && $this->storeinfo->inactive_bydatasync == 1 && isset($this->storeinfo->usertype) && $this->storeinfo->usertype == 4)) {
                           ?> <input class="blueglassbutton" type="reset" value="RESET"/>
                                    
 
