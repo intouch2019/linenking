@@ -153,7 +153,30 @@ class cls_header {
                                                             <?php } ?>
                                                         <br>Please <a href="<?php echo DEF_SITEURL; ?>home/login">TRY AGAIN</a> later. After successful payment (use Only UPI or Netbanking) is done using the above link , your portal will be enabled automatically after sometimes...</div>
                                                             </div><?php
-                                            }
+                                            }else if (isset($this->storeinfo->inactive_bydatasync) && $this->storeinfo->inactive_bydatasync == 1 && isset($this->storeinfo->usertype) && $this->storeinfo->usertype == 4) {
+
+//                                            print_r($this->storeinfo);
+                                            ?><div class="grid_9">
+
+                                                <div class="error" style="font-size:1.6em; color:red">Your portal is disabled.
+
+                                                    <?php if (isset($this->storeinfo)) {
+                                                        ?>
+                                                        <br>Reason is : <?php echo "Store Data Not Sync To Portal From Last 2 Days" ?>
+
+                                                        <?php }
+                                                        ?>
+
+                                                        <?php if (isset($this->storeinfo->paymentlink) && $this->storeinfo->paymentlink != "") { ?>
+                                                            <br> To make payment click this link <a href="<?php echo $this->storeinfo->paymentlink; ?>" target="_blank" style="color:blue"><?php echo $this->storeinfo->paymentlink; ?> </a>
+                                                                <br>Please <a href="<?php echo DEF_SITEURL; ?>home/login">TRY AGAIN</a>later.After successful payment (use Only UPI or Netbanking) is done using the above link , your portal will be enabled automatically after sometimes...
+                                                            <?php } ?>
+
+
+                                                            </div>
+
+                                                                </div><?php
+                                                            }
                                             ?>
                                                         </div>
                                                         <div class="grid_12">&nbsp;</div>
