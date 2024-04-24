@@ -10,9 +10,6 @@ class cls_co_invoice extends cls_renderer{
 	var $userid;
 	var $id=-1;
 		
-        
-        
-        
 	function __construct($params=null) {
 		//parent::__construct(array(UserType::Admin, UserType::CKAdmin));
 		$this->currUser = getCurrUser();
@@ -44,28 +41,29 @@ class cls_co_invoice extends cls_renderer{
 	$num = 0;
 	$db = new DBConn();
 	//$invoice = $db->fetchObject("select i.*,c.store_name from it_invoices i , it_codes c  where i.store_id = c.id and i.id=$this->id ");        
-        $invoice = $db->fetchObject("select i.* from it_saleback_invoices i  where  i.id=$this->id ");
+        $invoice = $db->fetchObject("select i.* from it_orders i  where  i.id=$this->id ");
+//        print_r($invoice);        exit();
 //        print "select i.*,c.store_name from it_invoices i , it_codes c  where i.store_id = c.id and i.id=$this->id ";
 	if ($invoice) {
         //$spObj = $db->fetchObject("select * from it_codes where id = ".DEF_SP_LIFESTYLE_ID); // S.P. Life Style ID    
-        $itemobj = $db->fetchObject("select item_code from it_saleback_invoice_items where invoice_id = $invoice->id ");
-	$items = $db->fetchObjectArray("select * from it_saleback_invoice_items where invoice_id = $invoice->id");
+        $itemobj = $db->fetchObject("select barcode from it_order_items where order_id = $invoice->id ");
+	$items = $db->fetchObjectArray("select * from it_order_items where order_id = $invoice->id");
+        $storeid = $db->fetchObject("select store_name from it_codes where id = $invoice->store_id ");
 	?>
 	<fieldset class="login">
-	<legend style="font-size:14px;">Linen King Corporate Invoice: <?php echo $invoice->invoice_no; ?> | 
-	<label>Amount:</label> <?php echo $invoice->invoice_amt; ?> | 
-	<label>Quantity:</label> <?php echo $invoice->invoice_qty; ?> | 
-	<label>Date:</label> <?php echo $invoice->invoice_dt; ?><br/>
-        <?php  if (strpos($itemobj->item_code,"89000") !== false) {?>
-           <label>Corporate Name:</label><?php echo $invoice->store_name;?>
+	<legend style="font-size:14px;">Cotton King Corporate Invoice: <?php echo $invoice->bill_no; ?> | 
+	<label>Amount:</label> <?php echo $invoice->amount; ?> | 
+	<label>Quantity:</label> <?php echo $invoice->quantity; ?> | 
+	<label>Date:</label> <?php echo $invoice->bill_datetime; ?><br/>
+        <?php  if (strpos($itemobj->barcode,"89000") !== false) {?>
+           <label>Corporate Name:</label><?php echo $storeid->store_name;?>
        <?php }else{
            //$obj1 = $db->fetchObject("select store_name from it_codes where id = $invoice->store_id ");
            ?>
-         <label>Store Name:</label><?php echo $invoice->store_name;?>
+         <label>Corporate Name:</label><?php echo $invoice->cust_name;?><br/>
+         <label>Store Name:</label><?php echo $storeid->store_name;?>
         <?php } ?>
-<?php if ($invoice->sp_invoice_id) { ?>
-	<br /><label>SP Invoice:</label> <a href="sp/invoice/id=<?php echo $invoice->sp_invoice_id; ?>/">View</a>
-<?php } ?>
+
 	</legend>
 				<table align="center" border="1">
 					<tr>
@@ -77,7 +75,7 @@ class cls_co_invoice extends cls_renderer{
 					</tr>
 					<?php foreach($items as $obj) { ?>
 					<tr>
-						<td><?php echo $obj->item_code; ?></td>
+						<td><?php echo $obj->barcode; ?></td>
 						<!--<td><?php echo $obj->barcode; ?></td>-->
 <!--						<td style="text-align:right;"><?php // echo sprintf("%0.02f", $obj->price); ?></td>-->
                                                 <td><?php echo sprintf("%0.02f", $obj->price); ?></td>
@@ -95,4 +93,5 @@ class cls_co_invoice extends cls_renderer{
 <?php
 	}
 }
+
 ?>
