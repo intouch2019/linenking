@@ -14,8 +14,8 @@ if (!$currStore) {
 }
 //$logger = new clsLogger();
 
-$aColumns = array( 'id','invoice_no', 'invoice_dt', 'invoice_amt', 'invoice_qty','iorn_no','sync_date', 'store_name', 'details');
-$sColumns = array('i.id','i.invoice_no', 'i.invoice_dt', 'i.invoice_amt','i.invoice_qty','i.createtime');
+$aColumns = array( 'id','invoice_no', 'invoice_dt', 'invoice_amt', 'invoice_qty','iorn_no','sync_date', 'store_name','invoice_status', 'details');
+$sColumns = array('i.id','i.invoice_no', 'i.invoice_dt', 'i.invoice_amt','i.invoice_qty','i.createtime','i.invoice_status');
 /* Indexed column (used for fast and accurate table cardinality) */
 //$sIndexColumn = "iid";
 //$sTable = "it_invoices";
@@ -155,6 +155,12 @@ foreach ($objs as $obj) {
                 }else{ $st_name="-";}
 //            }
                 $row[] = "$st_name";            
+        }else if ($aColumns[$i] == "invoice_status") {            
+                if($obj->invoice_status==0){
+                $row[] = 'In Transit';            
+            }else if($obj->invoice_status==1){
+                $row[] = 'Received At Store';            
+            }          
         }else if ($aColumns[$i] == "details") {    
             if ($obj->sp_invoice_id) {
                 $row[] = '<a onclick="showSPInvoiceDetails('. $obj->sp_invoice_id.')" href="javascript:void(0);"><u>View</u></a>';            
