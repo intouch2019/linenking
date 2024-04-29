@@ -953,7 +953,10 @@ class cls_admin_stores_edit extends cls_renderer {
                                     <label>Nach Limit.</label>
                                     <input type="text" id="cust_nach_lmt" name="cust_nach_limit" value="<?php echo $this->getFieldValue('nach_limit', $store->nach_limit); ?>">
                                 </p>
-
+                                 <p class="grid_3">
+                                    <label>Bank Name.</label>
+                                    <input type="text" id="cust_bank_nme" name="cust_bank_name" value="<?php echo $this->getFieldValue('cust_bank_nme', $store->cust_bank_name); ?>">
+                                </p>
 
 
                             </div>

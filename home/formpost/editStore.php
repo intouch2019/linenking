@@ -250,7 +250,9 @@ if (!$store_name || !$address || !$city || !$zip || !$owner || !$phone || !$emai
             $addquery .= " , upi_name = $upiname";
         }
 
-
+        if (isset($cust_bank_name) && trim($cust_bank_name) != "") {
+            $addquery .= " , cust_bank_name = '$cust_bank_name'";
+        }
 
         if ($store->usertype == UserType::Admin || $store->usertype == UserType::CKAdmin || $store->id == 128) {
 

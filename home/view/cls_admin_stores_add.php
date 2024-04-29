@@ -836,6 +836,10 @@ if(discval>0){
                                     <label>Nach Limit.</label>
                                     <input type="text" id="cust_nach_lmt" name="cust_nach_limit" value="">
                     </p>
+                     <p class="grid_3">
+                                    <label>Bank Name.</label>
+                                    <input type="text" id="cust_bank_nme" name="cust_bank_name" value="">
+                                </p>
                         
                     </div>
                     
