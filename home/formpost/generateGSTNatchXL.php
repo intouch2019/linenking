@@ -41,14 +41,15 @@ $objPHPExcel->getActiveSheet()->setCellValue('C1', 'UMRN');
 $objPHPExcel->getActiveSheet()->setCellValue('D1', 'Customer to be Debited');
 
 $objPHPExcel->getActiveSheet()->setCellValue('E1', 'Name');  //E1
-$objPHPExcel->getActiveSheet()->setCellValue('F1', 'Customer IFSC/MICR');    //G1 //F1
-$objPHPExcel->getActiveSheet()->setCellValue('G1', 'Customer Debit AC');//H1   //G1
-$objPHPExcel->getActiveSheet()->setCellValue('H1', 'Transaction ID');//I1    //H1
+$objPHPExcel->getActiveSheet()->setCellValue('F1', 'Bank Name');  //E1
+$objPHPExcel->getActiveSheet()->setCellValue('G1', 'Customer IFSC/MICR');    //G1 //F1
+$objPHPExcel->getActiveSheet()->setCellValue('H1', 'Customer Debit AC');//H1   //G1
+$objPHPExcel->getActiveSheet()->setCellValue('I1', 'Transaction ID');//I1    //H1
 
-$objPHPExcel->getActiveSheet()->setCellValue('I1', 'Transaction Amount');//J1    //I1
-$objPHPExcel->getActiveSheet()->setCellValue('J1', 'Transaction Date');//K1    //J1
+$objPHPExcel->getActiveSheet()->setCellValue('J1', 'Transaction Amount');//J1    //I1
+$objPHPExcel->getActiveSheet()->setCellValue('K1', 'Transaction Date');//K1    //J1
 
-$objPHPExcel->getActiveSheet()->setCellValue('K1', 'File No.');//L1   //K1
+$objPHPExcel->getActiveSheet()->setCellValue('L1', 'File No.');//L1   //K1
 
 
 
@@ -66,8 +67,9 @@ $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(20);
 $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(20);
 $objPHPExcel->getActiveSheet()->getColumnDimension('I')->setWidth(20);
 $objPHPExcel->getActiveSheet()->getColumnDimension('J')->setWidth(20);
-
 $objPHPExcel->getActiveSheet()->getColumnDimension('K')->setWidth(20);
+
+$objPHPExcel->getActiveSheet()->getColumnDimension('L')->setWidth(20);
 
 
 
@@ -114,6 +116,7 @@ $objPHPExcel->getActiveSheet()->getStyle('H1')->applyFromArray($styleArray);
 $objPHPExcel->getActiveSheet()->getStyle('I1')->applyFromArray($styleArray);
 $objPHPExcel->getActiveSheet()->getStyle('J1')->applyFromArray($styleArray);
 $objPHPExcel->getActiveSheet()->getStyle('K1')->applyFromArray($styleArray);
+$objPHPExcel->getActiveSheet()->getStyle('L1')->applyFromArray($styleArray);
 
 
 $objPHPExcel->getActiveSheet()->getStyle('A')->applyFromArray($cellstyleArray);
@@ -126,14 +129,14 @@ $objPHPExcel->getActiveSheet()->getStyle('G')->applyFromArray($cellstyleArray);
 $objPHPExcel->getActiveSheet()->getStyle('H')->applyFromArray($cellstyleArray);
 $objPHPExcel->getActiveSheet()->getStyle('I')->applyFromArray($cellstyleArray);
 $objPHPExcel->getActiveSheet()->getStyle('J')->applyFromArray($cellstyleArray);
-
 $objPHPExcel->getActiveSheet()->getStyle('K')->applyFromArray($cellstyleArray);
+$objPHPExcel->getActiveSheet()->getStyle('L')->applyFromArray($cellstyleArray);
 
 
 
 $rowCount=2;
 
-$query = "select  s.*,c.store_name,c.UMRN,c.cust_tobe_debited,c.cust_ifsc_or_mcr,c.cust_debit_account,(select State from states where id=c.state_id) as State,(select region from region where id=c.region_id)as region_name,c.Area,c.Location from it_invoices s, it_codes c where s.store_id = c.id  $dtClause $sClause";
+$query = "select  s.*,c.store_name,c.UMRN,c.cust_tobe_debited,c.cust_ifsc_or_mcr,c.cust_debit_account,(select State from states where id=c.state_id) as State,(select region from region where id=c.region_id)as region_name,c.cust_bank_name,c.Area,c.Location from it_invoices s, it_codes c where s.store_id = c.id  $dtClause $sClause";
 //$query="select s.*,c.store_name,c.UMRN,c.cust_tobe_debited,c.cust_ifsc_or_mcr,c.cust_debit_account,(select State from states where id=c.state_id) as State,c.Area,c.Location from it_invoices s, it_codes c where s.store_id = c.id and s.invoice_dt >= '2017-02-01 00:00:00' and s.invoice_dt <= '2018-02-28 23:59:59' and c.is_natch_required=1";
 //print "$query";
 //return
@@ -160,17 +163,18 @@ foreach ($objs as $obj) {
     
     $objPHPExcel->getActiveSheet()->setCellValueExplicit('E'.$rowCount,$brand_name,PHPExcel_Cell_DataType::TYPE_STRING); //E1
    // $objPHPExcel->getActiveSheet()->setCellValueExplicit('F'.$rowCount, $regions,PHPExcel_Cell_DataType::TYPE_STRING);//F1
-    $objPHPExcel->getActiveSheet()->setCellValueExplicit('F'.$rowCount, $obj->cust_ifsc_or_mcr,PHPExcel_Cell_DataType::TYPE_STRING); //G1       
+    $objPHPExcel->getActiveSheet()->setCellValueExplicit('F'.$rowCount, $obj->cust_bank_name,PHPExcel_Cell_DataType::TYPE_STRING); //G1
+    $objPHPExcel->getActiveSheet()->setCellValueExplicit('G'.$rowCount, $obj->cust_ifsc_or_mcr,PHPExcel_Cell_DataType::TYPE_STRING); //G1       
     //$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(5, $rowCount,'="$acc"'); 
-    $objPHPExcel->getActiveSheet()->setCellValueExplicit('G'.$rowCount,$acc,PHPExcel_Cell_DataType::TYPE_STRING);//H1
+    $objPHPExcel->getActiveSheet()->setCellValueExplicit('H'.$rowCount,$acc,PHPExcel_Cell_DataType::TYPE_STRING);//H1
                                   
-    $objPHPExcel->getActiveSheet()->setCellValueExplicit('H'.$rowCount, $obj->invoice_no,PHPExcel_Cell_DataType::TYPE_STRING);//I1
+    $objPHPExcel->getActiveSheet()->setCellValueExplicit('I'.$rowCount, $obj->invoice_no,PHPExcel_Cell_DataType::TYPE_STRING);//I1
   
-    $objPHPExcel->getActiveSheet()->setCellValueExplicit('I'.$rowCount, $obj->invoice_amt,PHPExcel_Cell_DataType::TYPE_NUMERIC);//J1
+    $objPHPExcel->getActiveSheet()->setCellValueExplicit('J'.$rowCount, $obj->invoice_amt,PHPExcel_Cell_DataType::TYPE_NUMERIC);//J1
     
-    $objPHPExcel->getActiveSheet()->setCellValueExplicit('J'.$rowCount, ddmmyy($obj->invoice_dt),PHPExcel_Cell_DataType::TYPE_STRING);//K1
+    $objPHPExcel->getActiveSheet()->setCellValueExplicit('K'.$rowCount, ddmmyy($obj->invoice_dt),PHPExcel_Cell_DataType::TYPE_STRING);//K1
     
-    $objPHPExcel->getActiveSheet()->setCellValueExplicit('K'.$rowCount, '');//L1
+    $objPHPExcel->getActiveSheet()->setCellValueExplicit('L'.$rowCount, '');//L1
     
     
     

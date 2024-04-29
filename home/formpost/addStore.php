@@ -226,7 +226,10 @@ if (!$storec || !$dealer_name || !$address || !$city || !$zip || !$name || !$pho
         if (isset($retail_sale_card_name) && trim($retail_sale_card_name) != "") {
             $addquery .= " , retail_sale_card_name = $retail_sale_card_name";
         }
-
+        
+        if (isset($cust_bank_name) && trim($cust_bank_name) != "") {
+            $addquery .= " , cust_bank_name = '$cust_bank_name'";
+        }
 
 
         if(!$cust_nach_limit){
