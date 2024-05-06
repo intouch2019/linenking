@@ -436,7 +436,7 @@ Your session has expired. Click <a href="">here</a> to login.
                                                  
                                                         //to get the quantity and stock id of specific item
                                                         $sizeid = $sizeobj[$i]->size_id;
-							$query = "select id,sum(curr_qty) as qty from it_items where design_no = $design_no and MRP=$design->MRP and ctg_id=$ctg_id and style_id = '$stylcod' and size_id = '$sizeid' and curr_qty > 0 order by curr_qty desc";
+							$query = "select id,sum(curr_qty) as qty,is_avail_manual_order from it_items where design_no = $design_no and MRP=$design->MRP and ctg_id=$ctg_id and style_id = '$stylcod' and size_id = '$sizeid' and curr_qty > 0 order by curr_qty desc";
                                                        $db = new DBConn();
                                                         $getitm = $db->fetchObject($query);
                                                         
@@ -500,7 +500,7 @@ Your session has expired. Click <a href="">here</a> to login.
                                                                     echo $exist->order_qty;
                                                                     print "'";
                                                                 }
-                                                                ?>/><br>[ <?php echo '<b>'.$getitm->qty.'</b>'; ?> ] <?php
+                                                                ?>/><br>[ <?php if($getitm->is_avail_manual_order==1){ echo '<b>'.$getitm->qty.'</b>';}else{echo '<b>' . 0 . '</b>';} ?> ] <?php //
                                                                 
                                                                 }
                                                               }
