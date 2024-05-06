@@ -266,7 +266,7 @@ function saveOrder($storeid, $items) {
     
      //-------------------store curr stock
 
-    $store_stock = $db->fetchObject("select sum(c.quantity * i.MRP) as curr_stock_value from it_current_stock c , it_items i where c.store_id = $storeid  and c.barcode = i.barcode");
+    $store_stock = $db->fetchObject("select sum(c.quantity * i.MRP) as curr_stock_value from it_current_stock c , it_items i where c.store_id = $storeid  and c.barcode = i.barcode and i.ctg_id not in (64,62,63,41,56,52,51,61,46,42,43)");
 
     $db->closeConnection();
     if (isset($store_stock) && trim($store_stock->curr_stock_value) != "") {

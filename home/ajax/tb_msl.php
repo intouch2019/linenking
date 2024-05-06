@@ -134,7 +134,7 @@ foreach ($objs as $obj) {
 
         //appreal_curr_stock
         else if ($aColumns[$i] == 'appreal_curr_stock') {//---------1
-            $cquery = "select sum(c.quantity * i.MRP) as appreal_curr_stock from it_current_stock c , it_items i where c.store_id = $obj->id  and c.barcode = i.barcode and i.ctg_id not in (42,43)";
+            $cquery = "select sum(c.quantity * i.MRP) as appreal_curr_stock from it_current_stock c , it_items i where c.store_id = $obj->id  and c.barcode = i.barcode and i.ctg_id not in (64,62,63,41,56,52,51,61,46,42,43)";
 
             $cobj = $db->fetchObject($cquery);
             if (isset($cobj) && trim($cobj->appreal_curr_stock) != "") {
@@ -192,7 +192,7 @@ foreach ($objs as $obj) {
 
         //appreal_stock_intransit
         else if ($aColumns[$i] == 'appreal_stock_intransit') {//---------------------------1
-            $tquery2 = "select sum(i.MRP*oi.quantity) as appreal_stock_intransit from it_sp_invoices o , it_sp_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6, 7) and o.store_id = $obj->id and o.is_procsdForRetail = 0 and oi.barcode = i.barcode and i.ctg_id not in (42,43)";
+            $tquery2 = "select sum(i.MRP*oi.quantity) as appreal_stock_intransit from it_sp_invoices o , it_sp_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6, 7) and o.store_id = $obj->id and o.is_procsdForRetail = 0 and oi.barcode = i.barcode and i.ctg_id not in (64,62,63,41,56,52,51,61,46,42,43)";
             $tobj = $db->fetchObject($tquery2);
             if (isset($tobj) && trim($tobj->appreal_stock_intransit) != "") {
                 $intransit_appreal_val = $tobj->appreal_stock_intransit;
