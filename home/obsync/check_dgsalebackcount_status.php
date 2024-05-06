@@ -15,7 +15,7 @@ $formattedTimestamp = date("Y-m-d H:i:s", strtotime($dateString));
 //    $store_id = 271;
   
     $db = new DBConn();
-    $query = "select barcode from defective_garment_form  where exchange_given_at_store = $store_id and exchange_bill_date > '$formattedTimestamp'";
+    $query = "select barcode from defective_garment_form  where exchange_given_at_store = $store_id and createdate >=  '$formattedTimestamp'";
 //    $barcodes = "select barcode from defective_garment_form  where exchange_given_at_store = $store_id and exchange_bill_date > '$formattedTimestamp'";
 
 //    print_r("query = ".$barcodes); exit();
