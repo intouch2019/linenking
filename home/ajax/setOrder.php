@@ -36,12 +36,12 @@ if (!$cart) { return error("Cart not found:$store_id. Please report this problem
 $queries = array();
 foreach ($items as $item) {
     $dbitem=$db->fetchObject("select * from it_items where id=$item->item_id");
-    $stock = $db->fetchObject("select sum(curr_qty) as qty from it_items where ctg_id=$dbitem->ctg_id and design_no='$dbitem->design_no' and MRP=$dbitem->MRP and style_id=$dbitem->style_id and size_id=$dbitem->size_id");
+    $stock = $db->fetchObject("select sum(curr_qty) as qty,is_avail_manual_order from it_items where ctg_id=$dbitem->ctg_id and design_no='$dbitem->design_no' and MRP=$dbitem->MRP and style_id=$dbitem->style_id and size_id=$dbitem->size_id");
     $exist = $db->fetchObject ("select id,item_id,order_qty from it_ck_orderitems where order_id=$cart->id and item_id=$item->item_id");
     //$exist=$db->fetchObject("select id, ctg_id,design_no,MRP,style_id,size_id from it_ck_orderitems where order_id=$cart->id and ctg_id=$ctg_id and design_no=$design_no and MRP=$mrp and style_id=$style_id and size_id=$size_id");
     if ($item->req_qty < 0)
       {$errors .= "Value cannot be negative for quantity. <br/>"; }
-    else if ($stock->qty <= 0)
+    else if ($stock->qty <= 0 || $stock->is_avail_manual_order ==0)
       {$errors .= "Quantity is unavailable for that item. <br/>"; }
     else if ($item->req_qty > $stock->qty)
       { $errors .= "Entered ".$item->req_qty.", available Quantity ".$stock->qty."<br />"; }

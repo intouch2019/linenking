@@ -137,6 +137,17 @@ if (count($errors) == 0) {
                             $item_grn_qty = $iobj->grn_qty;
                             if ($iobj->grn_qty < $to_release_qty) {
                                 $multiple_grp_flag = 1; // means release qty is sum of same group barcodes grn_qty
+                                
+                                //deactivate design for manual order
+                                $query = "update it_items set is_avail_manual_order=0 where id = $item_id ";
+           
+                                //--> code to log it_items update track
+                                $ipaddr = $_SERVER['REMOTE_ADDR'];
+                                $pg_name = __FILE__;
+                                $clsLogger->logInfo($query, false, $pg_name, $ipaddr);
+                                //--> log code ends here
+                                $db->execUpdate($query);
+                                
                                 $multiple_items_released = grnItemsBal($iobj, $to_release_qty);
 //                                print "ITS ARR: <br>";
 //                                print_r($multiple_items_released);
@@ -144,6 +155,17 @@ if (count($errors) == 0) {
                                 $currCheck = "";
                             } else {
                                 $multiple_grp_flag = 0; // means individual item in the same barcode grp has grn_qty , others grn_qty is not released
+                                
+                                 //deactivate design for manual order
+                                $query = "update it_items set is_avail_manual_order=0 where id = $item_id ";
+           
+                                //--> code to log it_items update track
+                                $ipaddr = $_SERVER['REMOTE_ADDR'];
+                                $pg_name = __FILE__;
+                                $clsLogger->logInfo($query, false, $pg_name, $ipaddr);
+                                //--> log code ends here
+                                $db->execUpdate($query);
+                                
                                 $query = "update it_items set grn_qty = grn_qty - $to_release_qty , curr_qty = curr_qty + $to_release_qty where id = $item_id ";
 //                               print "<br>UPDATE ITM QRY ELSE CASE: $query ";
                                 $currCheck = " && $iobj->curr_qty > 0 ";
@@ -386,6 +408,15 @@ if (count($errors) == 0) {
                             }
                         }// item objs isset check ends here
                     } // grn n release qty check ends here
+                    //activate design for manual order
+                                $query = "update it_items set is_avail_manual_order=1 where id = $item_id ";
+           
+                                //--> code to log it_items update track
+                                $ipaddr = $_SERVER['REMOTE_ADDR'];
+                                $pg_name = __FILE__;
+                                $clsLogger->logInfo($query, false, $pg_name, $ipaddr);
+                                //--> log code ends here
+                                $db->execUpdate($query);
                 } //items loop within design ends here
             }// all design loop ends here
         } else {
