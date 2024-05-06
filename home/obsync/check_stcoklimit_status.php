@@ -21,7 +21,7 @@ try {
         $intransit_stock_value_new = 0;
     }
 
-    $store_stock = $db->fetchObject("select sum(c.quantity * i.MRP) as curr_stock_value from it_current_stock c , it_items i where c.store_id = $store_id  and c.barcode = i.barcode");
+    $store_stock = $db->fetchObject("select sum(c.quantity * i.MRP) as curr_stock_value from it_current_stock c , it_items i where c.store_id = $store_id  and c.barcode = i.barcode and i.ctg_id not in (53,54,64,62,63,41,56,52,51,61,46,42,43)");
 
     if (isset($store_stock) && trim($store_stock->curr_stock_value) != "") {
         $curr_stock_val = $store_stock->curr_stock_value;

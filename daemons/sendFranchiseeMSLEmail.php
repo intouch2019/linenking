@@ -22,13 +22,13 @@ try{
     foreach($alldealersobj as $dealerobj){ 
         if(trim($dealerobj->min_stock_level)!=""){
             //step 1: fetch current stock value
-            $query = "select sum(c.quantity * i.MRP) as curr_stock_value from it_current_stock c , it_items i where c.store_id = $dealerobj->id  and c.barcode = i.barcode and i.ctg_id not in (53,54) ";
+            $query = "select sum(c.quantity * i.MRP) as curr_stock_value from it_current_stock c , it_items i where c.store_id = $dealerobj->id  and c.barcode = i.barcode and i.ctg_id not in (53,54,64,62,63,41,56,52,51,61,46,42,43) ";
             $cobj = $db->fetchObject($query);
             if(isset($cobj) && trim($cobj->curr_stock_value)!=""){ $store_stock_val = $cobj->curr_stock_value ;}
             else{ $store_stock_val = 0; }
             
             //step 2: fetch intransit stock value
-            $query2 = "select sum(invoice_amt) as intransit_stock_value from it_sp_invoices where  invoice_type in (0,6) and store_id = $dealerobj->id and is_procsdForRetail = 0 and i.ctg_id not in (53,54)";
+            $query2 = "select sum(invoice_amt) as intransit_stock_value from it_sp_invoices where  invoice_type in (0,6) and store_id = $dealerobj->id and is_procsdForRetail = 0 and i.ctg_id not in (53,54,64,62,63,41,56,52,51,61,46,42,43)";
             $tobj = $db->fetchObject($query2);
             if(isset($tobj) && trim($tobj->intransit_stock_value)!=""){ $intransit_stock_val = $tobj->intransit_stock_value ;}
             else{ $intransit_stock_val = 0; }
