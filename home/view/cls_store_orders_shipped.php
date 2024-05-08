@@ -73,7 +73,7 @@ Your session has expired. Click <a href="">here</a> to login.
 
 //            $orders = $db->fetchObjectArray ("select o.*, c.store_name, u.store_name as dispatcher from it_ck_orders o, it_codes c, it_codes u where o.store_id = $store_id and o.store_id = c.id and o.status=".OrderStatus::Shipped." and o.dispatcher_id = u.id order by o.active_time desc");
 //            $orders = $db->fetchObjectArray ("select o.*, c.store_name, u.store_name as dispatcher, p.store_name as picker from it_ck_orders o left outer join it_codes p on o.picker_id = p.id, it_codes c, it_codes u where o.store_id = $store_id and o.store_id = c.id and o.status=".OrderStatus::Shipped." and o.dispatcher_id = u.id order by o.shipped_time desc");
-	    $orders = $db->fetchObjectArray("select p.*, max(o.active_time) as active_time, c2.store_name as picker, u.store_name as dispatcher, c.store_name from it_ck_orders o, it_ck_pickgroup p left outer join it_codes c2 on p.picker_id = c2.id, it_codes c, it_codes u where p.storeid = $store_id and o.store_id = c.id and p.dispatcher_id = u.id and o.pickgroup = p.id and o.status = ".OrderStatus::Shipped." group by o.pickgroup order by p.picking_time desc");
+	    $orders = $db->fetchObjectArray("select p.*,inv.invoice_status, max(o.active_time) as active_time, c2.store_name as picker, u.store_name as dispatcher, c.store_name from it_invoices inv,it_ck_orders o, it_ck_pickgroup p left outer join it_codes c2 on p.picker_id = c2.id, it_codes c, it_codes u where inv.invoice_no=p.invoice_no and p.storeid = $store_id and o.store_id = c.id and p.dispatcher_id = u.id and o.pickgroup = p.id and o.status = ".OrderStatus::Shipped." group by o.pickgroup order by p.picking_time desc");
 
             ?>
     <div class="box">
@@ -86,6 +86,7 @@ Your session has expired. Click <a href="">here</a> to login.
                     <table>
                         <tr>
                             <th>Order No</th>
+                            <th>Order Status</th>
                             <th>Order Date</th>
                             <th>Shipped Date</th>
                             <th>Total Items</th>
@@ -158,6 +159,7 @@ $dialogHtml = json_encode($dialogHtml);
 			    ?>
                         <tr>
                             <td><?php echo $order->order_nos; ?> <a style="text-decoration:underline;" href="#" onclick='javascript:showDialog(<?php echo $dialogHtml; ?>);return false;'><br />Details</a></td>
+                            <td><?php if($order->invoice_status==0){ echo "In Transit";}else if ($order->invoice_status==1){echo "Received At Store";}else{echo "----";} ?></td>
                             <td><?php echo mmddyy($order->active_time); ?></td>
                             <td><?php echo mmddyy($order->shipped_time); ?></td>
                             <td><?php echo $order->order_qty; ?></td>
