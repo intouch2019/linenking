@@ -124,7 +124,7 @@ class cls_orders_shipped extends cls_renderer {
         } else {
             $dsQuery = " and p.dispatcher_id=$this->dispatcherid";
         }
-	$query = "select p.*, max(o.active_time) as active_time, c2.store_name as picker, u.store_name as dispatcher, c.store_name,c.is_natch_required from it_ck_orders o, it_ck_pickgroup p left outer join it_codes c2 on p.picker_id = c2.id, it_codes c, it_codes u where o.store_id = c.id and p.dispatcher_id = u.id and o.pickgroup = p.id and o.status = ".OrderStatus::Shipped." $dQuery $sQuery $dsQuery group by o.pickgroup order by p.shipped_time desc";
+	$query = "select p.*,inv.invoice_status, max(o.active_time) as active_time, c2.store_name as picker, u.store_name as dispatcher, c.store_name,c.is_natch_required from it_invoices inv,it_ck_orders o, it_ck_pickgroup p left outer join it_codes c2 on p.picker_id = c2.id, it_codes c, it_codes u where inv.invoice_no=p.invoice_no and o.store_id = c.id and p.dispatcher_id = u.id and o.pickgroup = p.id and o.status = ".OrderStatus::Shipped." $dQuery $sQuery $dsQuery group by o.pickgroup order by p.shipped_time desc";
         $orders = $db->fetchObjectArray($query);
         $allDispatchers = $db->fetchObjectArray("select * from it_codes where usertype=2");
         $currdispatcher = $db->fetchObject("select * from it_codes where id=$store_id and usertype=2");
@@ -149,6 +149,7 @@ class cls_orders_shipped extends cls_renderer {
                             <th>Sr. No</th>
                             <th>Store</th>
                             <th>Order No</th>
+                            <th>Order Status</th>
                             <th>Order Date</th>
                             <th>Picking Date</th>
                             <th>Shipped Date</th>
@@ -271,6 +272,7 @@ $dialogHtml = json_encode($dialogHtml);
                             <td><?php echo $count; ?></td>
                             <td><?php echo $order->store_name; ?></td>
                             <td><?php echo $order->order_nos; ?> <a style="text-decoration:underline;" href="#" onclick='javascript:showDialog(<?php echo $dialogHtml; ?>);return false;'>Details</a></td>
+                            <td><?php if($order->invoice_status==0){ echo "In Transit";}else if ($order->invoice_status==1){echo "Received At Store";}else{echo "----";} ?></td>
                             <td><?php echo mmddyy($order->active_time); ?></td>
                             <td><?php echo mmddyy($order->picking_time); ?></td>
                             <td><?php echo mmddyy($order->shipped_time); ?></td>
