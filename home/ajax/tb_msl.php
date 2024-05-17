@@ -147,7 +147,7 @@ foreach ($objs as $obj) {
             //  error_log("\nMSL query: " . $cquery . "\n", 3, "tmp_1.txt");
             $cobj = $db->fetchObject($cquery);
             if (isset($cobj) && trim($cobj->mask_curr_stock) != "") {
-                $store_mask_stock_val = $cobj->mask_curr_stock;
+                $store_mask_stock_val = 0; //store_mask_stock_value not calculate in store stock
             } else {
                 $store_mask_stock_val = 0;
             }
@@ -163,7 +163,7 @@ foreach ($objs as $obj) {
             //  error_log("\nMSL query: " . $cquery . "\n", 3, "tmp_1.txt");
             $cobj = $db->fetchObject($cquery);
             if (isset($cobj) && trim($cobj->mask_curr_stock) != "") {
-                $store_mask_stock_val = $cobj->mask_curr_stock;
+                $store_mask_stock_val = 0; //store_mask_stock_value not calculate in store stock
             } else {
                 $store_mask_stock_val = 0;
             }
@@ -205,7 +205,7 @@ foreach ($objs as $obj) {
             $tquery2 = "select sum(i.MRP*oi.quantity) as mask_stock_intransit from it_sp_invoices o , it_sp_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6, 7) and o.store_id = $obj->id and o.is_procsdForRetail = 0 and oi.barcode = i.barcode and i.ctg_id in(42,43)";
             $tobj = $db->fetchObject($tquery2);
             if (isset($tobj) && trim($tobj->mask_stock_intransit) != "") {
-                $intransit_mask_val = $tobj->mask_stock_intransit;
+                $intransit_mask_val = 0; //store_mask_stock_value not calculate in store stock
             } else {
                 $intransit_mask_val = 0;
             }
@@ -217,7 +217,7 @@ foreach ($objs as $obj) {
             $tquery2 = "select sum(i.MRP*oi.quantity) as mask_stock_intransit from it_sp_invoices o , it_sp_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6, 7) and o.store_id = $obj->id and o.is_procsdForRetail = 0 and oi.barcode = i.barcode and i.ctg_id in(42,43)";
             $tobj = $db->fetchObject($tquery2);
             if (isset($tobj) && trim($tobj->mask_stock_intransit) != "") {
-                $intransit_mask_val = $tobj->mask_stock_intransit;
+                $intransit_mask_val = 0; //store_mask_stock_value not calculate in store stock
             } else {
                 $intransit_mask_val = 0;
             }

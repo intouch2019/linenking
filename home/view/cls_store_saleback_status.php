@@ -69,7 +69,7 @@ $(function() {
 });
 
 function showInvoiceDetails( invid){
-    window.location.href = "ck/sbinvoice/id="+invid;
+    window.location.href = "lk/sbinvoice/id="+invid;
 }
 </script>		
 		<?php
