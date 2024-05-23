@@ -67,7 +67,7 @@ $net_total = "select sum(case when (o.tickettype in (0,1,6) ) then oi.quantity e
 
 $netobj = $db->fetchObjectArray($net_total);
 //print_r($netobj);
-$storename = "select store_name,tally_name,address,(select state from states where id = (select state_id from it_codes where id = $user->id)) as state,retail_saletally_name,retail_sale_cash_name,retail_sale_card_name, retail_sale_upi_name from it_codes where id = $user->id";
+$storename = "select store_name,tally_name as retail_saletally_name,address,(select state from states where id = (select state_id from it_codes where id = $user->id)) as state,retail_saletally_name,retail_sale_cash_name,retail_sale_card_name, retail_sale_upi_name from it_codes where id = $user->id";
 $store_obj = $db->fetchObject($storename);
 if (isset($store_obj->retail_saletally_name)) {
     if (isset($netobj)) {
