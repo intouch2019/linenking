@@ -53,7 +53,7 @@ try {
     $objPHPExcel->getActiveSheet()->setCellValue('P2', 'Sale Without Discount')->getStyle('P2')->applyFromArray($styleArray);
     $objPHPExcel->getActiveSheet()->setCellValue('Q2', 'Discount')->getStyle('Q2')->applyFromArray($styleArray);
     $objPHPExcel->getActiveSheet()->setCellValue('R2', 'Total Value')->getStyle('R2')->applyFromArray($styleArray);
-    
+    $objPHPExcel->getActiveSheet()->setCellValue('S2', 'Non Scheme Sale')->getStyle('S2')->applyFromArray($styleArray);
     // Set width for each column
     $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(5);
     $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(35);
@@ -73,7 +73,7 @@ try {
     $objPHPExcel->getActiveSheet()->getColumnDimension('P')->setWidth(20);
     $objPHPExcel->getActiveSheet()->getColumnDimension('Q')->setWidth(10);
     $objPHPExcel->getActiveSheet()->getColumnDimension('R')->setWidth(10);
-
+    $objPHPExcel->getActiveSheet()->getColumnDimension('S')->setWidth(10);
     
 // Redirect output to a client’s web browser (Excel5)
     header('Content-Type: application/vnd.ms-excel');
