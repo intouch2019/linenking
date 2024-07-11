@@ -373,6 +373,14 @@ function checkfile($newdir) {
                         $return = "Empty field in *P5 S5-> Total Value* Column";
                     }
                 }
+                
+                if ($colno == 18) {
+                    $nonschemesalevalue = $value;
+                    if ($nonschemesalevalue == "") {
+                        $imltpflag = true;
+                        $return = "Empty field in *P5 S5-> Non Scheme Sale Value* Column";
+                    }
+                }
                 $colno++;
             }
             $store_count++;
@@ -427,6 +435,7 @@ function insertCpFile($newdir) {
         $saleWoDiscount_p5s5 = "";
         $discount_p5s5 = "";
         $totalvalue_p5s5 = "";
+        $nonschemesalevalue = "";
         $iquery = "";
         
         if ($rowCount > 2) {
@@ -503,6 +512,10 @@ function insertCpFile($newdir) {
                         $totalvalue = $db->safe(trim($value));
                         $totalvalue_p5s5 = $totalvalue;
                     }
+                     if ($colno == 18) {
+                        $nonschemesalevalue = $db->safe(trim($value));
+
+                    }
                 }
                 $colno++;
             }
@@ -513,7 +526,7 @@ function insertCpFile($newdir) {
                 Scheme_Discount = $schemeDiscount, MRP_Sale_p12_s12 = $mrpSale_p12s12, Sale_Without_Discount_p12_s12 = $saleWoDiscount_p12s12, Discount_p12_s12 = $discount_p12s12, 
                 Total_Value_p12_s12 = $totalvalue_p12s12, MRP_Sale_p12_s5 = $mrpSale_p12s5, Sale_Without_Discount_p12_s5 = $saleWoDiscount_p12s5, Discount_p12_s5 = $discount_p12s5, 
                 Total_Value_p12_s5 = $totalvalue_p12s5, MRP_Sale_p5_s5 = $mrpSale_p5s5, Sale_Without_Discount_p5_s5 = $saleWoDiscount_p5s5, Discount_p5_s5 = $discount_p5s5, 
-                Total_Value_p5_s5 = $totalvalue_p5s5";
+                Total_Value_p5_s5 = $totalvalue_p5s5,non_scheme_sale=$nonschemesalevalue";
             //    print_r($iquery); exit();
             $db->execInsert($iquery);
         }
