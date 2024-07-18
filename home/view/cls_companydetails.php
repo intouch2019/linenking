@@ -138,7 +138,7 @@ class cls_companydetails extends cls_renderer {
                         <div style="float:right">
                              <?php  
                            if ($currUser->usertype == UserType::Admin || $currUser->usertype == UserType::CKAdmin) { ?> 
-                                <button><a target="_blank" href="editcontactdetails">Add Employees</a></button>
+                                <button><a  href="editcontactdetails">Add Employees</a></button>
                             <?php } ?>
                         </div>
                         <div class="grid_12">
@@ -236,7 +236,7 @@ class cls_companydetails extends cls_renderer {
                                             <?php } ?>
                                         </tr>
                                         <?php
-                                        $query = "Select id,name,contactno,designation,email from contactdetails where inactive=0";
+                                        $query = "Select id,name,contactno,designation,email from contactdetails where inactive=0 order by designation";
                                         $qresult = $db->fetchObjectArray($query);
                                         
                                         foreach ($qresult as $details) {
