@@ -86,7 +86,7 @@ if (isset($pay_done)) {
         } else {
             $updatequery = "update it_payment_gateway set Receive_response='$response',is_sent=3,status='$stats', updatetime = now() where id=$paysep->id";
             $updatedresponse = $db->execUpdate($updatequery);
-            $query3 = "update it_codes set inactivating_reason='Something went wrong please contact IT Teams',paymentlink='' where id =$paysep->store_id";
+            $query3 = "update it_codes set inactivating_reason='Something went wrong please contact Accounts Team',paymentlink='' where id =$paysep->store_id";
             $qu = $db->execUpdate($query3);
         }
         curl_close($curl);
