@@ -6,6 +6,7 @@ require_once "lib/db/DBConn.php";
 require_once "lib/core/Constants.php";
 require_once 'lib/users/clsUsers.php';
 require_once "lib/logger/clsLogger.php";
+require_once "lib/orders/clsOrders.php";
 
 $db = new DBConn();
 $currStore = getCurrUser();
@@ -27,6 +28,8 @@ extract($_POST);
  */
 
 $storeid = $storesel;
+$clsOrders = new clsOrders();
+$cart = $clsOrders->getCartt($storeid);
 
 try {
     $_SESSION['form_id'] = $form_id;
@@ -150,6 +153,80 @@ try {
                          }  */
                      }        
                 }
+                
+
+                
+                // Before adding the cart quantity an amount to AT order we need to check availability of products as someone might have already placed orders (This is because placing in cart does not remove product from portal)
+                if ($cart) {
+                    $orderitems = $db->fetchObjectArray("select id,item_id,order_qty,store_id from it_ck_orderitems where order_id=$cart->id");
+
+
+                    // Cart must have some quantity
+                    if (count($orderitems) > 0) {  
+                        foreach ($orderitems as $ord) {
+                            $item_qry = "select id,curr_qty,ctg_id from it_items where curr_qty>=$ord->order_qty and id=$ord->item_id and ctg_id != 21";
+                            $chk = $db->fetchObject($item_qry);
+
+
+                            // If current quantity on portal is not more than or equal to cart quantity then someone else placed ordered before this store for that perticular item
+                            if (!isset($chk)) {  
+                                $item_details_qry = "select c.name as ctg_name,i.design_no,i.MRP,st.name as style_name,sz.name as size_name from it_items i,it_categories c,it_styles st,it_sizes sz where c.id=i.ctg_id and st.id=i.style_id and sz.id=i.size_id and i.id=$ord->item_id and  i.ctg_id != 21";
+                                $result1 = $db->fetchObject($item_details_qry);
+                                if (isset($result1)) {
+                                    $del_query = "delete from it_ck_orderitems where id=$ord->id and store_id=$ord->store_id and item_id=$ord->item_id";
+                                    $db->execQuery($del_query);
+
+
+                                    // After deleting the items we need to update it_ck_orders as it will still have all the quantities that are added manually
+                                    $after_deleted_items = "select sum(order_qty) as tot_qty, sum(order_qty * MRP) as tot_amt, count(distinct(design_no)) as num_designs from it_ck_orderitems where order_id=$cart->id";
+                                    $obj = $db->fetchObject($after_deleted_items);
+                                    $tot_qty = 0;
+                                    $tot_amt = 0;
+                                    $num_designs = 0;
+
+                                    if ($obj && $obj->tot_qty && $obj->tot_amt && $obj->num_designs) {
+                                        $tot_qty = $obj->tot_qty;
+                                        $tot_amt = $obj->tot_amt;
+                                        $num_designs = $obj->num_designs;
+                                    }
+
+                                    $update_qry= "update it_ck_orders set order_qty=$tot_qty, order_amount=$tot_amt, num_designs=$num_designs where id=$cart->id";
+                                    $db->execUpdate($update_qry);
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+
+                // Adding cart quantity and amount in AT orders
+                if ($cart) {
+                    $cart_items_qry = "select item_id, order_qty from it_ck_orderitems where order_id=$cart->id";
+                    $cart_items = $db->fetchObjectArray($cart_items_qry);
+                    if ($cart->order_qty > 0) {
+                        foreach ($cart_items as $cart_item) {
+                            if (!isset($items[$cart_item->item_id])) {
+                                $items[$cart_item->item_id] = 0;
+                                $items[$cart_item->item_id] += $cart_item->order_qty;
+                                $itmcnt++;
+                            } else {
+                                $items[$cart_item->item_id] += $cart_item->order_qty;
+                                $itmcnt++;
+                            }
+                        }
+                    }
+
+
+//                  Empty cart here
+                    $empty_cart_qry="update it_ck_orders set order_qty=0, order_amount=0, num_designs=0 where id=$cart->id and store_id=$storeid";
+                    $empty_cart_items_qry= "delete from it_ck_orderitems where order_id=$cart->id and store_id=$storeid";
+                    $db->execUpdate($empty_cart_qry);
+                    $db->execUpdate($empty_cart_items_qry);
+                }
+
+                
+                
                 $res = saveOrder($storeid, $items);
             } 
        }
@@ -292,4 +369,3 @@ function saveOrder($storeid, $items) {
      $db->execUpdate($query);
      return $res;
 }
-

@@ -280,15 +280,21 @@ try {
      
     //------------------------------cart
 
-    $cartinfoo = $db->fetchObject("select  sum(order_amount) as cart_amt from it_ck_orders where status=0 and store_id=$sid");
+    $cartinfoo = $db->fetchObject("select  sum(order_amount) as cart_amt, sum(order_qty) as manual_ordr_qty from it_ck_orders where status=0 and store_id=$sid");
+        if (isset($cartinfoo) && trim($cartinfoo->cart_amt) != "") {
+            $cart_amount = $cartinfoo->cart_amt;
+        } else {
+            $cart_amount = 0;
+        }
 
-    if (isset($cartinfoo) && trim($cartinfoo->cart_amt) != "") {
-        $cart_amount = $cartinfoo->cart_amt;
-    } else {
-        $cart_amount = 0;
-    }
-      
-$totalamt = $tamt + $curr_stock_val + $intransit_stock_value_new + $active_amt + $picking_amt + $picking_complete_amt + $cart_amount;
+        if (isset($cartinfoo) && trim($cartinfoo->manual_ordr_qty) != "") {
+            $cart_qty = $cartinfoo->manual_ordr_qty;
+        } else {
+            $cart_qty = 0;
+        }
+
+
+        $totalamt = $tamt + $curr_stock_val + $intransit_stock_value_new + $active_amt + $picking_amt + $picking_complete_amt + $cart_amount;
 
 if ($totalamt >= $min_stock) {
 
@@ -308,12 +314,15 @@ if ($totalamt >= $min_stock) {
                 "num_item" => $num_item_codes,
                 "orderqty" => $ordered_qty,
                 "availstock" => $avail_qty,
-                "lasttime" => $lastrecord->createtime)
+                "lasttime" => $lastrecord->createtime,
+                "cart_qty" => $cart_qty,
+                "cart_amt" => $cart_amount)
             );
         }
           }else{
              $requ=$min_stock-$totalamt;
-        $msg = "Your AT order value does not meet to the minimum store stock level Please consider adding additional items to your manual order to meet the minimum requirement of minimum amount RS- .$requ";
+        $msg = "Your AT order value does not meet to the minimum store stock level. <br>"
+                . "<br> Go to manual order placement and add what you like in cart for <span style='font-weight: bold; font-size: 15px;'> minimum of $requ Rs </span> and then place AT.";
         
          echo json_encode(array("error" => "1",
                 "msg" => $msg)
