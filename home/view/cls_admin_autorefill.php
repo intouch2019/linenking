@@ -22,6 +22,7 @@ class cls_admin_autorefill extends cls_renderer {
         ?>
         <script type="text/javascript">
             function showUpload(value) {
+                document.getElementById('loader').style.display="block";    
                 document.getElementById("uploadBtn").style.visibility = "hidden";
                 if (value == "0") {
                     $('#dis').empty();
@@ -34,10 +35,15 @@ class cls_admin_autorefill extends cls_renderer {
                         dataType: 'json',
                         type: 'POST',
                         success: function(output) {
-                            //alert(output);
+//                            alert(output);
 //                            console.log("OUTPUT: "+output);
+                        document.getElementById('loader').style.display="none";
                         if(output.error==0){
-                            $('#dis').html("Total Item(s) are " + output.num_item + "</br> Total ordered quantity is " + output.orderqty + "</br> Total Available Stock is " + output.availstock + "<br/> Last Sync: "+output.lasttime );
+                                    $('#dis').html(
+                                            "Total Item(s) are " + output.num_item + "</br> Total ordered quantity is " + output.orderqty + 
+                                            "</br> Total Available Stock is " + output.availstock + "<br/> Last Sync: "+output.lasttime +
+                                            "</br> Cart Quantity = "+ output.cart_qty + "</br> Cart Amount = "+ output.cart_amt           
+                                        );
                             document.getElementById("uploadBtn").style.visibility = "visible";
                         }else{
                             $('#dis').html(output.msg);
@@ -110,7 +116,11 @@ class cls_admin_autorefill extends cls_renderer {
                                     <option value="<?php echo $obj->store_id ?>"<?php echo $selected; ?>><?php echo $obj->store_name . " [" . $obj->qty . "]"; ?></option>
         <?php }} ?>
                             </select>
+                            <div id="loader" style="display:none" >
+                                <img src="images/loading.gif" width="25" height="25"> Loading....
+                            </div>
                         </div>
+                        <br/>
                         <div id="dis" name="dis"></div>
                         <br /><br />
 
