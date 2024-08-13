@@ -134,6 +134,7 @@ class cls_companydetails extends cls_renderer {
                 <div class="box">
                     <h2>Company Details</h2><br>
 
+                    
                     <div style="margin-top: 0px; margin-right: 0px; margin-bottom: 0px; margin-left: 0px; position: static; overflow:auto; ">
                         <div style="float:right">
                              <?php  
