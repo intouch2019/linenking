@@ -71,6 +71,7 @@ const Shipped = 3;
 const Cancelled = 4;
 const Picking_Complete = 5;
 const StandingOrder = 6;
+const Proforma = 7;
 
 public static function getAll() {
 	return array(
@@ -80,7 +81,8 @@ public static function getAll() {
 		OrderStatus::Shipped => "Shipped",
                 OrderStatus::Cancelled => "Cancelled",
                 OrderStatus::Picking_Complete => "Picking Complete",
-                OrderStatus::StandingOrder => "Standing Order"
+                OrderStatus::StandingOrder => "Standing Order",
+                OrderStatus::Proforma => "Proforma Invoice"
 	);
 }
 

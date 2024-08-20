@@ -7,9 +7,9 @@ require_once "lib/logger/clsLogger.php";
 
 $db=new DBConn();
 
-//$str = getCurrUser();
+$str = getCurrUser();
 $store_id = getCurrUserId();       
-       
+//print_r($str); exit();  
 $clsOrders = new clsOrders();
 $clsLogger = new clsLogger();
 $cart = $clsOrders->getCartt($store_id);
@@ -18,6 +18,8 @@ $cart = $clsOrders->getCartt($store_id);
            
 //$redirect="store/orders/active";
 $cnt=0;
+$design_no1="";
+$design_no="";
 if ($cart) {   
 //$query="select * from it_ck_orderitems where order_id=$cart->id";
 //$orderitems=$db->fetchObjectArray("select * from it_ck_orderitems where order_id=$cart->id");
@@ -28,9 +30,7 @@ if (count($orderitems) == 0) {
     return;
     
 }
- 
-$design_no1="";
-$design_no="";
+
 foreach ($orderitems as $ord)
     {
 //    $query11="select * from it_items where curr_qty>=$ord->order_qty and id=$ord->item_id and ctg_id!=29";
@@ -119,9 +119,20 @@ $cartinfo = "";
 if ($obj) {
 $cartinfo = ", order_qty=$obj->tot_qty, order_amount=$obj->tot_amt, num_designs=$obj->num_designs";
 }
-$query="update it_ck_orders set status=1,active_time=now() $cartinfo where id=$cart->id";
-//print $query."<br/>";
-$db->execUpdate($query);
+if ($str->is_natch_required == 0) {  //it is for advance parties
+//    echo "is_natch_required = 0"; exit();
+        $pquery = "select id from ticketsnum_proforma"; //proforma invoice no
+        $proforma_inv =  $db->fetchObject($pquery);
+        if(isset($proforma_inv)){  
+        $query = "update it_ck_orders set status=" . OrderStatus::Proforma . ", ticketsnum_proforma_id = 'PRO-$proforma_inv->id' , is_proforma_inv = 1 , proforma_time=now() $cartinfo where id=$cart->id";
+        $db->execUpdate($query);
+        $db->execUpdate("update ticketsnum_proforma set id = id+1");
+        }
+    } else { //for nach register parties
+//          echo "is_natch_required =1"; exit();
+        $query="update it_ck_orders set status=" . OrderStatus::Active . ",active_time=now() $cartinfo where id=$cart->id";
+        $db->execUpdate($query);
+    }
 
 } 
 

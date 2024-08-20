@@ -43,6 +43,12 @@ Your session has expired. Click <a href="">here</a> to login.
     });
 
     //--><!]]>
+    
+    function getPaymentLink(orderid){
+    
+    const url = "formpost/genProformaInvPdf.php?orderid=" + orderid;
+    window.location.href = url;
+    }
 </script>
     <?php
     }
@@ -58,8 +64,8 @@ Your session has expired. Click <a href="">here</a> to login.
             $db = new DBConn();
             $store_id = getCurrUserId();
 
-            $query = "select * from it_ck_orders where store_id=$store_id and status=".OrderStatus::Active." order by active_time desc";
-            $orders = $db->fetchObjectArray ("select * from it_ck_orders where store_id=$store_id and status=".OrderStatus::Active." order by active_time desc");
+            $query = "select * from it_ck_orders where store_id=$store_id and status in(".OrderStatus::Active.",".OrderStatus::Proforma.") order by id desc";
+            $orders = $db->fetchObjectArray ($query);
 //              $query = "SELECT o.*, sum(oi.order_qty) as disqty FROM `it_ck_orders` o , it_ck_orderitems oi , it_items i WHERE oi.order_id = o.id and o.status = ".OrderStatus::Active." and o.store_id = $store_id and oi.item_id = i.id and i.ctg_id != (select id from it_categories where name = 'Others') group by o.id order by o.active_time desc";
 //              $orders = $db->fetchObjectArray($query);
             ?>
@@ -73,21 +79,32 @@ Your session has expired. Click <a href="">here</a> to login.
                     <table>
                         <tr>
                             <th>Order No</th>
+                            <th>Status</th>
                             <th>Order Date</th>
                             <th>Total Items</th>
                             <th>Total Price</th>
                             <th>Number Of Designs</th>
-                            <th></th>
+                            <th>View Order</th>
+                            <th>Get Payment Link</th>
                         </tr>
                             <?php foreach ($orders as $order) {
 			    ?>
                         <tr>
                             <td><?php echo $order->order_no; ?></td>
+                            <td><?php echo OrderStatus::getName($order->status); ?></td>
+                            
+                            <?php if($order->status== OrderStatus::Proforma){ ?>
+                            <td><?php echo mmddyy($order->proforma_time); ?></td>
+                            <?php } else {?>
                             <td><?php echo mmddyy($order->active_time); ?></td>
+                            <?php } ?>
+                            
                             <td><?php echo $order->order_qty; ?></td>
                             <td><?php echo $order->order_amount; ?></td>
                             <td><?php echo $order->num_designs; ?></td>
+                            
                             <td><a href="store/vieworder/oid=<?php echo $order->id;?>"><button>View Order</button></a></td>
+                            <?php if($order->status== OrderStatus::Proforma){ ?><td><button onclick="getPaymentLink(<?php echo $order->id;?>)">Get Payment Link</button></td><?php }else{ echo "<td></td>";}?>
                         </tr>
 			<?php } ?>
                     </table>

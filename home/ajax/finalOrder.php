@@ -55,10 +55,20 @@ $cartinfo = "";
 if ($obj) {
 $cartinfo = ", order_qty=$obj->tot_qty, order_amount=$obj->tot_amt, num_designs=$obj->num_designs";
 }
-$query="update it_ck_orders set status=1,active_time=now() $cartinfo where id=$cart->id";
-//print $query."<br/>";
-$db->execUpdate($query);
-//$redirect="store/vieworder/oid=$cart->id";
+if ($str->is_natch_required == 0) {  //it is for advance parties
+    
+        $pquery = "select id from ticketsnum_proforma"; //proforma invoice no
+        $proforma_inv =  $db->fetchObject($pquery);
+        if(isset($proforma_inv)){  
+        $query = "update it_ck_orders set status=" . OrderStatus::Proforma . ", ticketsnum_proforma_id = 'PRO-$proforma_inv->id' , is_proforma_inv = 1 , proforma_time=now() $cartinfo where id=$cart->id";
+        $db->execUpdate($query);
+        $db->execUpdate("update ticketsnum_proforma set id = id+1");
+        }
+    } else { //for nach register parties
+        
+        $query="update it_ck_orders set status=" . OrderStatus::Active . ",active_time=now() $cartinfo where id=$cart->id";
+        $db->execUpdate($query);
+    }
 $redirect="store/orders/active";
 } else {
 //print "cart not found<br />";
