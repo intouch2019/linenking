@@ -40,7 +40,7 @@ if (trim($place_ord) == "") {
 if (count($errors) == 0) {
     try {
         //step 1 : fetch all auto refill stores
-        $squery = "select id,store_number from  it_codes where usertype = " . UserType::Dealer . " and is_autorefill = 1 and is_closed = 0 and inactive = 0 and sbstock_active = 1 and sequence is not null and sequence > 0 order by sequence ";
+        $squery = "select id,store_number from  it_codes where usertype = " . UserType::Dealer . " and is_autorefill = 1 and is_closed = 0 and inactive = 0 and sbstock_active = 1 and is_natch_required=1 and sequence is not null and sequence > 0 order by sequence ";
 //   $sresults = $db->execQuery($squery);
 
         $storeobjs = $db->fetchObjectArray($squery);

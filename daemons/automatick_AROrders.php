@@ -331,6 +331,8 @@ function saveOrder($storeid, $items) {
     
      $totalamt = $tamt + $curr_stock_val + $intransit_stock_value_new + $active_amt + $picking_amt + $picking_complete_amt + $cart_amount;
     
+     $is_nach_store = $db->fetchObject("select is_natch_required from it_codes where id=$storeid");
+     if ($is_nach_store->is_natch_required == 1) {
     
     if ($totalamt >= $min_stock) {
 
@@ -408,6 +410,9 @@ function saveOrder($storeid, $items) {
       }else{
        
      $res1 = "order not placed bec of FAT order does not meet the store stock level amount -store:$storeinfo->store_name.";
+}
+} else {
+    $res1 = "Order cannot be placed as it is a Advance Party Store -store:$storeinfo->store_name.";
 }
 
     $query = "update it_orders set ck_order_id = $order_id , updatetime = now() where store_id = $storeid and ck_order_id is null";
