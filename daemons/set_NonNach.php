@@ -21,7 +21,7 @@ echo "<br>Execution start...<br> datetime: ".$start_date."<br>";
 
 try {
     
-    $query = "select id, min_stock_level from it_codes where is_natch_required = 1 and is_closed=0 and id in (671,659) order by createtime desc";
+    $query = "select id, min_stock_level from it_codes where is_natch_required = 1 and is_closed=0 and id in (161,164) order by createtime desc";
 //    $query = "select * from it_codes where is_natch_required = 1 and is_closed=0 order by createtime desc";
     $objs = $db->fetchObjectArray($query); // fetch non nach active stores
 //    print_r($objs); exit();
