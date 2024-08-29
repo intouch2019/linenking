@@ -309,10 +309,7 @@ foreach ($objs as $obj) {
 
             if (strpos($itemobj->item_code,"89000") !== false) {
 
-                $st_name = $spObj->store_name;
-
-            }else{
-
+              
                 $obj1 = $db->fetchObject("select store_name from it_codes where id = $obj->store_id ");
 
                 $st_name = $obj1->store_name;
