@@ -96,7 +96,7 @@ function showInvoiceDetails( invid){
 	<!--<div class="box" style="clear:both;">-->
 	<!--<fieldset class="login">-->	
          <div class="grid_12" id="tablebox" class="ui-widget-content ui-corner-bottom" style="overflow:auto;">
-             <legend>CottonKing SaleBack Invoices</legend>
+             <legend>LinenKing SaleBack Invoices</legend>
              <input type="hidden" value="<?php echo $this->userid; ?>" id="st_id" >
              <table align="center" border="1" cellpadding="0" cellspacing="0" border="0" class="display" id="tb_allinvoices">
 					<thead>
