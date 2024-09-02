@@ -90,7 +90,7 @@ if ($sWhere == "") {
 
 
 
- $sWhere .= "s.storeid=c.id and c.inactive = 0";
+ $sWhere .= "s.storeid=c.id";
  
 //	if ($sOrder == "") { $sOrder = " order by iid desc "; }
 //$logger->logInfo("sOrder=$sOrder");
