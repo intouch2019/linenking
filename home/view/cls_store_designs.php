@@ -25,6 +25,11 @@ class cls_store_designs extends cls_renderer {
             { $this->ctg = $params['ctg']; }
         else 
             { $this->ctg = null; }
+            
+        if (isset($params['style'])) {
+            $this->style = $params['style'];
+        }
+
         if (isset($params['dno']))
             $this->des_code = $params['dno'];
         if (isset($params['mrp']))
@@ -132,6 +137,13 @@ Your session has expired. Click <a href="">here</a> to login.
 
         return false;
     }
+    
+    
+           function setStyle(dropdown){
+                var idx = dropdown.selectedIndex;
+                var value = dropdown.options[idx].value;                
+                window.location.href = "store/designs/brand=<?php echo $this->brand; ?>/ctg=<?php echo $this->ctg; ?>/mrp=<?php echo $this->MRP?>/style=" + value+"/size=<?php echo $this->size?>" ;
+            }
     
     function validate(item_id)
             {
@@ -329,7 +341,41 @@ Your session has expired. Click <a href="">here</a> to login.
                             ?>
                 </select>   
             </p>
+            
+            
             <p>
+                        <label> AND Select Style: </label>
+
+                        <select name ="setStyle" style="width:160px" onchange="setStyle(this);">
+                            <option value=0 selected="selected">Select Style</option>
+                            <?php
+//                            $q = "select s1.*,s2.name from it_ck_sizes s1,it_sizes s2  $mTab where s1.size_id = s2.id and s1.ctg_id=$ctg_id  $mrpClause order by s1.sequence";
+                            $q = "select s2.name as name, s2.id as it_styles_id from it_ck_styles s1 inner join it_styles s2 on s1.style_id=s2.id where s1.ctg_id=$ctg_id";
+                            $objs = $db->fetchObjectArray($q);
+                            foreach ($objs as $obj) {
+                                $selected = "";
+                                if ($obj->it_styles_id == $this->style) {$selected = "selected"; }
+                                if (isset($this->MRP) && trim($this->MRP) != "") {$mStr = " and i.MRP = $this->MRP"; } else {$mStr = "";}
+                                if (isset($this->size) && !empty($this->size)) {$sizeCondition = " and i.size_id= $this->size"; } else {$sizeCondition = ""; }     
+                                $temp="select sum(i.curr_qty) as tot_qty from it_items i,it_ck_designs d where i.ctg_id=$ctg_id $brandquery $sizeCondition and i.ctg_id=d.ctg_id and i.design_no=d.design_no and i.is_design_mrp_active=1 and i.style_id='$obj->it_styles_id' $mStr and i.curr_qty > 0 having tot_qty >0";
+                                $obj2 = $db->fetchObject("select sum(i.curr_qty) as tot_qty from it_items i,it_ck_designs d where i.ctg_id=$ctg_id $brandquery $sizeCondition and i.ctg_id=d.ctg_id and i.design_no=d.design_no and i.is_design_mrp_active=1 and i.style_id='$obj->it_styles_id' $mStr and i.curr_qty > 0 having tot_qty >0"); //$brandquery
+//                                    error_log("\nSTOCK MRP: $temp; \n", 3, "C:/xampp/htdocs/linenking/home/view/tmp.txt");
+                                $query = "select sum(i.curr_qty) as tot_qty from it_items i,it_ck_designs d where i.ctg_id=$ctg_id $brandquery $sizeCondition and i.ctg_id=d.ctg_id and i.design_no=d.design_no and i.is_design_mrp_active=1 and i.style_id='$obj->it_styles_id' $mStr and i.curr_qty > 0 having tot_qty >0";
+
+                                $units = 0;
+                                if ($obj2 && $obj2->tot_qty) {
+                                    $units = $obj2->tot_qty;
+                                }
+                                ?>
+                                <option value="<?php echo $obj->it_styles_id; ?>" <?php echo $selected; ?>><?php echo "$obj->name [$units units]"; ?></option>
+                                <?php
+                            }
+                            ?>
+                        </select>   
+                    </p>
+
+
+                    <p>
                 <label>OR by Design Number: </label>
                 <input type="text" id="srch" style="width:170px;" name="srch" value="<?php echo $this->des_code; ?>" >
                 <button id="searchBtn" onclick="search()">Search</button>
@@ -345,8 +391,14 @@ Your session has expired. Click <a href="">here</a> to login.
                 $allDesigns = $db->fetchObjectArray("select i.id,i.MRP,i.brand_id,br.name as brandname, i.prod_type_id, pt.name as prodtype, i.material_id, mt.name as material, i.fabric_type_id, ft.name as fabric, d.image,d.design_no,sum(i.curr_qty) as tot_qty from it_items i,it_ck_designs d,it_brands br,it_prod_types pt,it_materials mt,it_fabric_types ft where i.design_no=$code $brandquery and i.is_design_mrp_active=1 and i.design_no=d.design_no and i.design_id = d.id and i.ctg_id=$ctg_id and i.brand_id=br.id and i.prod_type_id=pt.id and i.material_id=mt.id and i.fabric_type_id=ft.id and i.ctg_id=d.ctg_id  $stockclause group by i.design_no,MRP");
                 $db->closeConnection();               
                  
-            } 
-            else if ($this->MRP && $this->ctg) {
+            } else if(!empty($this->style) && !empty($this->ctg)){
+                  if(!empty($this->size)){$sizeCon="and i.size_id=$this->size";}else{$sizeCon="";}
+                  if(!empty($this->MRP)){$MRPCon="and i.MRP=$this->MRP";}else{$MRPCon="";}
+
+                  $query = "select i.id,i.MRP,i.brand_id,br.name as brandname, i.prod_type_id, pt.name as prodtype, i.material_id, mt.name as material, i.fabric_type_id, ft.name as fabric, d.image,d.design_no,sum(i.curr_qty) as tot_qty from it_items i,it_ck_designs d,it_brands br,it_prod_types pt,it_materials mt,it_fabric_types ft where i.style_id=$this->style $brandquery  $sizeCon $MRPCon and i.is_design_mrp_active=1 and i.design_no=d.design_no and i.design_id = d.id and i.ctg_id=$ctg_id and i.brand_id=br.id and i.prod_type_id=pt.id and i.material_id=mt.id and i.fabric_type_id=ft.id and i.ctg_id=d.ctg_id $stockclause group by i.design_no,MRP having tot_qty>0"; 
+//                    error_log("\nSTOCK MRP: $query; \n", 3, "C:/xampp/htdocs/linenking/home/view/tmp.txt");                  
+                    $allDesigns = $db->fetchObjectArray($query);
+            }else if ($this->MRP && $this->ctg) {
                 //$time1=0;
                 $query = "Select i.id,i.MRP,i.brand_id,br.name as brandname,i.prod_type_id,pt.name as prodtype,i.material_id,mt.name as material,i.fabric_type_id,ft.name as fabric,d.image,d.design_no,sum(i.curr_qty) as tot_qty from it_items i,it_ck_designs d,it_brands br,it_prod_types pt,it_materials mt,it_fabric_types ft where i.ctg_id=$ctg_id and i.MRP=$this->MRP $brandquery and i.brand_id=br.id and i.prod_type_id=pt.id and i.material_id=mt.id and i.fabric_type_id=ft.id and i.ctg_id=d.ctg_id and i.design_no=d.design_no and i.design_id = d.id and i.is_design_mrp_active=1 $stockclause group by i.design_no having tot_qty > 0 order by tot_qty";
                 //$time1= microtime(true);
