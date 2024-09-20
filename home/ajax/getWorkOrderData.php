@@ -21,7 +21,7 @@ if (!isset($_POST)) {
         //$records= "17028<>1"; //17001,17004
         //print_r($_POST);
         $records = $_POST['order_id']."<>2";
-        $url = "http://180.179.212.137/ckwip/home/syncDealerportal/sendworkorderDet.php";
+        $url = "http://15.206.125.234/ckwip/home/syncDealerportal/sendworkorderDet.php";
       // $url = "http://192.168.0.36/ckwip/home/syncDealerportal/sendworkorderDet.php";
         $fields = array('records' => urlencode($records));
         $fields_string = "";
