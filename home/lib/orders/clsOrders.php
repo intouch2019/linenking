@@ -14,7 +14,7 @@ class clsOrders extends dbobject {
 	}
 
 	function getCart($store_id) {
-		$query = "select * from it_ck_orders where store_id=$store_id and status=".OrderStatus::InCart;
+		$query = "select id,order_no,order_qty,order_amount,num_designs,msl_ack from it_ck_orders where store_id=$store_id and status=".OrderStatus::InCart;
 //print "$query<br />"; return null;
 		$obj = $this->fetchObject("select * from it_ck_orders where store_id=$store_id and status=".OrderStatus::InCart);
 		if ($obj) { return $obj; }
@@ -31,7 +31,7 @@ class clsOrders extends dbobject {
 		if ($new_order_no == 1000) { $new_order_no = 1; }
 		$order_no = $this->safe(sprintf("%03d%03d", $store_number, $new_order_no));
 		$order_id=$this->execInsert("insert into it_ck_orders set store_id=$store_id, status=".OrderStatus::InCart.", order_no=$order_no, order_qty=0");
-		return $this->fetchObject("select * from it_ck_orders where id=$order_id");
+		return $this->fetchObject("select id,order_no,order_qty,order_amount,num_designs,msl_ack from it_ck_orders where id=$order_id");
 	}
 
 	function getCartItems($order_id) {

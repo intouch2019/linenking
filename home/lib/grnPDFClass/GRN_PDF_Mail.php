@@ -30,17 +30,24 @@ function sendMail()//$pdfidarr)
 //    }
     
     $date = date('Y-m-d');
-     $query= "select * from it_grn_pdfs where is_mailed=0 and createtime >= '$date 00:00:00' and createtime <= '$date 23:59:59'";
+     $query= "select id,pdf_file_path from it_grn_pdfs where is_mailed=0 and createtime >= '$date 00:00:00' and createtime <= '$date 23:59:59'";
 //     echo $query;
         $pdfobjs= $db->fetchObjectArray($query);
-        if(isset($pdfobjs)){
-            foreach($pdfobjs as $pdfobj){
-                $pdfname = $pdfobj->pdf_file_path; 
-                array_push($fpatharr,$pdfname);
-                $pdf_ids .= $pdfobj->id.",";
+//        if(isset($pdfobjs)){
+//            foreach($pdfobjs as $pdfobj){
+//                $pdfname = $pdfobj->pdf_file_path; 
+//                array_push($fpatharr,$pdfname);
+//                $pdf_ids .= $pdfobj->id.",";
+//            }
+//            $pdf_id_list = rtrim($pdf_ids,",");
+//           
+//        }
+            if ($pdfobjs) {
+            foreach ($pdfobjs as $pdfobj) {
+                $fpatharr[] = $pdfobj->pdf_file_path;
+                $pdf_ids .= $pdfobj->id . ",";
             }
-            $pdf_id_list = rtrim($pdf_ids,",");
-           
+            $pdf_id_list = rtrim($pdf_ids, ",");
         }
 //        echo "PDF IDS: ".$pdf_id_list;
         //email to all dealers
@@ -50,20 +57,22 @@ function sendMail()//$pdfidarr)
         $objs = $db->fetchObjectArray($query);
         
          foreach($objs as $obs){
-            if(trim($obs->email)!=""){
-              $arr = explode(",", $obs->email);
-              foreach($arr as $key => $email){
-                 array_push($toArray,$email);   
-              }
-//              array_push($toArray,$obs->email);  
-            }
-            if(trim($obs->email2)!=""){
-               $arr2 = explode(",", $obs->email2);
-              foreach($arr2 as $key => $email2){
-                 array_push($toArray,$email2);   
-              } 
-              //array_push($toArray,$obs->email2);  
-            }
+//            if(trim($obs->email)!=""){
+//              $arr = explode(",", $obs->email);
+//              foreach($arr as $key => $email){
+//                 array_push($toArray,$email);   
+//              }
+////              array_push($toArray,$obs->email);  
+//            }
+//            if(trim($obs->email2)!=""){
+//               $arr2 = explode(",", $obs->email2);
+//              foreach($arr2 as $key => $email2){
+//                 array_push($toArray,$email2);   
+//              } 
+//              //array_push($toArray,$obs->email2);  
+//            }
+             $toArray = array_merge($toArray, array_filter(explode(",", trim($obs->email))));
+            $toArray = array_merge($toArray, array_filter(explode(",", trim($obs->email2))));
         }
         array_push($toArray,"pradip.marathe@kinglifestyle.com");        
 	array_push($toArray,"samir.joshi@kinglifestyle.com");
@@ -84,10 +93,10 @@ function sendMail()//$pdfidarr)
         $errormsg = $emailHelper->send($toArray, $subject, $body, $fpatharr);
 //        print_r($errormsg);
         //--> code to log email tracking
-          $clsLogger = new clsLogger();
-          $ipaddr =  $_SERVER['REMOTE_ADDR'];
-          $pg_name = __FILE__;                
-          $clsLogger->logInfo($errormsg,false, $pg_name,$ipaddr);
+//          $clsLogger = new clsLogger();
+//          $ipaddr =  $_SERVER['REMOTE_ADDR'];
+//          $pg_name = __FILE__;                
+//          $clsLogger->logInfo($errormsg,false, $pg_name,$ipaddr);
           //--> log code ends here
         if ($errormsg != "0") {
             $errors['mail'] = " <br/> Error in sending mail, please try again later.";
