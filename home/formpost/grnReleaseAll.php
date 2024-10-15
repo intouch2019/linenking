@@ -12,10 +12,8 @@ require_once "lib/orders/clsOrders.php";
 
 extract($_POST);
 //print_r($_POST);
-
-
 $db = new DBConn();
-$clsLogger = new clsLogger();
+//$clsLogger = new clsLogger();
 $clsOrders = new clsOrders();
 
 $place_ord = isset($_POST['stand_ord']) ? $_POST['stand_ord'] : false;
@@ -40,7 +38,7 @@ if (trim($place_ord) == "") {
 if (count($errors) == 0) {
     try {
         //step 1 : fetch all auto refill stores
-        $squery = "select id,store_number from  it_codes where usertype = " . UserType::Dealer . " and is_autorefill = 1 and is_closed = 0 and inactive = 0 and sbstock_active = 1 and sequence is not null and sequence > 0 order by sequence ";
+        $squery = "select id,store_number,min_stock_level,max_stock_level,inactive from  it_codes where usertype = " . UserType::Dealer . " and is_autorefill = 1 and is_closed = 0 and inactive = 0 and sbstock_active = 1 and sequence is not null and sequence > 0 order by sequence ";
 //   $sresults = $db->execQuery($squery);
 
         $storeobjs = $db->fetchObjectArray($squery);
@@ -142,9 +140,9 @@ if (count($errors) == 0) {
                                 $query = "update it_items set is_avail_manual_order=0 where id = $item_id ";
            
                                 //--> code to log it_items update track
-                                $ipaddr = $_SERVER['REMOTE_ADDR'];
-                                $pg_name = __FILE__;
-                                $clsLogger->logInfo($query, false, $pg_name, $ipaddr);
+//                                $ipaddr = $_SERVER['REMOTE_ADDR'];
+//                                $pg_name = __FILE__;
+//                                $clsLogger->logInfo($query, false, $pg_name, $ipaddr);
                                 //--> log code ends here
                                 $db->execUpdate($query);
                                 
@@ -160,9 +158,9 @@ if (count($errors) == 0) {
                                 $query = "update it_items set is_avail_manual_order=0 where id = $item_id ";
            
                                 //--> code to log it_items update track
-                                $ipaddr = $_SERVER['REMOTE_ADDR'];
-                                $pg_name = __FILE__;
-                                $clsLogger->logInfo($query, false, $pg_name, $ipaddr);
+//                                $ipaddr = $_SERVER['REMOTE_ADDR'];
+//                                $pg_name = __FILE__;
+//                                $clsLogger->logInfo($query, false, $pg_name, $ipaddr);
                                 //--> log code ends here
                                 $db->execUpdate($query);
                                 
@@ -174,9 +172,9 @@ if (count($errors) == 0) {
                                 //                      error_log("grnr qry: $query",3,"tmp.txt");
                                 //                       print "<br>$query<br>";
                                 //--> code to log it_items update track
-                                $ipaddr = $_SERVER['REMOTE_ADDR'];
-                                $pg_name = __FILE__;
-                                $clsLogger->logInfo($query, false, $pg_name, $ipaddr);
+//                                $ipaddr = $_SERVER['REMOTE_ADDR'];
+//                                $pg_name = __FILE__;
+//                                $clsLogger->logInfo($query, false, $pg_name, $ipaddr);
                                 //--> log code ends here
                                 $db->execUpdate($query);
                             }
@@ -258,7 +256,7 @@ if (count($errors) == 0) {
                                                 $qty = $release_bal_qty;
                                             }
 
-                                            $msl = $db->fetchObject("select min_stock_level,max_stock_level,inactive from it_codes where id = $sobj->id");
+//                                            $msl = $db->fetchObject("select min_stock_level,max_stock_level,inactive from it_codes where id = $sobj->id");
 
                                             if (!isset($csv[$sobj->id])) {
 
@@ -289,68 +287,78 @@ if (count($errors) == 0) {
                                             } else {
                                                 $intransit_stock_value_new = $isv[$sobj->id];
                                             }
+                                            
+                                            //Fetch active,picking,picking_complete,cart amount
+                                            $query = "SELECT SUM(CASE WHEN status = 1 THEN order_amount ELSE 0 END) AS active_amount, SUM(CASE WHEN status = 2 THEN order_amount ELSE 0 END) AS picking_amount, SUM(CASE WHEN status = 5 THEN order_amount ELSE 0 END) AS picking_complete_amount, SUM(CASE WHEN status = 0 THEN order_amount ELSE 0 END) AS cart_amt FROM it_ck_orders WHERE store_id = $sobj->id and status in (0,1,2,5)";
+                                            $result = $db->fetchObject($query);
 
-                                            if (!isset($aa[$sobj->id])) {
+                                            // Access the amounts
+                                            $active_amt = isset($result->active_amount) ? $result->active_amount : 0;
+                                            $picking_amt = isset($result->picking_amount) ? $result->picking_amount : 0;
+                                            $picking_complete_amt = isset($result->picking_complete_amount) ? $result->picking_complete_amount : 0;
+                                            $cart_amount = isset($result->cart_amt) ? $result->cart_amt : 0;
 
-                                                $active_amount = $db->fetchObject("select sum(order_amount) as active_amount from it_ck_orders where status=1 and store_id=$sobj->id");
+//                                            if (!isset($aa[$sobj->id])) {
+//
+//                                                $active_amount = $db->fetchObject("select sum(order_amount) as active_amount from it_ck_orders where status=1 and store_id=$sobj->id");
+//
+//                                                if (isset($active_amount) && trim($active_amount->active_amount) != "") {
+//                                                    $active_amt = $active_amount->active_amount;
+//                                                } else {
+//                                                    $active_amt = 0;
+//                                                }
+//                                                $aa[$sobj->id] = $active_amt;
+//                                            } else {
+//                                                $active_amt = $aa[$sobj->id];
+//                                            }
 
-                                                if (isset($active_amount) && trim($active_amount->active_amount) != "") {
-                                                    $active_amt = $active_amount->active_amount;
-                                                } else {
-                                                    $active_amt = 0;
-                                                }
-                                                $aa[$sobj->id] = $active_amt;
-                                            } else {
-                                                $active_amt = $aa[$sobj->id];
-                                            }
+//                                            if (!isset($pa[$sobj->id])) {
+//
+//                                                $picking_amount = $db->fetchObject("select sum(order_amount) as picking_amount  from it_ck_orders where status=2 and store_id=$sobj->id");
+//
+//                                                if (isset($picking_amount) && trim($picking_amount->picking_amount) != "") {
+//                                                    $picking_amt = $picking_amount->picking_amount;
+//                                                } else {
+//                                                    $picking_amt = 0;
+//                                                }
+//                                                $pa[$sobj->id] = $picking_amt;
+//                                            } else {
+//                                                $picking_amt = $pa[$sobj->id];
+//                                            }
 
-                                            if (!isset($pa[$sobj->id])) {
+//                                            if (!isset($pca[$sobj->id])) {
+//
+//                                                $picking_complete_amount = $db->fetchObject("select sum(order_amount) as picking_complete_amount  from it_ck_orders where status=5 and store_id=$sobj->id");
+//
+//                                                if (isset($picking_complete_amount) && trim($picking_complete_amount->picking_complete_amount) != "") {
+//                                                    $picking_complete_amt = $picking_complete_amount->picking_complete_amount;
+//                                                } else {
+//                                                    $picking_complete_amt = 0;
+//                                                }
+//                                                $pca[$sobj->id] = $picking_complete_amt;
+//                                            } else {
+//                                                $picking_complete_amt = $pca[$sobj->id];
+//                                            }
 
-                                                $picking_amount = $db->fetchObject("select sum(order_amount) as picking_amount  from it_ck_orders where status=2 and store_id=$sobj->id");
-
-                                                if (isset($picking_amount) && trim($picking_amount->picking_amount) != "") {
-                                                    $picking_amt = $picking_amount->picking_amount;
-                                                } else {
-                                                    $picking_amt = 0;
-                                                }
-                                                $pa[$sobj->id] = $picking_amt;
-                                            } else {
-                                                $picking_amt = $pa[$sobj->id];
-                                            }
-
-                                            if (!isset($pca[$sobj->id])) {
-
-                                                $picking_complete_amount = $db->fetchObject("select sum(order_amount) as picking_complete_amount  from it_ck_orders where status=5 and store_id=$sobj->id");
-
-                                                if (isset($picking_complete_amount) && trim($picking_complete_amount->picking_complete_amount) != "") {
-                                                    $picking_complete_amt = $picking_complete_amount->picking_complete_amount;
-                                                } else {
-                                                    $picking_complete_amt = 0;
-                                                }
-                                                $pca[$sobj->id] = $picking_complete_amt;
-                                            } else {
-                                                $picking_complete_amt = $pca[$sobj->id];
-                                            }
-
-                                            if (!isset($ca[$sobj->id])) {
-
-                                                $cartinfoo = $db->fetchObject("select  sum(order_amount) as cart_amt from it_ck_orders where store_id=$sobj->id and status=0");
-
-                                                if (isset($cartinfoo) && trim($cartinfoo->cart_amt) != "") {
-                                                    $cart_amount = $cartinfoo->cart_amt;
-                                                } else {
-                                                    $cart_amount = 0;
-                                                }
-                                                $ca[$sobj->id] = $cart_amount;
-                                            } else {
-
-                                                $cart_amount = $ca[$sobj->id];
-                                            }
+//                                            if (!isset($ca[$sobj->id])) {
+//
+//                                                $cartinfoo = $db->fetchObject("select  sum(order_amount) as cart_amt from it_ck_orders where store_id=$sobj->id and status=0");
+//
+//                                                if (isset($cartinfoo) && trim($cartinfoo->cart_amt) != "") {
+//                                                    $cart_amount = $cartinfoo->cart_amt;
+//                                                } else {
+//                                                    $cart_amount = 0;
+//                                                }
+//                                                $ca[$sobj->id] = $cart_amount;
+//                                            } else {
+//
+//                                                $cart_amount = $ca[$sobj->id];
+//                                            }
 
 
 
 
-                                            if (isset($msl) && trim($msl->max_stock_level) != NULL && trim($msl->max_stock_level) != 0) {
+                                            if (isset($sobj) && trim($sobj->max_stock_level) != NULL && trim($sobj->max_stock_level) != 0) {
                                                 if (array_key_exists($sobj->id, $store_orders)) {
                                                     $order_id = $store_orders[$sobj->id];
 
@@ -363,14 +371,14 @@ if (count($errors) == 0) {
 
                                                     $ttt = $pre_amount + $curr_stock_val + $intransit_stock_value_new + $active_amt + $picking_amt + $picking_complete_amt + $cart_amount;
 
-                                                    if ($ttt > $msl->max_stock_level) {
+                                                    if ($ttt > $sobj->max_stock_level) {
                                                         continue;
                                                     }
                                                 } else {
 
                                                     $tt = $curr_stock_val + $intransit_stock_value_new + $active_amt + $picking_amt + $picking_complete_amt + $cart_amount;
 
-                                                    if ($tt > $msl->max_stock_level) {
+                                                    if ($tt > $sobj->max_stock_level) {
                                                         continue;
                                                     }
                                                 }
@@ -412,9 +420,9 @@ if (count($errors) == 0) {
                                 $query = "update it_items set is_avail_manual_order=1 where id = $item_id ";
            
                                 //--> code to log it_items update track
-                                $ipaddr = $_SERVER['REMOTE_ADDR'];
-                                $pg_name = __FILE__;
-                                $clsLogger->logInfo($query, false, $pg_name, $ipaddr);
+//                                $ipaddr = $_SERVER['REMOTE_ADDR'];
+//                                $pg_name = __FILE__;
+//                                $clsLogger->logInfo($query, false, $pg_name, $ipaddr);
                                 //--> log code ends here
                                 $db->execUpdate($query);
                 } //items loop within design ends here
@@ -465,21 +473,21 @@ if (count($errors) == 0) {
                 $order_tot_val = 0;
                 $db = new DBConn();
                 $msl = $db->fetchObject("select min_stock_level,max_stock_level from it_codes where id = $store_id ");
-                $db->closeConnection();
+//                $db->closeConnection();
                 if (isset($msl) && trim($msl->min_stock_level) != "") {
                     //step 1: fetch current order's tot val
-                    $db = new DBConn();
+//                    $db = new DBConn();
                     $order_val = $db->fetchObject("select sum(order_qty * MRP) as tot_amt from it_ck_orderitems where order_id=$order_id ");
-                    $db->closeConnection();
+//                    $db->closeConnection();
                     if (isset($order_val) && trim($order_val->tot_amt) != "") {
                         $order_tot_val = $order_val->tot_amt;
                     } else {
                         $order_tot_val = 0;
                     }
                     //step 2: fetch store current stock value
-                    $db = new DBConn();
+//                    $db = new DBConn();
                     $store_stock = $db->fetchObject("select sum(c.quantity * i.MRP) as curr_stock_value from it_current_stock c , it_items i where c.store_id = $store_id  and c.barcode = i.barcode and i.ctg_id not in (53,54,64,62,63,41,56,52,51,61,46,42,43)");
-                    $db->closeConnection();
+//                    $db->closeConnection();
                     if (isset($store_stock) && trim($store_stock->curr_stock_value) != "") {
                         $curr_stock_val = $store_stock->curr_stock_value;
                     } else {
@@ -487,10 +495,10 @@ if (count($errors) == 0) {
                     }
                     //step 3: fetch store's stock in transit
 
-                    $db = new DBConn();
+//                    $db = new DBConn();
                     //$stock_intransit_new = $db->fetchObject("select sum(i.MRP*oi.quantity) as intransit_stock_value_new from it_sp_invoices o , it_sp_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6 ) and o.store_id =$store_id  and o.is_procsdForRetail = 0 and oi.item_code = i.barcode");
                       $stock_intransit_new = $db->fetchObject("select sum(i.MRP*oi.quantity) as intransit_stock_value_new from it_sp_invoices o , it_sp_invoice_items oi , it_items i where oi.invoice_id = o.id and o.invoice_type in ( 0 , 6 ) and o.store_id =$store_id  and o.is_procsdForRetail = 0 and oi.barcode = i.barcode");
-                    $db->closeConnection();
+//                    $db->closeConnection();
 
                     if (isset($stock_intransit_new) && trim($stock_intransit_new->intransit_stock_value_new) != "") {
                         $intransit_stock_value_new = $stock_intransit_new->intransit_stock_value_new;
@@ -498,49 +506,60 @@ if (count($errors) == 0) {
                         $intransit_stock_value_new = 0;
                     }
 
+                    
+                    //Fetch active_amount,picking_amount,picking_completed_amout
+                    // Merge the queries into one
+                    $query = "SELECT SUM(CASE WHEN status = 1 THEN order_amount ELSE 0 END) AS active_amount, SUM(CASE WHEN status = 2 THEN order_amount ELSE 0 END) AS picking_amount, SUM(CASE WHEN status = 5 THEN order_amount ELSE 0 END) AS picking_complete_amount FROM it_ck_orders WHERE store_id = $store_id and status in (1,2,5)";
+                    $result = $db->fetchObject($query);
 
+                    // Check if each amount is set, otherwise assign 0
+                    $active_amt = isset($result->active_amount) ? $result->active_amount : 0;
+                    $picking_amt = isset($result->picking_amount) ? $result->picking_amount : 0;
+                    $picking_complete_amt = isset($result->picking_complete_amount) ? $result->picking_complete_amount : 0;
+
+                    
                     //step: check active ammount from order
-                    $db = new DBConn();
-                    $active_amount = $db->fetchObject("select sum(order_amount) as active_amount from it_ck_orders where status=1 and store_id=$store_id");
-                    $db->closeConnection();
-                    if (isset($active_amount) && trim($active_amount->active_amount) != "") {
-                        $active_amt = $active_amount->active_amount;
-                    } else {
-                        $active_amt = 0;
-                    }
+//                    $db = new DBConn();
+//                    $active_amount = $db->fetchObject("select sum(order_amount) as active_amount from it_ck_orders where status=1 and store_id=$store_id");
+////                    $db->closeConnection();
+//                    if (isset($active_amount) && trim($active_amount->active_amount) != "") {
+//                        $active_amt = $active_amount->active_amount;
+//                    } else {
+//                        $active_amt = 0;
+//                    }
 
 
 
                     //step: check picking ammount from order
-                    $db = new DBConn();
-                    $picking_amount = $db->fetchObject("select sum(order_amount) as picking_amount  from it_ck_orders where status=2 and store_id=$store_id");
-                    $db->closeConnection();
-                    if (isset($picking_amount) && trim($picking_amount->picking_amount) != "") {
-                        $picking_amt = $picking_amount->picking_amount;
-                    } else {
-                        $picking_amt = 0;
-                    }
+//                    $db = new DBConn();
+//                    $picking_amount = $db->fetchObject("select sum(order_amount) as picking_amount  from it_ck_orders where status=2 and store_id=$store_id");
+////                    $db->closeConnection();
+//                    if (isset($picking_amount) && trim($picking_amount->picking_amount) != "") {
+//                        $picking_amt = $picking_amount->picking_amount;
+//                    } else {
+//                        $picking_amt = 0;
+//                    }
                     //step: check picking complete  ammount from order
 
-                    $db = new DBConn();
-                    $picking_complete_amount = $db->fetchObject("select sum(order_amount) as picking_complete_amount  from it_ck_orders where status=5 and store_id=$store_id");
-                    $db->closeConnection();
-                    if (isset($picking_complete_amount) && trim($picking_complete_amount->picking_complete_amount) != "") {
-                        $picking_complete_amt = $picking_complete_amount->picking_complete_amount;
-                    } else {
-                        $picking_complete_amt = 0;
-                    }
+//                    $db = new DBConn();
+//                    $picking_complete_amount = $db->fetchObject("select sum(order_amount) as picking_complete_amount  from it_ck_orders where status=5 and store_id=$store_id");
+////                    $db->closeConnection();
+//                    if (isset($picking_complete_amount) && trim($picking_complete_amount->picking_complete_amount) != "") {
+//                        $picking_complete_amt = $picking_complete_amount->picking_complete_amount;
+//                    } else {
+//                        $picking_complete_amt = 0;
+//                    }
 
                     if (isset($msl)) {
                         $min_stock = $msl->min_stock_level;
                         $max_stock = $msl->max_stock_level;
                     }
                     $total_orderamt_pickcomplete = $active_amt + $picking_amt + $picking_complete_amt + $order_tot_val;
-
-                    if ($curr_stock_val + $cartinfo->amount + $intransit_stock_value_new + $total_orderamt_pickcomplete >= $min_stock) {
+                    $total_stockamt=$curr_stock_val + $cartinfo->amount + $intransit_stock_value_new + $total_orderamt_pickcomplete;
+                    if ($total_stockamt >= $min_stock) {
 
                         if (isset($msl) && trim($msl->max_stock_level) != NULL && trim($msl->max_stock_level) != 0) {
-                            if ($curr_stock_val + $cartinfo->amount + $intransit_stock_value_new + $total_orderamt_pickcomplete >= $max_stock) {
+                            if ($total_stockamt >= $max_stock) {
 
                                 $query = "select sum(oi.order_qty) as tot_qty, sum(oi.order_qty * oi.MRP) as tot_amt, count(distinct(oi.design_no)) as num_designs from it_ck_orderitems oi, it_items i where oi.order_id=$order_id and oi.item_id = i.id and i.ctg_id != 21";
 //               print "<br> FINAL ITM UPDATE SEL: $query <br>";                 
@@ -700,7 +719,7 @@ exit;
 
 function cancelOrder($order_id) {
     $db = new DBConn();
-    $clsLogger = new clsLogger();
+//    $clsLogger = new clsLogger();
 
     $updates = array();
     $count = 0;
@@ -723,9 +742,9 @@ function cancelOrder($order_id) {
         $query = "update it_items set curr_qty = curr_qty + $quantity where id=$itemid";
 
         //--> code to log it_items update track
-        $ipaddr = $_SERVER['REMOTE_ADDR'];
-        $pg_name = __FILE__;
-        $clsLogger->logInfo($query, false, $pg_name, $ipaddr);
+//        $ipaddr = $_SERVER['REMOTE_ADDR'];
+//        $pg_name = __FILE__;
+//        $clsLogger->logInfo($query, false, $pg_name, $ipaddr);
         //--> log code ends here
         $db->execUpdate($query);
     }
@@ -736,7 +755,7 @@ function cancelOrder($order_id) {
 
 function orderCreate($sobj, $qty, &$store_orders, $iobj, $release_bal_qty, $item_grn_qty, $multiple_items_released) {
     $db = new DBConn();
-    $clsLogger = new clsLogger();
+//    $clsLogger = new clsLogger();
 
     $store_number = $sobj->store_number;
     $order_qty_bal = $qty;
@@ -774,9 +793,9 @@ function orderCreate($sobj, $qty, &$store_orders, $iobj, $release_bal_qty, $item
             $query = "update it_items set updatetime=now(),curr_qty=curr_qty - " . $qty . " where id=$iobj->id";
             //        print "<br><br>UPDATE ITEM QTY: $query";
             //--> code to log it_items update track
-            $ipaddr = $_SERVER['REMOTE_ADDR'];
-            $pg_name = __FILE__;
-            $clsLogger->logInfo($query, false, $pg_name, $ipaddr);
+//            $ipaddr = $_SERVER['REMOTE_ADDR'];
+//            $pg_name = __FILE__;
+//            $clsLogger->logInfo($query, false, $pg_name, $ipaddr);
             //--> log code ends here
             $db->execUpdate($query);
 
@@ -813,9 +832,9 @@ function orderCreate($sobj, $qty, &$store_orders, $iobj, $release_bal_qty, $item
                         $query = "update it_items set updatetime=now(),curr_qty=curr_qty - " . $to_order_qty . " where id=$item_id";
 //                        print "<br><br>UPDATE ITEM QTY IN ELSE : $query";
                         //--> code to log it_items update track
-                        $ipaddr = $_SERVER['REMOTE_ADDR'];
-                        $pg_name = __FILE__;
-                        $clsLogger->logInfo($query, false, $pg_name, $ipaddr);
+//                        $ipaddr = $_SERVER['REMOTE_ADDR'];
+//                        $pg_name = __FILE__;
+//                        $clsLogger->logInfo($query, false, $pg_name, $ipaddr);
                         //--> log code ends here
                         $db->execUpdate($query);
                         $release_bal_qty = $release_bal_qty - $to_order_qty;
@@ -838,7 +857,7 @@ function orderCreate($sobj, $qty, &$store_orders, $iobj, $release_bal_qty, $item
 
 function insertItems($sobj, $qty, $iobj, $order_id, $release_bal_qty, $item_grn_qty, $multiple_items_released) {
     $db = new DBConn();
-    $clsLogger = new clsLogger();
+//    $clsLogger = new clsLogger();
     $order_qty_bal = $qty;
     //step 1 fetch order details
 //    $oquery = "select  from it_ck_orders where id = $order_id ";
@@ -856,9 +875,9 @@ function insertItems($sobj, $qty, $iobj, $order_id, $release_bal_qty, $item_grn_
         $query = "update it_items set updatetime=now(),curr_qty=curr_qty - " . $qty . " where id=$iobj->id";
         //    print "<br><br>UPDATE ITM CASE 2 : $query <br>";
         //--> code to log it_items update track
-        $ipaddr = $_SERVER['REMOTE_ADDR'];
-        $pg_name = __FILE__;
-        $clsLogger->logInfo($query, false, $pg_name, $ipaddr);
+//        $ipaddr = $_SERVER['REMOTE_ADDR'];
+//        $pg_name = __FILE__;
+//        $clsLogger->logInfo($query, false, $pg_name, $ipaddr);
         //--> log code ends here
         $db->execUpdate($query);
 
@@ -896,9 +915,9 @@ function insertItems($sobj, $qty, $iobj, $order_id, $release_bal_qty, $item_grn_
                     $query = "update it_items set updatetime=now(),curr_qty=curr_qty - " . $to_order_qty . " where id=$item_id";
 //                            print "<br><br>UPDATE ITEM QTY: $query";
                     //--> code to log it_items update track
-                    $ipaddr = $_SERVER['REMOTE_ADDR'];
-                    $pg_name = __FILE__;
-                    $clsLogger->logInfo($query, false, $pg_name, $ipaddr);
+//                    $ipaddr = $_SERVER['REMOTE_ADDR'];
+//                    $pg_name = __FILE__;
+//                    $clsLogger->logInfo($query, false, $pg_name, $ipaddr);
                     //--> log code ends here
                     $db->execUpdate($query);
                     $release_bal_qty = $release_bal_qty - $to_order_qty;
@@ -914,7 +933,7 @@ function insertItems($sobj, $qty, $iobj, $order_id, $release_bal_qty, $item_grn_
 function grnItemsBal($iobj, $to_release_qty) {
 //   print "<br>IN GRN ITEM BAL: <br>";
     $db = new DBConn();
-    $clsLogger = new clsLogger();
+//    $clsLogger = new clsLogger();
     $multiple_items_released = array();
     $query = "select ctg_id,design_no,id,MRP,grn_qty from it_items where ctg_id = $iobj->ctg_id and design_id = $iobj->design_id and style_id = $iobj->style_id and size_id = $iobj->size_id and grn_qty > 0 order by grn_qty desc ";
 //   print "<br>ITM QRY: ".$query;
@@ -932,9 +951,9 @@ function grnItemsBal($iobj, $to_release_qty) {
 //               error_log("grnr qry: $query",3,"tmp.txt");
 //            print "<br>UPDATE QRY: $query<br>";
             //--> code to log it_items update track
-            $ipaddr = $_SERVER['REMOTE_ADDR'];
-            $pg_name = __FILE__;
-            $clsLogger->logInfo($query, false, $pg_name, $ipaddr);
+//            $ipaddr = $_SERVER['REMOTE_ADDR'];
+//            $pg_name = __FILE__;
+//            $clsLogger->logInfo($query, false, $pg_name, $ipaddr);
             //--> log code ends here
             $db->execUpdate($query);
 

@@ -157,7 +157,7 @@ function createexcel($dealersList){
      $filename=basename($fpath);
      $db = new DBconn();
      $emailHelper = new EmailHelper();
-     $qry = "select email from it_codes where usertype = ".UserType::CKAdmin." and id in (68,129,130)" ; 
+     $qry = "select email from it_codes where usertype = ".UserType::CKAdmin." and id in (68,129,90)" ; 
      $aobjs = $db->fetchObjectArray($qry);
      // sends email to koushik,kunal
      if($aobjs){

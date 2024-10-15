@@ -19,31 +19,35 @@ class GeneratePDF {
         //$img_path = '/var/www/cottonking_new/home/images/stock/';
         $pdf = new FPDF();
         $db = new DBConn();
-        $todays_date = date('Y-m-d');
+//        $todays_date = date('Y-m-d');
 
         $pdf->AddPage();       
         if(!empty($item_ids_arr)){
             $itemids = implode(",", $item_ids_arr);
             //$query = "select c.name as ctg_name, i.design_no, i.mrp, cd.image as image_name,cd.extension , cdp.cdesp from it_items i  left join it_grn_ctg_desp cdp on i.ctg_id = cdp.ctg_id and i.design_id = cdp.design_id, it_categories c , it_ck_designs cd where i.ctg_id = c.id and c.id = cd.ctg_id and i.design_id = cd.id and i.id in ( $itemids ) group by i.ctg_id,i.design_id,i.mrp ";
+
             $query = "select c.name as ctg_name,c.sequence, i.design_no, i.mrp, cd.image as image_name,cd.extension , cdp.cdesp,i.ctg_id,i.prod_type_id  from it_items i  left join it_grn_ctg_desp cdp on i.ctg_id = cdp.ctg_id and i.design_id = cdp.design_id, it_categories c , it_ck_designs cd where i.ctg_id = c.id and c.id = cd.ctg_id and i.design_id = cd.id and i.id in ( $itemids ) group by i.ctg_id,i.design_id,i.mrp order by c.sequence, c.id";
 //            print $query;
+
             $all_items = $db->fetchObjectArray($query);
 //            $db->closeConnection();
             $count=0;
             if(!empty($all_items)){
                  $icnt = 0;
+                 $pdf->SetAutoPageBreak(true);
             foreach ($all_items as $item) {
 //                  print_r($item); 
-                 $avl_query="select sum(curr_qty) as total_available from it_items where ctg_id= $item->ctg_id and design_no='".$item->design_no."'";
-//                echo "<br>".$avl_query;//exit();
-                 $avl = $db->fetchObject($avl_query);
-                if(isset($avl) && $avl->total_available >25){
+//                 $avl_query="select sum(curr_qty) as total_available from it_items where ctg_id= $item->ctg_id and design_no='".$item->design_no."'";
+////                echo "<br>".$avl_query;//exit();
+//                 $avl = $db->fetchObject($avl_query);
+//                if(isset($avl) && $avl->total_available >25)
+                  if (isset($item->total_available) && $item->total_available > 10){
                 $count++;
             
                 if($icnt > 2){
                     $icnt=0;
                      $pdf->AddPage();
-                     $y = 0;
+//                     $y = 0;
                 }
                     $icnt = $icnt + 1;
                 $category_name = $item->ctg_name;
@@ -96,7 +100,7 @@ class GeneratePDF {
                 $pdf->Ln();
                 $pdf->Ln();
                 $pdf->Ln();
-                $pdf->SetAutoPageBreak(true);
+//                $pdf->SetAutoPageBreak(true);
             }
             }
 //            exit();
@@ -117,7 +121,7 @@ class GeneratePDF {
             //Insert into new table it_grn_pdfs.
             $query = "insert into it_grn_pdfs set pdf_file_path=$pdf_path,createtime=now()";
             $pdf_id = $db->execInsert($query);
-            $db->closeConnection();
+//            $db->closeConnection();
 
             //Downlaod pdf file into pdf_files folder
             //$fname = $dir.$ctg_space_replace."_".$date;
@@ -157,5 +161,6 @@ class GeneratePDF {
         }
       }
     }
+    $db->closeConnection();
     }
 }
