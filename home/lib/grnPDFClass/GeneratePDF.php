@@ -26,7 +26,7 @@ class GeneratePDF {
             $itemids = implode(",", $item_ids_arr);
             //$query = "select c.name as ctg_name, i.design_no, i.mrp, cd.image as image_name,cd.extension , cdp.cdesp from it_items i  left join it_grn_ctg_desp cdp on i.ctg_id = cdp.ctg_id and i.design_id = cdp.design_id, it_categories c , it_ck_designs cd where i.ctg_id = c.id and c.id = cd.ctg_id and i.design_id = cd.id and i.id in ( $itemids ) group by i.ctg_id,i.design_id,i.mrp ";
 
-            $query = "select c.name as ctg_name,c.sequence, i.design_no, i.mrp, cd.image as image_name,cd.extension , cdp.cdesp,i.ctg_id,i.prod_type_id  from it_items i  left join it_grn_ctg_desp cdp on i.ctg_id = cdp.ctg_id and i.design_id = cdp.design_id, it_categories c , it_ck_designs cd where i.ctg_id = c.id and c.id = cd.ctg_id and i.design_id = cd.id and i.id in ( $itemids ) group by i.ctg_id,i.design_id,i.mrp order by c.sequence, c.id";
+            $query = "SELECT c.name AS ctg_name, i.design_no, i.mrp, cd.image AS image_name, cdp.cdesp, i.ctg_id, i.prod_type_id, (SELECT SUM(curr_qty) FROM it_items WHERE ctg_id = i.ctg_id AND design_no = i.design_no) AS total_available FROM it_items i LEFT JOIN it_grn_ctg_desp cdp ON i.ctg_id = cdp.ctg_id AND i.design_id = cdp.design_id JOIN it_categories c ON i.ctg_id = c.id JOIN it_ck_designs cd ON i.ctg_id = cd.ctg_id AND i.design_id = cd.id WHERE i.id IN ($itemids) GROUP BY i.ctg_id, i.design_id, i.mrp ORDER BY c.sequence";
 //            print $query;
 
             $all_items = $db->fetchObjectArray($query);
