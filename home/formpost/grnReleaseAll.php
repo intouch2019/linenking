@@ -9,6 +9,7 @@ require_once 'lib/users/clsUsers.php';
 require_once "lib/logger/clsLogger.php";
 require_once "lib/grnPDFClass/GeneratePDF.php";
 require_once "lib/orders/clsOrders.php";
+require_once "lib/grnPDFClass/EmailHelper.php";
 
 extract($_POST);
 //print_r($_POST);
@@ -685,7 +686,54 @@ if (count($errors) == 0) {
                 $clsGRNPDF = new GeneratePDF();
                 $clsGRNPDF->genUnreleasedPDF($items_with_balance);
             }
+        }else{
+             //no balance qty available 
+        $EmailArray = array(); // Initialize array
+        $errorfpatharr = array(); // Initialize another array
+        $EmailArray = array(); // Reset the array
+        array_push($EmailArray, "shchaudhari@intouchrewards.com");
+        array_push($EmailArray, "ranjeet.mundekar@kinglifestyle.com");
+        array_push($EmailArray, "kunal.marathe@kinglifestyle.com");
+        array_push($EmailArray, "rghule@intouchrewards.com");
+        array_push($EmailArray, "harshada.marathe@kinglifestyle.com");
+        array_push($EmailArray, "ahatwar@intouchrewards.com");
+        array_push($EmailArray, "koushik.marathe@kinglifestyle.com");
+        array_push($EmailArray, "rohan.phalke@kinglifestyle.com");
+        array_push($EmailArray, "prashant.mane@kinglifestyle.com");
+        $errorsubject = "No balance qty available from todays design release for Linenking";
+        $errorbody = "<br>Dear All,<br><br><br>";
+        $errorbody .= "<p>$cnt Standing Orders placed sucessfully. and no balance qty available after standing order placed. </p>";
+        $errorbody .= "<p>So, No pdf will be generated. </p>";
+        $errorbody .= "<b>Note : This is auto generated email, please do not reply this email.</b><br/><br>";
+        $errorbody .= "<b><br>From</b><br/>";
+        $errorbody .= "<b>Linenking Portal</b><br/>";
+        $errorbody .= "<b></b>";
+        $errorbody .= "<br/>";
+        $emailHelper = new EmailHelper();
+        $errormsg = $emailHelper->send($EmailArray, $errorsubject, $errorbody, $errorfpatharr);
         }
+        $EmailArray = array(); // Initialize array
+        $errorfpatharr = array(); // Initialize another array
+        $EmailArray = array(); // Reset the array
+        array_push($EmailArray, "shchaudhari@intouchrewards.com");
+        array_push($EmailArray, "ranjeet.mundekar@kinglifestyle.com");
+        array_push($EmailArray, "kunal.marathe@kinglifestyle.com");
+        array_push($EmailArray, "rghule@intouchrewards.com");
+        array_push($EmailArray, "harshada.marathe@kinglifestyle.com");
+        array_push($EmailArray, "ahatwar@intouchrewards.com");
+        array_push($EmailArray, "koushik.marathe@kinglifestyle.com");
+        array_push($EmailArray, "rohan.phalke@kinglifestyle.com");
+        array_push($EmailArray, "prashant.mane@kinglifestyle.com");
+        $errorsubject = "Standing Order Placed for Todays Design Release of Linenking";
+        $errorbody = "<br>Dear All,<br><br><br>";
+        $errorbody .= "<p>$cnt Standing Orders placed sucessfully. </p>";
+        $errorbody .= "<b>Note : This is auto generated email, please do not reply this email.</b><br/><br>";
+        $errorbody .= "<b><br>From</b><br/>";
+        $errorbody .= "<b>Linenking Portal</b><br/>";
+        $errorbody .= "<b></b>";
+        $errorbody .= "<br/>";
+        $emailHelper = new EmailHelper();
+        $errormsg = $emailHelper->send($EmailArray, $errorsubject, $errorbody, $errorfpatharr);
     } catch (Exception $xcp) {
         print $xcp->getMessage();
     }

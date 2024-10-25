@@ -10,6 +10,17 @@ require_once "lib/logger/clsLogger.php";
 
 class GRN_PDF_Mail {
     
+     function get_tiny_url($url)  {  
+    $ch = curl_init();  
+    $timeout = 5;  
+    curl_setopt($ch,CURLOPT_URL,'http://tinyurl.com/api-create.php?url='.$url);  
+    curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);  
+    curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$timeout);  
+    $data = curl_exec($ch);  
+    curl_close($ch);  
+    return $data;  
+}
+    
 function sendMail()//$pdfidarr)
     {
 //    print"<br>in send mail<br>";
@@ -82,14 +93,20 @@ function sendMail()//$pdfidarr)
       if(count($fpatharr)>0){
         $subject = "New Designs Released";
         $body = "<br>Dear All,<br><br><br>";
-        $body .= "<p>Please find the below given attachment of the new designs released. Please have a look and place your orders on the portal as per your requirements.</p>";
+         foreach($fpatharr as $fpath){
+            $pdflink=basename($fpath);
+            $pdfurl="https://linenking.intouchrewards.com/lib/grnPDFClass/pdf_files/"."$pdflink";
+            $tinyurl=$this->get_tiny_url($pdfurl);
+            $body .= "<b> Please click here to downlod new Design release pdf :-  $tinyurl</b><br/><br>";
+        }
+        $body .= "<p>Please have a look and place your orders on the portal as per your requirements.</p>";
         $body .= "<b>Note : This is auto generated email ,please do not reply this email.</b><br/><br>";
         $body .= "<b><br>From</b><br/>";
         $body .= "<b>Dispatch Department,</b><br/>";
         $body .= "<b>Baramati</b>";
         $body .= "<br/>";
        
- 
+         $fpatharr = array();  //reset the filepath array
         $errormsg = $emailHelper->send($toArray, $subject, $body, $fpatharr);
 //        print_r($errormsg);
         //--> code to log email tracking
@@ -100,6 +117,27 @@ function sendMail()//$pdfidarr)
           //--> log code ends here
         if ($errormsg != "0") {
             $errors['mail'] = " <br/> Error in sending mail, please try again later.";
+            $EmailArray = array(); // Initialize array
+                $errorfpatharr = array(); // Initialize another array
+                $EmailArray = array(); // Reset the array
+                array_push($EmailArray, "shchaudhari@intouchrewards.com");
+                array_push($EmailArray, "ranjeet.mundekar@kinglifestyle.com");
+                array_push($EmailArray, "kunal.marathe@kinglifestyle.com");
+                array_push($EmailArray, "rghule@intouchrewards.com");
+                array_push($EmailArray, "harshada.marathe@kinglifestyle.com");
+                array_push($EmailArray, "ahatwar@intouchrewards.com");
+                array_push($EmailArray, "koushik.marathe@kinglifestyle.com");
+                array_push($EmailArray, "rohan.phalke@kinglifestyle.com");
+                array_push($EmailArray, "prashant.mane@kinglifestyle.com");
+                $errorsubject = "Email Sending Failure for Todays Design Release of Linenking";
+                $errorbody = "<br>Dear All,<br><br><br>";
+                $errorbody .= "<p>There is Some error in todays Design release email send. Please check pdf and send Manually</p>";
+                $errorbody .= "<b>Note : This is auto generated email, please do not reply this email.</b><br/><br>";
+                $errorbody .= "<b><br>From</b><br/>";
+                $errorbody .= "<b>Linenking Portal</b><br/>";
+                $errorbody .= "<b></b>";
+                $errorbody .= "<br/>";
+                $errormsg = $emailHelper->send($EmailArray, $errorsubject, $errorbody, $errorfpatharr);
 //             print"mail send failed<br>";
             return -1;
         } 

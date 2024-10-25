@@ -112,7 +112,7 @@ class GeneratePDF {
             $dir=$parent_dir.'/pdf_files/';
             
 //            $dir='pdf_files/';
-            $date = date('Y-m-dh::i::s');
+            $date = date('YmdHis');
             $ctg_space_replace = str_replace(" ", "_", $category_name);
             //$filename = $ctg_space_replace."_".$date.".pdf";
             $filename = "Designs_Released_".$date.".pdf";
