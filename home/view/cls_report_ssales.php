@@ -34,6 +34,7 @@ class cls_report_ssales extends cls_renderer{
         var $region;
         var $status;
         var $salesmancode;
+        var $day;
         function __construct($params=null) {
 //		parent::__construct(array(UserType::Admin, UserType::CKAdmin, UserType::Manager));
                 ini_set('max_execution_time', 300);
@@ -80,7 +81,8 @@ class cls_report_ssales extends cls_renderer{
                 
                 if (isset($params['custname'])){ $this->fields['custname'] =$params['custname']; $this->custname = $params['custname']; }else{ $this->fields['custname'] = "0"; }
                 if (isset($params['custphone'])){ $this->fields['custphone'] =$params['custphone']; $this->custphone = $params['custphone']; }else{ $this->fields['custphone'] = "0"; }
-                
+                if (isset($params['day'])) { $this->fields['day']=$params['day']; $this->date = $params['day']; } else $this->fields['day']="0";
+
                 if(isset($params['a'])){ $this->a=$params['a'];}
                 if($this->currUser->usertype==UserType::Dealer){ 
                     $this->storeidreport = $this->currUser->id;
@@ -407,6 +409,7 @@ foreach ($objs as $obj) {
                                           <option value="prodtype">Production Type</option> 
                                           <option value="manuf">Manufactured By</option> 
                                           <option value="date" selected>Date</option>
+                                          <option value="day" selected>Day</option>
                                         <option value="billno" selected>Bill no</option>
                                         <option value="billtype" selected>Bill Type</option>
                                         <option value="voucheramt" selected>Voucher Amount</option>
@@ -526,6 +529,7 @@ foreach ($objs as $obj) {
                         if ($field=="month") {$tableheaders.="Month:"; $queryfields .= " CONCAT(monthname(o.bill_datetime),'-',year(o.bill_datetime)) as month , ";$group_by[] = "month"; $total_td .= "<td></td>";}
                         if ($field=="custname") {$tableheaders.="Customer Name:"; $queryfields .= " o.cust_name as customername , ";$group_by[] = "customername"; $total_td .= "<td></td>";}
                         if ($field=="custphone") {$tableheaders.="Customer Phone:"; $queryfields .= "LEFT(o.cust_phone,10) as customerphone , ";$group_by[] = "customerphone"; $total_td .= "<td></td>";}
+                        if ($field=="day") {$tableheaders.="Day:"; $queryfields .= " DAYNAME(o.bill_datetime)as day , ";$group_by[] = "day"; $total_td .= "<td></td>";}
                         if ($field == "monthlyrent") {
                                         $tableheaders .= "Stores Monthly Rent:";
                                         $queryfields .= "c.monthlyrent,";
