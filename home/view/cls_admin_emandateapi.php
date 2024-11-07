@@ -172,7 +172,18 @@ if($("#CustomerExpiryDate").val()==="")
   $("#Customer_MaxAmount").focus();
   return;
 }
-
+if($("#filler_6").val()==="")
+{
+  alert("Please enter Bank Code in Filler 6");
+  $("#filler_6").focus();
+  return;
+}
+if($("#IFSCCode").val()==="")
+{
+  alert("Please enter Bank IFSC Code");
+  $("#IFSCCode").focus();
+  return;
+}
 var account_no=$("#CustomerAccountNo").val();
 account_no=account_no.substr(2,account_no.length);
 //alert(account_no)
@@ -569,7 +580,7 @@ $.ajax({
                     <input type="text" name="Filler5" id="filler_5" placeholder="Filler5(Account Type)" required=""><br>
                         <span style="color: #a9a9a9; " >"S” for Savings ,“C” for Current or “O” for “Other”. </span>
                 </td><td>
-                    <input type="text" name="Filler6" id="filler_6" placeholder="Filler6(Bank Code)"><br>
+                    <input type="text" name="Filler6" id="filler_6" placeholder="Filler6(Bank Code)" required><br>
                         <span style="color: #9c9c9c00; " >Filler 6 </span>
                 </td></tr>  
                 
