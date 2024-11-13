@@ -41,7 +41,7 @@ require_once "lib/logger/clsLogger.php";
 if (isset($_GET['storeIds']) && !empty($_GET['storeIds'])) {
 $storeId =$_GET['storeIds'];
 
-    $query = "SELECT * FROM it_invoices WHERE store_id = $storeId AND is_procsdForRetail = 0";
+    $query = "SELECT * FROM it_sp_invoices WHERE store_id = $storeId AND is_procsdForRetail = 0";
     $invoices = $db->fetchObjectArray($query);
     if ($invoices) {
         echo "<h3>Invoices for Store ID: $storeId</h3>";
