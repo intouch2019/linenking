@@ -9,7 +9,7 @@ require_once "lib/logger/clsLogger.php";
      $id = ($_GET['id']);
         $db = new DBConn();
 
-$query = "update it_invoices set is_procsdForRetail = 1 where id = '$id'";
+$query = "update it_sp_invoices set is_procsdForRetail = 1 where id = '$id'";
 $obj = $db->execUpdate($query);
 
 if($obj == "1"){
