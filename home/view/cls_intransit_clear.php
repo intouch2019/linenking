@@ -32,14 +32,14 @@ class cls_intransit_clear extends cls_renderer {
         }
         ?>
 
-        <script type="text/javascript" src="<?php CdnUrl('jqueryui/js/jquery-ui-1.7.1.custom.min.js'); ?>"></script>
-        <link rel="stylesheet" href="<?php CdnUrl('css/redmond/jquery-ui-1.7.1.custom.css'); ?>" type="text/css" title="ui-theme" />
-        <link rel="stylesheet" href="<?php CdnUrl('js/chosen/chosen.css'); ?>" />
-        <script src="<?php CdnUrl('js/chosen/chosen.jquery.js'); ?>" type="text/javascript"></script>
-        <link rel="stylesheet" href="<?php CdnUrl('css/prettyPhoto.css'); ?>" type="text/css" media="screen" title="prettyPhoto main stylesheet" charset="utf-8" />
-        <link rel="stylesheet" type="text/css" href="<?php CdnUrl('css/dark-glass/sidebar.css'); ?>" />
-        <script src="<?php CdnUrl('js/prettyPhoto/jquery.prettyPhoto.js'); ?>" type="text/javascript" charset="utf-8"></script>
-        <script type="text/javascript" src="<?php CdnUrl('js/sidebar/jquery.sidebar.js'); ?>"></script>
+        <script type="text/javascript" src="jqueryui/js/jquery-ui-1.7.1.custom.min.js>"></script>
+        <link rel="stylesheet" href="css/redmond/jquery-ui-1.7.1.custom.css" type="text/css" title="ui-theme" />
+        <link rel="stylesheet" href="js/chosen/chosen.css" />
+        <script src="js/chosen/chosen.jquery.js" type="text/javascript"></script>
+        <link rel="stylesheet" href="css/prettyPhoto.css" type="text/css" media="screen" title="prettyPhoto main stylesheet" charset="utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/dark-glass/sidebar.css" />
+        <script src="js/prettyPhoto/jquery.prettyPhoto.js" type="text/javascript" charset="utf-8"></script>
+        <script type="text/javascript" src="js/sidebar/jquery.sidebar.js"></script>
         <style>
             .checkbox {
                 font-size: 20px;
