@@ -29,11 +29,11 @@ try {
         print_r($designno[0]);
 //            exit();
      if(isset($designno[0]) && $designno[0]!=""){
-        if ($designno[0] == -1) {
-            $query = "update it_ck_designs set core=$designtype where ctg_id=$category";
-            $db->execUpdate($query);
-            $success = "Design type updated sucessfully";
-        } else {
+//        if ($designno[0] == -1) {
+//            $query = "update it_ck_designs set core=$designtype where ctg_id=$category";
+//            $db->execUpdate($query);
+//            $success = "Design type updated sucessfully";
+//        } else {
 
             foreach ($designno as $designid) {
 //                exit();
@@ -44,7 +44,7 @@ try {
             }
             $success = "Design type updated sucessfully";
             unset($_SESSION['form_post']);
-        }
+//        }
      }
       
     }
