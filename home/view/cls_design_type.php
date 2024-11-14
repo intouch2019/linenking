@@ -271,7 +271,7 @@ class cls_design_type extends cls_renderer {
                                         $defaultSel = "";
                                     }
                                     ?>
-                                    <option value="-1" <?php echo $defaultSel; ?>>All Designs</option> 
+                                    <!--<option value="-1" <?php // echo $defaultSel; ?>>All Designs</option>--> 
                                     <?php
                                     $objs = array();
 
