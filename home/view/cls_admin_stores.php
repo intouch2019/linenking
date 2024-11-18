@@ -94,7 +94,7 @@ class cls_admin_stores extends cls_renderer {
 <div id="storeinfo"></div>
     <div style="float:right;margin-right:15px;">
          <?php
-        if($this->currStore->usertype == UserType::Admin){  ?>
+        if(($this->currStore->usertype == UserType::Admin )||($this->currStore->roles == RollType::IT)){  ?>
         <a href="admin/stores/stocklimitupdate"><button>Update Stocklimit</button></a>
         
         <?php }  ?>
@@ -138,10 +138,10 @@ class cls_admin_stores extends cls_renderer {
                 <th></th>
                 <th></th>
                 <th></th>
-                <?php if($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::CKAdmin || $this->currStore->id ==100){?>
+                <?php if($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::CKAdmin || $this->currStore->id ==100 || $this->currStore->roles == RollType::IT ){?>
                  <th>License</th>
                  <?php } ?>
-                <?php if($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::CKAdmin || $this->currStore->id ==100){ ?>
+                <?php if($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::CKAdmin || $this->currStore->id ==100 || $this->currStore->roles == RollType::IT){ ?>
                 <th>License Reset</th>
                 <?php } ?>
             </tr>
@@ -235,10 +235,10 @@ $dialogHtml = json_encode($dialogHtml);
 		<a href="stores/disablelogin/reason/id=<?php echo $obj->id; ?>"><button>Disable</button></a>
 <?php } ?>             
 		</td>
-           <?php if($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::CKAdmin || $this->currStore->id ==100){ ?>
+           <?php if($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::CKAdmin || $this->currStore->id ==100 || $this->currStore->roles == RollType::IT){ ?>
                 <td><?php echo $obj->license; ?></td>
                 <?php } ?>     
- <?php if($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::CKAdmin || $this->currStore->id ==100){ ?>               
+ <?php if($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::CKAdmin || $this->currStore->id ==100 || $this->currStore->roles == RollType::IT){ ?>               
                 <td>
 <?php if($obj->macaddress != null || trim($obj->macaddress) != ""){ ?>                    
                     <a href="#" onclick='javascript:resetMacAddr(<?php echo $obj->id; ?>);return false;'><button>Enable </button></a>
