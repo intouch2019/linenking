@@ -199,8 +199,8 @@ class cls_admin_payment_gateway_hdfc extends cls_renderer {
 
                         <div class="grid_4">
 
-                            Remark || Reason*:</br>
-                            <textarea id="description" name="description" rows="3" cols="40" required></textarea>
+                            Remark || Reason:</br>
+                            <textarea id="description" name="description" rows="3" cols="40"></textarea>
 
                         </div>
 
