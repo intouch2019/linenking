@@ -608,7 +608,7 @@ class cls_admin_stores_edit extends cls_renderer {
         //}
 
 
-        if ($this->currStore->usertype == UserType::CKAdmin || $this->currStore->usertype == UserType::Admin || $this->currStore->id == 128) {
+        if ($this->currStore->usertype == UserType::CKAdmin || $this->currStore->usertype == UserType::Admin || $this->currStore->id == 128 || $this->currStore->roles == RollType::IT) {
 
             $query = "select id,discount from it_dealer_discount order by discount asc";
             $obj_deler_disc = $db->fetchObjectArray($query);
@@ -621,7 +621,7 @@ class cls_admin_stores_edit extends cls_renderer {
                                     foreach ($obj_deler_disc as $disc) {
                                         $selected = "";
 
-                                        if ($disc->id > 3 && $disc->discount!=0 && $this->currStore->usertype != UserType::CKAdmin) {
+                                        if ($disc->id > 3 && $disc->discount!=0 && $this->currStore->usertype != UserType::CKAdmin && $this->currStore->roles != RollType::IT) {
                                             continue;
                                         }
                                         ?>
@@ -679,7 +679,7 @@ class cls_admin_stores_edit extends cls_renderer {
 
 
 
-        <?php if ($this->currStore->usertype == UserType::CKAdmin || $this->currStore->usertype == UserType::Admin || $this->currStore->id == 128) { ?>
+        <?php if ($this->currStore->usertype == UserType::CKAdmin || $this->currStore->usertype == UserType::Admin || $this->currStore->id == 128 || $this->currStore->roles == RollType::IT) { ?>
                                 <p class="grid_1">
                                     <label>Cash:</label>
                                     <input type="checkbox"  name="cashes" id="<?php echo $store->is_cash; ?>" value="1" <?php if ($store->is_cash == "1") echo "checked"; ?> onclick="isCheckedById();"/>
@@ -702,7 +702,7 @@ class cls_admin_stores_edit extends cls_renderer {
         <?php } ?>
 
 
-        <?php if ($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::CKAdmin || $this->currStore->id == 128) { ?>
+        <?php if ($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::CKAdmin || $this->currStore->id == 128 || $this->currStore->roles == RollType::IT) { ?>
                                 <p class="grid_12">
                                     <label>Minimum Stock Level: </label><br>
                                     <input type="text" name="msl"  id="msl" style='width:30%' value="<?php echo $this->getFieldValue('msl', $store->min_stock_level); ?>">
@@ -964,7 +964,7 @@ class cls_admin_stores_edit extends cls_renderer {
                                 <span id="statusMsg" class="<?php echo $formResult->cssClass; ?>" style="display:<?php echo $formResult->showhide; ?>;"><?php echo $formResult->status; ?></span>
                             </p>
                             <p class="grid_12" align="center">
-        <?php if ($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::CKAdmin || $this->currStore->id==100) { ?>
+        <?php if ($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::CKAdmin || $this->currStore->id==100 || $this->currStore->roles == RollType::IT) { ?>
                                     <input type="submit" value="Update" style="width:35%" onClick="javaScript:selectall();">
         <?php } ?>
                             </p>
