@@ -6,7 +6,7 @@ require_once "lib/core/Constants.php";
 require_once "lib/core/strutil.php";
 
 $user = getCurrUser();
-if (!$user || ($user->usertype != UserType::Admin && $user->usertype != UserType::CKAdmin && $user->usertype != UserType::Accounts && $user->id!=100)) { print 'You have to be logged in to run this program. Login <a href="home/login">here</a>'; return; }
+if (!$user || ($user->usertype != UserType::Admin && $user->usertype != UserType::CKAdmin && $user->usertype != UserType::Accounts && $user->id!=100 && $user->roles != RollType::IT)) { print 'You have to be logged in to run this program. Login <a href="home/login">here</a>'; return; }
 
 $fp=fopen("items.csv","w");
 if (!$fp) { print 'Unable to open file items.csv'; exit; }
