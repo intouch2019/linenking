@@ -110,6 +110,8 @@ if (count($errors) == 0) {
 //print_r($working_key);
 //exit();
             $string_JSON = "enc_request=$encrypted_data&access_code=$access_code&request_type=JSON&response_type=JSON&command=generateQuickInvoice&version=1.2";
+            $updateqry = "update it_payment_gateway_hdfc set sent_payload='$string_JSON', updatetime = now() where id=$inserted_id ";
+            $db->execUpdate($updateqry);
 //            print_r($string_JSON);            exit();
             $curl = curl_init();
             curl_setopt_array($curl, array(
@@ -169,7 +171,11 @@ if (count($errors) == 0) {
                 if(isset($var['merchant_reference_no'])){
                     $merchant_reference_no=$var['merchant_reference_no'];
                 }
+                if(isset($var['error_desc'])){
+                  $error_desc=$var['error_desc'];
+                }
                 
+                if(empty($error_desc)){
                 if ($merchant_reference_no == $invoiceid) {
                     if ($payment_status == 0) {//-------------payment created
                         $updatequery = "update it_payment_gateway_hdfc set  reference_id='$reference_id', Send_response='$response',Paymenturl='$short_url',status='Invoice generated successfully',is_sent=1, updatetime = now() where id=$inserted_id ";
@@ -183,6 +189,10 @@ if (count($errors) == 0) {
                 }else{
                      $updatequery = "update it_payment_gateway_hdfc set  reference_id='$reference_id', Send_response='$response',Paymenturl='',status='Invoice no send and received is not same',is_sent=4, updatetime = now() where id=$inserted_id ";
                      $updatedresponse = $db->execUpdate($updatequery);
+                }
+                } else {
+                    $updatequery = "update it_payment_gateway_hdfc set  reference_id='$reference_id', Send_response='$response',Paymenturl='',status='$error_desc',is_sent=3, updatetime = now() where id=$inserted_id ";
+                    $updatedresponse = $db->execUpdate($updatequery);
                 }
             }
 
