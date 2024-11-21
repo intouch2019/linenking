@@ -72,7 +72,7 @@ $store_check = $db->fetchObject($storees);
 //    
 
 
-if ($store->usertype == UserType::Admin || $store->usertype == UserType::CKAdmin || $store->id == 128) {
+if ($store->usertype == UserType::Admin || $store->usertype == UserType::CKAdmin || $store->id == 128 || $store->roles == RollType::IT) {
     $newcashval = 0.0;
     $newnonclaim = 0.0;
     // $delerDisc=0.0; /////hiiiii  
@@ -178,7 +178,7 @@ if (!$store_name || !$address || !$city || !$zip || !$owner || !$phone || !$emai
         //        $tallyname = $db->safe($tally);
         //$zipcode = isset($zip) ? $db->safe(trim($zip)) : false;
 
-        if ($store->usertype == UserType::Admin || $store->usertype == UserType::CKAdmin || $store->id == 128) {
+        if ($store->usertype == UserType::Admin || $store->usertype == UserType::CKAdmin || $store->id == 128 || $store->roles == RollType::IT) {
             $discquery = "";
             if (isset($adddisc) && trim($adddisc) != "") {
                 $discquery .= " , additional_discount = $adddisc ";
@@ -208,7 +208,7 @@ if (!$store_name || !$address || !$city || !$zip || !$owner || !$phone || !$emai
 
 
         $sClause = "";
-        if ($store->usertype == UserType::Admin || $store->usertype == UserType::CKAdmin || $store->id == 128) {
+        if ($store->usertype == UserType::Admin || $store->usertype == UserType::CKAdmin || $store->id == 128 || $store->roles == RollType::IT) {
             //add msl permission to=>it-admin,koushik,kunal
             if (trim($msl) != "") {
                 $sClause .= ", min_stock_level =" . doubleval($msl);
@@ -254,7 +254,7 @@ if (!$store_name || !$address || !$city || !$zip || !$owner || !$phone || !$emai
             $addquery .= " , cust_bank_name = '$cust_bank_name'";
         }
 
-        if ($store->usertype == UserType::Admin || $store->usertype == UserType::CKAdmin || $store->id == 128) {
+        if ($store->usertype == UserType::Admin || $store->usertype == UserType::CKAdmin || $store->id == 128 || $store->roles == RollType::IT) {
 
 
             if (isset($claimed) && trim($claimed) != "") {  ///////////////////////$claimed  //$cashes
