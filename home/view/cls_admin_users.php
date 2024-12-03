@@ -78,7 +78,7 @@ Your session has expired. Click <a href="">here</a> to login.
                 <td><?php echo RollType::getName($obj->roles); ?></td>
                 <td><?php echo UserType::getName($obj->usertype); ?></td>
                 <td><?php echo $obj->createdate; ?></td>
-                <td><a href="admin/users/edit/id=<?php echo $obj->id; ?>"><button>Edit</button></a><button onclick="deleteUser(<?php echo $obj->id; ?>);">Delete</button></td>
+                <td><a href="admin/users/edit/id=<?php echo $obj->id; ?>"><button>Edit</button></a><?php if( $this->currUser->usertype == UserType::Admin  || $this->currUser->roles == RollType::IT){ ?><button onclick="deleteUser(<?php echo $obj->id; ?>);">Delete</button><?php } ?></td>
             </tr>
                     <?php } ?>
         </table>
