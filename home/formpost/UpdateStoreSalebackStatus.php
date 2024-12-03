@@ -24,12 +24,12 @@ if($a > $b){
 
                   foreach ($_POST['store'] as $selectedOption){ 
                     if($selectedOption==-1){
-                        $query = "update it_codes set saleback_starttime = '$start_date' , saleback_endtime = '$end_date' where  isastore=1 and is_closed=0  and usertype = ".UserType::Dealer."";
+                        $query = "update it_codes set saleback_starttime = '$start_date' , saleback_endtime = '$end_date' where   is_closed=0  and usertype = ".UserType::Dealer."";
                         $updated_row=$db->execUpdate($query);
                        break;
                     }else{
                         foreach ($_POST['store'] as $selectedOption){
-                            $query = "update it_codes set saleback_starttime = '$start_date' , saleback_endtime = '$end_date'  where  isastore=1 and is_closed=0 and usertype = ".UserType::Dealer." and id=$selectedOption";
+                            $query = "update it_codes set saleback_starttime = '$start_date' , saleback_endtime = '$end_date'  where  is_closed=0 and usertype = ".UserType::Dealer." and id=$selectedOption";
                             $updated_row=$db->execUpdate($query);
                         }
                        break;
