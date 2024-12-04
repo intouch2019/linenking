@@ -80,7 +80,7 @@ Your session has expired. Click <a href="">here</a> to login.
 		    <select name="picker_id">
 			<option value="">Please Select</option>
 <?php
-	$users = $db->fetchObjectArray("select id,store_name as fullname from it_codes where usertype=".UserType::Picker." order by fullname");
+	$users = $db->fetchObjectArray("select id,store_name as fullname from it_codes where usertype=".UserType::Picker." and inactive=0 order by fullname");
 	foreach ($users as $picker) {
 		if ($picker->id == $this->getFieldValue('picker_id')) {
 			$selected = "selected";
