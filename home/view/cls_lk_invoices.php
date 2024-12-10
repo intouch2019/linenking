@@ -10,7 +10,7 @@ class cls_lk_invoices extends cls_renderer{
 	var $userid;
 		
 	function __construct($params=null) {
-		parent::__construct(array(UserType::Admin, UserType::CKAdmin));
+		parent::__construct(array(UserType::Admin, UserType::CKAdmin, UserType::Manager));
 		$this->currUser = getCurrUser();
 		$this->userid = $this->currUser->id;
 	}
