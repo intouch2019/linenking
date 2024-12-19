@@ -48,8 +48,6 @@ if (!isset($mrp) || trim($mrp) == "") {
 
 if (!isset($description) || trim($description) == "") {
     $description = "Payment for the following invoice no :  $invoiceid. of amount : $mrp is generated.";
-} else {
-    $description;
 }
 
  $invoiceids = "select invoice_nos from it_payment_gateway_hdfc where invoice_nos = '$invoiceid'";
@@ -85,7 +83,7 @@ if (count($errors) == 0) {
             $working_key = 'B2D18CFF8EFD4FFF3EAD0A1D37047B50';
             $access_code = 'AVYK24LJ63AQ54KYQA';
             $merchant_id = '3876548';
-
+            $store = str_replace(' ', '_', $obj->store_name);
             $merchant_json_data = array(
                 "customer_name" => $obj->store_name,
                 "bill_delivery_type" => "BOTH",
@@ -98,6 +96,7 @@ if (count($errors) == 0) {
                 "valid_type" => "days",
                 "amount" => $mrp,
                 "merchant_reference_no" => $invoiceid,
+                "merchant_reference_no2" => $store,
                 "terms_and_conditions" => "terms and condition",
                 "sms_content" => "Please make payment for Rs " . $mrp . " INR # Invoice_ID for Invoice_Currency Invoice_Amount or pay online at Pay_Link.",
             );
