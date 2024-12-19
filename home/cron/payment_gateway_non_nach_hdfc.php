@@ -87,6 +87,7 @@ if (isset($storeobjs)) {
 
             $phone = trim($inv->phone);
             $email = trim($inv->email);
+            $store = str_replace(' ', '_', $obj->store_name);
                 $merchant_json_data = array(
                     "customer_name" => $inv->store_name,
                     "bill_delivery_type" => "BOTH",
@@ -99,6 +100,7 @@ if (isset($storeobjs)) {
                     "valid_type" => "days",
                     "amount" => $mrp,
                     "merchant_reference_no" => $inv->invoice_no,
+                    "merchant_reference_no2" => $store,
                     "terms_and_conditions" => "terms and condition",
                     "sms_content" => "Please make payment for Rs " . $mrp . " INR # Invoice_ID for Invoice_Currency Invoice_Amount or pay online at Pay_Link.",
                 );
