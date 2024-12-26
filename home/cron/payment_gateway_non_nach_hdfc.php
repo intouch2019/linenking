@@ -60,17 +60,17 @@ if (isset($storeobjs)) {
             $query1 = "select id, invoice_nos, status, is_sent from it_payment_gateway_hdfc where invoice_nos='$inv->invoice_no'";
             $checkIfInvAvailableInPaymentGatewayTable = $db->fetchObject($query1);
 
-            $insert_id = "";
+            $inserted_id = "";
             if (isset($checkIfInvAvailableInPaymentGatewayTable) && $checkIfInvAvailableInPaymentGatewayTable != null) {
-                $insert_id = $checkIfInvAvailableInPaymentGatewayTable->id;
+                $inserted_id = $checkIfInvAvailableInPaymentGatewayTable->id;
             } else {
                 $insqry = "insert into it_payment_gateway_hdfc set store_id  = $inv->store_id,store_name ='$inv->store_name' ,remark_text='Paid full payment of Invoice No :- $inv->invoice_no', invoice_nos ='$inv->invoice_no', phone='$inv->phone', email ='$inv->email', createtime = now() ";
-                $insert_id = $db->execInsert($insqry);
+                $inserted_id = $db->execInsert($insqry);
             }
 
-//                    print_r($insert_id);exit();
+//                    print_r($inserted_id);exit();
 
-            if (isset($insert_id) && !empty($insert_id) && $insert_id != null) {
+            if (isset($inserted_id) && !empty($inserted_id) && $inserted_id != null) {
                 $mrp = $inv->invoice_amt;
 
 // Test Credentials Fashionking
@@ -134,7 +134,7 @@ if (isset($storeobjs)) {
 //                print_r($api_status);exit();
 
                 if ($api_status == 1) {//API call failed.
-                    $updatequery = "update it_payment_gateway_hdfc set send_response='$response',status='API call was unsuccessful',is_sent=3, updatetime = now() where id=$insert_id ";
+                    $updatequery = "update it_payment_gateway_hdfc set send_response='$response',status='API call was unsuccessful',is_sent=3, updatetime = now() where id=$inserted_id ";
                     $updatedresponse = $db->execUpdate($updatequery);
 //                    print_r($updatequery);exit();
                 } else {
@@ -160,11 +160,16 @@ if (isset($storeobjs)) {
                     if (isset($var['merchant_reference_no'])) {
                         $merchant_reference_no = $var['merchant_reference_no'];
                     }
+                    if(isset($var['error_desc'])){
+                        $error_desc=$var['error_desc'];
+                    }
+
+                if(empty($error_desc)){
 
 
                     if ($merchant_reference_no == $inv->invoice_no) {// -----------Checking if supplied order_id is same in response
                         if ($payment_status == 0) { //-------------payment created
-                            $updatequery = "update it_payment_gateway_hdfc set reference_id='$reference_id', send_response='$response',paymenturl='$short_url', status='Payment link created', invoice_amt=$mrp, is_sent=1, updatetime = now() where id=$insert_id ";
+                            $updatequery = "update it_payment_gateway_hdfc set reference_id='$reference_id', send_response='$response',paymenturl='$short_url', status='Payment link created', invoice_amt=$mrp, is_sent=1, updatetime = now() where id=$inserted_id ";
                             $updatedresponse = $db->execUpdate($updatequery);
 
                             $query = "update it_codes set inactive=1, inactivated_by =312, paymentlink='$short_url', inactivating_reason='Payment for the following invoice no :  $inv->invoice_no. of amount of : $mrp is generated.', inactive_dttm = now() where id = $inv->store_id";
@@ -173,11 +178,15 @@ if (isset($storeobjs)) {
                             $inv_ups = "update it_sp_invoices set non_nach_p=1 where store_id=$inv->store_id and invoice_no='$inv->invoice_no'";
                             $inv_up = $db->execUpdate($inv_ups);
                         } else {
-                            $updatequ = "update it_payment_gateway_hdfc set reference_id='$reference_id', send_response='$response', status='$payment_status', is_sent=3, updatetime = now() where id=$insert_id";
+                            $updatequ = "update it_payment_gateway_hdfc set reference_id='$reference_id', send_response='$response', status='$payment_status', is_sent=3, updatetime = now() where id=$inserted_id";
                             $updatedresp = $db->execUpdate($updatequ);
                         }
                     } else {
-                        $updatequery = "update it_payment_gateway_hdfc set reference_id='$reference_id', send_response='$response',paymenturl='',status='Invoice no send and received is not same',is_sent=4, updatetime = now() where id=$insert_id ";
+                        $updatequery = "update it_payment_gateway_hdfc set reference_id='$reference_id', send_response='$response',paymenturl='',status='Invoice no send and received is not same',is_sent=4, updatetime = now() where id=$inserted_id ";
+                        $updatedresponse = $db->execUpdate($updatequery);
+                         }
+                    } else {
+                        $updatequery = "update it_payment_gateway_hdfc set  reference_id='$reference_id', Send_response='$response',Paymenturl='',status='$error_desc',is_sent=3, updatetime = now() where id=$inserted_id ";
                         $updatedresponse = $db->execUpdate($updatequery);
                     }
                 }
