@@ -188,10 +188,12 @@ if (count($errors) == 0) {
                 }else{
                      $updatequery = "update it_payment_gateway_hdfc set  reference_id='$reference_id', Send_response='$response',Paymenturl='',status='Invoice no send and received is not same',is_sent=4, updatetime = now() where id=$inserted_id ";
                      $updatedresponse = $db->execUpdate($updatequery);
+                     $errors['status'] = "Invoice no send and received is not same.";
                 }
                 } else {
                     $updatequery = "update it_payment_gateway_hdfc set  reference_id='$reference_id', Send_response='$response',Paymenturl='',status='$error_desc',is_sent=3, updatetime = now() where id=$inserted_id ";
                     $updatedresponse = $db->execUpdate($updatequery);
+                     $errors['status'] = $error_desc;
                 }
             }
 
