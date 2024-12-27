@@ -20,7 +20,7 @@ class SMSHelper {
             $fields2 = array(                
                 'username' => 'cottonking',
                 'password' => 'cot?321',
-                'senderid' => 'LINNKG',
+                'senderid' => 'LINKNG',
                 'route' => '1',                
                 'number' => $phoneno,
                 'message' => urlencode($message)

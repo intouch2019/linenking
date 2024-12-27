@@ -89,7 +89,7 @@ if (!$Manager_name || !$Managerphone || !$Auditor_name || !$AuditDate ||  !$rema
         $phoneno = $store->phone;
        
         //$message = "Audit report for the store - $store->store_name is submitted on the portal. Date $date"; //%26 for &
-        $message =  "LK Audit report for the store - $store->store_name is submitted on the portal. Date $date";
+        $message =  "Linenking Audit report for the store - $store->store_name is submitted on the portal. Date $date";
         $smsHelper = new SMSHelper();
         
         if($phoneno!= null || $phoneno!= "")

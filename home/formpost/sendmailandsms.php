@@ -29,7 +29,7 @@ extract($_GET);
         $inv_ids = rtrim($inv_ids, ',');
 
         $phoneno = $store->phone;
-        $message = "LK - Stock for the Invoice ".$invoice[0]->invoice_no." is dispatched. Driver Name $drivername, Mobile no. $drivermob & Vehicle no $vehicleno."; //%26 for &
+        $message = "Linenking - Stock for the Invoice ".$invoice[0]->invoice_no." is dispatched. Driver Name $drivername, Mobile no. $drivermob & Vehicle no $vehicleno."; //%26 for &
 
         $transport_insert_id = $db->execInsert("insert into it_invoice_transport_details set store_id=$store->id, invoice_id='$inv_ids',invoice_no='$inv_nos',transporter='$transporter',vehicleno='$vehicleno',driver_name='$drivername',driver_mob='$drivermob'");
 
