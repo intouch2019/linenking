@@ -23,6 +23,11 @@ require_once ("util/Crypto.php");
 $store = getCurrUser();
 $db = new DBConn();
 
+
+$starttime = "select now() as sttime";
+print_r("Start time --> ");
+print_r($db->fetchObject($starttime)->sttime);
+
 // Test Credentials Fashionking
 //$working_key = 'C31BB3656BDB9000D656BDA362A9F258';
 //$access_code = 'ATBH45KL25CL13HBLC';
@@ -180,5 +185,7 @@ if (isset($pay_done)) {
     }
 }
 
-
+$starttime = "select now() as edtime";
+print_r("<br>End time --> ");
+print_r($db->fetchObject($starttime)->edtime);
 
