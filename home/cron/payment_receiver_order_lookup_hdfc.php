@@ -167,7 +167,7 @@ if (isset($pay_done)) {
                     $updatequ = "update it_payment_gateway_hdfc set receive_response='$response',status='$payment_status', updatetime = now() where id=$inv->id";
                     $updatedre = $db->execUpdate($updatequ);
                     $invoice_amount=$db->fetchObject("select invoice_amt from it_sp_invoices where store_id=$inv->store_id and invoice_no='$inv->invoice_nos'");
-                    $query4 = "update it_codes set inactivating_reason='Payment for the following invoice no :  $inv->invoice_nos. of amount of : $invoice_amount is generated.' where id =$inv->store_id";
+                    $query4 = "update it_codes set inactivating_reason='Payment for the following invoice no :  $inv->invoice_nos. of amount of : $invoice_amount->invoice_amt is generated.' where id =$inv->store_id";
                     $quu = $db->execUpdate($query4);
                 } elseif ($payment_status == "System refund" || $payment_status == "Chargeback" || $payment_status == "Auto-Reversed") {
                     $updatequery = "update it_payment_gateway_hdfc set receive_response='$response',status='$payment_status', updatetime = now() where id=$inv->id";
