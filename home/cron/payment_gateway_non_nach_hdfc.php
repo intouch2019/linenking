@@ -109,6 +109,9 @@ if (isset($storeobjs)) {
                 $encrypted_data = encrypt($merchant_data, $working_key);
                 $string_JSON = "enc_request=$encrypted_data&access_code=$access_code&request_type=JSON&response_type=JSON&command=generateQuickInvoice&version=1.2";
 
+                $updateqry = "update it_payment_gateway_hdfc set sent_payload='$string_JSON', updatetime = now() where id=$inserted_id ";
+                $db->execUpdate($updateqry);
+                
                 $curl = curl_init();
                 curl_setopt_array($curl, array(
                     // Test URL
