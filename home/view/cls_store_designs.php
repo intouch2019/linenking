@@ -634,7 +634,7 @@ Your session has expired. Click <a href="">here</a> to login.
                                                            
                                                            <?php if($margin==0 && $ctg_id1 !=41){ ?>
                                                            
-                        <td width="70%"><input type='number' max="9" min="0" style="<?php if ($getitm->qty == 0) { echo ''; } elseif ($totqtyavil == 0 && $getitm->qty > 0 && ($this->showcurstck == 1 && !$isTimeBetween4pmAnd12am)) { echo 'border: 2px solid green;'; } elseif ($totqtyavil > 0 && $getitm->qty > 0 && ($this->showcurstck == 1 && !$isTimeBetween4pmAnd12am)) { echo 'border: 2px solid red;'; } ?>" id="id_<?php echo $getitm->id;?>" placeholder="Enter no of set/packet" <?php echo $validate;?> pattern= "[0-9]+" title="ONLY NUMBER" name="item_<?php echo $id."_".$qty; ?>" <?php
+                        <td width="70%"><input type='number' max="200" min="0" style="<?php if ($getitm->qty == 0) { echo ''; } elseif ($totqtyavil == 0 && $getitm->qty > 0 && ($this->showcurstck == 1 && !$isTimeBetween4pmAnd12am)) { echo 'border: 2px solid green;'; } elseif ($totqtyavil > 0 && $getitm->qty > 0 && ($this->showcurstck == 1 && !$isTimeBetween4pmAnd12am)) { echo 'border: 2px solid red;'; } ?>" id="id_<?php echo $getitm->id;?>" placeholder="Enter no of set/packet" <?php echo $validate;?> pattern= "[0-9]+" title="ONLY NUMBER" name="item_<?php echo $id."_".$qty; ?>" <?php
                                                                 if ($exist) {
                                                                     print "value='";
                                                                     echo $exist->order_qty;
@@ -645,7 +645,7 @@ Your session has expired. Click <a href="">here</a> to login.
                                                         
                                                                 <?php } else { ?> 
                                                                 
-                                                                 <td><input type='number' max="9" min="0" style='width: 40px; <?php if ($getitm->qty == 0) { echo ''; } elseif ($totqtyavil == 0 && $getitm->qty > 0 && ($this->showcurstck == 1 && !$isTimeBetween4pmAnd12am)) { echo 'border: 2px solid green;'; } elseif ($totqtyavil > 0 && $getitm->qty > 0 && ($this->showcurstck == 1 && !$isTimeBetween4pmAnd12am)) { echo 'border: 2px solid red;'; } ?>' pattern= "[0-9]+" title="ONLY NUMBER" name="item_<?php echo $id."_".$qty; ?>" <?php
+                                                                 <td><input type='number' max="200" min="0" style='width: 40px; <?php if ($getitm->qty == 0) { echo ''; } elseif ($totqtyavil == 0 && $getitm->qty > 0 && ($this->showcurstck == 1 && !$isTimeBetween4pmAnd12am)) { echo 'border: 2px solid green;'; } elseif ($totqtyavil > 0 && $getitm->qty > 0 && ($this->showcurstck == 1 && !$isTimeBetween4pmAnd12am)) { echo 'border: 2px solid red;'; } ?>' pattern= "[0-9]+" title="ONLY NUMBER" name="item_<?php echo $id."_".$qty; ?>" <?php
                                                                 if ($exist) {
                                                                     print "value='";
                                                                     echo $exist->order_qty;
