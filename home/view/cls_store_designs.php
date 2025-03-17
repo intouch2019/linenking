@@ -210,52 +210,7 @@ Your session has expired. Click <a href="">here</a> to login.
         else
         { alert ("Please enter a design code"); }
     }
-    
-     window.onload = disableButtonBasedOnTime;
-             
-                    async function disableButtonBasedOnTime() {
-          const availabilityButton = document.getElementById("availabilityButton");
-          const messageDiv = document.getElementById("message");
 
-          try {
-            // Fetch server time
-
-                   const now = new Date();
-                  const options = { timeZone: "Asia/Kolkata" };
-
-                  const year = now.toLocaleString("en-IN", { ...options, year: "numeric" });
-                  const month = now.toLocaleString("en-IN", { ...options, month: "2-digit" });
-                  const day = now.toLocaleString("en-IN", { ...options, day: "2-digit" });
-                  const hours = now.toLocaleString("en-IN", { ...options, hour: "2-digit", hour12: false });
-                  const minutes = now.toLocaleString("en-IN", { ...options, minute: "2-digit" });
-                  const seconds = now.toLocaleString("en-IN", { ...options, second: "2-digit" });
-
-                  const timestamp = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-//                  alert(timestamp);
-            
-            if (!timestamp) {
-              console.error("Invalid server response format");
-              messageDiv.innerHTML = "Error: Could not retrieve server time.";
-              return;
-            }
-
-            // Parse timestamp into a Date object
-            const serverTime = new Date(timestamp);
-            const currentHour = serverTime.getHours();
-
-            // Check the time and update button status and message
-            if (currentHour >= 16 && currentHour < 24) {
-              availabilityButton.disabled = true;
-              messageDiv.innerHTML = "Button is disabled between 4 PM to 12 AM.";
-            } else {
-              availabilityButton.disabled = false;
-              messageDiv.innerHTML = ""; // Clear the message when the button is enabled
-            }
-          } catch (error) {
-            console.error("Error fetching or processing server time:", error);
-            messageDiv.innerHTML = "Error: Unable to fetch server time.";
-          }
-        }
             
             function showcurrStockview(){
                             let curretURL=window.location.href;
@@ -585,9 +540,7 @@ Your session has expired. Click <a href="">here</a> to login.
                                                             $db->closeConnection(); 
                                                             if ($getitm->id) { $id = $getitm->id; } else { $id="0"; }
                                                             if ($getitm->qty) { $qty=$getitm->qty; 
-                                                            $currentHour  = $db->fetchObject("select hour(now()) as currentHour"); // Get current hour in 24-hour format (0-23)
-                                                            $isTimeBetween4pmAnd12am = ($currentHour->currentHour >= 16 && $currentHour->currentHour < 24);
-                                                            if($this->showcurstck == 1 && !$isTimeBetween4pmAnd12am){
+                                                            if($this->showcurstck == 1){
       
                                                     $totqtyavil=0;
                                                     $stock_qry="SELECT IFNULL((SELECT SUM(quantity) FROM it_current_stock WHERE barcode = '$getitm->barcode' AND store_id = $storeid), 0) AS current_stock_qty, IFNULL((SELECT SUM(oi.quantity) FROM it_invoices o JOIN it_invoice_items oi ON oi.invoice_id = o.id WHERE o.invoice_type IN (0, 6) AND o.store_id = $storeid AND oi.item_code = '$getitm->barcode'), 0) AS intransit_stock_qty, IFNULL((SELECT SUM(oi.order_qty) FROM it_ck_orders o JOIN it_ck_orderitems oi ON o.id = oi.order_id JOIN it_items i ON oi.item_id = i.id WHERE o.store_id = $storeid AND i.barcode = '$getitm->barcode' AND o.status IN (" . OrderStatus::Active . ", " . OrderStatus::Picking . ", " . OrderStatus::Picking_Complete . ")), 0) AS active_picking_qty"; 
@@ -634,7 +587,7 @@ Your session has expired. Click <a href="">here</a> to login.
                                                            
                                                            <?php if($margin==0 && $ctg_id1 !=41){ ?>
                                                            
-                        <td width="70%"><input type='number' max="9" min="0" style="<?php if ($getitm->qty == 0) { echo ''; } elseif ($totqtyavil == 0 && $getitm->qty > 0 && ($this->showcurstck == 1 && !$isTimeBetween4pmAnd12am)) { echo 'border: 2px solid green;'; } elseif ($totqtyavil > 0 && $getitm->qty > 0 && ($this->showcurstck == 1 && !$isTimeBetween4pmAnd12am)) { echo 'border: 2px solid red;'; } ?>" id="id_<?php echo $getitm->id;?>" placeholder="Enter no of set/packet" <?php echo $validate;?> pattern= "[0-9]+" title="ONLY NUMBER" name="item_<?php echo $id."_".$qty; ?>" <?php
+                        <td width="70%"><input type='number' max="9" min="0" style="<?php if ($getitm->qty == 0) { echo ''; } elseif ($totqtyavil == 0 && $getitm->qty > 0 && ($this->showcurstck == 1 )) { echo 'border: 2px solid green;'; } elseif ($totqtyavil > 0 && $getitm->qty > 0 && ($this->showcurstck == 1)) { echo 'border: 2px solid red;'; } ?>" id="id_<?php echo $getitm->id;?>" placeholder="Enter no of set/packet" <?php echo $validate;?> pattern= "[0-9]+" title="ONLY NUMBER" name="item_<?php echo $id."_".$qty; ?>" <?php
                                                                 if ($exist) {
                                                                     print "value='";
                                                                     echo $exist->order_qty;
@@ -645,7 +598,7 @@ Your session has expired. Click <a href="">here</a> to login.
                                                         
                                                                 <?php } else { ?> 
                                                                 
-                                                                 <td><input type='number' max="9" min="0" style='width: 40px; <?php if ($getitm->qty == 0) { echo ''; } elseif ($totqtyavil == 0 && $getitm->qty > 0 && ($this->showcurstck == 1 && !$isTimeBetween4pmAnd12am)) { echo 'border: 2px solid green;'; } elseif ($totqtyavil > 0 && $getitm->qty > 0 && ($this->showcurstck == 1 && !$isTimeBetween4pmAnd12am)) { echo 'border: 2px solid red;'; } ?>' pattern= "[0-9]+" title="ONLY NUMBER" name="item_<?php echo $id."_".$qty; ?>" <?php
+                                                                 <td><input type='number' max="9" min="0" style='width: 40px; <?php if ($getitm->qty == 0) { echo ''; } elseif ($totqtyavil == 0 && $getitm->qty > 0 && ($this->showcurstck == 1)) { echo 'border: 2px solid green;'; } elseif ($totqtyavil > 0 && $getitm->qty > 0 && ($this->showcurstck == 1)) { echo 'border: 2px solid red;'; } ?>' pattern= "[0-9]+" title="ONLY NUMBER" name="item_<?php echo $id."_".$qty; ?>" <?php
                                                                 if ($exist) {
                                                                     print "value='";
                                                                     echo $exist->order_qty;
