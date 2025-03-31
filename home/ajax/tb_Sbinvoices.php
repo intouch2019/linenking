@@ -98,6 +98,8 @@ $sWhere .= "  i.invoice_type in (7)";
  * SQL queries
  * Get data to display
  */
+$sWhere .= " and i.createtime > '2025-04-01 00:00:00' and is_sb_transit_complete != 2 ";  //Requirement from Accounts team By- Mr. Yogesh Shitole Sir
+
 $sQuery = "
             select SQL_CALC_FOUND_ROWS  i.*  
             from it_saleback_invoices i ,it_codes c
