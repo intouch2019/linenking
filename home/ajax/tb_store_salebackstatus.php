@@ -199,7 +199,7 @@ if ($sWhere == "") {
 
  $sWhere .= "  i.invoice_type in (7) and i.store_id=$st_id";
 
-
+ $sWhere .= " and i.createtime > '2025-04-01 00:00:00'";  //Requirement from Accounts team By- Mr. Yogesh Shitole Sir
 
 
 //	if ($sOrder == "") { $sOrder = " order by iid desc "; }
