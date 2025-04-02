@@ -13,7 +13,7 @@ $member_mobno = $_POST['member_mobno'];//live
 $member_name = $_POST['member_name'];
 $membership_enroll_amt = $_POST['membership_enroll_amt'];
 $member_already_register = $_POST['member_already_register'];
-//$store_id = $gCodeId; 
+$store_id = $gCodeId; 
 //print_r($_POST);
 //echo '<br>';
 //$member_mobno = "9881677716"; //Test
