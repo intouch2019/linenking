@@ -271,7 +271,7 @@ class cls_enrollmembersscheme_masters extends cls_renderer {
                         </div>
 
                         <div class="button-container">
-                            <?php if ($this->storeid == 67) { ?>
+                            <?php if ($this->storeid == 107 || $this->storeid ==90 || $this->storeid ==68) { ?>
                                 <button type="submit">Save Changes</button>
                             <?php } ?>
                         </div>
