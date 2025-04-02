@@ -169,7 +169,7 @@ class cls_ckmembershipenroll_schemestorewise extends cls_renderer {
 
                         <br><br><br><br><br><br><br>
 
-                                <?php if ($this->storeid == 67) { ?>
+                                <?php if ($this->storeid == 107 || $this->storeid ==90 || $this->storeid ==68) { ?>
                                     <button type="button" id="assignschemetostore">Assign Scheme To Store</button>
                                     <span id="loadingIndicator" style="display: none;">
                                         <img src="images/loading.gif" alt="Processing..." width="20">
