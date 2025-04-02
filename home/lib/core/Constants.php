@@ -393,4 +393,45 @@ public static function getName($rolltype) {
 	else { return "Unknown"; }
 }
 }
+
+class Membership_querytype{
+    const Insert = 1;
+    const Update = 2;
+    const Delete = 3;
+    
+    public static function getALL(){
+        return array(
+          querytype::Insert => "Insert Query",
+          querytype::Update => "Update Query",
+          querytype::Delete => "Delete Query"      
+        );
+    }
+    
+    public static function getName($type){
+        $all = Membership_querytype::getALL();
+        if(isset($all[$type])){ return $all[$type];}
+        else{ return "Unknown"; }
+    }
+}
+
+
+class OTP_Status{
+    const OTP_send = 1;
+    const Verified = 2;
+    const Expired = 3;
+    
+    public static function getALL(){
+        return array(
+          querytype::OTP_send => "OTP Send",
+          querytype::Verified => "Verified",
+          querytype::Expired => "Expired"      
+        );
+    }
+    
+    public static function getName($type){
+        $all = OTP_Status::getALL();
+        if(isset($all[$type])){ return $all[$type];}
+        else{ return "Unknown"; }
+    }
+}
 ?>
