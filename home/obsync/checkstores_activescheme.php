@@ -9,7 +9,7 @@ require_once "lib/sms/SMS_Membership.php";
 
 extract($_POST);
 $db = new DBConn();
-//$store_id = $gCodeId; //live
+$store_id = $gCodeId; //live
 
 //$store_id = 161; //test
 $logger = new clsLogger();

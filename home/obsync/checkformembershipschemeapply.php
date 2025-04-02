@@ -10,7 +10,7 @@ require_once "lib/sms/SMS_Membership.php";
 extract($_POST);
 $db = new DBConn();
 $netbill_value = $_POST['netbill_amt'];//live
-//$store_id = $gCodeId; //live
+$store_id = $gCodeId; //live
 
 
 //$netbill_value = 4999; //test

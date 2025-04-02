@@ -12,7 +12,7 @@ $db = new DBConn();
 $mobile_no = $_POST['mobile_no'];//live
 $netbill_value = $_POST['netbill_value'];//live
 $OTP =$_POST['otp'];
-//$store_id = $gCodeId; //live
+$store_id = $gCodeId; //live
 
 //$netbill_value=5999;
 //$mobile_no = "9881677716"; //test
