@@ -53,7 +53,7 @@ $checkotp = "select id from mobile_otp_verification where mobile_number=$mobile_
 $validateotp = $db->fetchObject($checkotp);
 if ($validateotp) {
     //update OTP verified status
-    $chngsts = "update mobile_otp_verification set otp_status=" . OTP_Status::Verified . ", updatetime=now()";
+    $chngsts = "update mobile_otp_verification set otp_status=" . OTP_Status::Verified . ", updatetime=now() where id=$validateotp->id";
     $db->execUpdate($chngsts);
 
     if (!empty($mobile_no) && !empty($store_id) && intval($store_id) !== 0) {
@@ -64,15 +64,10 @@ if ($validateotp) {
         $discount_value = isset($curr_scheme_obj->discount_value) && !empty($curr_scheme_obj->discount_value) ? $curr_scheme_obj->discount_value : 0.00;
 
         if (isset($curr_scheme_obj)) {
-            $checkenrollmentstatus = "select * from membership_customer_details where member_mobno=$mobile_no and is_membership_active=1 and membership_enroll_date < now() and membership_expiry_date > now()";
+            $checkenrollmentstatus = "select id from membership_customer_details where member_mobno=$mobile_no and is_membership_active=1 and membership_enroll_date < now() and membership_expiry_date > now()";
             $checkenrollmentobj = $db->fetchObject($checkenrollmentstatus);
             if (isset($checkenrollmentobj)) {//Already register user
-                if ($checkenrollmentobj->member_last_purchase != NULL) {//Not purchase in last 24 hour
-                   $purchase_date = date('Y-m-d', strtotime($checkenrollmentobj->member_last_purchase)); // Extract date only
-                $today_date = date('Y-m-d'); // Get today's date
 
-                    
-                        //now the user is already registerd and not used scheme discount in last 24 hours
                         $result = array(
                             "mobile_number" => "$mobile_no",
                             "registration_status" => "1", //already register
@@ -85,14 +80,6 @@ if ($validateotp) {
                         print_r($result);
                         return;
                     
-                } else {
-                    $result = array(
-                        "status" => "Error",
-                        "errordesc" => "Member Last Purchase date is null."
-                    );
-                    print_r($result);
-                    return;
-                }
             } else {
                 //unregisterd user.
                 //Sucessfully send OTP.
@@ -111,7 +98,7 @@ if ($validateotp) {
         } else {
             $result = array(
                 "status" => "Error",
-                "errordesc" => "Store not having any active scheme."
+                "errordesc" => "The store does not have any active schemes/the net bill value of $netbill_value is not eligible for any scheme."
             );
             print_r($result);
             return;

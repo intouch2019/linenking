@@ -76,7 +76,7 @@ $membership_enroll_amt = isset($membership_enroll_amt) ? $membership_enroll_amt 
 $member_already_register = isset($member_already_register) ? $member_already_register : "";
 
 if ($member_already_register == 0) {//not already register
-    $checkmemberstatus = "select * from membership_customer_details where member_mobno='$member_mobno' and is_membership_active=1 and membership_enroll_date < now() and membership_expiry_date > now()";
+    $checkmemberstatus = "select id from membership_customer_details where member_mobno='$member_mobno' and is_membership_active=1 and membership_enroll_date < now() and membership_expiry_date > now()";
     $checkenrollmentobj = $db->fetchObject($checkmemberstatus);
     if (isset($checkenrollmentobj)) {//alreday register
         $saveresult = array(
@@ -137,21 +137,9 @@ if ($member_already_register == 0) {//not already register
         }
     }
 } else if ($member_already_register == 1) {//Already Register
-    $checkmemberstatus = "select * from membership_customer_details where member_mobno='$member_mobno' and is_membership_active=1 and membership_enroll_date < now() and membership_expiry_date > now()";
+    $checkmemberstatus = "select id from membership_customer_details where member_mobno='$member_mobno' and is_membership_active=1 and membership_enroll_date < now() and membership_expiry_date > now()";
     $checkenrollmentobj = $db->fetchObject($checkmemberstatus);
     if (isset($checkenrollmentobj)) {//alreday register
-        if ($checkenrollmentobj->member_last_purchase != NULL) {//Not purchase in last 24 hour
-           $purchase_date = date('Y-m-d', strtotime($checkenrollmentobj->member_last_purchase)); // Extract date only
-                $today_date = date('Y-m-d'); // Get today's date
-
-                if ($purchase_date == $today_date) { // Compare only the date part
-                    $result = array(
-                        "status" => "Error",
-                        "errordesc" => "This user used the discount scheme today."
-                    );
-                    print_r($result);
-                    return;
-                } else {
                 $updatelastpurchase = "update membership_customer_details set member_last_purchase=now(),update_date=now() where member_mobno='$member_mobno' and is_membership_active=1";
                 $updateresult = $db->execUpdate($updatelastpurchase);
 
@@ -191,15 +179,6 @@ if ($member_already_register == 0) {//not already register
                     print_r($saveresult);
                     return;
                 }
-            }
-        } else {
-            $saveresult = array(
-                "status" => "Error",
-                "errordesc" => "Member Last Purchase date is null."
-            );
-            print_r($saveresult);
-            return;
-        }
     } else {
         $saveresult = array(
             "status" => "Error",
