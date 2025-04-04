@@ -56,7 +56,7 @@ if (!empty($mobile_no) && !empty($store_id) && intval($store_id) !== 0) {
 
 
 
-        $checkenrollmentstatus = "select * from membership_customer_details where member_mobno=$mobile_no and is_membership_active=1 and membership_enroll_date < now() and membership_expiry_date > now()";
+        $checkenrollmentstatus = "select id from membership_customer_details where member_mobno=$mobile_no and is_membership_active=1 and membership_enroll_date < now() and membership_expiry_date > now()";
         $checkenrollmentobj = $db->fetchObject($checkenrollmentstatus);
         if (isset($checkenrollmentobj)) {//Already register user
            
