@@ -5,7 +5,7 @@ require_once "lib/core/Constants.php";
 require_once "lib/core/strutil.php";
 require_once "session_check.php";
 
-class cls_report_ssalesMDTSR extends cls_renderer {
+class cls_report_ssalesmdtsr extends cls_renderer {
     var $currUser;
     var $userid;
     var $storeidstr;
