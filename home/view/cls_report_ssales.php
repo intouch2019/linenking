@@ -357,7 +357,7 @@ class cls_report_ssales extends cls_renderer {
             } else if(side==2){
             var selectedCountry=listRight.options.selectedIndex;  
             var sval = listRight.options[selectedCountry].value;  
-            if(sval=='itemqty' || sval=='totalvalue' || sval=='creditvoucherused'){
+            if(sval=='itemqty' || sval=='totalvalue' ){
 
             alert('You cannot move default fields to Left');
             return false;
@@ -649,7 +649,7 @@ class cls_report_ssales extends cls_renderer {
                                                     <option value="billtype" selected>Bill Type</option>
                                                     <option value="voucheramt" selected>Voucher Amount</option>
                                                     <option value="nnetsale" selected>Net Sale Value</option>
-                                                    <option value="creditvoucherused" selected hidden>Creditvaucher Used</option>
+                                                    <option value="creditvoucherused" selected >Creditvaucher Used</option>
                                                     <option value="salesmancode" selected>Salesman ID</option>
                                                     <!--                                        <option value="itemvalue">Sold Price</option>-->
                                                     <option value="month">Month</option>
@@ -676,8 +676,6 @@ class cls_report_ssales extends cls_renderer {
                                             <select name="selectRight" multiple size="10" style="width:200px;" id="selectRight">                                     
                                                 <option value="itemqty">Item Quantity</option>                                       
                                                 <option value="totalvalue">Total Value</option>
-                                                <option value="creditvoucherused" selected >Creditvaucher Used</option>
-
                                             </select>
                                         </td>
                                     </tr>
@@ -754,7 +752,7 @@ class cls_report_ssales extends cls_renderer {
                                     }
                                     if ($field == "creditvoucherused") {
                                         $tableheaders .= "Creditvoucher Used:";
-                                        $queryfields .= "o.orderinfo,";
+                                        $queryfields .= "o.orderinfo ,";
                                         $total_td .= "<td></td>";
                                     }
                                     if ($field == "billtype") {
@@ -1189,7 +1187,17 @@ class cls_report_ssales extends cls_renderer {
                                         $value = ddmmyy2($value);
                                     } else if ($field == "orderinfo") {
                                         // Display full creditNoteUsed value
-                                        $value = isset($json_array['creditNoteUsed']) ? substr($json_array['creditNoteUsed'], 21) : "";
+//                                         $json_array = json_decode($reportrows->orderinfo, true);
+//                                        if (!empty($json_array['creditNoteUsed']) && in_array($ticketid, $creditnotearray)) {
+                                        if(isset($this->creditvoucherused)){
+                                            $value = isset($json_array['creditNoteUsed']) ? substr($json_array['creditNoteUsed'], 21) : "";
+                                        }
+                                        else{
+//                                            continue;
+                                        $value="";
+//                                            unset($value);
+                                        }
+                                        
 
                                     } else if ($field == "quantity") {
                                         $totqty += $value;
@@ -1262,7 +1270,12 @@ class cls_report_ssales extends cls_renderer {
                                 $totTotalValue = $totAmt;
                             }
                             if ($write_htm) {
-                                fwrite($fp2, "<tr>$total_td<td><b>$totqty</b></td><td><b>$totTotalValue</b></td></tr>");
+                               if(isset($this->creditvoucherused)){
+                                    fwrite($fp2, "<tr><tr>$total_td-<td><b>$totqty</b></td><td><b>$totTotalValue</b></td></tr></tr>");
+                                }
+                                else{
+                                    fwrite($fp2, "<tr>$total_td-<td><b>$totqty</b></td><td><b>$totTotalValue</b></td></tr>");
+                                }
                                 fwrite($fp2, "</tbody></table>");
                                 fclose($fp2);
                             }
