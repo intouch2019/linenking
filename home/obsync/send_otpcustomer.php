@@ -128,7 +128,7 @@ if (!empty($mobile_no) && !empty($store_id) && intval($store_id) !== 0) {
 
 function send_avilofferotp($mobile_no) {
     $otp = mt_rand(1000, 9999); 
-    $message = "Dear Linenking Member, Your one time password to avail for Linenking Membership Discount is ".$otp." and is valid for 15 mins.";
+    $message = "Dear Linenking Member , Your OTP to avail for Linenking Membership Discount is ".$otp." and is valid for 15 mins.";
 
 
 
