@@ -47,7 +47,7 @@ $merchant_id = '3876548';
 // non_nach_p=1 -> When Payment link is created 
 // non_nach_p=2 -> When Payment is received
 
-$pay_done = $db->fetchObjectArray("select id, store_id, store_name, status, invoice_nos, reference_id,invoice_amt, createtime from it_payment_gateway_hdfc where is_sent=1");
+$pay_done = $db->fetchObjectArray("select id, store_id, store_name, status, invoice_nos, reference_id,invoice_amt, createtime from it_payment_gateway_hdfc where is_sent=1 AND createtime > NOW() - INTERVAL 5 DAY");
 
 if (isset($pay_done)) {
     foreach ($pay_done as $inv) {
