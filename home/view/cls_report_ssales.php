@@ -1047,7 +1047,7 @@ class cls_report_ssales extends cls_renderer {
 
                         $query = "select $queryfields,o.orderinfo";
                         // $query .= " from it_orders o,it_order_items oi, it_items i, it_codes c,states s,region r where $storeClause $dQuery and oi.order_id=o.id and i.id = oi.item_id and  o.store_id = c.id  and s.id = c.state_id and c.region_id=r.id  ".$gClause;
-                        $query .= " from it_orders o,it_order_items oi, it_items i, it_codes c,states s,region r where $storeClause $dQuery and oi.order_id=o.id and i.id = oi.item_id and  o.store_id = c.id  and s.id = c.state_id and c.region_id=r.id  " . $gClause;
+                        $query .= " from it_orders o FORCE INDEX (idx_store_date),it_order_items oi, it_items i, it_codes c,states s,region r where $storeClause $dQuery and oi.order_id=o.id and i.id = oi.item_id and  o.store_id = c.id  and s.id = c.state_id and c.region_id=r.id  " . $gClause;
                         //print $query;
                         // print $query; //and c.id in ( $storeClause)
                         //error_log("1:$query\n",3, "../ajax/tmp.txt");
@@ -1099,7 +1099,7 @@ class cls_report_ssales extends cls_renderer {
                         $tableheaders = "Date:Bill No:Bill Type:Bill Quantity:Bill Amount:Tax:Bill Discount Value:Bill Discount %:Voucher:Store Name:Area:city:Location:State:Region:Status";
                         //$query2 = "select DATE_FORMAT(o.bill_datetime,'%d/%m/%Y') as bill_datetime,o.bill_no,o.tickettype,o.quantity,o.amount,o.tax,o.discount_val,o.discount_pct,o.voucher_amt from it_orders o where o.store_id in ( $storeClause ) $dQuery group by $gClause o.bill_no order by bill_datetime";
                         // $query2 = "select o.bill_datetime ,o.bill_no,o.tickettype,o.quantity,o.amount,o.tax,o.discount_val,o.discount_pct,o.voucher_amt,c.store_name,c.Area,c.city,c.Location,s.state,r.region,c.status  from it_orders o , it_codes c,states s,region r   where $storeClause  and  o.store_id = c.id  and s.id=c.state_id and r.id = c.region_id  $dQuery group by o.store_id, o.bill_no order by bill_datetime";
-                        $query2 = "select o.bill_datetime ,o.bill_no,o.tickettype,o.orderinfo,o.quantity,o.amount,o.tax,o.discount_val,o.discount_pct,o.voucher_amt,c.store_name,c.Area,c.city,c.Location,s.state,r.region,c.status  from it_orders o , it_codes c,states s,region r   where $storeClause  and  o.store_id = c.id  and s.id=c.state_id and r.id = c.region_id  $dQuery group by o.store_id, o.bill_no order by bill_datetime";
+                        $query2 = "select o.bill_datetime ,o.bill_no,o.tickettype,o.orderinfo,o.quantity,o.amount,o.tax,o.discount_val,o.discount_pct,o.voucher_amt,c.store_name,c.Area,c.city,c.Location,s.state,r.region,c.status  from it_orders o FORCE INDEX (idx_store_date), it_codes c,states s,region r   where $storeClause  and  o.store_id = c.id  and s.id=c.state_id and r.id = c.region_id  $dQuery group by o.store_id, o.bill_no order by bill_datetime";
 
                         // echo $query2;
                         $result = $db->execQuery($query2);
