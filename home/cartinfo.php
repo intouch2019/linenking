@@ -43,7 +43,7 @@ if(isset($msl) && trim($msl->min_stock_level)!=""){
     if(isset($order_val) && trim($order_val->tot_amt) !=""){ $order_tot_val = $order_val->tot_amt; }else{ $order_tot_val = 0; }
     //step 2: fetch store current stock value
     $db = new DBConn();
-    $store_stock = $db->fetchObject("select sum(c.quantity * i.MRP) as curr_stock_value from it_current_stock c , it_items i where c.store_id = $store_id  and c.barcode = i.barcode and i.ctg_id not in (53,54,64,62,63,41,56,52,51,61,46,42,43)");
+    $store_stock = $db->fetchObject("select sum(c.quantity * i.MRP) as curr_stock_value from it_current_stock c , it_items i where c.store_id = $store_id  and c.barcode = i.barcode and i.ctg_id not in (53,54,64,62,63,41,56,52,51,61,46,42,43,65)");
     $db->closeConnection();
     if(isset($store_stock) && trim($store_stock->curr_stock_value) !=""){ $curr_stock_val = $store_stock->curr_stock_value; }else{ $curr_stock_val = 0; }
     //step 3: fetch store's stock in transit
