@@ -71,7 +71,7 @@ try{
 //        }     
          if (trim($dealerobj->min_stock_level) != "") {
             //step 1: fetch current stock value
-            $query = "select sum(c.quantity * i.MRP) as curr_stock_value from it_current_stock c , it_items i where c.store_id = $dealerobj->id  and c.barcode = i.barcode and i.ctg_id not in (53,54,64,62,63,41,56,52,51,61,46,42,43)";
+            $query = "select sum(c.quantity * i.MRP) as curr_stock_value from it_current_stock c , it_items i where c.store_id = $dealerobj->id  and c.barcode = i.barcode and i.ctg_id not in (53,54,64,62,63,41,56,52,51,61,46,42,43,65)";
             $cobj = $db->fetchObject($query);
             if (isset($cobj) && trim($cobj->curr_stock_value) != "") {
                 $store_stock_val = $cobj->curr_stock_value;
