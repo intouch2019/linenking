@@ -115,11 +115,12 @@ function SendMail(){
                 <input type ="radio" name="tallytype" id="tallytype" value="1"  required>Receipt Voucher 
                 <input type ="radio" name="tallytype" id="tallytype" value="2"  required>Sales Voucher 
                 <input type ="radio" name="tallytype" id="tallytype" value="3"  required>Credit Voucher 
-                <input type ="radio" name="tallytype" id="tallytype" value="4"  required>Purchase XML
-                <input type ="radio" name="tallytype" id="tallytype" value="5"  required>Generate GST Nach Report
-                <input type ="radio" name="tallytype" id="tallytype" value="6"  required>GST SaleBack Purchase Voucher
-                <input type ="radio" name="tallytype" id="tallytype" value="7"  required>GST Credit Voucher 2019
-               <input type ="radio" name="tallytype" id="tallytype" value="8"  required>GST DG Credit Voucher
+                <input type ="radio" name="tallytype" id="tallytype" value="4"  required>Purchase XML</br>
+                <input type ="radio" name="tallytype" id="tallytype" value="5"  required><l style="color: yellow">Generate GST Nach Report HDFC</l>
+                <input type ="radio" name="tallytype" id="tallytype" value="10" required><l style="color: yellow">Generate GST Nach Report Axis</l><br/>
+                <input type ="radio" name="tallytype" id="tallytype" value="6"  required>GST SaleBack Purchase Voucher<br/>
+                <input type ="radio" name="tallytype" id="tallytype" value="7"  required>GST Credit Voucher 2019<br/>
+               <input type ="radio" name="tallytype" id="tallytype" value="8"  required>GST DG Credit Voucher<br/>
                 <input type ="radio" name="tallytype" id="tallytype" value="9"  required>Debit Note Voucher Saleback
                 <br/><br/>
                 <div class="grid_5" id="storeDiv" name="storeDiv">
