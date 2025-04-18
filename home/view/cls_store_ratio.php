@@ -878,7 +878,7 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
           <!------------------------All without Exception end here----------------------------------->
                    <?php 
                       $row_no = 1;
-                     $dquery = "select s.id,s.store_id,s.ctg_id,ctg.name as ctgname,ctg.active,s.design_id,c.design_no,s.style_id,s.size_id,s.mrp,s.ratio_type,s.ratio,s.is_exceptional,s.is_exceptional_active,s.createtime,c.image from it_store_ratios s , it_ck_designs c , it_categories ctg where c.id = s.design_id and  s.store_id = $this->sid and  s.ctg_id = $this->cat and s.ratio_type = $this->rtype group by s.ctg_id,s.design_id";
+                     $dquery = "select s.id,s.store_id,s.ctg_id,ctg.name as ctgname,ctg.active,s.design_id,c.design_no,s.style_id,s.size_id,s.mrp,s.ratio_type,s.ratio,s.is_exceptional,s.is_exceptional_active,s.createtime,c.image,c.core from it_store_ratios s , it_ck_designs c , it_categories ctg where c.id = s.design_id and s.ctg_id=ctg.id and s.store_id = $this->sid and s.core = $this->core and s.ctg_id = $this->cat and s.ratio_type = $this->rtype group by s.ctg_id,s.design_id";
                      $dObjs = $db->fetchObjectArray($dquery);
                      
                      foreach($dObjs as $dobj){ 
@@ -969,7 +969,7 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
                                                  
                                                 for ($i = 0; $i < $no_sizes; $i++) {
                                                     $sizeid = $sizeobj[$i]->size_id;
-                                                    $query = "select id,ratio from it_store_ratios where store_id=$dobj->store_id and ctg_id=$dobj->ctg_id and design_id = $dobj->design_id and ratio_type=$dobj->ratio_type and style_id = $stylcod and size_id = $sizeid ";
+                                                    $query = "select id,ratio from it_store_ratios where store_id=$dobj->store_id and ctg_id=$dobj->ctg_id and design_id = $dobj->design_id and ratio_type=$dobj->ratio_type and style_id = $stylcod and size_id = $sizeid and core=$dobj->core";
                                                     $getratio = $db->fetchObject($query);
                                                    if(isset($getratio)){$gid = $getratio->id; }else{ $gid=0;}
                                                     ?><td name="C">
