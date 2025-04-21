@@ -50,44 +50,57 @@ $(document).ready(function(){
             if(radioValue==5){
 //                alert("Your are a - " + radioValue);
                 txndtDiv.style.display = "block";
+                txndtDiv2.style.display = "none";
                 $("#btnSend").attr("disabled", false);
+                $("#btnSend2").attr("disabled", true);
+            } else if(radioValue==10){
+                  txndtDiv2.style.display = "block";
+                   txndtDiv.style.display = "none";
+                $("#btnSend2").attr("disabled", false);
+                $("#btnSend").attr("disabled", true);
             }else{
                 txndtDiv.style.display = "none";
+                txndtDiv2.style.display = "none";
             }
         });
         
         $("input[type='button']").click(function(){  
             $("#btnSend").attr("disabled", true);
-        });        
+        });
+        $("input[type='button']").click(function(){  
+            $("#btnSend2").attr("disabled", true);
+        });  
     });
     
-function SendMail(){
-    var txndt = document.getElementById("txndt").value;
+function SendMailHdfc(){
+    var txndt = document.getElementById("txndt1").value;
     var d1 = document.getElementById("from").value;
     var d2 = document.getElementById("to").value;
     
     if(d2=="" || d1=="" || txndt==""){
-        alert("Please Fill All Required Fields..");        
+        alert("Please Fill All Required Fields..");
+        $("input[type='button']").click(function(){  
+            $("#btnSend").attr("disabled", false);
+        });
         return;
     }
     
-    var ajaxURL = "formpost/generateGSTNatchXL_sendMail.php?d1="+d1+"&d2="+d2+"&txndt="+txndt;
-//    alert(ajaxURL);
-         $.ajax({
-         url:ajaxURL,
-            //dataType: 'json',
-            cache: false,
-            success:function(html){
-                if(html=="No Record Found"){
-                    alert("No Record Found");
-                }else{
-                    alert("Email Sent Successfully.");
-                }
-//                alert(html);
-            }
+    window.location.href = "formpost/generateGSTNatchXL_sendMail.php?d1="+d1+"&d2="+d2+"&txndt="+txndt;
+}
+
+function SendMailAxis(){
+    var txndt = document.getElementById("txndt2").value;
+    var d1 = document.getElementById("from").value;
+    var d2 = document.getElementById("to").value;
+
+    if(d2=="" || d1=="" || txndt==""){
+        alert("Please Fill All Required Fields..");  
+        $("input[type='button']").click(function(){  
+            $("#btnSend2").attr("disabled", false);
         });
-    
-    
+        return;
+    }
+    window.location.href = "formpost/generateGSTNatchXLAxis_sendMail.php?d1="+d1+"&d2="+d2+"&txndt="+txndt;
 }
 
 //function tallyXML(){
@@ -132,20 +145,25 @@ function SendMail(){
                 </div>                  
                 <br/><br/><br/>
                 
-                <div class="grid_5" id="txndtDiv" name="txndtDiv" style ="display: none">
-                    Select Transaction date :* &nbsp;&nbsp;&nbsp;&nbsp;              
-                    <input id="txndt" type="text" name="txndt" style ="width:30%" value="" />
-                    <input type = "button" id="btnSend" name="btnSend" value = "Send Email" onclick="SendMail()"/>
+                <div class="grid_6" id="txndtDiv" name="txndtDiv" style ="display: none">
+                    Select Transaction date (HDFC):* &nbsp;&nbsp;&nbsp;&nbsp;              
+                    <input id="txndt1" type="date" name="txndt1" style ="width:30%" value="" />
+                    <input type = "button" style="margin-left: 10px;" id="btnSend" name="btnSend" value = "Send Email" onclick="SendMailHdfc()"/>
                     <br/><br/>
                 </div>
-                
+                <div class="grid_6" id="txndtDiv2" name="txndtDiv2" style ="display: none">
+                    Select Transaction date (AXIS) :* &nbsp;&nbsp;&nbsp;&nbsp;              
+                        <input id="txndt2" type="date" name="txndt2" style ="width:30%" value="" />
+                    <input type = "button" style="margin-left: 10px;" id="btnSend2" name="btnSend2" value = "Send Email" onclick="SendMailAxis()"/>
+                    <br/><br/>
+                </div>
                 <div class="grid_8">                
                 <!--<input type="button" value="Download" onclick="javascript:tallyXML();"/>-->
                 <input type = "submit" value = "Download" />
-                <span id="statusMsg" class="<?php echo $formResult->cssClass; ?>" style="display:<?php echo $formResult->showhide; ?>;"><?php echo $formResult->status; ?></span>               
                 </div>
         </form>
         </fieldset>
+        <span id="statusMsg" class="<?php echo $formResult->cssClass; ?>" style="display:<?php echo $formResult->showhide; ?>;"><?php echo $formResult->status; ?></span>               
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
 <script src="js/chosen/chosen.jquery.js" type="text/javascript"></script>
