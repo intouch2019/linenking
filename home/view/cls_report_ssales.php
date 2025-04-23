@@ -1157,6 +1157,13 @@ class cls_report_ssales extends cls_renderer {
                                 if (!empty($cn)) {
                                     array_push($creditnotearray, $cn);
                                 }
+                                $totaldiscountvalue=0;
+                                if(!empty($reportrows->totdiscv)){
+                                $totaldiscountvalue+=$reportrows->totdiscv;
+                                }
+                                else{
+                                    $totaldiscountvalue=0;
+                                }
 
                                 foreach ($reportrows as $field => $value) {
                                     if ($field == "tax") {
@@ -1169,8 +1176,15 @@ class cls_report_ssales extends cls_renderer {
 
                                             if (in_array($ticketid, $creditnotearray)) {
                                                 $value = "Exchanged";
-                                            } elseif ($reportrows->totdiscv > 0) {
-                                                $value = 'Discount';
+                                            } elseif ($totaldiscountvalue > 0) {
+                                                if(round($totaldiscountvalue) == 500){
+                                                    $value='Hurdle 1 Discount';
+                                                }elseif(round($totaldiscountvalue) == 1000){
+                                                    $value='Hurdle 2 Discount';
+                                                }else{
+                                                    
+                                                 $value = 'Discount';
+                                                }
                                             } else {
                                                 $value = 'Credit Note';
                                             }
