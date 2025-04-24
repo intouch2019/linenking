@@ -827,7 +827,7 @@ class cls_report_ssales extends cls_renderer {
                                     }
                                     if ($field == "ticketdiscountval") {
                                         $tableheaders .= "Ticket Discount Value:";
-                                        $queryfields .= "o.discount_val as totdiscv,";
+                                        $queryfields .= "sum(oi.discount_val) as totdiscv,";
                                     }
                                     if ($field == "tax") {
                                         $tableheaders .= "Tax on Bill Amt:";

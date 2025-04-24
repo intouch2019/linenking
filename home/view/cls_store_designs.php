@@ -295,7 +295,7 @@ Your session has expired. Click <a href="">here</a> to login.
             }
             
             
-	    $query = "select i.MRP, sum(i.curr_qty) as tot_qty from it_items i,it_ck_designs d where i.ctg_id=$ctg_id $brandquery and i.ctg_id=d.ctg_id and i.design_no=d.design_no and i.is_design_mrp_active=1 and i.curr_qty > 0 group by i.MRP having tot_qty > 0";
+	    $query = "select i.MRP, sum(i.curr_qty) as tot_qty, count(distinct i.design_no) as tot_active_design from it_items i,it_ck_designs d where i.ctg_id=$ctg_id $brandquery and i.ctg_id=d.ctg_id and i.design_no=d.design_no and i.is_design_mrp_active=1 and i.curr_qty > 0 group by i.MRP having tot_qty > 0";
             $db = new DBConn();
             $allprices = $db->fetchObjectArray($query);
             $db->closeConnection();
@@ -344,13 +344,15 @@ Your session has expired. Click <a href="">here</a> to login.
                     <option value=0 selected="selected">Select Price</option>
             <?php
                             foreach ($allprices as $price) {
+                                $design_sizeqty=0;
                                 $selected = "";
 				if ($price->tot_qty <= 0) { continue; }
                                 if ($price->MRP == $this->MRP) {
                                     $selected = "selected";
                                 }
+                                 if ($price && $price->tot_active_design) { $design_sizeqty = $price->tot_active_design; }
                                 ?>
-                    <option value="<?php echo $price->MRP; ?>" <?php echo $selected; ?>><?php echo "Rs. $price->MRP [$price->tot_qty units]"; ?></option>
+                    <option value="<?php echo $price->MRP; ?>" <?php echo $selected; ?>><?php echo "Rs. $price->MRP [$price->tot_qty units] [$design_sizeqty designs]"; ?></option>
                             <?php
                             }
                             ?>
@@ -370,11 +372,13 @@ Your session has expired. Click <a href="">here</a> to login.
 					$selected = "selected";
                                 }
                                 if(isset($this->MRP) && trim($this->MRP) != ""){ $mStr = " and i.MRP = $this->MRP"; }else{ $mStr = "";}
-	    			$obj2 = $db->fetchObject("select sum(i.curr_qty) as tot_qty from it_items i,it_ck_designs d where i.ctg_id=$ctg_id $brandquery and i.ctg_id=d.ctg_id and i.design_no=d.design_no and i.is_design_mrp_active=1 and i.size_id='$obj->size_id' $mStr and i.curr_qty > 0 having tot_qty >0");
+	    			$obj2 = $db->fetchObject("select sum(i.curr_qty) as tot_qty, count(distinct i.design_no) as tot_active_design from it_items i,it_ck_designs d where i.ctg_id=$ctg_id $brandquery and i.ctg_id=d.ctg_id and i.design_no=d.design_no and i.is_design_mrp_active=1 and i.size_id='$obj->size_id' $mStr and i.curr_qty > 0 having tot_qty >0");
 				$units = 0;
+                                $design_sizeqty = 0;
 				if ($obj2 && $obj2->tot_qty) { $units = $obj2->tot_qty; }
+                                if ($obj2 && $obj2->tot_active_design) { $design_sizeqty = $obj2->tot_active_design; }
                                 ?>
-                    <option value="<?php echo $obj->size_id; ?>" <?php echo $selected; ?>><?php echo "$obj->name [$units units]"; ?></option>
+                    <option value="<?php echo $obj->size_id; ?>" <?php echo $selected; ?>><?php echo "$obj->name [$units units] [$design_sizeqty designs]"; ?></option>
                             <?php
                             }
                             ?>
@@ -397,16 +401,17 @@ Your session has expired. Click <a href="">here</a> to login.
                                 if (isset($this->MRP) && trim($this->MRP) != "") {$mStr = " and i.MRP = $this->MRP"; } else {$mStr = "";}
                                 if (isset($this->size) && !empty($this->size)) {$sizeCondition = " and i.size_id= $this->size"; } else {$sizeCondition = ""; }     
                                 $temp="select sum(i.curr_qty) as tot_qty from it_items i,it_ck_designs d where i.ctg_id=$ctg_id $brandquery $sizeCondition and i.ctg_id=d.ctg_id and i.design_no=d.design_no and i.is_design_mrp_active=1 and i.style_id='$obj->it_styles_id' $mStr and i.curr_qty > 0 having tot_qty >0";
-                                $obj2 = $db->fetchObject("select sum(i.curr_qty) as tot_qty from it_items i,it_ck_designs d where i.ctg_id=$ctg_id $brandquery $sizeCondition and i.ctg_id=d.ctg_id and i.design_no=d.design_no and i.is_design_mrp_active=1 and i.style_id='$obj->it_styles_id' $mStr and i.curr_qty > 0 having tot_qty >0"); //$brandquery
+                                $obj2 = $db->fetchObject("select sum(i.curr_qty) as tot_qty, count(distinct i.design_no) as tot_active_design from it_items i,it_ck_designs d where i.ctg_id=$ctg_id $brandquery $sizeCondition and i.ctg_id=d.ctg_id and i.design_no=d.design_no and i.is_design_mrp_active=1 and i.style_id='$obj->it_styles_id' $mStr and i.curr_qty > 0 having tot_qty >0"); //$brandquery
 //                                    error_log("\nSTOCK MRP: $temp; \n", 3, "C:/xampp/htdocs/linenking/home/view/tmp.txt");
                                 $query = "select sum(i.curr_qty) as tot_qty from it_items i,it_ck_designs d where i.ctg_id=$ctg_id $brandquery $sizeCondition and i.ctg_id=d.ctg_id and i.design_no=d.design_no and i.is_design_mrp_active=1 and i.style_id='$obj->it_styles_id' $mStr and i.curr_qty > 0 having tot_qty >0";
-
+                                $design_sizeqty = 0;
                                 $units = 0;
                                 if ($obj2 && $obj2->tot_qty) {
                                     $units = $obj2->tot_qty;
                                 }
+                                if ($obj2 && $obj2->tot_active_design) { $design_sizeqty = $obj2->tot_active_design; }
                                 ?>
-                                <option value="<?php echo $obj->it_styles_id; ?>" <?php echo $selected; ?>><?php echo "$obj->name [$units units]"; ?></option>
+                                <option value="<?php echo $obj->it_styles_id; ?>" <?php echo $selected; ?>><?php echo "$obj->name [$units units] [$design_sizeqty designs]"; ?></option>
                                 <?php
                             }
                             ?>
