@@ -1158,8 +1158,16 @@ class cls_report_ssales extends cls_renderer {
                                     array_push($creditnotearray, $cn);
                                 }
                                 $totaldiscountvalue=0;
-                                if(!empty($reportrows->totdiscv)){
-                                $totaldiscountvalue+=$reportrows->totdiscv;
+                                if(!empty($reportrows->bill_no)){
+                                $orderid=$db->fetchObject("select id from it_orders where bill_no='$reportrows->bill_no' and store_id in ($this->storeidreport);");
+                                }                       
+                                if(!empty($orderid)){
+                                $orderidtotaldiscount=$db->fetchObject("select sum(discount_val) as discount from it_order_items where order_id=$orderid->id");
+                                }
+                                                              
+                                $totaldiscountvalue=0;
+                                if(!empty($orderidtotaldiscount)){
+                                $totaldiscountvalue=$orderidtotaldiscount->discount;
                                 }
                                 else{
                                     $totaldiscountvalue=0;
@@ -1176,6 +1184,12 @@ class cls_report_ssales extends cls_renderer {
 
                                             if (in_array($ticketid, $creditnotearray)) {
                                                 $value = "Exchanged";
+                                            }  else {
+                                                $value = 'Credit Note';
+                                            }
+                                        } else {
+                                            if (!empty($json_array['creditNoteUsed'])) {
+                                                $value = 'Exchanged';
                                             } elseif ($totaldiscountvalue > 0) {
                                                 if(round($totaldiscountvalue) == 500){
                                                     $value='Hurdle 1 Discount';
@@ -1185,14 +1199,6 @@ class cls_report_ssales extends cls_renderer {
                                                     
                                                  $value = 'Discount';
                                                 }
-                                            } else {
-                                                $value = 'Credit Note';
-                                            }
-                                        } else {
-                                            if (!empty($json_array['creditNoteUsed'])) {
-                                                $value = 'Exchanged';
-                                            } elseif ($firstDiscountValue > 0) {
-                                                $value = 'Discount';
                                             } else {
                                                 $value = 'Sale';
                                             }
