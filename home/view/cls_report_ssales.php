@@ -1158,8 +1158,19 @@ class cls_report_ssales extends cls_renderer {
                                     array_push($creditnotearray, $cn);
                                 }
                                 $totaldiscountvalue=0;
-                                if(!empty($reportrows->bill_no)){
-                                $orderid=$db->fetchObject("select id from it_orders where bill_no='$reportrows->bill_no' and store_id in ($this->storeidreport);");
+                                 if(!empty($reportrows->bill_no)){
+                                    if($this->storeidreport!="9"){
+                                        $orderid=$db->fetchObject("select id from it_orders where bill_no='$reportrows->bill_no' and store_id in ($this->storeidreport);");
+                                    
+                                 
+                                    }
+                                    else{
+//                                        echo "select id,store_name from it_codes where store_name='$reportrows->store_name';";
+                                        $getStoreids=$db->fetchObject("select id,store_name from it_codes where store_name='$reportrows->store_name';");
+//                                        echo "select id from it_orders where bill_no='$reportrows->bill_no';"."<br>";
+                                        $orderid=$db->fetchObject("select id from it_orders where bill_no='$reportrows->bill_no' and store_id=$getStoreids->id;");
+                                    }
+                                
                                 }                       
                                 if(!empty($orderid)){
                                 $orderidtotaldiscount=$db->fetchObject("select sum(discount_val) as discount from it_order_items where order_id=$orderid->id");
