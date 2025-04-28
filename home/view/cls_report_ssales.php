@@ -723,10 +723,27 @@ class cls_report_ssales extends cls_renderer {
                     } else {
                         $dQuery = "";
                     }
+                            //store sales report excel name
+                $filenameas_storename = "storesales_";
+            if ($this->currUser->usertype == UserType::Dealer) {
+                $filenameas_storename = $this->currUser->store_name . "_";
+            } else {
+                $ids = explode(',', $this->storeidreport);
+                if (count($ids) > 1) {
+                    $filenameas_storename = "Multistores_";
+                } else if (count($ids) == 1) {
+                    if ($this->storeidreport == 9) {
+                        $filenameas_storename = "Allstores_";
+                    } else {
+                        $storename = $db->fetchObject("select store_name from it_codes where id=$this->storeidreport");
+                        $filenameas_storename = $storename->store_name . "_";
+                    }
+                }
+            }
                     if ($this->gen != 1) {
                         $totTotalValue = 0;
                         $totAmt = "";
-                        $newfname = "Bill_itemwise_" . $sdate . "_" . $edate . ".csv";
+                        $newfname = $filenameas_storename."Bill_itemwise_" . $sdate . "_" . $edate . ".csv";
                         $group_by = array();
                         $total_td = "";
                         $gClause = "";
@@ -1053,7 +1070,7 @@ class cls_report_ssales extends cls_renderer {
                         //error_log("1:$query\n",3, "../ajax/tmp.txt");
                         $result = $db->execQuery($query);
                     } else if ($this->gen == 1) {
-                        $newfname = "Billwise_" . $sdate . "_" . $edate . ".csv";
+                        $newfname = $filenameas_storename."Billwise_" . $sdate . "_" . $edate . ".csv";
                         $totTotalValue = "";
                         $totAmt = 0;
                         $storeClause = "";

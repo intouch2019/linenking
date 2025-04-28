@@ -17,6 +17,11 @@ $storeid = isset($_GET['storeid']) && trim($_GET['storeid']) != "" ? $_GET['stor
 //print_r($dQuery);
 //print_r($storeid);
 //exit();
+$filenameas_storename = "Allstores_";
+if($storeid != -1){
+    $storename = $db->fetchObject("select store_name from it_codes where id=$storeid");
+    $filenameas_storename = $storename->store_name . "_";
+}
 $dtarr = explode(" - ", $dQuery);
 if (count($dtarr) == 1) {
     list($dd, $mm, $yy) = explode("-", $dtarr[0]);
@@ -79,11 +84,11 @@ if (count($dtarr) == 1) {
 //$db->closeConnection();
 $objPHPExcel = new PHPExcel();
 if (!empty($items)) {
-    createexcel($items, $objPHPExcel);
+    createexcel($items, $objPHPExcel,$filenameas_storename);
 //                    unset($dealersList);
 }
 
-function createexcel($items, $objPHPExcel) {
+function createexcel($items, $objPHPExcel,$filenameas_storename) {
 
     $sheetIndex = 0;
     // Create new PHPExcel object
@@ -188,7 +193,7 @@ function createexcel($items, $objPHPExcel) {
 }
 
 //echo "Row Count=======>".$rowCount."\n";
-$filename = "DGReturnReport_" . date('Y-m-d H:i:s') . ".xls";
+$filename = $filenameas_storename."DGReturnReport_" . date('Y-m-d H:i:s') . ".xls";
 header('Content-Type: application/vnd.ms-excel');
 header('Content-Disposition: attachment;filename=' . $filename);
 header('Cache-Control: max-age=0');
