@@ -61,6 +61,7 @@ class cls_bhm_tallytransfer extends cls_renderer {
                     <form id="stallytranfer" name="stallytransfer"  method="POST" action="formpost/genBHMStoreTallyXML.php">                                                    
                         Select the type of Tally XML to download from below: <br/><br/>
                         <input type ="radio" name="tallytype" id="tallytype" value="1"  required>GST Counter Sales
+                        <input type ="radio" name="tallytype" id="tallytype" value="2"  required>GST Cash Receipt Voucher
                         <br/><br/>
                         <div class="grid_5" id="storeDiv" name="storeDiv">
                             Select date range from below :*<br/>                                         
