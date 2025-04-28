@@ -11,8 +11,9 @@ try{
     $db = new DBConn();
     $cnt=0;
     $dealersList = array();
+    $filenameas_storename = "Allstores_";
       if(getCurrUser()->usertype==UserType::Dealer){
-      				
+      	$filenameas_storename = getCurrUser()->store_name . "_";			
        	$alldealersobj = $db->fetchObjectArray("select id,store_name,min_stock_level,max_stock_level  from it_codes where usertype = ".UserType::Dealer." and id= ".getCurrUser()->id." and is_closed = 0 and min_stock_level is not null" );
        
      }else{
@@ -105,14 +106,14 @@ try{
     } 
     $db->closeConnection();
     if(!empty($dealersList)) {
-       $fpath = createexcel($dealersList);             
+       $fpath = createexcel($dealersList,$filenameas_storename);             
        unset($dealersList);          
     }
 }catch(Exception $xcp){
     print $xcp->getMessage();
 }
 
-function createexcel($dealersList){
+function createexcel($dealersList,$filenameas_storename){
     $db = new DBConn();
     $sheetIndex=0;
     // Create new PHPExcel object
@@ -236,7 +237,7 @@ function createexcel($dealersList){
     $objWriter->save(str_replace(__FILE__, $fpath, __FILE__));    */
     
 // Redirect output to a client’s web browser (Excel5)
-$filename = "dealersBelowMSL_".date("Ymd-His").".xls";     
+$filename = $filenameas_storename."dealersBelowMSL_".date("Ymd-His").".xls";     
 header('Content-Type: application/vnd.ms-excel');
 header('Content-Disposition: attachment;filename='.$filename);
 header('Cache-Control: max-age=0');

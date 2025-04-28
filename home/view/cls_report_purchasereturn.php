@@ -318,10 +318,27 @@ foreach ($objs as $obj) {
 		$dQuery = "";
 	}
         
-       
+       //store purchase return report excel name
+                $filenameas_storename = "stores_";
+            if ($this->currUser->usertype == UserType::Dealer) {
+                $filenameas_storename = $this->currUser->store_name . "_";
+            } else {
+                $ids = explode(',', $this->storeidreport);
+                if (count($ids) > 1) {
+                    $filenameas_storename = "Multistores_";
+                } else if (count($ids) == 1) {
+                    if ($this->storeidreport == -1) {
+                        $filenameas_storename = "Allstores_";
+                    } else {
+                        $storename = $db->fetchObject("select store_name from it_codes where id=$this->storeidreport");
+                        $filenameas_storename = $storename->store_name . "_";
+                    }
+                }
+            }
+            
         if ($this->gen!=1) {
                         $totTotalValue=0;$totAmt="";
-            $newfname = "PurchaseReturnReports_".$sdate."_".$edate.".csv";           
+            $newfname = $filenameas_storename."PurchaseReturnReports_".$sdate."_".$edate.".csv";           
 	    $group_by = array(); $total_td = "";$gClause="";
             for ($x=1;$x<24;$x++) {
                 foreach ($this->fields as $field => $seq) {
