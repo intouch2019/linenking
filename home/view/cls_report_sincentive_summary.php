@@ -432,7 +432,7 @@ class cls_report_sincentive_summary extends cls_renderer {
                                         $fetchMult = "SELECT sr.bill_no, sr.salesman_no, sr.createtime,i.ctg_id FROM it_salesmanreport sr JOIN it_items i ON sr.barcode COLLATE utf8_general_ci = i.barcode WHERE sr.store_id in ($this->storeidreport)  and i.ctg_id NOT IN (16,13,14,18,19,20,24,25,26,27,28,29,33,35,36,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64) AND sr.$createtimequery GROUP BY sr.bill_no, sr.salesman_no HAVING COUNT(sr.bill_no) > 1 order by sr.createtime ";
                                     }
 //                                    echo $fetchMult;
-                                    $parameters = ["Total Incentive", "Single Qty Bills", "Qty in Single Bills", "Single Qty Value", "Single Qty Incentive Amt", "Multiple Qty No Membership Bills", "Qty in multiple bills", "Multiple Qty Bill Value", "Multiple Qty Incentive Amt", "Membership Bills 1st Hurdle (4999₹)", "Qty 1st Hurdle", "Value 1st Hurdle", "Membership 1st Hurdle Incentive Amt", "Membership Bills 2nd Hurdle (7999₹)", "Qty 2nd Hurdle", "Value 2nd Hurdle", "Membership 2nd Hurdle Incentive Amt"];
+                                    $parameters = ["Total Incentive", "Single Qty Bills", "Qty in Single Bills", "Single Qty Value", "Single Qty Incentive Amt", "Multiple Qty No Membership Bills", "Qty in multiple bills", "Multiple Qty Bill Value", "Multiple Qty Incentive Amt", "Membership Bills 1st Hurdle (5999₹)", "Qty 1st Hurdle", "Value 1st Hurdle", "Membership 1st Hurdle Incentive Amt", "Membership Bills 2nd Hurdle (9999₹)", "Qty 2nd Hurdle", "Value 2nd Hurdle", "Membership 2nd Hurdle Incentive Amt"];
                                     $fetchMultobjescts = $db->fetchObjectArray($fetchMult);
                                     $salesmanHurdle1Counts = array();
                                     $salesmanHurdle2Counts = array();
@@ -823,9 +823,9 @@ class cls_report_sincentive_summary extends cls_renderer {
                                                     $color = 'red';
                                                 } elseif (in_array($param, ["Multiple Qty No Membership Bills", "Qty in multiple bills", "Multiple Qty Bill Value", "Multiple Qty Incentive Amt"])) {
                                                     $color = 'blue';
-                                                } elseif (in_array($param, ["Membership Bills 1st Hurdle (4999₹)", "Qty 1st Hurdle", "Value 1st Hurdle", "Membership 1st Hurdle Incentive Amt"])) {
+                                                } elseif (in_array($param, ["Membership Bills 1st Hurdle (5999₹)", "Qty 1st Hurdle", "Value 1st Hurdle", "Membership 1st Hurdle Incentive Amt"])) {
                                                     $color = 'rgb(170, 51, 106)';
-                                                } elseif (in_array($param, ["Membership Bills 2nd Hurdle (7999₹)", "Qty 2nd Hurdle", "Value 2nd Hurdle", "Membership 2nd Hurdle Incentive Amt"])) {
+                                                } elseif (in_array($param, ["Membership Bills 2nd Hurdle (9999₹)", "Qty 2nd Hurdle", "Value 2nd Hurdle", "Membership 2nd Hurdle Incentive Amt"])) {
                                                     $color = 'rgb(204, 85, 0)';
                                                 }
 
@@ -845,9 +845,9 @@ class cls_report_sincentive_summary extends cls_renderer {
                                                         <td style="color: red;">
                                                         <?php } elseif (in_array($param, ["Multiple Qty No Membership Bills", "Qty in multiple bills", "Multiple Qty Bill Value", "Multiple Qty Incentive Amt"])) { ?>
                                                         <td style="color: blue;">
-                                                        <?php } elseif (in_array($param, ["Membership Bills 1st Hurdle (4999₹)", "Qty 1st Hurdle", "Value 1st Hurdle", "Membership 1st Hurdle Incentive Amt"])) { ?>
+                                                        <?php } elseif (in_array($param, ["Membership Bills 1st Hurdle (5999₹)", "Qty 1st Hurdle", "Value 1st Hurdle", "Membership 1st Hurdle Incentive Amt"])) { ?>
                                                         <td style="color: rgb(170, 51, 106);">
-                                                        <?php } elseif (in_array($param, ["Membership Bills 2nd Hurdle (7999₹)", "Qty 2nd Hurdle", "Value 2nd Hurdle", "Membership 2nd Hurdle Incentive Amt"])) { ?>
+                                                        <?php } elseif (in_array($param, ["Membership Bills 2nd Hurdle (9999₹)", "Qty 2nd Hurdle", "Value 2nd Hurdle", "Membership 2nd Hurdle Incentive Amt"])) { ?>
                                                         <td style="color: rgb(204, 85, 0);">
                                                         <?php } else { ?>
                                                         <td>
@@ -939,7 +939,7 @@ class cls_report_sincentive_summary extends cls_renderer {
                                                             echo $multyqtyincentive;
                                                             array_push($multiQtyIncentivearray, $multyqtyincentive);
                                                             $multybillqtyincenvalue += $multyqtyincentive;
-                                                        } elseif ($param == "Membership Bills 1st Hurdle (4999₹)") {
+                                                        } elseif ($param == "Membership Bills 1st Hurdle (5999₹)") {
                                                             echo isset($salesmanHurdle1Counts[$sm_no]) ? $salesmanHurdle1Counts[$sm_no] : '0';
                                                             $memberbills1sthurdlecount += isset($salesmanHurdle1Counts[$sm_no]) ? $salesmanHurdle1Counts[$sm_no] : '0';
                                                             array_push($firsthundlebillsarray, isset($salesmanHurdle1Counts[$sm_no]) ? $salesmanHurdle1Counts[$sm_no] : '0');
@@ -965,7 +965,7 @@ class cls_report_sincentive_summary extends cls_renderer {
                                                             echo $finalhurdle1incentive;
                                                             array_push($firsthurdleincentivearray, $finalhurdle1incentive);
                                                             $firsthurdletotalvalue += $finalhurdle1incentive;
-                                                        } elseif ($param == "Membership Bills 2nd Hurdle (7999₹)") {
+                                                        } elseif ($param == "Membership Bills 2nd Hurdle (9999₹)") {
 
                                                             array_push($secondhundlebillsarray, isset($salesmanHurdle2Counts[$sm_no]) ? $salesmanHurdle2Counts[$sm_no] : '0');
                                                             echo isset($salesmanHurdle2Counts[$sm_no]) ? $salesmanHurdle2Counts[$sm_no] : '0';
@@ -1007,9 +1007,9 @@ class cls_report_sincentive_summary extends cls_renderer {
                                                     <td style="color: red;">
                                                     <?php } elseif (in_array($param, ["Multiple Qty No Membership Bills", "Qty in multiple bills", "Multiple Qty Bill Value", "Multiple Qty Incentive Amt"])) { ?>
                                                     <td style="color: blue;">
-                                                    <?php } elseif (in_array($param, ["Membership Bills 1st Hurdle (4999₹)", "Qty 1st Hurdle", "Value 1st Hurdle", "Membership 1st Hurdle Incentive Amt"])) { ?>
+                                                    <?php } elseif (in_array($param, ["Membership Bills 1st Hurdle (5999₹)", "Qty 1st Hurdle", "Value 1st Hurdle", "Membership 1st Hurdle Incentive Amt"])) { ?>
                                                     <td style="color: rgb(170, 51, 106);">
-                                                    <?php } elseif (in_array($param, ["Membership Bills 2nd Hurdle (7999₹)", "Qty 2nd Hurdle", "Value 2nd Hurdle", "Membership 2nd Hurdle Incentive Amt"])) { ?>
+                                                    <?php } elseif (in_array($param, ["Membership Bills 2nd Hurdle (9999₹)", "Qty 2nd Hurdle", "Value 2nd Hurdle", "Membership 2nd Hurdle Incentive Amt"])) { ?>
                                                     <td style="color: rgb(204, 85, 0);">
                                                     <?php } else { ?>
                                                     <td>
@@ -1040,7 +1040,7 @@ class cls_report_sincentive_summary extends cls_renderer {
                                                     } elseif ($param == "Multiple Qty Incentive Amt") {
                                                         // multiple quantity incentive amount
                                                         echo $multybillqtyincenvalue;
-                                                    } elseif ($param == "Membership Bills 1st Hurdle (4999₹)") {
+                                                    } elseif ($param == "Membership Bills 1st Hurdle (5999₹)") {
                                                         // membership bills first hurdle
                                                         echo $memberbills1sthurdlecount;
                                                     } elseif ($param == "Qty 1st Hurdle") {
@@ -1052,7 +1052,7 @@ class cls_report_sincentive_summary extends cls_renderer {
                                                     } elseif ($param == "Membership 1st Hurdle Incentive Amt") {
                                                         // membership 1st hurdle incentive amount
                                                         echo $firsthurdletotalvalue;
-                                                    } elseif ($param == "Membership Bills 2nd Hurdle (7999₹)") {
+                                                    } elseif ($param == "Membership Bills 2nd Hurdle (9999₹)") {
                                                         echo $memberbills2ndhurdlecount;
                                                         // membership bills second hurdle
                                                     } elseif ($param == "Qty 2nd Hurdle") {
