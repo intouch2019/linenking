@@ -281,7 +281,7 @@ class cls_report_sincentive_summary extends cls_renderer {
                     <form action="" method="" onsubmit="reloadreport();
                                     return false;">
                         <div class="grid_12">
-                            <?php if ($this->currUser->usertype != UserType::Dealer) { ?>    
+                              
                                                                         <!--<p>Select store(s) below to view their current stock.</p>-->    
                                 <div class="grid_4">
                                     <b>Select Store*:</b><br/>
@@ -296,8 +296,12 @@ class cls_report_sincentive_summary extends cls_renderer {
                                         <option value="-1" <?php echo $defaultSel; ?> >Select Store</option> 
                                          <!--<option value="-1" <?php // echo $defaultSel; ?> hidden>Select Store</option>--> 
                                         <?php
+                                        if ($this->currUser->usertype != UserType::Dealer) { 
                                         $objs = $db->fetchObjectArray("select id,store_name from it_codes where usertype=" . UserType::Dealer . " order by store_name");
-
+                                        }else{
+                                             $storeid=$this->currUser->id;
+                                             $objs = $db->fetchObjectArray("select id,store_name from it_codes where id=$storeid and usertype=" . UserType::Dealer . " order by store_name");
+                                        }
                                         if ($this->storeidreport == "-1") {
                                             $storeid = array();
                                             $allstoreArrays = $db->fetchObjectArray("select id from it_codes where usertype = " . UserType::Dealer);
@@ -328,11 +332,7 @@ class cls_report_sincentive_summary extends cls_renderer {
                                     <span style="font-weight:bold;">Date Filter : </span></br> <input size="20" type="text" id="dateselect" name="dateselect" value="<?php echo $this->dtrange; ?>" /> (Click to see date options)
                                 </div>
                             </div>
-                        <?php } else { ?>  
-                            <div class="grid_12">
-                                <span style="font-weight:bold;">Date Filter : </span></br> <input size="20" type="text" id="dateselect" name="dateselect" value="<?php echo $this->dtrange; ?>" /> (Click to see date options)
-                            </div>
-                        <?php } ?>
+                       
                         <div class="clear"></div>
                         <br>
                         <div class="grid_12" id="itemselection">
