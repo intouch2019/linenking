@@ -19,18 +19,18 @@ public function send($toArray, $subject, $body,$attachments=false , $ccArray=fal
     #$mail->Password   = "Cottonking@2012";            // GMAIL password(old- cottonking2012)
     //$mail->Password   = "hqsehyhriufycvci";            // GMAIL password(old- cottonking2012) //App Password
     
-    $mail->Username   = "cottonkingwebmaster2@gmail.com";  // GMAIL username
+    $mail->Username   = "webmaster@kinglifestyle.com";  // GMAIL username
     //$mail->Password   = "Cottonking@321";            // GMAIL password
-    $mail->Password   = "ukrogttrmptbubla";            // App password
+    $mail->Password   = "bkaampfnvsknzjdq";            // App password
 
-    $mail->From       = "cottonkingwebmaster2@gmail.com";
+    $mail->From       = "webmaster@kinglifestyle.com";
     $mail->FromName   = "LinenKing Webmaster";
     $mail->Subject    = $subject;
     $mail->WordWrap   = 50; // set word wrap
 
     $mail->MsgHTML($body);
 
-    $mail->AddReplyTo("cottonkingwebmaster2@gmail.com","LinenKing Webmaster");
+    $mail->AddReplyTo("webmaster@kinglifestyle.com","LinenKing Webmaster");
     
     //adding attachement(s)
     if($attachments){
