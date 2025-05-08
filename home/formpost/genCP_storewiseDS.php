@@ -51,11 +51,11 @@ $html1 = '<style type="text/css">
                 
 #test2{border: 1px solid black;border-left:none;border-right:none;}
              table {
-               border-collapse: collapse; width: 800px;
+               border-collapse: collapse; width: 900px;
         }   
            td { padding: 4px;border-collapse: collapse;width: 500px;height: 10px;}
-           th { padding: 5px; text-align:center;border-collapse: collapse;width: 100px;height: 70px;}
-           tr { padding: 4px; border-collapse: collapse;width: 200px;height: 10px;}
+           th { padding: 4px; text-align:center;border-collapse: collapse;width: 100px;height: 70px;}
+           tr { padding: 4px; border-collapse: collapse;width: 300px;height: 15px;}
 </style>';
 
 // Generate the third HTML content section P5-S5 Calculations
@@ -168,15 +168,49 @@ $html1 = '<style type="text/css">
   $reimbursement_p12s12 = $actualPricePurchase_p12s12_int - $priceByCK_p12s12_int - $GST_diff_P12_S12;
   $reimbursement_p12s12_int = round((float)$reimbursement_p12s12);
   
-  // Total Reimburstment
-$totalReimburstment = ($reimbursement_p5s5_int + $reimbursement_p12s5_int + $reimbursement_p12s12_int);
+// Generate the first HTML content section P18-S18 Calculations
+if ($obj->Sale_Without_Discount_p18_s18 == 0) {
+    $saleWoDiscount_p18s18 = "-";
+} else {
+    $saleWoDiscount_p18s18 = trim($obj->Sale_Without_Discount_p18_s18);
+}
+$soldunserdiscschem_p18s18 = trim($obj->MRP_Sale_p18_s18) - $saleWoDiscount_p18s18;
+$soldunserdiscschem_p18s18_int = round((float) $soldunserdiscschem_p18s18);
+
+$actualSale_p18s18 = $soldunserdiscschem_p18s18_int - round($obj->Discount_p18_s18);
+$actualSale_p18s18_int = round((float) $actualSale_p18s18);
+
+$dealerDiscountAC_p18s18 = $actualSale_p18s18_int * trim($obj->Scheme_Discount);
+$dealerDiscountAC_p18s18_int = round((float) $dealerDiscountAC_p18s18);
+
+$priceByCK_p18s18 = $actualSale_p18s18_int - $dealerDiscountAC_p18s18_int;
+$priceByCK_p18s18_int = round((float) $priceByCK_p18s18);
+
+$originalMrpUnderDiscSchm_p18s18 = $soldunserdiscschem_p18s18_int;
+
+$dealerDiscount_p18s18 = $originalMrpUnderDiscSchm_p18s18 * trim($obj->Dealer_Margin);
+$dealerDiscount_p18s18_int = round((float) $dealerDiscount_p18s18);
+
+$actualPricePurchase_p18s18 = $originalMrpUnderDiscSchm_p18s18 - $dealerDiscount_p18s18_int;
+$actualPricePurchase_p18s18_int = round((float) $actualPricePurchase_p18s18);
+
+$mrp_sale_P18_S18 = trim($obj->MRP_Sale_p18_s18);
+$mrp_sale_GST_P18_S18 = round((float)($mrp_sale_P18_S18 / 1.18) * 0.18);
+$mrp_disc_sale_GST_P18_S18 = round((float)($actualSale_p18s18_int / 1.18) * 0.18);
+$GST_diff_P18_S18 = $mrp_sale_GST_P18_S18 - $mrp_disc_sale_GST_P18_S18;
+
+$reimbursement_p18s18 = $actualPricePurchase_p18s18_int - $priceByCK_p18s18_int - $GST_diff_P18_S18;
+$reimbursement_p18s18_int = round((float) $reimbursement_p18s18);
+
+// Total Reimburstment
+$totalReimburstment = ($reimbursement_p5s5_int + $reimbursement_p12s5_int + $reimbursement_p12s12_int + $reimbursement_p18s18_int);
 
 $html1 .='<page>';
 
     
 $html1 .= "<table style=\"margin-top: 50px;\" width=\"70%\" align=\"center\" border=\"1\">";
 
-    $html1  .= "<tr><td align='center' colspan=6><span style=\"font-size:14px; padding:14px 0 0px 0\">"
+    $html1  .= "<tr><td align='center' colspan=7><span style=\"font-size:14px; padding:14px 0 0px 0\">"
             . "<b>" . trim($obj->Row_Labels) . "</b><br>"
             . "<b>" . trim($obj->Credit_Point_Heading) . "</b><br>"
             . "<b>Calculations & Working for Credit Points</b></span></td></tr>";
@@ -185,9 +219,10 @@ $html1 .= "<table style=\"margin-top: 50px;\" width=\"70%\" align=\"center\" bor
     $html1 .= "<tr>"
             . "<td width=50% align='center'><b>Sr No.</b></td>"
             . "<td align='center'><b>Details</b></td>"
-            . "<td width=50% align='center'><b>Amount for P5-S5</b></td>"
-            . "<td width=50% align='center'><b>Amount for P12-S5</b></td>"
-            . "<td width=50% align='center'><b>Amount for P12-S12</b></td>"
+            . "<td width=50% align='center'><b>Amount for <br> P5-S5</b></td>"
+            . "<td width=50% align='center'><b>Amount for <br> P12-S5</b></td>"
+            . "<td width=50% align='center'><b>Amount for <br> P12-S12</b></td>"
+            . "<td width=50% align='center'><b>Amount for <br> P18-S18</b></td>"
             . "<td width=50% align='center'><b>TOTAL</b></td>"
             . "</tr>";
     
@@ -198,6 +233,7 @@ $html1 .= "<table style=\"margin-top: 50px;\" width=\"70%\" align=\"center\" bor
             . "<td width=50% align='center'>" . round((float)trim($obj->MRP_Sale_p5_s5)) . "</td>"
             . "<td width=50% align='center'>" . round((float)trim($obj->MRP_Sale_p12_s5)) . "</td>"
             . "<td width=50% align='center'>" . round((float)trim($obj->MRP_Sale_p12_s12)) . "</td>"
+            . "<td width=50% align='center'>" . round((float) trim($obj->MRP_Sale_p18_s18)) . "</td>"
             . "<td width=50% align='center'></td>"
             . "</tr>";
     
@@ -207,6 +243,7 @@ $html1 .= "<table style=\"margin-top: 50px;\" width=\"70%\" align=\"center\" bor
             . "<td width=50% align='center'>$saleWoDiscount_p5s5</td>"
             . "<td width=50% align='center'>$saleWoDiscount_p12s5</td>"
             . "<td width=50% align='center'>$saleWoDiscount_p12s12</td>"
+            . "<td width=50% align='center'>$saleWoDiscount_p18s18</td>"
             . "<td width=50% align='center'>$obj->non_scheme_sale</td>"
             . "</tr>";
    
@@ -216,6 +253,7 @@ $html1 .= "<table style=\"margin-top: 50px;\" width=\"70%\" align=\"center\" bor
             . "<td width=50% align='center'>$soldunserdiscschem_p5s5_int</td>"
             . "<td width=50% align='center'>$soldunserdiscschem_p12s5_int</td>"
             . "<td width=50% align='center'>" . round($soldunserdiscschem_p12s12_int) . "</td>"
+            . "<td width=50% align='center'>" . round($soldunserdiscschem_p18s18_int) . "</td>"
             . "<td width=50% align='center'></td>"
             . "</tr>";
    
@@ -225,6 +263,7 @@ $html1 .= "<table style=\"margin-top: 50px;\" width=\"70%\" align=\"center\" bor
             . "<td width=50% align='center'>" . round((float) trim($obj->Discount_p5_s5)) . "</td>"
             . "<td width=50% align='center'>" . round((float) trim($obj->Discount_p12_s5)) . "</td>"
             . "<td width=50% align='center'>" . round((float) trim($obj->Discount_p12_s12)) . "</td>"
+            . "<td width=50% align='center'>" . round((float) trim($obj->Discount_p18_s18)) . "</td>"
             . "<td width=50% align='center'></td>"
             . "</tr>";
     
@@ -234,6 +273,7 @@ $html1 .= "<table style=\"margin-top: 50px;\" width=\"70%\" align=\"center\" bor
             . "<td width=50% align='center'>$actualSale_p5s5_int</td>"
             . "<td width=50% align='center'>$actualSale_p12s5_int</td>"
             . "<td width=50% align='center'>" . round($actualSale_p12s12_int) . "</td>"
+            . "<td width=50% align='center'>" . round($actualSale_p18s18_int) . "</td>"
             . "<td width=50% align='center'></td>"
             . "</tr>";
     
@@ -243,6 +283,7 @@ $html1 .= "<table style=\"margin-top: 50px;\" width=\"70%\" align=\"center\" bor
             . "<td width=50% align='center'>$dealerDiscountAC_p5s5_int</td>"
             . "<td width=50% align='center'>$dealerDiscountAC_p12s5_int</td>"
             . "<td width=50% align='center'>" . round($dealerDiscountAC_p12s12_int) . "</td>"
+            . "<td width=50% align='center'>" . round($dealerDiscountAC_p18s18_int) . "</td>"
             . "<td width=50% align='center'></td>"
             . "</tr>";
     
@@ -252,6 +293,7 @@ $html1 .= "<table style=\"margin-top: 50px;\" width=\"70%\" align=\"center\" bor
             . "<td width=50% align='center'>$priceByCK_p5s5_int</td>"
             . "<td width=50% align='center'>$priceByCK_p12s5_int</td>"
             . "<td width=50% align='center'>" . round($priceByCK_p12s12_int) . "</td>"
+            . "<td width=50% align='center'>" . round($priceByCK_p18s18_int) . "</td>"
             . "<td width=50% align='center'></td>"
             . "</tr>";
 
@@ -261,6 +303,7 @@ $html1 .= "<table style=\"margin-top: 50px;\" width=\"70%\" align=\"center\" bor
             . "<td width=50% align='center'>$actualPricePurchase_p5s5_int</td>"
             . "<td width=50% align='center'>$actualPricePurchase_p12s5_int</td>"
             . "<td width=50% align='center'>" . round($actualPricePurchase_p12s12_int) . "</td>"
+            . "<td width=50% align='center'>" . round($actualPricePurchase_p18s18_int) . "</td>"
             . "<td width=50% align='center'></td>"
             . "</tr>";
     
@@ -270,6 +313,7 @@ $html1 .= "<table style=\"margin-top: 50px;\" width=\"70%\" align=\"center\" bor
             . "<td width=50% align='center'>".round($GST_diff_P5_S5)."</td>"
             . "<td width=50% align='center'>".round($GST_diff_P12_S5)."</td>"
             . "<td width=50% align='center'>".round($GST_diff_P12_S12)."</td>"
+            . "<td width=50% align='center'>".round($GST_diff_P18_S18)."</td>"
             . "<td width=50% align='center'></td>"
             . "</tr>";
  
@@ -279,6 +323,7 @@ $html1 .= "<table style=\"margin-top: 50px;\" width=\"70%\" align=\"center\" bor
             . "<td width=50% align='center'><b>$reimbursement_p5s5_int</b></td>"
             . "<td width=50% align='center'><b>$reimbursement_p12s5_int</b></td>"
             . "<td width=50% align='center'><b>" . round($reimbursement_p12s12_int) . "</b></td>"
+            . "<td width=50% align='center'><b>" . round($reimbursement_p18s18_int) . "</b></td>"
             . "<td width=50% align='center'><b>$totalReimburstment</b></td>"
             . "</tr>";
     
@@ -306,6 +351,10 @@ $html1 .= "<div style='display: flex; align-items: center; margin-left: 30px; wi
         . "<tr>"
         . "<td>GST for Selling Price above 1051</td>"
         . "<td width='50%' align='center'>12%</td>"
+        . "</tr>"
+        . "<tr>"
+        . "<td>GST for Selling Loyalty Membership</td>"
+        . "<td width='50%' align='center'>18%</td>"
         . "</tr>"
         . "<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>"
         . "<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>"
