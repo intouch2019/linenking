@@ -91,6 +91,7 @@ function checkfile($newdir) {
         $p12s12 = "";
         $p12s5 = "";
         $p5s5 = "";
+        $p18s18 = "";
         $srNo = "";
         $rowLabels = "";
         $storeId = "";
@@ -122,6 +123,12 @@ function checkfile($newdir) {
                 if ($colno == 14) {
                     $p5s5 = $value;
                     if ($p5s5 != "P5 S5") {
+                        $return = "Column name $value does not match";
+                    }
+                }
+                if ($colno == 18) {
+                    $p18s18 = $value;
+                    if ($p18s18 != "P18 S18") {
                         $return = "Column name $value does not match";
                     }
                 }
@@ -231,6 +238,31 @@ function checkfile($newdir) {
                     }
                 }
                 if ($colno == 17) {
+                    $totalvalue = $value;
+//                    print_r($value);    exit();
+                    if ($totalvalue != "Total Value") {
+                        $return = "Column name $value does not match";
+                    }
+                }
+                if ($colno == 18) {
+                    $mrpSale = $value;
+                    if ($mrpSale != "MRP Sale") {
+                        $return = "Column name $value does not match";
+                    }
+                }
+                if ($colno == 19) {
+                    $saleWoDiscount = $value;
+                    if ($saleWoDiscount != "Sale Without Discount") {
+                        $return = "Column name $value does not match";
+                    }
+                }
+                if ($colno == 20) {
+                    $discount = $value;
+                    if ($discount != "Discount") {
+                        $return = "Column name $value does not match";
+                    }
+                }
+                if ($colno == 21) {
                     $totalvalue = $value;
 //                    print_r($value);    exit();
                     if ($totalvalue != "Total Value") {
@@ -375,10 +407,39 @@ function checkfile($newdir) {
                 }
                 
                 if ($colno == 18) {
+                    $mrpSale = $value;
+                    if ($mrpSale == "") {
+                        $imltpflag = true;
+                        $return = "Empty field in *P18 S18-> MRP Sale* Column";
+                    }
+                }
+                if ($colno == 19) {
+                    $saleWoDiscount = $value;
+                    if ($saleWoDiscount == "") {
+                        $imltpflag = true;
+                        $return = "Empty field in *P18 S18-> Sale Without Discount* Column";
+                    }
+                }
+                if ($colno == 20) {
+                    $discount = $value;
+                    if ($discount == "") {
+                        $imltpflag = true;
+                        $return = "Empty field in *P18 S18-> Discount* Column";
+                    }
+                }
+                if ($colno == 21) {
+                    $totalvalue = $value;
+                    if ($totalvalue == "") {
+                        $imltpflag = true;
+                        $return = "Empty field in *P18 S18-> Total Value* Column";
+                    }
+                }
+                
+                if ($colno == 22) {
                     $nonschemesalevalue = $value;
                     if ($nonschemesalevalue == "") {
                         $imltpflag = true;
-                        $return = "Empty field in *P5 S5-> Non Scheme Sale Value* Column";
+                        $return = "Empty field in *Non Scheme Sale Value* Column";
                     }
                 }
                 $colno++;
@@ -435,6 +496,10 @@ function insertCpFile($newdir) {
         $saleWoDiscount_p5s5 = "";
         $discount_p5s5 = "";
         $totalvalue_p5s5 = "";
+        $mrpSale_p18s18 = "";
+        $saleWoDiscount_p18s18 = "";
+        $discount_p18s18 = "";
+        $totalvalue_p18s18= "";
         $nonschemesalevalue = "";
         $iquery = "";
         
@@ -512,7 +577,23 @@ function insertCpFile($newdir) {
                         $totalvalue = $db->safe(trim($value));
                         $totalvalue_p5s5 = $totalvalue;
                     }
-                     if ($colno == 18) {
+                    if ($colno == 18) {
+                        $mrpSale = $db->safe(trim($value));
+                        $mrpSale_p18s18 = $mrpSale;
+                    }
+                    if ($colno == 19) {
+                        $saleWoDiscount = $db->safe(trim($value));
+                        $saleWoDiscount_p18s18 = $saleWoDiscount;
+                    }
+                    if ($colno == 20) {
+                        $discount = $db->safe(trim($value));
+                        $discount_p18s18 = $discount;
+                    }
+                    if ($colno == 21) {
+                        $totalvalue = $db->safe(trim($value));
+                        $totalvalue_p18s18 = $totalvalue;
+                    }
+                     if ($colno == 22) {
                         $nonschemesalevalue = $db->safe(trim($value));
 
                     }
@@ -526,7 +607,8 @@ function insertCpFile($newdir) {
                 Scheme_Discount = $schemeDiscount, MRP_Sale_p12_s12 = $mrpSale_p12s12, Sale_Without_Discount_p12_s12 = $saleWoDiscount_p12s12, Discount_p12_s12 = $discount_p12s12, 
                 Total_Value_p12_s12 = $totalvalue_p12s12, MRP_Sale_p12_s5 = $mrpSale_p12s5, Sale_Without_Discount_p12_s5 = $saleWoDiscount_p12s5, Discount_p12_s5 = $discount_p12s5, 
                 Total_Value_p12_s5 = $totalvalue_p12s5, MRP_Sale_p5_s5 = $mrpSale_p5s5, Sale_Without_Discount_p5_s5 = $saleWoDiscount_p5s5, Discount_p5_s5 = $discount_p5s5, 
-                Total_Value_p5_s5 = $totalvalue_p5s5,non_scheme_sale=$nonschemesalevalue";
+                Total_Value_p5_s5 = $totalvalue_p5s5, MRP_Sale_p18_s18 = $mrpSale_p18s18, Sale_Without_Discount_p18_s18 = $saleWoDiscount_p18s18, Discount_p18_s18 = $discount_p18s18, 
+                Total_Value_p18_s18 = $totalvalue_p18s18, non_scheme_sale=$nonschemesalevalue";
             //    print_r($iquery); exit();
             $db->execInsert($iquery);
         }

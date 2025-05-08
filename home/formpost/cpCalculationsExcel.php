@@ -33,6 +33,8 @@ try {
     $objPHPExcel->getActiveSheet()->setCellValue('K1', 'P12 S5')->getStyle('K1')->applyFromArray($styleArray)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
     $objPHPExcel->getActiveSheet()->mergeCells('O1:R1');
     $objPHPExcel->getActiveSheet()->setCellValue('O1', 'P5 S5')->getStyle('O1')->applyFromArray($styleArray)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+    $objPHPExcel->getActiveSheet()->mergeCells('S1:V1');
+    $objPHPExcel->getActiveSheet()->setCellValue('S1', 'P18 S18')->getStyle('S1')->applyFromArray($styleArray)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
 //set the value in 2nd row
     $objPHPExcel->getActiveSheet()->setCellValue('A2', 'Sr No')->getStyle('A2')->applyFromArray($styleArray);
@@ -53,7 +55,11 @@ try {
     $objPHPExcel->getActiveSheet()->setCellValue('P2', 'Sale Without Discount')->getStyle('P2')->applyFromArray($styleArray);
     $objPHPExcel->getActiveSheet()->setCellValue('Q2', 'Discount')->getStyle('Q2')->applyFromArray($styleArray);
     $objPHPExcel->getActiveSheet()->setCellValue('R2', 'Total Value')->getStyle('R2')->applyFromArray($styleArray);
-    $objPHPExcel->getActiveSheet()->setCellValue('S2', 'Non Scheme Sale')->getStyle('S2')->applyFromArray($styleArray);
+    $objPHPExcel->getActiveSheet()->setCellValue('S2', 'MRP Sale')->getStyle('S2')->applyFromArray($styleArray);
+    $objPHPExcel->getActiveSheet()->setCellValue('T2', 'Sale Without Discount')->getStyle('T2')->applyFromArray($styleArray);
+    $objPHPExcel->getActiveSheet()->setCellValue('U2', 'Discount')->getStyle('U2')->applyFromArray($styleArray);
+    $objPHPExcel->getActiveSheet()->setCellValue('V2', 'Total Value')->getStyle('V2')->applyFromArray($styleArray);
+    $objPHPExcel->getActiveSheet()->setCellValue('W2', 'Non Scheme Sale')->getStyle('W2')->applyFromArray($styleArray);
     // Set width for each column
     $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(5);
     $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(35);
@@ -74,6 +80,10 @@ try {
     $objPHPExcel->getActiveSheet()->getColumnDimension('Q')->setWidth(10);
     $objPHPExcel->getActiveSheet()->getColumnDimension('R')->setWidth(10);
     $objPHPExcel->getActiveSheet()->getColumnDimension('S')->setWidth(10);
+    $objPHPExcel->getActiveSheet()->getColumnDimension('T')->setWidth(20);
+    $objPHPExcel->getActiveSheet()->getColumnDimension('U')->setWidth(10);
+    $objPHPExcel->getActiveSheet()->getColumnDimension('V')->setWidth(10);
+    $objPHPExcel->getActiveSheet()->getColumnDimension('W')->setWidth(15);
     
 // Redirect output to a client’s web browser (Excel5)
     header('Content-Type: application/vnd.ms-excel');

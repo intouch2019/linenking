@@ -234,7 +234,7 @@ class cls_report_discountschemecalculations extends cls_renderer {
                         </style>
                         <table style="width:250%" >
                             <tr>
-                                <th colspan="20" style="font-size: 14px; text-align: left; border: none;">Credit Point Discount Scheme
+                                <th colspan="24" style="font-size: 14px; text-align: left; border: none;">Credit Point Discount Scheme
                                     <span style="font-size: 10px;">( Scroll right to Download Pdf )</span>
                                 </th>
 
@@ -245,6 +245,7 @@ class cls_report_discountschemecalculations extends cls_renderer {
                                 <th colspan="4" style="background-color: lightgreen;">P12 S12</th>
                                 <th colspan="4" style="background-color: lightsalmon;">P12 S5</th>
                                 <th colspan="4" style="background-color: lightblue;">P5 S5</th>
+                                <th colspan="4" style="background-color: lightgoldenrodyellow;">P18 S18</th>
                                 <th></th>
                                 <th></th>
                             </tr>
@@ -255,6 +256,10 @@ class cls_report_discountschemecalculations extends cls_renderer {
                                 <td><b>Credit Point Heading</b></td>
                                 <td><b>Dealer Margin</b></td>
                                 <td><b>Scheme Discount</b></td>
+                                <td><b>MRP Sale</b></td>
+                                <td><b>Sale Without Discount</b></td>
+                                <td><b>Discount</b></td>
+                                <td><b>Total Value</b></td>
                                 <td><b>MRP Sale</b></td>
                                 <td><b>Sale Without Discount</b></td>
                                 <td><b>Discount</b></td>
@@ -281,13 +286,15 @@ class cls_report_discountschemecalculations extends cls_renderer {
                                 $iquery = "select id, Row_Labels,Store_ID,Credit_Point_Heading,Dealer_Margin,Scheme_Discount,MRP_Sale_p12_s12,
                                            Sale_Without_Discount_p12_s12,Discount_p12_s12, Total_Value_p12_s12,MRP_Sale_p12_s5,
                                            Sale_Without_Discount_p12_s5,Discount_p12_s5,Total_Value_p12_s5,MRP_Sale_p5_s5,
-                                           Sale_Without_Discount_p5_s5,Discount_p5_s5,Total_Value_p5_s5,non_scheme_sale from cp_calculations 
+                                           Sale_Without_Discount_p5_s5,Discount_p5_s5,Total_Value_p5_s5,
+                                           MRP_Sale_p18_s18,Sale_Without_Discount_p18_s18,Discount_p18_s18,Total_Value_p18_s18,non_scheme_sale from cp_calculations 
                                            order by CreateTime desc limit $start_from, $limit";
                             } else {
                                 $iquery = "select id, Row_Labels,Store_ID,Credit_Point_Heading,Dealer_Margin,Scheme_Discount,MRP_Sale_p12_s12,
                                            Sale_Without_Discount_p12_s12,Discount_p12_s12, Total_Value_p12_s12,MRP_Sale_p12_s5,
                                            Sale_Without_Discount_p12_s5,Discount_p12_s5,Total_Value_p12_s5,MRP_Sale_p5_s5,
-                                           Sale_Without_Discount_p5_s5,Discount_p5_s5,Total_Value_p5_s5,non_scheme_sale from cp_calculations where Store_ID=$this->storeid order by CreateTime desc limit $start_from, $limit";
+                                           Sale_Without_Discount_p5_s5,Discount_p5_s5,Total_Value_p5_s5,
+                                           MRP_Sale_p18_s18,Sale_Without_Discount_p18_s18,Discount_p18_s18,Total_Value_p18_s18,non_scheme_sale from cp_calculations where Store_ID=$this->storeid order by CreateTime desc limit $start_from, $limit";
                             }
 //       
                             $items = $db->fetchObjectArray($iquery);
@@ -314,7 +321,11 @@ class cls_report_discountschemecalculations extends cls_renderer {
                                         <td><?php echo round($obj->Sale_Without_Discount_p5_s5) ?></td>
                                         <td><?php echo round($obj->Discount_p5_s5) ?></td>
                                         <td><?php echo round($obj->Total_Value_p5_s5) ?></td>
-                                         <td><?php echo round($obj->non_scheme_sale) ?></td>
+                                        <td><?php echo round($obj->MRP_Sale_p18_s18) ?></td>
+                                        <td><?php echo round($obj->Sale_Without_Discount_p18_s18) ?></td>
+                                        <td><?php echo round($obj->Discount_p18_s18) ?></td>
+                                        <td><?php echo round($obj->Total_Value_p18_s18) ?></td>
+                                        <td><?php echo round($obj->non_scheme_sale) ?></td>
                                         <td>
                                             <a href='formpost/genCP_storewiseDS.php?storeid=<?php echo $obj->Store_ID; ?>&id=<?php echo $obj->id; ?>' target="_blank"><button class="view-button">Download</button></a>
                                         </td>
