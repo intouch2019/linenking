@@ -182,14 +182,14 @@ $data = [
      
      
     
-    array_merge(['Membership Bills 1st Hurdle (4999₹)'],$firsthundlebillsarray,[array_sum($firsthundlebillsarray)]),
+    array_merge(['Membership Bills 1st Hurdle (5999₹)'],$firsthundlebillsarray,[array_sum($firsthundlebillsarray)]),
       array_merge(['Qty 1st Hurdle'],$firsthurdleqtyarray,[array_sum($firsthurdleqtyarray)]),
      array_merge(['Value 1st Hurdle '],$firsthurdlevaluearray,[array_sum($firsthurdlevaluearray)]),
      array_merge(['Membership 1st Hurdle Incentive Amt'],$firsthurdleincentivearray,[array_sum($firsthurdleincentivearray)]),
     
      
       
-     array_merge(['Membership Bills 2nd Hurdle (7999₹)'],$secondhundlebillsarray,[array_sum($secondhundlebillsarray)]),
+     array_merge(['Membership Bills 2nd Hurdle (9999₹)'],$secondhundlebillsarray,[array_sum($secondhundlebillsarray)]),
      array_merge(['Qty 2nd Hurdle'],$secondhurdleqtyarray,[array_sum($secondhurdleqtyarray)]),
      array_merge(['Value 2nd Hurdle'],$secondhurdlevaluearray,[array_sum($secondhurdlevaluearray)]),
     array_merge(['Membership 2nd Hurdle Incentive Amt'],$secondhurdleincentivearray,[array_sum($secondhurdleincentivearray)]),

@@ -394,13 +394,7 @@ class cls_report_sincentive_summary extends cls_renderer {
                                         /*padding: 5px;*/
                                         /*text-align: center;*/
                                     }/*
-                                    td:first-child {
-                                        width: 25%;  Parameter column 
-                                        font-weight: bold;
-                                    }
-                                    td:not(:first-child) {
-                                        width: auto;  Salesman columns will auto-distribute 
-                                    }*/
+
                                 </style>
 
                                 <?php
@@ -424,14 +418,14 @@ class cls_report_sincentive_summary extends cls_renderer {
                                     <?php
                                     if ($this->storeidreport == -1) {
                                         $salesmannoquery = $db->fetchObjectArray("SELECT DISTINCT(salesman_no) FROM it_salesmanreport ORDER BY salesman_no ASC;");
-//                                        $fetchMult = "SELECT bill_no, salesman_no, createtime FROM it_salesmanreport WHERE $createtimequery and ctg_id NOT IN (9,42,57,58,45,56,52,60,62,61,34,44,40,54,36,11,39,53,47,43,21,29,41,37,51,24,23,13,28,50,35,38,49,48,55) GROUP BY bill_no, salesman_no HAVING COUNT(bill_no) > 1 order by createtime ";
-                                        $fetchMult = "SELECT sr.bill_no, sr.salesman_no, sr.createtime,i.ctg_id FROM it_salesmanreport sr JOIN it_items i ON sr.barcode COLLATE utf8_general_ci = i.barcode WHERE i.ctg_id NOT IN (16,13,14,18,19,20,24,25,26,27,28,29,33,35,36,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64) AND sr.$createtimequery GROUP BY sr.bill_no, sr.salesman_no HAVING COUNT(sr.bill_no) > 1 ";
-//                                        echo $fetchMult;
+                                                                                                                                                                                                                                                            
+                                        $fetchMult = "SELECT sr.bill_no, sr.salesman_no, sr.createtime,i.ctg_id FROM it_salesmanreport sr JOIN it_items i ON sr.barcode  = i.barcode WHERE i.ctg_id NOT IN (16,13,14,18,19,20,24,25,26,27,28,29,33,35,36,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64) AND sr.$createtimequery GROUP BY sr.bill_no, sr.salesman_no HAVING COUNT(sr.bill_no) > 1 ";
+
                                     } else {
                                         $salesmannoquery = $db->fetchObjectArray("SELECT DISTINCT(salesman_no) FROM it_salesmanreport where store_id in ($this->storeidreport) ORDER BY salesman_no ASC;");
-                                        $fetchMult = "SELECT sr.bill_no, sr.salesman_no, sr.createtime,i.ctg_id FROM it_salesmanreport sr JOIN it_items i ON sr.barcode COLLATE utf8_general_ci = i.barcode WHERE sr.store_id in ($this->storeidreport)  and i.ctg_id NOT IN (16,13,14,18,19,20,24,25,26,27,28,29,33,35,36,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64) AND sr.$createtimequery GROUP BY sr.bill_no, sr.salesman_no HAVING COUNT(sr.bill_no) > 1";
+                                        $fetchMult = "SELECT sr.bill_no, sr.salesman_no, sr.createtime,i.ctg_id FROM it_salesmanreport sr JOIN it_items i ON sr.barcode  = i.barcode WHERE sr.store_id in ($this->storeidreport)  and i.ctg_id NOT IN (16,13,14,18,19,20,24,25,26,27,28,29,33,35,36,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64) AND sr.$createtimequery GROUP BY sr.bill_no, sr.salesman_no HAVING COUNT(sr.bill_no) > 1";
                                     }
-//                                    echo $fetchMult;
+
                                     $parameters = ["Total Incentive", "Single Qty Bills", "Qty in Single Bills", "Single Qty Value", "Single Qty Incentive Amt", "Multiple Qty No Membership Bills", "Qty in multiple bills", "Multiple Qty Bill Value", "Multiple Qty Incentive Amt", "Membership Bills 1st Hurdle (5999₹)", "Qty 1st Hurdle", "Value 1st Hurdle", "Membership 1st Hurdle Incentive Amt", "Membership Bills 2nd Hurdle (9999₹)", "Qty 2nd Hurdle", "Value 2nd Hurdle", "Membership 2nd Hurdle Incentive Amt"];
                                     $fetchMultobjescts = $db->fetchObjectArray($fetchMult);
                                     $salesmanHurdle1Counts = array();
@@ -444,11 +438,8 @@ class cls_report_sincentive_summary extends cls_renderer {
                                     $singleqtybillss = 0;
                                     $singleqtybillssvalue = 0;
                                     foreach ($fetchMultobjescts as $billobjs) {
-                                       
-//                                        echo $billobjs->bill_no." "."<br>";
                                         
                                         if ($this->storeidreport != -1) {
-//                                            echo "SELECT id,quantity FROM it_orders WHERE bill_no = '{$billobjs->bill_no}' AND store_id in ($this->storeidreport);"."<br>";
                                             $orderinfoofmultybillno = $db->fetchObject("SELECT id,quantity FROM it_orders WHERE bill_no = '{$billobjs->bill_no}' AND store_id in ($this->storeidreport)");
                                         } else {
                                             $orderinfoofmultybillno = $db->fetchObject("SELECT id,quantity FROM it_orders WHERE bill_no = '{$billobjs->bill_no}'");
@@ -462,7 +453,6 @@ class cls_report_sincentive_summary extends cls_renderer {
                                         $getcnqty = 0;
                                         
                                         $getcreditnote = $db->fetchObject("select msg from it_order_payments where order_id=$orderinfoofmultybillno->id and payment_name='paperin'");
-//                                        echo "select msg from it_order_payments where order_id=$orderinfoofmultybillno->id and payment_name='paperin'";
 
                                         $cnusedbillno = "";
                                         if (!empty($getcreditnote)) {
@@ -470,7 +460,7 @@ class cls_report_sincentive_summary extends cls_renderer {
                                             $getcnqty = $db->fetchObject("select quantity from it_orders where bill_no='$cnusedbillno'");
                                         }
 
-                                        $getorderidsumqty = $db->fetchObject(" SELECT SUM(oi.quantity) AS quantity FROM it_order_items oi JOIN it_items i ON oi.barcode COLLATE utf8_unicode_ci = i.barcode COLLATE utf8_unicode_ci WHERE oi.order_id = $orderinfoofmultybillno->id AND i.ctg_id NOT IN (16,13,14,18,19,20,24,25,26,27,28,29,33,35,36,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64) ");
+                                        $getorderidsumqty = $db->fetchObject(" SELECT SUM(oi.quantity) AS quantity FROM it_order_items oi JOIN it_items i ON oi.barcode  = i.barcode  WHERE oi.order_id = $orderinfoofmultybillno->id AND i.ctg_id NOT IN (16,13,14,18,19,20,24,25,26,27,28,29,33,35,36,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64) ");
 
 
                                         $billQty = $getorderidsumqty->quantity;
@@ -479,7 +469,7 @@ class cls_report_sincentive_summary extends cls_renderer {
                                                 $finalQty = $getcnqty->quantity - $billQty;
                                             } else if ($getcnqty->quantity < 0) {
                                                 $finalQty = $billQty + $getcnqty->quantity;
-//                                                echo $finalQty;
+
                                             } else {
                                                 $finalQty = $billQty - $getcnqty->quantity;
                                             }
@@ -491,16 +481,14 @@ class cls_report_sincentive_summary extends cls_renderer {
                                         $isHurdle2 = false;
                                         $isMultiQty = false;
                                         if ($finalQty > 1) {
-                                            $orderinfopayments = $db->fetchObjectArray("SELECT * FROM it_order_payments 
-                                                WHERE order_id = {$orderinfoofmultybillno->id}");
+                                            $orderinfopayments = $db->fetchObjectArray("SELECT order_id,amount,payment_name FROM it_order_payments WHERE order_id = {$orderinfoofmultybillno->id}");
 
                                             $found500 = false;
 
                                             foreach ($orderinfopayments as $oipobj) {
                                                 $paymentNameLower = strtolower($oipobj->payment_name);
                                                 if (stripos($oipobj->payment_name, 'Loyalty') !== false) {
-                                                    $getbill_no=$db->fetchObject("select bill_no from it_orders where id=$oipobj->order_id");
-//                                                        echo $getbill_no->bill_no."<br>";
+                                               
                                                     if ($oipobj->amount == 500) {
                                                         $found500 = true;
                                                         $isHurdle1 = true;
@@ -508,8 +496,7 @@ class cls_report_sincentive_summary extends cls_renderer {
 
                                                     }
                                                     if ($oipobj->amount == 1000) {
-                                                        $getbill_no=$db->fetchObject("select bill_no from it_orders where id=$oipobj->order_id");
-//                                                        echo $getbill_no->bill_no."<br>";
+                                                   
                                                         $isHurdle2 = true;
                                                         $checknetvalue2ndhurdle = $db->fetchObject("select net_total from it_orders where id='$oipobj->order_id'");
                                                         if (!isset($salesmanHurdle2Counts[$billobjs->salesman_no])) {
@@ -525,7 +512,7 @@ class cls_report_sincentive_summary extends cls_renderer {
                                                         if (!isset($salesmanHurdle2Amount[$billobjs->salesman_no])) {
                                                             $salesmanHurdle2Amount[$billobjs->salesman_no] = 0;
                                                         }
-                                                        $checkaccformultyqty = $db->fetchObject("SELECT SUM(sr.net_total) AS total_net, i.ctg_id FROM it_salesmanreport sr JOIN it_items i ON sr.barcode COLLATE utf8_general_ci = i.barcode JOIN it_categories ct ON i.ctg_id = ct.id WHERE sr.bill_no = '$billobjs->bill_no' AND ct.name COLLATE utf8_general_ci IN ( 'BLAZER+TIE+BROOCH', 'TROUSER PIECE', 'TIE', 'BLAZER+PANT PIECE', 'BLAZER+SHIRT+ TROUSER+TIE', '60''Lee', 'SHIRT PIECE', '60'' Li Dobby Linen', '60''s Li Dobby Linen', '60''s Li Dobby', 'INTERLOCK', 'Others', 'Starch Spray', 'Fabric', 'Handkerchiefs', 'Salwar', 'Pajama', 'Cloth Bag', 'Thermal Roll', 'Wallet & Belt Combo', 'KURTA PIECE', 'Cabin Bag', 'Trolly Bag', 'Paper Bags', 'SOCKS', 'Jacket Buttons', 'Watch Pocket', 'Jeans Button & Revet Set', 'Gift Box', 'Paper Carry Bags', '2 Layer Mask', 'Non Surgical Pollution Mask', 'Ear Loop Extender', 'Stool', 'Shoes', 'Belt', 'Job Work', 'Zipper', 'Mannequin', 'Wooden Shirt Hanger', 'Wooden Trouser Hanger', 'Accessories Stand' ) and sr.store_id in ($this->storeidreport) ;");
+                                                        $checkaccformultyqty = $db->fetchObject("SELECT SUM(sr.net_total) AS total_net, i.ctg_id FROM it_salesmanreport sr JOIN it_items i ON sr.barcode  = i.barcode JOIN it_categories ct ON i.ctg_id = ct.id WHERE sr.bill_no = '$billobjs->bill_no' AND ct.name  IN ( 'BLAZER+TIE+BROOCH', 'TROUSER PIECE', 'TIE', 'BLAZER+PANT PIECE', 'BLAZER+SHIRT+ TROUSER+TIE', '60''Lee', 'SHIRT PIECE', '60'' Li Dobby Linen', '60''s Li Dobby Linen', '60''s Li Dobby', 'INTERLOCK', 'Others', 'Starch Spray', 'Fabric', 'Handkerchiefs', 'Salwar', 'Pajama', 'Cloth Bag', 'Thermal Roll', 'Wallet & Belt Combo', 'KURTA PIECE', 'Cabin Bag', 'Trolly Bag', 'Paper Bags', 'SOCKS', 'Jacket Buttons', 'Watch Pocket', 'Jeans Button & Revet Set', 'Gift Box', 'Paper Carry Bags', '2 Layer Mask', 'Non Surgical Pollution Mask', 'Ear Loop Extender', 'Stool', 'Shoes', 'Belt', 'Job Work', 'Zipper', 'Mannequin', 'Wooden Shirt Hanger', 'Wooden Trouser Hanger', 'Accessories Stand' ) and sr.store_id in ($this->storeidreport) ;");
 
                                                         if (!empty($checkaccformultyqty)) {
                                                             $salesmanHurdle2Amount[$billobjs->salesman_no] += $checknetvalue2ndhurdle->net_total - $checkaccformultyqty->total_net;
@@ -560,7 +547,7 @@ class cls_report_sincentive_summary extends cls_renderer {
                                                 if (!isset($salesmanHurdle1Amount[$billobjs->salesman_no])) {
                                                     $salesmanHurdle1Amount[$billobjs->salesman_no] = 0;
                                                 }
-                                                $checkaccformultyqty = $db->fetchObject("SELECT SUM(sr.net_total) AS total_net, i.ctg_id FROM it_salesmanreport sr JOIN it_items i ON sr.barcode COLLATE utf8_general_ci = i.barcode JOIN it_categories ct ON i.ctg_id = ct.id WHERE sr.bill_no = '$billobjs->bill_no' AND ct.name COLLATE utf8_general_ci IN ( 'BLAZER+TIE+BROOCH', 'TROUSER PIECE', 'TIE', 'BLAZER+PANT PIECE', 'BLAZER+SHIRT+ TROUSER+TIE', '60''Lee', 'SHIRT PIECE', '60'' Li Dobby Linen', '60''s Li Dobby Linen', '60''s Li Dobby', 'INTERLOCK', 'Others', 'Starch Spray', 'Fabric', 'Handkerchiefs', 'Salwar', 'Pajama', 'Cloth Bag', 'Thermal Roll', 'Wallet & Belt Combo', 'KURTA PIECE', 'Cabin Bag', 'Trolly Bag', 'Paper Bags', 'SOCKS', 'Jacket Buttons', 'Watch Pocket', 'Jeans Button & Revet Set', 'Gift Box', 'Paper Carry Bags', '2 Layer Mask', 'Non Surgical Pollution Mask', 'Ear Loop Extender', 'Stool', 'Shoes', 'Belt', 'Job Work', 'Zipper', 'Mannequin', 'Wooden Shirt Hanger', 'Wooden Trouser Hanger', 'Accessories Stand' ) and sr.store_id in ($this->storeidreport);");
+                                                $checkaccformultyqty = $db->fetchObject("SELECT SUM(sr.net_total) AS total_net, i.ctg_id FROM it_salesmanreport sr JOIN it_items i ON sr.barcode  = i.barcode JOIN it_categories ct ON i.ctg_id = ct.id WHERE sr.bill_no = '$billobjs->bill_no' AND ct.name  IN ( 'BLAZER+TIE+BROOCH', 'TROUSER PIECE', 'TIE', 'BLAZER+PANT PIECE', 'BLAZER+SHIRT+ TROUSER+TIE', '60''Lee', 'SHIRT PIECE', '60'' Li Dobby Linen', '60''s Li Dobby Linen', '60''s Li Dobby', 'INTERLOCK', 'Others', 'Starch Spray', 'Fabric', 'Handkerchiefs', 'Salwar', 'Pajama', 'Cloth Bag', 'Thermal Roll', 'Wallet & Belt Combo', 'KURTA PIECE', 'Cabin Bag', 'Trolly Bag', 'Paper Bags', 'SOCKS', 'Jacket Buttons', 'Watch Pocket', 'Jeans Button & Revet Set', 'Gift Box', 'Paper Carry Bags', '2 Layer Mask', 'Non Surgical Pollution Mask', 'Ear Loop Extender', 'Stool', 'Shoes', 'Belt', 'Job Work', 'Zipper', 'Mannequin', 'Wooden Shirt Hanger', 'Wooden Trouser Hanger', 'Accessories Stand' ) and sr.store_id in ($this->storeidreport);");
 
                                                 if (!empty($checkaccformultyqty)) {
                                                     $salesmanHurdle1Amount[$billobjs->salesman_no] += $checknetvalue1sthurdle->net_total - $checkaccformultyqty->total_net;
@@ -587,7 +574,7 @@ class cls_report_sincentive_summary extends cls_renderer {
                                                     $multiQtyAmount[$sm_no] = 0;
                                                 }
 
-                                                $checkaccformultyqty = $db->fetchObject("SELECT SUM(sr.net_total) AS total_net, i.ctg_id FROM it_salesmanreport sr JOIN it_items i ON sr.barcode COLLATE utf8_general_ci = i.barcode JOIN it_categories ct ON i.ctg_id = ct.id WHERE sr.bill_no = '$billobjs->bill_no' AND ct.name COLLATE utf8_general_ci IN ('BLAZER+TIE+BROOCH', 'TROUSER PIECE', 'TIE', 'BLAZER+PANT PIECE', 'BLAZER+SHIRT+ TROUSER+TIE', '60''Lee', 'SHIRT PIECE', '60'' Li Dobby Linen', '60''s Li Dobby Linen', '60''s Li Dobby', 'INTERLOCK', 'Others', 'Starch Spray', 'Fabric', 'Handkerchiefs', 'Salwar', 'Pajama', 'Cloth Bag', 'Thermal Roll', 'Wallet & Belt Combo', 'KURTA PIECE', 'Cabin Bag', 'Trolly Bag', 'Paper Bags', 'SOCKS', 'Jacket Buttons', 'Watch Pocket', 'Jeans Button & Revet Set', 'Gift Box', 'Paper Carry Bags', '2 Layer Mask', 'Non Surgical Pollution Mask', 'Ear Loop Extender', 'Stool', 'Shoes', 'Belt', 'Job Work', 'Zipper', 'Mannequin', 'Wooden Shirt Hanger', 'Wooden Trouser Hanger', 'Accessories Stand' ) and sr.store_id IN ($this->storeidreport);");
+                                                $checkaccformultyqty = $db->fetchObject("SELECT SUM(sr.net_total) AS total_net, i.ctg_id FROM it_salesmanreport sr JOIN it_items i ON sr.barcode  = i.barcode JOIN it_categories ct ON i.ctg_id = ct.id WHERE sr.bill_no = '$billobjs->bill_no' AND ct.name  IN ('BLAZER+TIE+BROOCH', 'TROUSER PIECE', 'TIE', 'BLAZER+PANT PIECE', 'BLAZER+SHIRT+ TROUSER+TIE', '60''Lee', 'SHIRT PIECE', '60'' Li Dobby Linen', '60''s Li Dobby Linen', '60''s Li Dobby', 'INTERLOCK', 'Others', 'Starch Spray', 'Fabric', 'Handkerchiefs', 'Salwar', 'Pajama', 'Cloth Bag', 'Thermal Roll', 'Wallet & Belt Combo', 'KURTA PIECE', 'Cabin Bag', 'Trolly Bag', 'Paper Bags', 'SOCKS', 'Jacket Buttons', 'Watch Pocket', 'Jeans Button & Revet Set', 'Gift Box', 'Paper Carry Bags', '2 Layer Mask', 'Non Surgical Pollution Mask', 'Ear Loop Extender', 'Stool', 'Shoes', 'Belt', 'Job Work', 'Zipper', 'Mannequin', 'Wooden Shirt Hanger', 'Wooden Trouser Hanger', 'Accessories Stand' ) and sr.store_id IN ($this->storeidreport);");
 
                                                 if (!empty($checkaccformultyqty)) {
                                                     $multiQtyAmount[$sm_no] += $checkNetValue->net_total - $checkaccformultyqty->total_net;
@@ -616,75 +603,32 @@ class cls_report_sincentive_summary extends cls_renderer {
                                         $storeClause = "AND sr.store_id IN ($this->storeidreport)";
                                     }
 
-                                    $query = "
-    SELECT t.salesman_no, t.bill_no, t.total_qty, t.net_total 
-    FROM (
-        SELECT sr.salesman_no, sr.bill_no, SUM(sr.qty) AS total_qty, SUM(sr.net_total) AS net_total 
-        FROM it_salesmanreport sr 
-        JOIN it_items i ON sr.barcode COLLATE utf8_general_ci = i.barcode 
-        WHERE i.ctg_id NOT IN (16,13,14,18,19,20,24,25,26,27,28,29,33,35,36,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64)
-        $storeClause
-        AND sr.$createtimequery  
-        GROUP BY sr.bill_no, sr.salesman_no
-    ) AS t 
-    JOIN it_orders o ON t.bill_no = o.bill_no 
-    WHERE o.tickettype IN (0, 6)
-    " . ($this->storeidreport != -1 ? "AND o.store_id IN ($this->storeidreport)" : "") . ";
-";
+                                    $query = " SELECT t.salesman_no, t.bill_no, t.total_qty, t.net_total FROM ( SELECT sr.salesman_no, sr.bill_no, SUM(sr.qty) AS total_qty, SUM(sr.net_total) AS net_total FROM it_salesmanreport sr JOIN it_items i ON sr.barcode  = i.barcode WHERE i.ctg_id NOT IN (16,13,14,18,19,20,24,25,26,27,28,29,33,35,36,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64) $storeClause AND sr.$createtimequery GROUP BY sr.bill_no, sr.salesman_no ) AS t JOIN it_orders o ON t.bill_no = o.bill_no WHERE o.tickettype IN (0, 6) " . ($this->storeidreport != -1 ? "AND o.store_id IN ($this->storeidreport)" : "") . "; ";
                                     
-//                                    echo $query;
                                     $singleQtyResults = $db->fetchObjectArray($query);
 
                                     foreach ($singleQtyResults as $bObjs) {
                                         $billNo = trim($bObjs->bill_no);
-                                        $getbillorderid = $db->fetchObject("
-        SELECT id,amount FROM it_orders 
-        WHERE bill_no = '$billNo' 
-        " . ($this->storeidreport != -1 ? "AND store_id IN ($this->storeidreport)" : "") . "
-        LIMIT 1
-    ");
+                                        $getbillorderid = $db->fetchObject(" SELECT id,amount FROM it_orders WHERE bill_no = '$billNo' " . ($this->storeidreport != -1 ? "AND store_id IN ($this->storeidreport)" : "") . " LIMIT 1 ");
 
                                         if (!$getbillorderid)
                                             continue;
 
-                                        $getorderidbillqty = $db->fetchObject("
-        SELECT SUM(oi.quantity) AS quantity 
-        FROM it_order_items oi 
-        JOIN it_items i ON oi.barcode COLLATE utf8_unicode_ci = i.barcode COLLATE utf8_unicode_ci 
-        WHERE oi.order_id = $getbillorderid->id 
-        AND i.ctg_id NOT IN (16,13,14,18,19,20,24,25,26,27,28,29,33,35,36,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64)
-    ");
+                                        $getorderidbillqty = $db->fetchObject(" SELECT SUM(oi.quantity) AS quantity FROM it_order_items oi JOIN it_items i ON oi.barcode  = i.barcode  WHERE oi.order_id = $getbillorderid->id AND i.ctg_id NOT IN (16,13,14,18,19,20,24,25,26,27,28,29,33,35,36,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64) ");
 
                                         $billQty = $getorderidbillqty && $getorderidbillqty->quantity !== null ? (float) $getorderidbillqty->quantity : 0;
 
                                         // Get Credit Note No.
-                                        $getcnno = $db->fetchObject("
-        SELECT DISTINCT(TRIM(return_no)) AS cn 
-        FROM it_salesmanreport 
-        WHERE bill_no = '$billNo' 
-        " . ($this->storeidreport != -1 ? "AND store_id IN ($this->storeidreport)" : "") . "
-        LIMIT 1
-    ");
+                                        $getcnno = $db->fetchObject(" SELECT DISTINCT(TRIM(return_no)) AS cn FROM it_salesmanreport WHERE bill_no = '$billNo' " . ($this->storeidreport != -1 ? "AND store_id IN ($this->storeidreport)" : "") . " LIMIT 1 ");
 
                                         $cnQty = 0;
                                         if (!empty($getcnno) && $getcnno->cn != "") {
                                             $cnNo = $getcnno->cn;
-                                            $getcnorderid = $db->fetchObject("
-            SELECT id FROM it_orders 
-            WHERE bill_no = '$cnNo' 
-            " . ($this->storeidreport != -1 ? "AND store_id IN ($this->storeidreport)" : "") . "
-            LIMIT 1
-        ");
+                                            $getcnorderid = $db->fetchObject(" SELECT id FROM it_orders WHERE bill_no = '$cnNo' " . ($this->storeidreport != -1 ? "AND store_id IN ($this->storeidreport)" : "") . " LIMIT 1 ");
 
 
                                             if ($getcnorderid) {
-                                                $getorderidcnqty = $db->fetchObject("
-                SELECT SUM(oi.quantity) AS quantity 
-                FROM it_order_items oi 
-                JOIN it_items i ON oi.barcode COLLATE utf8_unicode_ci = i.barcode COLLATE utf8_unicode_ci 
-                WHERE oi.order_id = $getcnorderid->id 
-                AND i.ctg_id NOT IN (16,13,14,18,19,20,24,25,26,27,28,29,33,35,36,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64)
-            ");
+                                                $getorderidcnqty = $db->fetchObject(" SELECT SUM(oi.quantity) AS quantity FROM it_order_items oi JOIN it_items i ON oi.barcode  = i.barcode  WHERE oi.order_id = $getcnorderid->id AND i.ctg_id NOT IN (16,13,14,18,19,20,24,25,26,27,28,29,33,35,36,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64) ");
                                                 $cnQty = $getorderidcnqty && $getorderidcnqty->quantity !== null ? (float) $getorderidcnqty->quantity : 0;
                                             }
                                         }
@@ -697,14 +641,14 @@ class cls_report_sincentive_summary extends cls_renderer {
                                         if ($finalsinglebillqty == 1) {
 
                                         if (isset($singleQtyMap[$bObjs->salesman_no])) {
-
+                                            
                                             $singleQtyMap[$bObjs->salesman_no]['singleqtybills'] += $finalsinglebillqty;
                                             $singleQtyMap[$bObjs->salesman_no]['value'] += $getbillorderid->amount;
                                         } else {
                                             // First entry for that salesman
                                             $singleQtyMap[$bObjs->salesman_no] = array(
                                                 'singleqtybills' => 1,
-                                                'value' => $bObjs->net_total
+                                                'value' => $getbillorderid->amount
                                             );
                                         }
                                     }
