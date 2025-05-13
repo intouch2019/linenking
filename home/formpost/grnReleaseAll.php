@@ -696,7 +696,7 @@ if (count($errors) == 0) {
         array_push($EmailArray, "kunal.marathe@kinglifestyle.com");
         array_push($EmailArray, "rghule@intouchrewards.com");
         array_push($EmailArray, "harshada.marathe@kinglifestyle.com");
-        array_push($EmailArray, "ahatwar@intouchrewards.com");
+//        array_push($EmailArray, "ahatwar@intouchrewards.com");
         array_push($EmailArray, "koushik.marathe@kinglifestyle.com");
         array_push($EmailArray, "rohan.phalke@kinglifestyle.com");
         array_push($EmailArray, "prashant.mane@kinglifestyle.com");
@@ -720,7 +720,7 @@ if (count($errors) == 0) {
         array_push($EmailArray, "kunal.marathe@kinglifestyle.com");
         array_push($EmailArray, "rghule@intouchrewards.com");
         array_push($EmailArray, "harshada.marathe@kinglifestyle.com");
-        array_push($EmailArray, "ahatwar@intouchrewards.com");
+//        array_push($EmailArray, "ahatwar@intouchrewards.com");
         array_push($EmailArray, "koushik.marathe@kinglifestyle.com");
         array_push($EmailArray, "rohan.phalke@kinglifestyle.com");
         array_push($EmailArray, "prashant.mane@kinglifestyle.com");
