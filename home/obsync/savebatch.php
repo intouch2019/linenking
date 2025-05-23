@@ -875,6 +875,7 @@ foreach ($arr as $orderinfo) {
 
 //                     $currpaymentline = trim($currpaymentline);
 //                     if($currpaymentline == ""){ continue; }
+                  foreach($paymentlines as $currpaymentline){
                    if(isset($currpaymentline) && !empty($currpaymentline) && $currpaymentline != null){ 
                      //list($payment_name,$payment_amt,$payment_msg) = explode("<>", $currpaymentline);
                     $payment_name = $currpaymentline->m_sName;
@@ -896,6 +897,7 @@ foreach ($arr as $orderinfo) {
                      $db->execInsert($pquery);
                     }
                  }
+            }
                  //update disc_pct if gift voucher is used
                  updateDiscPct($order_id);
             }
