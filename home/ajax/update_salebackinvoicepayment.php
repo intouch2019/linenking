@@ -27,8 +27,12 @@ if (!$currStore) {
 //}
 
 // Retrieve data from AJAX request
-  if($_GET['utr']==0 || $_GET['remark']==''){
-      print "Please Fill Utr And Remark";
+  if($_GET['utr']=== '0'){
+      print "Please Fill Utr ";
+    return;
+  }
+  if($_GET['remark']===''){
+      print "Please Fill  Remark";
     return;
   }
 $utrval = $_GET['utr'];
