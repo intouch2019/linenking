@@ -92,13 +92,10 @@ function saveOrder($store, $items) {
     if (!$storeinfo) {
         return "ERROR:Store $store not found";
     } else {
-        if($storeinfo->inactive == 1){ //means store is disabled
-//            return "ERROR:Store $store is disabled so order against it cannot be placed ";  
-            return;
-        }
+       
         if($storeinfo->is_closed == 1){ //means store is closed
 //            return "<br> ERROis_closedR:Store $store is closed so order against it cannot be placed ";  
-            return;
+            return "ERROR: Store $storeinfo->store_name is closed <br/>";
         } 
         //check if at least 1 qty exist for the items.
         $sum = 0;
