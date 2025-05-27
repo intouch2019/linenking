@@ -106,14 +106,14 @@ function checkForItems($storename, $items) {
     $db = new DBConn();
     $store = $db->safe($storename);
     
-    $storeinfo = $db->fetchObject("SELECT inactive, is_closed FROM it_codes WHERE id = $store");
+    $storeinfo = $db->fetchObject("SELECT inactive, is_closed,store_name FROM it_codes WHERE id = $store");
 
     if (!$storeinfo) {
         return "ERROR: Store $store not found<br/>";
     }
 
-    if ($storeinfo->inactive == 1 || $storeinfo->is_closed == 1) {
-        return "";
+    if ($storeinfo->is_closed == 1) {
+        return "ERROR: Store $storeinfo->store_name is closed <br/>";
     }
 
     $sum = 0;
@@ -193,8 +193,8 @@ function saveOrder($store, $items) {
         return "ERROR: Store $store not found<br/>";
     }
 
-    if ($storeinfo->inactive == 1 || $storeinfo->is_closed == 1) {
-        return "";
+    if ($storeinfo->is_closed == 1) {
+        return "ERROR: Store $storeinfo->store_name is closed <br/>";
     }
 
     $sum = 0;
