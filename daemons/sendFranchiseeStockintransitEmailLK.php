@@ -178,6 +178,7 @@ function createexcel($dealersList){
          array_push($toArray, 'harshada.marathe@kinglifestyle.com');
          array_push($toArray, 'rohan.phalke@kinglifestyle.com');
          array_push($toArray, 'prashant.mane@kinglifestyle.com');
+         array_push($toArray,"samir.joshi@kinglifestyle.com");
 //         array_push($toArray, 'abhoir@intouchrewards.com');
         
         
