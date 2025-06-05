@@ -1219,9 +1219,9 @@ class cls_report_ssales extends cls_renderer {
                                             if (!empty($json_array['creditNoteUsed'])) {
                                                 $value = 'Exchanged';
                                             } elseif ($totaldiscountvalue > 0) {
-                                                if(round($totaldiscountvalue) == 500){
+                                                if(round($totaldiscountvalue) >= 499 && round($totaldiscountvalue) <= 501){
                                                     $value='Hurdle 1 Discount';
-                                                }elseif(round($totaldiscountvalue) == 1000){
+                                                }elseif(round($totaldiscountvalue) >= 999 && round($totaldiscountvalue) <= 1001){
                                                     $value='Hurdle 2 Discount';
                                                 }else{
                                                     
