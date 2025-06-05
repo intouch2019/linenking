@@ -105,7 +105,7 @@ class cls_report_mdtsr extends cls_renderer {
         $menuitem = "mdtsr";
         include "sidemenu." . $this->currUser->usertype . ".php";
         $db = new DBConn();
-        $stores = $db->fetchObjectArray("SELECT id, store_name FROM it_codes WHERE usertype = 4 AND is_closed = 0");
+        $stores = $db->fetchObjectArray("SELECT id, store_name FROM it_codes WHERE usertype = 4");
 ?>
 <div class="grid_10">
     <div class="box">
@@ -118,7 +118,7 @@ class cls_report_mdtsr extends cls_renderer {
                         <select name="storeidforvoucher[]" id="storeidforvoucher" multiple required style="width: 100%; padding: 10px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; box-sizing: border-box;">
                             <option value="-1">All Stores</option>
                             <?php
-                                $objs = $db->fetchObjectArray("SELECT id, store_name FROM it_codes WHERE usertype=4 AND is_closed=0");
+                                $objs = $db->fetchObjectArray("SELECT id, store_name FROM it_codes WHERE usertype=4");
                                 foreach ($objs as $obj) {
                                     ?>
                                     <option value="<?php echo $obj->id; ?>"> <?php echo $obj->store_name; ?></option>
@@ -169,7 +169,7 @@ class cls_report_mdtsr extends cls_renderer {
 
                             if (in_array("-1", $store_ids)) {
                                 // "All Stores" selected — get all store IDs from DB
-                                $all_stores = $db->fetchObjectArray("SELECT id FROM it_codes WHERE usertype=4 AND is_closed=0");
+                                $all_stores = $db->fetchObjectArray("SELECT id FROM it_codes WHERE usertype=4");
                                 $store_ids = array_map(function($store) {
                                     return (int)$store->id;
                                 }, $all_stores);
