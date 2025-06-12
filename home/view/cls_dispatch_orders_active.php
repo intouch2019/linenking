@@ -86,6 +86,7 @@ class cls_dispatch_orders_active extends cls_renderer {
 		}
 ?>
 		</select>
+                <span style="display: inline-block; width: 12px; height: 12px; background-color: #87CEEB; border: 1px solid black; border-radius: 5px; margin-left: 20px;"></span> Membership Order
 	</div>
         <div style="margin-top: 0px; margin-right: 0px; margin-bottom: 0px; margin-left: 0px; position: static; overflow-x: hidden; overflow-y: hidden; ">
             <div class="block" id="accordion" style="margin-top: 0px; margin-right: 0px; margin-bottom: 0px; margin-left: 0px; ">
@@ -97,6 +98,7 @@ class cls_dispatch_orders_active extends cls_renderer {
                             <th>Order No</th>
                             <th><?php if ($this->store_id) { ?><input type="checkbox" name="all" id="checkall">Check All</button><?php } ?> </th>
                             <th>Status</th>
+                            <th>Membership Order</th>
                             <th>Order Date</th>
                             <th>Total Items</th>
                             <th>Total Price</th>
@@ -111,13 +113,16 @@ class cls_dispatch_orders_active extends cls_renderer {
 			$tot_qty += $order->order_qty;
 			$tot_amount += $order->order_amount;
 			  $ids .= $order->id.",";
+                        $membershipquery = "SELECT EXISTS ( SELECT 1 FROM it_ck_orders o JOIN it_ck_orderitems oi ON o.id = oi.order_id JOIN it_items i ON oi.item_id = i.id WHERE o.id = $order->id AND i.ctg_id = 65 ) AS result";//check the order contains Membership ctg barcode
+                        $resultmembershipquery=$db->fetchObject($membershipquery);
 			?>
                         <tr>
                             <td><?php echo $count; ?><span style="display:none;"><?php echo $order->id; ?></span></td>
                             <td><?php echo $order->store_name; ?></td>
-                            <td><?php echo $order->order_no; ?></td>
+                            <td style="background-color: <?php echo ($resultmembershipquery && $resultmembershipquery->result > 0) ? '#87CEEB' : 'transparent'; ?>"><?php echo $order->order_no; ?></td>
                             <td><?php if ($this->store_id) { ?><input type="checkbox" id="ch_<?php echo $order->id; ?>"><?php } ?></td>
                             <td><?php echo OrderStatus::getName($order->status); ?></td>
+                            <?php if ($resultmembershipquery && $resultmembershipquery->result > 0) { ?>     <td><?php echo "Yes" ?></td> <?php } else { ?>     <td><?php echo "No" ?></td> <?php } ?> 
                             <td><?php echo mmddyy($order->active_time); ?></td>
                             <td><?php echo $order->order_qty; ?></td>
                             <td><?php echo $order->order_amount; ?></td>
