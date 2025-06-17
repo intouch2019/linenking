@@ -60,7 +60,7 @@ if (!empty($storeObjs)) {
 //        echo $query; exit();
         $netobj = $db->fetchObjectArray($query);
 
-        $storename = "SELECT ic.store_name, ic.tally_name, ic.address, s.state, ic.retail_saletally_name, ic.retail_sale_cash_name, ic.retail_sale_card_name, ic.retail_sale_upi_name FROM it_codes ic LEFT JOIN states s ON s.id = ic.state_id WHERE ic.id = $bhmStore->id";
+        $storename = "SELECT ic.store_name, ic.tally_name, ic.address, s.state, ic.retail_saletally_name, ic.cash_receipt_name, ic.retail_sale_card_name, ic.retail_sale_upi_name FROM it_codes ic LEFT JOIN states s ON s.id = ic.state_id WHERE ic.id = $bhmStore->id";
 //        echo $storename; exit();
         $store_obj = $db->fetchObject($storename);
 
@@ -100,7 +100,7 @@ if (!empty($storeObjs)) {
                         $payment_type = "Cash Sale";
                         $amt = $cash_credit->nettotal;
                         $ALLLEDGERENTRIES_LIST_1 = $VOUCHER->addChild("ALLLEDGERENTRIES.LIST");
-                        $ALLLEDGERENTRIES_LIST_1->addChild("LEDGERNAME", "$store_obj->retail_sale_cash_name");
+                        $ALLLEDGERENTRIES_LIST_1->addChild("LEDGERNAME", "$store_obj->cash_receipt_name");
                         $ALLLEDGERENTRIES_LIST_1->addChild("ISDEEMEDPOSITIVE", "Yes");
                         $ALLLEDGERENTRIES_LIST_1->addChild("AMOUNT", round($amt * -1));
                         $ALLLEDGERENTRIES_LIST_1->addChild("VATEXPAMOUNT", round($amt * -1));

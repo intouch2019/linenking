@@ -16,7 +16,7 @@ $clsLogger = new clsLogger();
 $db = new DBConn();
 
 
-if (empty($retail_saletally_name) || empty($retail_sale_cash_name) || empty($retail_sale_card_name) || empty($retail_sale_upi_name)) {
+if (empty($retail_saletally_name) || empty($retail_sale_cash_name) || empty($retail_sale_card_name) || empty($retail_sale_upi_name)  || empty($cash_receipt_name)) {
     $errors['storec'] = "Please enter a value for all required fields marked with *";
 } else {
     try {
@@ -24,11 +24,12 @@ if (empty($retail_saletally_name) || empty($retail_sale_cash_name) || empty($ret
         $retail_sale_cash_name = $db->safe($retail_sale_cash_name);
         $retail_sale_card_name = $db->safe($retail_sale_card_name);
         $retail_sale_upi_name = $db->safe($retail_sale_upi_name);
+        $cash_receipt_name = $db->safe($cash_receipt_name);
 //        $retail_sale_bank_name = $db->safe($retail_sale_bank_name);
         if($retail_sale_bank_name !=""){
-        $query = "update it_codes set retail_saletally_name = $retail_saletally_name, retail_sale_cash_name=$retail_sale_cash_name, retail_sale_card_name=$retail_sale_card_name, retail_sale_upi_name=$retail_sale_upi_name, retail_sale_bank_name='$retail_sale_bank_name' where id = $store->id";       
+        $query = "update it_codes set retail_saletally_name = $retail_saletally_name, retail_sale_cash_name=$retail_sale_cash_name, retail_sale_card_name=$retail_sale_card_name, retail_sale_upi_name=$retail_sale_upi_name, retail_sale_bank_name='$retail_sale_bank_name',cash_receipt_name=$cash_receipt_name where id = $store->id";       
         } else {
-        $query = "update it_codes set retail_saletally_name = $retail_saletally_name, retail_sale_cash_name=$retail_sale_cash_name, retail_sale_card_name=$retail_sale_card_name, retail_sale_upi_name=$retail_sale_upi_name where id = $store->id";
+        $query = "update it_codes set retail_saletally_name = $retail_saletally_name, retail_sale_cash_name=$retail_sale_cash_name, retail_sale_card_name=$retail_sale_card_name, retail_sale_upi_name=$retail_sale_upi_name,cash_receipt_name=$cash_receipt_name where id = $store->id";
         }
 //        print $query;
         $db->execUpdate($query);
