@@ -98,7 +98,7 @@ try {
 <tr><td style=\"font-weight:bold;font-size:7px;\" colspan=\"4\">Product: $item->category&nbsp;&nbsp;&nbsp;$br$print_material</td></tr>
 <tr><td colspan=\"4\" style=\"font-size:8px;\">Design no: $item->design_no&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Qty in Nos: $item->num_units</td></tr>.";
                 if ($item->size == "45cm X 45cm") {
-                        $html .= "<tr style=\"font-weight:bold;\"><td colspan=\"4\" align=\"center\" style=\"font-size:10px;\"><span style=\"font-size:8px;\"></span> SIZE-$item->size  - $item->style</td></tr>.";
+                        $html .= "<tr style=\"font-weight:bold;\"><td colspan=\"4\" align=\"center\" style=\"font-size:10px;\"><span style=\"font-size:8px;\"></span> SIZE-$item->size </td></tr>";
                     } else {
                         $html .= "<tr style=\"font-weight:bold;\"><td colspan=\"4\" align=\"center\" style=\"font-size:10px;\"><span style=\"font-size:8px;\">TO FIT</span> SIZE-$item->size cm - $item->style</td></tr>.";
                     }
@@ -160,7 +160,7 @@ try {
                 <tr><td style=\"font-weight:bold;font-size:7px;\" colspan=\"4\">Product: $item->category&nbsp;&nbsp;&nbsp;$br$print_material</td></tr>
                 <tr><td colspan=\"4\" style=\"font-size:8px;\">Design no: $item->design_no&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Qty in Nos: $item->num_units</td></tr>.";
                 if($item->size == "45cm X 45cm"){
-                    $html.="<tr style=\"font-weight:bold;\"><td colspan=\"4\" align=\"center\" style=\"font-size:10px;\"><span style=\"font-size:8px;\"></span> SIZE-$item->size  - $item->style</td></tr>.";
+                    $html.="<tr style=\"font-weight:bold;\"><td colspan=\"4\" align=\"center\" style=\"font-size:10px;\"><span style=\"font-size:8px;\"></span> SIZE-$item->size</td></tr>";
                 }else{
                     $html.="<tr style=\"font-weight:bold;\"><td colspan=\"4\" align=\"center\" style=\"font-size:10px;\"><span style=\"font-size:8px;\">TO FIT</span> SIZE-$item->size cm - $item->style</td></tr>.";
                 }
@@ -182,7 +182,7 @@ try {
                 <tr><td style=\"font-weight:bold;font-size:7px;\" colspan=\"4\">Product: $item->category&nbsp;&nbsp;&nbsp;$br$print_material</td></tr>
                 <tr><td colspan=\"4\" style=\"font-size:8px;\">Design no: $item->design_no&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Qty in Nos: $item->num_units</td></tr>.";
                 if($item->size == "45cm X 45cm"){
-                    $html.="<tr style=\"font-weight:bold;\"><td colspan=\"4\" align=\"center\" style=\"font-size:10px;\"><span style=\"font-size:8px;\"></span> SIZE-$item->size  - $item->style</td></tr>.";
+                    $html.="<tr style=\"font-weight:bold;\"><td colspan=\"4\" align=\"center\" style=\"font-size:10px;\"><span style=\"font-size:8px;\"></span> SIZE-$item->size</td></tr>";
                 }else{
                     $html.="<tr style=\"font-weight:bold;\"><td colspan=\"4\" align=\"center\" style=\"font-size:10px;\"><span style=\"font-size:8px;\">TO FIT</span> SIZE-$item->size cm - $item->style</td></tr>.";
                 }
