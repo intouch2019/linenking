@@ -96,9 +96,13 @@ try {
 <tr><th> </th><th> </th><th> </th><th> </th></tr>
 <tr><td style=\"font-weight:bold;\" colspan=\"4\"></td></tr>
 <tr><td style=\"font-weight:bold;font-size:7px;\" colspan=\"4\">Product: $item->category&nbsp;&nbsp;&nbsp;$br$print_material</td></tr>
-<tr><td colspan=\"4\" style=\"font-size:8px;\">Design no: $item->design_no&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Qty in Nos: $item->num_units</td></tr>
-<tr style=\"font-weight:bold;\"><td colspan=\"4\" align=\"center\" style=\"font-size:10px;\"><span style=\"font-size:8px;\">TO FIT</span> SIZE-$item->size cm - $item->style</td></tr>
-<tr><td align=\"center\" colspan=\"4\"><barcode type=\"EAN13\" value=\"$item->barcode\" label=\"label\" style=\"width:36mm; height:6mm; font-size: 2mm\"></barcode></td></tr>
+<tr><td colspan=\"4\" style=\"font-size:8px;\">Design no: $item->design_no&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Qty in Nos: $item->num_units</td></tr>.";
+                if ($item->size == "45cm X 45cm") {
+                        $html .= "<tr style=\"font-weight:bold;\"><td colspan=\"4\" align=\"center\" style=\"font-size:10px;\"><span style=\"font-size:8px;\"></span> SIZE-$item->size  - $item->style</td></tr>.";
+                    } else {
+                        $html .= "<tr style=\"font-weight:bold;\"><td colspan=\"4\" align=\"center\" style=\"font-size:10px;\"><span style=\"font-size:8px;\">TO FIT</span> SIZE-$item->size cm - $item->style</td></tr>.";
+                    }
+                    $html.="<tr><td align=\"center\" colspan=\"4\"><barcode type=\"EAN13\" value=\"$item->barcode\" label=\"label\" style=\"width:36mm; height:6mm; font-size: 2mm\"></barcode></td></tr>
 <tr style=\"font-weight:bold;\"><td colspan=\"2\" style=\"font-size:$fontsz;\">Rs.$item->MRP.00$mtr</td><td colspan=\"2\" style=\"font-size:5px;\">Maximum Retail Price<br />(Incl. All Taxes)</td></tr>
 
 </table>
@@ -154,9 +158,15 @@ try {
                 <table width=\"100%\" style=\"font-size:9px;margin-top:6px;\">
                 <tr><th> </th><th> </th><th> </th><th> </th></tr>
                 <tr><td style=\"font-weight:bold;font-size:7px;\" colspan=\"4\">Product: $item->category&nbsp;&nbsp;&nbsp;$br$print_material</td></tr>
-                <tr><td colspan=\"4\" style=\"font-size:8px;\">Design no: $item->design_no&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Qty in Nos: $item->num_units</td></tr>
-                <tr style=\"font-weight:bold;\"><td colspan=\"4\" align=\"center\" style=\"font-size:10px;\"><span style=\"font-size:8px;\">TO FIT</span> SIZE-$item->size cm - $item->style</td></tr>
-                <tr><td align=\"center\" colspan=\"4\"><barcode type=\"EAN13\" value=\"$item->barcode\" label=\"label\" style=\"width:36mm; height:6mm; font-size: 2mm;\"></barcode></td></tr>
+                <tr><td colspan=\"4\" style=\"font-size:8px;\">Design no: $item->design_no&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Qty in Nos: $item->num_units</td></tr>.";
+                if($item->size == "45cm X 45cm"){
+                    $html.="<tr style=\"font-weight:bold;\"><td colspan=\"4\" align=\"center\" style=\"font-size:10px;\"><span style=\"font-size:8px;\"></span> SIZE-$item->size  - $item->style</td></tr>.";
+                }else{
+                    $html.="<tr style=\"font-weight:bold;\"><td colspan=\"4\" align=\"center\" style=\"font-size:10px;\"><span style=\"font-size:8px;\">TO FIT</span> SIZE-$item->size cm - $item->style</td></tr>.";
+                }
+                
+                    
+                $html.="<tr><td align=\"center\" colspan=\"4\"><barcode type=\"EAN13\" value=\"$item->barcode\" label=\"label\" style=\"width:36mm; height:6mm; font-size: 2mm;\"></barcode></td></tr>
                 <tr style=\"font-weight:bold;\"><td colspan=\"2\" style=\"font-size:$fontsz;\">Rs.$item->MRP.00$mtr</td><td colspan=\"2\" style=\"font-size:6px;\">Maximum Retail Price<br />(Incl. All Taxes)</td></tr>
                 
                 </table>
@@ -170,9 +180,13 @@ try {
                 <table width=\"100%\" style=\"font-size:9px;margin-top:6px;\">
                 <tr><th> </th><th> </th><th> </th><th> </th></tr>
                 <tr><td style=\"font-weight:bold;font-size:7px;\" colspan=\"4\">Product: $item->category&nbsp;&nbsp;&nbsp;$br$print_material</td></tr>
-                <tr><td colspan=\"4\" style=\"font-size:8px;\">Design no: $item->design_no&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Qty in Nos: $item->num_units</td></tr>
-                <tr style=\"font-weight:bold;\"><td colspan=\"4\" align=\"center\" style=\"font-size:10px;\"><span style=\"font-size:8px;\">TO FIT</span> SIZE-$item->size cm - $item->style</td></tr>
-                <tr><td align=\"center\" colspan=\"4\"><barcode type=\"EAN13\" value=\"$item->barcode\" label=\"label\" style=\"width:36mm; height:6mm; font-size: 2mm;\"></barcode></td></tr>
+                <tr><td colspan=\"4\" style=\"font-size:8px;\">Design no: $item->design_no&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Qty in Nos: $item->num_units</td></tr>.";
+                if($item->size == "45cm X 45cm"){
+                    $html.="<tr style=\"font-weight:bold;\"><td colspan=\"4\" align=\"center\" style=\"font-size:10px;\"><span style=\"font-size:8px;\"></span> SIZE-$item->size  - $item->style</td></tr>.";
+                }else{
+                    $html.="<tr style=\"font-weight:bold;\"><td colspan=\"4\" align=\"center\" style=\"font-size:10px;\"><span style=\"font-size:8px;\">TO FIT</span> SIZE-$item->size cm - $item->style</td></tr>.";
+                }
+                $html.="<tr><td align=\"center\" colspan=\"4\"><barcode type=\"EAN13\" value=\"$item->barcode\" label=\"label\" style=\"width:36mm; height:6mm; font-size: 2mm;\"></barcode></td></tr>
                 <tr style=\"font-weight:bold;\"><td colspan=\"2\" style=\"font-size:$fontsz;\">Rs.$item->MRP.00$mtr</td><td colspan=\"2\" style=\"font-size:6px;\">Maximum Retail Price<br />(Incl. All Taxes)</td></tr>
                 
                 </table>
