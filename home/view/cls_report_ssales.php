@@ -778,13 +778,13 @@ class cls_report_ssales extends cls_renderer {
                                         $group_by[] = "o.tickettype";
                                         $total_td .= "<td></td>";
                                     }
-                                    if ($field == "nnetsale") {
+                                    if ($field == "billtype") {
                                         $tableheaders .= "Net Sale Value:";
-                                        $queryfields .= "if(o.tickettype<='0',o.net_total,''),";
+                                        $queryfields .= "if(o.tickettype<='0',o.net_total,'')  AS billnettotalval,";
                                         $total_td .= "<td></td>";
                                     }
 
-                                    if ($field == "store") {
+                                    if ($field == "billno") {
                                         $tableheaders .= "Store Name:";
                                         $queryfields .= "c.store_name,";
                                         $group_by[] = "o.store_id";
@@ -1187,8 +1187,11 @@ class cls_report_ssales extends cls_renderer {
 //                                        echo "select id from it_orders where bill_no='$reportrows->bill_no';"."<br>";
                                         $orderid=$db->fetchObject("select id from it_orders where bill_no='$reportrows->bill_no' and store_id=$getStoreids->id;");
                                     }
+                                $isloyaltybill=$db->fetchObject("SELECT CASE WHEN EXISTS ( SELECT 1 FROM it_orders o, it_order_payments op WHERE o.id = op.order_id AND o.bill_no = '$reportrows->bill_no' AND o.store_id IN ($this->storeidreport) AND op.payment_name = 'loyalty' ) THEN 1 ELSE 0 END AS loyalty_payment_used");
+//                                print_r("SELECT CASE WHEN EXISTS ( SELECT 1 FROM it_orders o, it_order_payments op WHERE o.id = op.order_id AND o.bill_no = 'LK-252600519' AND o.store_id IN (9) AND op.payment_name = 'loyalty' ) THEN 1 ELSE 0 END AS loyalty_payment_used");
+                                 $billnettotalval = (isset($reportrows->billnettotalval) && $reportrows->billnettotalval !== '') ? $reportrows->billnettotalval : 0;
                                 
-                                }                       
+                                    }                       
                                 if(!empty($orderid)){
                                 $orderidtotaldiscount=$db->fetchObject("select sum(discount_val) as discount from it_order_items where order_id=$orderid->id");
                                 }
@@ -1219,14 +1222,27 @@ class cls_report_ssales extends cls_renderer {
                                             if (!empty($json_array['creditNoteUsed'])) {
                                                 $value = 'Exchanged';
                                             } elseif ($totaldiscountvalue > 0) {
-                                                if(round($totaldiscountvalue) >= 499 && round($totaldiscountvalue) <= 501){
-                                                    $value='Hurdle 1 Discount';
-                                                }elseif(round($totaldiscountvalue) >= 999 && round($totaldiscountvalue) <= 1001){
-                                                    $value='Hurdle 2 Discount';
-                                                }else{
+                                                if($isloyaltybill->loyalty_payment_used == "1"){
+                                                    if (round($totaldiscountvalue) >= 499 && round($totaldiscountvalue) <= 501) {
+                                                $value = 'Hurdle 1 Discount';
+                                            } elseif (round($totaldiscountvalue) >= 999 && round($totaldiscountvalue) <= 1001) {
+                                                $value = 'Hurdle 2 Discount';
+                                            } else {
+
+                                                $value = 'Discount';
+                                            }
+                                        }else{
+                                                 if (round($billnettotalval)>9999) {
+                                                $value = 'Hurdle 2 Discount';
+                                            } elseif (round($billnettotalval)>5999) {
+                                                $value = 'Hurdle 1 Discount';
+                                            } else {
+
+                                                $value = 'Discount';
+                                            }
                                                     
-                                                 $value = 'Discount';
                                                 }
+                                                
                                             } else {
                                                 $value = 'Sale';
                                             }
