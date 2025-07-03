@@ -179,7 +179,7 @@ foreach ($objs as $obj) {
                 
          //active_orders
         else if($aColumns[$i] == 'active_orders'){
-            $active_amount = $db->fetchObject("select sum(order_amount) as active_amount from it_ck_orders where status=1 and store_id=$obj->id");
+            $active_amount = $db->fetchObject("select sum(order_amount) as active_amount from it_ck_orders where status in (1,2,5,6) and store_id=$obj->id");
             if(isset($active_amount) && trim($active_amount->active_amount)!=""){
                 $active_amt=$active_amount->active_amount;
             }
@@ -234,7 +234,7 @@ foreach ($objs as $obj) {
         else if ($aColumns[$i] == 'appreal_tot_stock') {
 
             //$appreal_tot_stock = $store_appreal_stock_val + $intransit_appreal_val;
-            $appreal_tot_stock_incl_intransit += $tot_intransit_stk + $tot_curr_stk;
+            $appreal_tot_stock_incl_intransit += $tot_intransit_stk + $tot_curr_stk + $active_amt;
 
             $row[] = $appreal_tot_stock_incl_intransit;
         }
@@ -276,7 +276,7 @@ foreach ($objs as $obj) {
         }
         //max_difference
         else if ($aColumns[$i] == 'max_difference') {
-            $row[] = $appreal_tot_stock_incl_intransit + $active_amt - $obj->max_stock_level;
+            $row[] = $appreal_tot_stock_incl_intransit - $obj->max_stock_level;
             //$row[] = $tot_stk - $obj->max_stock_level;
         } else {
             $row[] = "-";
