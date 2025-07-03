@@ -32,8 +32,8 @@ try{
             $tobj = $db->fetchObject($query2);
             if(isset($tobj) && trim($tobj->intransit_stock_value)!=""){ $intransit_stock_val = $tobj->intransit_stock_value ;}
             else{ $intransit_stock_val = 0; }
-            
-            $tot_stk_val = $store_stock_val + $intransit_stock_val;
+            $active_amount = $db->fetchObject("select sum(order_amount) as active_amount from it_ck_orders where status in (1,2,5,6,7) and store_id=$dealerobj->id")->active_amount;
+            $tot_stk_val = $store_stock_val + $intransit_stock_val + $active_amount;
             if($tot_stk_val < $dealerobj->min_stock_level){
                    $diff = $dealerobj->min_stock_level - $tot_stk_val;
                 $dealersList[$dealerobj->id] = $dealerobj->store_name."::".$store_stock_val."::".$intransit_stock_val."::".$tot_stk_val."::".$dealerobj->min_stock_level;
