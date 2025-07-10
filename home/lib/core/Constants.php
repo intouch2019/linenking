@@ -434,4 +434,22 @@ class OTP_Status{
         else{ return "Unknown"; }
     }
 }
+
+class Discount_scheme{
+    const loyalty_membership = 1;
+    const dealer_discount = 2;
+    
+    public static function getALL(){
+        return array(
+          Discount_scheme::loyalty_membership => "Loyalty Membership",
+          Discount_scheme::dealer_discount => "EOSS"
+        );
+    }
+    
+    public static function getName($type){
+        $all = Discount_scheme::getALL();
+        if(isset($all[$type])){ return $all[$type];}
+        else{ return "Unknown"; }
+    }
+}
 ?>

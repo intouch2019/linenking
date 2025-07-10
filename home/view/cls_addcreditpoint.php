@@ -54,6 +54,52 @@ function fetchSampleExcel(){
     window.location.href="formpost/addCreditpointExcel.php";
 }
 
+function toggleDateInputs() {
+    const schemeInput = document.getElementById('scheme').value;
+    const monthInput = document.getElementById('monthyear');
+    const monthDiv = document.getElementById('monthInputDiv');
+    const dateRangeDiv = document.getElementById('dateRangeDiv');
+
+    if (schemeInput === "2") {
+        monthInput.disabled = true;
+        monthDiv.style.display = "none";
+        dateRangeDiv.style.display = "block";
+    } else {
+        monthInput.disabled = false;
+        monthDiv.style.display = "block";
+        dateRangeDiv.style.display = "none";
+    }
+}
+
+function fetchCreditPointExcel() {
+    const schemeInput = document.getElementById('scheme').value;
+    const monthInput = document.getElementById('monthyear').value;
+    const fromDate = document.getElementById('fromDate').value;
+    const toDate = document.getElementById('toDate').value;
+
+    if (schemeInput === "0") {
+        alert("Please select a scheme before downloading.");
+        return false;
+    }
+
+    if (schemeInput === "2") {
+        if (!fromDate || !toDate) {
+            alert("Please select both From and To dates.");
+            return false;
+        }
+        //disbaled EOSS Scheme temporary (to enable remove below two lines)
+//        alert("Right Now EOSS is Disabled");
+//        return false;
+    } else {
+        if (!monthInput) {
+            alert("Please select a month before downloading.");
+            return false;
+        }
+    }
+
+    document.getElementById('cpForm').submit();
+}
+
 function uploadfile(event){
     event.preventDefault(); // Prevent default form submission
     var fileInput = document.getElementById('file');
@@ -118,6 +164,35 @@ var confirmation = confirm('Sum of stores: ' + storecnt + '\nSum of credit point
 	<fieldset class="login">
 	<legend>Add Credit Point</legend>	
         <br><center><button name="dwnFile" id="dwnFile" onclick="fetchSampleExcel();">Download Excel to add Credit Point</button></center><br><br>
+        <form id="cpForm" method="post" action="formpost/getCreditpointExcel.php">
+            <center>
+                <label for="scheme">Select Scheme *</label><br>
+                <select name="scheme" id="scheme" onchange="toggleDateInputs()">
+                    <option value="0">Select Scheme</option>
+                    <?php foreach (Discount_scheme::getALL() as $id => $name) { ?>
+                        <option value="<?php echo htmlspecialchars($id); ?>"><?php echo htmlspecialchars($name); ?></option>
+                    <?php } ?>
+                </select>
+                <br>
+
+                <div id="monthInputDiv">
+                    <label for="monthyear">Select Month *</label><br>
+                    <input type="month" name="monthyear" id="monthyear"><br><br>
+                </div>
+
+                <div id="dateRangeDiv" style="display:none;">
+                    <label for="fromDate">From Date *</label><br>
+                    <input type="date" name="fromDate" id="fromDate"><br>
+                    <label for="toDate">To Date *</label><br>
+                    <input type="date" name="toDate" id="toDate"><br><br>
+                </div>
+
+                <button type="button" name="dwnFile" id="dwnFile" onclick="fetchCreditPointExcel();">
+                    Download to Get Credit Point Excel
+                </button>
+            </center>
+        </form>
+        <br><br>
         <form  id="storeseq" name="storeseq" enctype="multipart/form-data" method="post" action="formpost/checkStoreCreditPoint.php">      
                     
             <div>
@@ -125,7 +200,7 @@ var confirmation = confirm('Sum of stores: ' + storecnt + '\nSum of credit point
             <div class="clsText"><input type="file" id="file" name="file" ></div>
             <br/>
             <input type="submit" onclick="uploadfile(event)" value="Submit File"/>
-            <div>
+            </div>
             <label>
             <?php
             $filename_arr= explode(".", $formResult->status);
