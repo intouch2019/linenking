@@ -61,8 +61,106 @@ function uploadFile(){
     window.location.href = "formpost/checkStoreCreditPointCalculations.php?"+params;
 }
 
+function toggleDateInputs() {
+    const schemeInput = document.getElementById('scheme').value;
+    const monthInput = document.getElementById('monthyear');
+    const monthDiv = document.getElementById('monthInputDiv');
+    const dateRangeDiv = document.getElementById('dateRangeDiv');
 
+    if (schemeInput === "2") {
+        monthInput.disabled = true;
+        monthDiv.style.display = "none";
+        dateRangeDiv.style.display = "block";
+    } else {
+        monthInput.disabled = false;
+        monthDiv.style.display = "block";
+        dateRangeDiv.style.display = "none";
+    }
+}
 
+function fetchCreditPointExcel() {
+    const schemeInput = document.getElementById('scheme').value;
+    const monthInput = document.getElementById('monthyear').value;
+    const fromDate = document.getElementById('fromDate').value;
+    const toDate = document.getElementById('toDate').value;
+
+    if (schemeInput === "0") {
+        alert("Please select a scheme before downloading.");
+        return false;
+    }
+
+    if (schemeInput === "2") {
+        if (!fromDate || !toDate) {
+            alert("Please select both From and To dates.");
+            return false;
+        }
+        //disbaled EOSS Scheme temporary (to enable remove below two lines)
+//        alert("Right Now EOSS is Disabled");
+//        return false;
+    } else {
+        if (!monthInput) {
+            alert("Please select a month before downloading.");
+            return false;
+        }
+    }
+
+    document.getElementById('cpForm').submit();
+}
+
+function handleStoreSchemeChange() {
+    const scheme = document.getElementById('scheme2').value;
+    const monthDiv = document.getElementById('storeMonthDiv');
+    const monthInput = document.getElementById('monthyear_store');
+    const dateRangeDiv = document.getElementById('storeDateRangeDiv');
+
+    if (scheme === "2") {
+        // Hide month input
+        monthDiv.style.display = "none";
+        monthInput.disabled = true;
+        dateRangeDiv.style.display = "block";
+    } else {
+        // Show month input
+        monthDiv.style.display = "block";
+        monthInput.disabled = false;
+        dateRangeDiv.style.display = "none";
+    }
+}
+
+function validateAndSubmitStoreForm() {
+    const form = document.getElementById('storeseq');
+    const scheme = document.getElementById('scheme2').value;
+    const monthInput = document.getElementById('monthyear_store').value;
+    const fileInput = document.getElementById('file').value;
+    const fromDate = document.getElementById('fromDateTime').value;
+    const toDate = document.getElementById('toDateTime').value;
+
+    if (!fileInput) {
+        alert("Please upload an Excel file.");
+        return false;
+    }
+
+    if (scheme === "0") {
+        alert("Please select a scheme.");
+        return false;
+    }
+
+    if (scheme === "2") {
+        if (!fromDate || !toDate) {
+            alert("Please select both From and To dates.");
+            return false;
+        }
+        //disbaled EOSS Scheme temporary (to enable remove below two lines)
+//        alert("Right Now EOSS is Disabled");
+//        return false;
+    } else {
+        if (!monthInput) {
+            alert("Please select a month before submit.");
+            return false;
+        }
+    }
+
+    form.submit();
+}
 
 </script>
 <script type='text/javascript'>
@@ -89,15 +187,66 @@ function uploadFile(){
      <div class="box" style="clear:both;">
 	<fieldset class="login">
 	<legend>Credit Point Calculations</legend>	
-        <br><center><button name="dwnFile" id="dwnFile" onclick="fetchSampleExcel();">Download Excel for Credit Point Calculations</button></center><br><br>
+        <br><center><button name="dwnFile" id="dwnFile" onclick="fetchSampleExcel();">Download Blank Excel for Credit Point Calculations</button></center><br><br>
+         <form id="cpForm" method="post" action="formpost/discountSchemeUploadExcel.php">
+            <center>
+                <label for="scheme">Select Scheme *</label><br>
+                <select name="scheme" id="scheme" onchange="toggleDateInputs()">
+                    <option value="0">Select Scheme</option>
+                    <?php foreach (Discount_scheme::getALL() as $id => $name) { ?>
+                        <option value="<?php echo htmlspecialchars($id); ?>"><?php echo htmlspecialchars($name); ?></option>
+                    <?php } ?>
+                </select>
+                <br>
+
+                <div id="monthInputDiv">
+                    <label for="monthyear">Select Month *</label><br>
+                    <input type="month" name="monthyear" id="monthyear"><br><br>
+                </div>
+
+                <div id="dateRangeDiv" style="display:none;">
+                    <label for="fromDate">From Date *</label><br>
+                    <input type="date" name="fromDate" id="fromDate"><br>
+                    <label for="toDate">To Date *</label><br>
+                    <input type="date" name="toDate" id="toDate"><br><br>
+                </div>
+
+                <button type="button" name="dwnFile" id="dwnFile" onclick="fetchCreditPointExcel();">
+                    Download Excel for Credit Point Calculations
+                </button>
+            </center>
+        </form>
+        <hr style="border: 3px solid white; margin: 40px 0;">
         <form  id="storeseq" name="storeseq" enctype="multipart/form-data" method="post" action="formpost/checkStoreCreditPointCalculations.php">      
                     
             <div>
             <div class="clsDid" >Add File (Excel)</div>
             <div class="clsText"><input type="file" id="file" name="file" ></div>
             <br/>
-            <input type="submit" value="Submit File"/>
-            <div>
+             <!-- Scheme Selection -->
+            <label for="scheme">Select Scheme *</label><br>
+            <select name="scheme" id="scheme2" onchange="handleStoreSchemeChange()" required>
+                <option value="0">Select Scheme</option>
+                <?php foreach (Discount_scheme::getALL() as $id => $name) { ?>
+                    <option value="<?php echo htmlspecialchars($id); ?>"><?php echo htmlspecialchars($name); ?></option>
+                <?php } ?>
+            </select>
+            <br/>
+            
+            <div id="storeMonthDiv">
+                    <label for="monthyear">Select Month *</label><br>
+                    <input type="month" name="monthyear" id="monthyear_store" size="60"><br><br>
+                </div>
+
+                <div id="storeDateRangeDiv" style="display:none;">
+                    <label for="fromDate">From Date *</label><br>
+                    <input type="date" name="fromDate" id="fromDateTime"><br>
+                    <label for="toDate">To Date *</label><br>
+                    <input type="date" name="toDate" id="toDateTime"><br><br>
+                </div>
+
+            <button type="button" onclick="validateAndSubmitStoreForm()">Submit File</button>
+            </div>
             <label>
             <?php
             $filename_arr= explode(".", $formResult->status);
