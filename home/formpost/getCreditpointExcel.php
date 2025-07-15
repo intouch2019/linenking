@@ -79,21 +79,24 @@ try{
      $objs = $db->getConnection()->query($query);
      while($obj=$objs->fetch_object()){
         if($scheme == Discount_scheme::loyalty_membership){
-            $sql = "select sum(credit_points) as credit_points from cp_calculations where month_key=$month_key and Store_ID= $obj->id group by month_key";
+            $sql = "select sum(credit_points) as credit_points, Credit_Point_Heading from cp_calculations where month_key=$month_key and Store_ID= $obj->id group by month_key";
         } else if ($scheme == Discount_scheme::dealer_discount){
-            $sql = "select sum(credit_points) as credit_points from cp_calculations where month_key=$month_key and Store_ID= $obj->id group by month_key"; 
+            $sql = "select sum(credit_points) as credit_points, Credit_Point_Heading from cp_calculations where month_key=$month_key and Store_ID= $obj->id group by month_key"; 
         }
 //         echo $sql; exit();
          
          $cp = $db->fetchObject($sql);
          if(empty($cp)){
              $creditPoints = "";
+             $remark = "";
          } else {
              $creditPoints = $cp->credit_points;
+             $remark = trim($cp->Credit_Point_Heading);
          }
          $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, $rowCount, $obj->id);
          $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(1, $rowCount, $obj->store_name);
-         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(2, $rowCount, $creditPoints); 
+         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(2, $rowCount, $creditPoints);
+         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(3, $rowCount, $remark);
          
 
          $rowCount++;
