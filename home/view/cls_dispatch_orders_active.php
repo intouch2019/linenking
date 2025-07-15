@@ -63,7 +63,8 @@ class cls_dispatch_orders_active extends cls_renderer {
 <div class="grid_10">
             <?php
             $db = new DBConn();
-
+            $membershiporderqty=0;
+            $membershipordervalue=0;
 	    $sQuery = "";
 	    if ($this->store_id) { $sQuery = " and o.store_id=$this->store_id"; }
             $orders = $db->fetchObjectArray ("select o.*, c.store_name from it_ck_orders o, it_codes c where o.store_id = c.id $sQuery and o.status=".OrderStatus::Active." order by o.active_time desc");
@@ -105,6 +106,30 @@ class cls_dispatch_orders_active extends cls_renderer {
                             <th>Number Of Designs</th>
                             <th></th>
                         </tr>
+                         <?php
+			$count = 0; $tot_qty=0; $tot_amount=0; $tot_qtyt=0; $tot_amountt=0;
+			 $ids = "";
+			foreach ($orders as $order) {
+                        $tot_qtyt += $order->order_qty;
+			$tot_amountt += $order->order_amount;
+                        $membershipquery = "SELECT EXISTS ( SELECT 1 FROM it_ck_orders o JOIN it_ck_orderitems oi ON o.id = oi.order_id JOIN it_items i ON oi.item_id = i.id WHERE o.id = $order->id AND i.ctg_id = 65 ) AS result";//check the order contains Membership ctg barcode
+                        $resultmembershipquery=$db->fetchObject($membershipquery);
+                        if ($resultmembershipquery && $resultmembershipquery->result > 0) {$membershiporderqty+=$order->order_qty; $membershipordervalue+=$order->order_amount;}
+                        }
+			?>
+                        <tr style="font-weight:bold;">
+                            <td></td>
+                            <td>TOTAL</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td><?php echo $tot_qtyt."  (MB = $membershiporderqty)"; ?></td>
+                            <td><?php echo $tot_amountt."  (MB = $membershipordervalue)"; ?></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
                         <?php
 			$count = 0; $tot_qty=0; $tot_amount=0;
 			 $ids = "";
@@ -112,14 +137,14 @@ class cls_dispatch_orders_active extends cls_renderer {
 			$count++;
 			$tot_qty += $order->order_qty;
 			$tot_amount += $order->order_amount;
-			  $ids .= $order->id.",";
+			$ids .= $order->id.",";
                         $membershipquery = "SELECT EXISTS ( SELECT 1 FROM it_ck_orders o JOIN it_ck_orderitems oi ON o.id = oi.order_id JOIN it_items i ON oi.item_id = i.id WHERE o.id = $order->id AND i.ctg_id = 65 ) AS result";//check the order contains Membership ctg barcode
                         $resultmembershipquery=$db->fetchObject($membershipquery);
 			?>
                         <tr>
                             <td><?php echo $count; ?><span style="display:none;"><?php echo $order->id; ?></span></td>
                             <td><?php echo $order->store_name; ?></td>
-                            <td style="background-color: <?php echo ($resultmembershipquery && $resultmembershipquery->result > 0) ? '#87CEEB' : 'transparent'; ?>"><?php echo $order->order_no; ?></td>
+                            <td style="background-color: <?php echo ($resultmembershipquery && $resultmembershipquery->result > 0) ? '#87CEEB' : ''; ?>"><?php echo $order->order_no; ?></td>
                             <td><?php if ($this->store_id) { ?><input type="checkbox" id="ch_<?php echo $order->id; ?>"><?php } ?></td>
                             <td><?php echo OrderStatus::getName($order->status); ?></td>
                             <?php if ($resultmembershipquery && $resultmembershipquery->result > 0) { ?>     <td><?php echo "Yes" ?></td> <?php } else { ?>     <td><?php echo "No" ?></td> <?php } ?> 
@@ -160,8 +185,9 @@ class cls_dispatch_orders_active extends cls_renderer {
                             <td></td>
                             <td></td>
                             <td></td>
-                            <td><?php echo $tot_qty; ?></td>
-                            <td><?php echo $tot_amount; ?></td>
+                            <td></td>
+                            <td><?php echo $tot_qty."  (MB = $membershiporderqty)"; ?></td>
+                            <td><?php echo $tot_amount."  (MB = $membershipordervalue)"; ?></td>
                             <td></td>
                             <td></td>
                         </tr>

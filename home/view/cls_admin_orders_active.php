@@ -71,12 +71,12 @@ Your session has expired. Click <a href="">here</a> to login.
                     <table>
                         <tr>
                             <th>Sr. No</th>
-                            <th>Store</th>
+                            <th style="width: 110px;">Store</th>
                             <th>Order No</th>
                             <th>Status</th>
-                            <th>Order Date</th>
-                            <th>Total Items</th>
-                            <th>Total Price</th>
+                            <th style="width: 110px;">Order Date</th>
+                            <th style="width: 110px;">Total Items</th>
+                            <th style="width: 90px;">Total Price</th>
                             <th>Number Of Designs</th>
                             <th>View Order</th>
                         </tr>
@@ -84,7 +84,12 @@ Your session has expired. Click <a href="">here</a> to login.
                          <?php
                                         $tq =0;
                                         $ta =0;
+                                        $membershiporderqty=0;
+                                        $membershipordervalue=0;
                                     foreach ($orders as $order) {
+                                        $membershipquery = "SELECT EXISTS ( SELECT 1 FROM it_ck_orders o JOIN it_ck_orderitems oi ON o.id = oi.order_id JOIN it_items i ON oi.item_id = i.id WHERE o.id = $order->id AND i.ctg_id = 65 ) AS result";//check the order contains Membership ctg barcode
+                                        $resultmembershipquery=$db->fetchObject($membershipquery);
+                                        if ($resultmembershipquery && $resultmembershipquery->result > 0) {$membershiporderqty+=$order->order_qty; $membershipordervalue+=$order->order_amount;}                      
                                         $tq += $order->order_qty;
                                         $ta += $order->order_amount;
                                     }
@@ -96,8 +101,8 @@ Your session has expired. Click <a href="">here</a> to login.
                             <td></td>
                             <td></td>
                             <td></td>
-                            <td><?php echo $tq; ?></td>
-                            <td><?php echo $ta; ?></td>
+                            <td><?php echo $tq." (MB = $membershiporderqty)"; ?></td>
+                            <td><?php echo $ta." (MB = $membershipordervalue)"; ?></td>
                             <td></td>
                             <td></td>
                         </tr>
@@ -129,8 +134,8 @@ Your session has expired. Click <a href="">here</a> to login.
                             <td></td>
                             <td></td>
                             <td></td>
-                            <td><?php echo $tot_qty; ?></td>
-                            <td><?php echo $tot_amount; ?></td>
+                            <td><?php echo $tot_qty."  (MB = $membershiporderqty)"; ?></td>
+                            <td><?php echo $tot_amount."  (MB = $membershipordervalue)"; ?></td>
                             <td></td>
                             <td></td>
                         </tr>
