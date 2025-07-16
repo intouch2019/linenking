@@ -829,6 +829,7 @@ class cls_report_ssales extends cls_renderer {
                                         $tableheaders .= "Barcode:";
                                         $queryfields .= "oi.barcode,";
                                         $group_by[] = "oi.barcode";
+                                        $group_by[] = "oi.id";
                                         $total_td .= "<td></td>";
                                     }
                                     if ($field == "linediscountper") {
