@@ -36,7 +36,7 @@ try{
             $tot_stk_val = $store_stock_val + $intransit_stock_val + $active_amount;
             if($tot_stk_val < $dealerobj->min_stock_level){
                    $diff = $dealerobj->min_stock_level - $tot_stk_val;
-                $dealersList[$dealerobj->id] = $dealerobj->store_name."::".$store_stock_val."::".$intransit_stock_val."::".$tot_stk_val."::".$dealerobj->min_stock_level;
+                $dealersList[$dealerobj->id] = $dealerobj->store_name."::".$store_stock_val."::".$intransit_stock_val."::".$tot_stk_val."::".$dealerobj->min_stock_level."::".$diff;
             }
             
         }     
