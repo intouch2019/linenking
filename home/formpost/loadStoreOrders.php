@@ -83,7 +83,7 @@ function saveOrder($store, $items) {
     $msg = "";
     $db = new DBConn();
     $store = $db->safe($store);
-    $storeinfo = $db->fetchObject("select id,store_number,inactive,is_closed from it_codes where code =$store");
+    $storeinfo = $db->fetchObject("select id,store_number,inactive,is_closed,is_natch_required from it_codes where code =$store");
     if (!$storeinfo) {
         return "ERROR:Store $store not found";
     } else {
@@ -136,7 +136,11 @@ function saveOrder($store, $items) {
                 $storequery = "select c.id as store_id,c.code,c.store_name,c.tally_name,c.accountinfo,c.owner,c.address,c.city,c.zipcode,c.phone,c.phone2,c.email,c.email2,c.vat,c.store_number,c.usertype,c.tax_type,c.server_change_id,c.username,c.a1hash,c.trust,c.password,c.createtime,c.inactive,d.dealer_discount,d.additional_discount,d.transport,d.octroi,d.cash,d.nonclaim from it_codes c left outer join it_ck_storediscount d on c.id = d.store_id where c.id = ".$storeid;
                 $storeobj = $db->fetchObject($storequery);
                 $json_str = $db->safe(json_encode($storeobj));
+                 if($storeinfo->is_natch_required == 1){
                 $order_id = $db->execInsert("insert into it_ck_orders set store_id=$storeid, status=" . OrderStatus::Active . ", order_no=$order_no, order_qty=0 , store_info = $json_str ");
+            }else{
+                $order_id = $db->execInsert("insert into it_ck_orders set store_id=$storeid, status=" . OrderStatus::Proforma . ", order_no=$order_no, order_qty=0 , store_info = $json_str ");
+            }
             } else {
                 $order_id = "-1";
 //			print "$query<br />";
