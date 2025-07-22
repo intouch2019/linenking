@@ -868,7 +868,7 @@ foreach ($arr as $orderinfo) {
                     }
                 }    
             }
-
+            }
             //save payment info 
             if(isset($tobj->paymentinfo)){
                 $paymentlines = $tobj->paymentinfo;
@@ -897,7 +897,7 @@ foreach ($arr as $orderinfo) {
                      $db->execInsert($pquery);
                     }
                  }
-            }
+            
                  //update disc_pct if gift voucher is used
                  updateDiscPct($order_id);
             }
