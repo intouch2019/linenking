@@ -239,12 +239,12 @@ function updatecreditpoints($newdir) {
 //            }
             
             
-            $is_cp_used = $db->fetchObject("select sum(points_to_upload) as cu from it_store_redeem_points where store_id=$id and is_completely_used=0");
-               
-       if(isset($is_cp_used) && trim($is_cp_used->cu)){
-           $credit_points_present .= "Store - $store_name already have credit points available<br> <br>";
-           continue;
-       }
+//            $is_cp_used = $db->fetchObject("select sum(points_to_upload) as cu from it_store_redeem_points where store_id=$id and is_completely_used=0");
+//               
+//       if(isset($is_cp_used) && trim($is_cp_used->cu)){
+//           $credit_points_present .= "Store - $store_name already have credit points available<br> <br>";
+//           continue;
+//       }
             
              
 //            if (isset($objcode) && $objcode->usertype == 4) {
@@ -261,9 +261,9 @@ function updatecreditpoints($newdir) {
         }
     }
     
-     if(isset($credit_points_present) && $credit_points_present != ""){
-       return $credit_points_present;
-    }
+//     if(isset($credit_points_present) && $credit_points_present != ""){
+//       return $credit_points_present;
+//    }
     
     
     foreach ($objWorksheet->getRowIterator() as $row) {
@@ -332,6 +332,24 @@ function updatecreditpoints($newdir) {
             
 
             if (isset($objcode) && $objcode->usertype == 4) {
+                // <----- Allowed To Add credit points for stores whos credit points are present - Code Starts ----->
+                $is_cp_used = $db->fetchObject("select sum(points_to_upload) as cu from it_store_redeem_points where store_id=$id and is_completely_used=0");
+
+                if (isset($is_cp_used) && trim($is_cp_used->cu)) {
+                    //Insert and Make this credit point INACTIVE due to previous credit points are presents for this store
+                    $query = "INSERT INTO it_store_redeem_points set store_id=$id,points_to_upload = $creditpoint,remark='$remark',points_upload_date=now(),active=0;";
+//                    echo $query; exit();
+                    $db->execInsert($query);
+                    
+                    $totalcreditpoints+=$creditpoint;
+                    $ii+=count($id);
+                    $i=$ii;
+                    $ozze_storecnt++;
+                    
+                    continue;
+                }
+                 // <----- Allowed To Add credit points for stores whos credit points are present - Code Ends ----->
+                
                 $query = "INSERT INTO it_store_redeem_points (store_id,points_to_upload,remark,points_upload_date)VALUES ($id,$creditpoint,'$remark',now()); ";
                 $objredeem = $db->execInsert($query);
 //                $i++;
@@ -345,31 +363,32 @@ function updatecreditpoints($newdir) {
     }
     
     
-     $serverCh = new clsServerChanges();
-      $objj1 = $db->fetchObjectArray("select id, store_id,points_to_upload from it_store_redeem_points where is_sent=0 and active=1");
-       
-       $credit_point = array();
-       $credit_points =array();
-       $item=array();
-       $workorderno=0;
-                foreach ($objj1 as $obj1){
-                    $item['server_id']=intval($obj1->id);
-                    $item['store_id']=intval($obj1->store_id);
-                    $item['points_to_upload'] = intval($obj1->points_to_upload);
-                    $credit_point[] = json_encode($item);
-                   
-                   $cnt++;
-                }
+    $serverCh = new clsServerChanges();
+    $objj1 = $db->fetchObjectArray("select id, store_id,points_to_upload from it_store_redeem_points where is_sent=0 and active=1");
+    if (!empty($objj1)) {
+        $credit_point = array();
+        $credit_points = array();
+        $item = array();
+        $workorderno = 0;
+        foreach ($objj1 as $obj1) {
+            $item['server_id'] = intval($obj1->id);
+            $item['store_id'] = intval($obj1->store_id);
+            $item['points_to_upload'] = intval($obj1->points_to_upload);
+            $credit_point[] = json_encode($item);
+
+            $cnt++;
+        }
 //                $wip_stockdata['work_order_no']=$workorderno;
-                 $credit_points['items']=json_encode($credit_point);
-                 $server_ch = json_encode($credit_points); 
-                             $CKWHStoreid = DEF_CK_WAREHOUSE_ID;
-                             $ser_type = changeType::crditPoints;   
-                             $serverCh->save($ser_type, $server_ch,$CKWHStoreid,$workorderno);
-                             
-                             $sql="update it_store_redeem_points set is_sent=1";
-                             $db->execUpdate($sql);
-   
+        $credit_points['items'] = json_encode($credit_point);
+        $server_ch = json_encode($credit_points);
+        $CKWHStoreid = DEF_CK_WAREHOUSE_ID;
+        $ser_type = changeType::crditPoints;
+        $serverCh->save($ser_type, $server_ch, $CKWHStoreid, $workorderno);
+
+        $sql = "update it_store_redeem_points set is_sent=1";
+        $db->execUpdate($sql);
+    }
+
     $db->closeConnection();
     //unset($array_seq);
 }

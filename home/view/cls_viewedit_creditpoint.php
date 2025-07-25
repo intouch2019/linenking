@@ -375,17 +375,6 @@ class cls_viewedit_creditpoint extends cls_renderer {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
                     <!--for old uploaded credit points-->
                     <div class="grid_12" style="overflow-y: scroll; display:none;" id="prevCP">
 
@@ -589,7 +578,22 @@ class cls_viewedit_creditpoint extends cls_renderer {
                             <div id="dwnloadbtn" style='margin-left:15px;  height:24px;width:130px;border: solid gray 1px;background:#F5F5F5;padding-top:4px;'>
                                 <a href='<?php echo "tmp1/credit_point_New.php?output=$newfname"; ?>' title='Export table to CSV'><img src="images/excel.png" width='20' hspace='3' style='margin-bottom:-6px;' /> Export To Excel</a>
                             </div>
-                        </div> 
+                        </div><br><br>
+                        
+                        <div style="margin-bottom: 10px;">
+                            <span style="display: inline-flex; align-items: center; margin-right: 15px;">
+                                <span style="width: 12px; height: 12px; background-color: green; border-radius: 50%; display: inline-block; margin-right: 5px;"></span>
+                                Utilised Points
+                            </span>
+                            <span style="display: inline-flex; align-items: center; margin-right: 15px;">
+                                <span style="width: 12px; height: 12px; background-color: yellow; border-radius: 50%; display: inline-block; margin-right: 5px;"></span>
+                                Active Points
+                            </span>
+                            <span style="display: inline-flex; align-items: center;">
+                                <span style="width: 12px; height: 12px; background-color: red; border-radius: 50%; display: inline-block; margin-right: 5px;"></span>
+                                Inactive Points
+                            </span>
+                        </div>
 
                         <table style="width:100%" >
                             <tr>
@@ -619,11 +623,11 @@ class cls_viewedit_creditpoint extends cls_renderer {
                             $i = 1;
                             if ($this->storeid == -1) {
 //                            $iquery = "select r.*, c.store_name  from it_codes c,it_store_redeem_points r where  $dQuery  and r.active=1 and r.store_id=c.id order by c.store_name ";
-                                $iquery = "select r.id,r.store_id,r.points_to_upload,r.points_upload_date,r.is_reddeme,rp.points_redeemdate,rp.invoice_no, rp.points_used,r.active,r.remark, c.store_name from it_codes c inner join it_store_redeem_points r on r.store_id=c.id left join  it_store_redeem_points_partial rp on r.id=rp.it_store_redeem_points_id where  $dQuery  and r.active=1 order by c.store_name ";
+                                $iquery = "select r.id,r.store_id,r.points_to_upload,r.points_upload_date,r.is_reddeme,rp.points_redeemdate,rp.invoice_no, rp.points_used,r.active,r.remark,r.is_completely_used,r.is_sent, c.store_name from it_codes c inner join it_store_redeem_points r on r.store_id=c.id left join  it_store_redeem_points_partial rp on r.id=rp.it_store_redeem_points_id where  $dQuery order by c.store_name ";
                             } else {
 
 //                            $iquery = "select r.*, c.store_name  from it_codes c,it_store_redeem_points r where  $dQuery  and r.active=1 and r.store_id= $this->storeid and r.store_id=c.id";
-                                $iquery = "select r.id,r.store_id,r.points_to_upload,r.points_upload_date,r.is_reddeme,rp.points_redeemdate,rp.invoice_no, rp.points_used,r.active,r.remark, c.store_name from it_codes c inner join it_store_redeem_points r on r.store_id=c.id left join it_store_redeem_points_partial rp on r.id=rp.it_store_redeem_points_id where  $dQuery  and r.active=1 and r.store_id= $this->storeid";
+                                $iquery = "SELECT r.id, r.store_id, r.points_to_upload, r.points_upload_date, r.is_reddeme, rp.points_redeemdate, rp.invoice_no, rp.points_used, r.active, r.remark, r.is_completely_used, r.is_sent, c.store_name FROM it_codes c INNER JOIN it_store_redeem_points r ON r.store_id = c.id LEFT JOIN it_store_redeem_points_partial rp ON r.id = rp.it_store_redeem_points_id WHERE $dQuery AND r.store_id = $this->storeid";
                             }
                             $items = $db->fetchObjectArray($iquery);
                             $pointsToUploadIdArrayForTotal = array();
@@ -642,7 +646,20 @@ class cls_viewedit_creditpoint extends cls_renderer {
                                     <td><?php echo $i; ?></td>
                                     <td><?php echo $obj->store_name; ?></td>
 
-                                    <td><?php
+                                    <td style="
+                                        <?php 
+                                            if ($obj->active == 0 && $obj->is_sent == 0) {
+                                                echo 'background-color: red; color: white;';
+                                            } elseif ($obj->active == 1 && $obj->is_completely_used == 0  ) {
+                                                echo 'background-color: yellow; color: black;';
+                                            } elseif ($obj->active == 1 && $obj->is_completely_used == 1 && !in_array($obj->id, $pointsToUploadIdArray)) {
+                                                echo 'background-color: green; color: white;';
+                                            } else {
+                                                echo '';
+                                            }
+                                        ?>
+                                        ">
+                                        <?php
                                         if (!in_array($obj->id, $pointsToUploadIdArray)) {
                                             echo $obj->points_to_upload;
                                         } else {
@@ -696,9 +713,9 @@ class cls_viewedit_creditpoint extends cls_renderer {
                                                            echo "abcf";
                                                            ?> disabled <?php }; ?> value="Remove" onclick="return is_confirm('<?php echo $obj->points_to_upload; ?>', '<?php echo $obj->store_name; ?>')"></form>
                                         </td>
-                                    <?php }//else{  ?>
-                                <!--<td>-</td>-->
-                                <?php //}   ?>
+                                    <?php }else{  ?>
+                                <td></td>
+                                <?php }   ?>
 
                                 </tr>
                                 <?php
@@ -706,8 +723,8 @@ class cls_viewedit_creditpoint extends cls_renderer {
                             }
                             ?>
                             <?php $remainingPoints = $totalPoints - $totalUsedPoints; ?>
-                            <tr><td></td><td><b>Total-</b></td><td><b><?php echo $totalPoints; ?></b></td><td></td><td></td><td></td><td></td><td><b><?php echo $totalUsedPoints; ?></b></td><td></td></tr>
-                            <tr><td></td><td><b>Remaining-</b></td><td><b><?php echo $remainingPoints; ?></b></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                            <tr><td></td><td><b>Total-</b></td><td><b><?php echo $totalPoints; ?></b></td><td></td><td></td><td></td><td></td><td><b><?php echo $totalUsedPoints; ?></b></td><td></td><td></td></tr>
+                            <tr><td></td><td><b>Remaining-</b></td><td><b><?php echo $remainingPoints; ?></b></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
                             <?php
                             if ($this->storeid == -1) {
 //                                    $iquery = "select  c.store_name ,r.points_to_upload,r.points_upload_date,if(r.is_reddeme =1,'Yes','No' ) as Is_Redeem,if(r.is_reddeme =1,r.points_redeemdate,'-' ) as points_redeemdate,if(r.is_reddeme =1,r.invoice_no,'-' ) as invoice_no,r.remark from it_codes c,it_store_redeem_points r where  $dQuery  and r.active=1 and r.store_id=c.id order by c.store_name ";
