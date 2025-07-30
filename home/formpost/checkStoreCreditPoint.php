@@ -385,7 +385,7 @@ function updatecreditpoints($newdir) {
         $ser_type = changeType::crditPoints;
         $serverCh->save($ser_type, $server_ch, $CKWHStoreid, $workorderno);
 
-        $sql = "update it_store_redeem_points set is_sent=1";
+        $sql = "update it_store_redeem_points set is_sent=1 where is_sent=0 and active=1";
         $db->execUpdate($sql);
     }
 
