@@ -30,6 +30,22 @@ try {
             if (!empty($inactiveCpObj)) {
 //                echo "select sum(points_to_upload) as cu from it_store_redeem_points where store_id=$store->id and is_completely_used=0 and active=1 and is_sent=1;<br>";
 //                exit();
+                //if less than 2 Credit points remaining in active points it will marked as completely used so we can activate the next INACTIVE points
+                $uploaded_cp = $db->fetchObject("select id, sum(points_to_upload) as uploaded_points from it_store_redeem_points where store_id=$store->id and is_completely_used=0 and active=1 and is_sent=1");
+                $difference = 0;
+                if (isset($uploaded_cp) && !empty($uploaded_cp) && $uploaded_cp->uploaded_points != null) {
+                    $partial_cp_used = $db->fetchObject("select sum(points_used) as partail_points from it_store_redeem_points_partial where it_store_redeem_points_id=$uploaded_cp->id");
+                    if (isset($partial_cp_used) && !empty($partial_cp_used) && $partial_cp_used->partail_points != null) {
+                        $partail_points_sum = $partial_cp_used->partail_points;
+                    } else {
+                        $partail_points_sum = 0;
+                    }
+                    $difference = $uploaded_cp->uploaded_points - $partail_points_sum;
+                    if ($difference <= 2) {
+                        $squery = "update it_store_redeem_points set is_completely_used=1 where store_id=$store->id and id=$uploaded_cp->id";
+                        $db->execUpdate($squery);
+                    }
+                }
                 $is_cp_used = $db->fetchObject("select sum(points_to_upload) as cu from it_store_redeem_points where store_id=$store->id and is_completely_used=0 and active=1 and is_sent=1");
 //               print_r($is_cp_used);
                 if (isset($is_cp_used) && !empty($is_cp_used) && $is_cp_used->cu!=null) {
