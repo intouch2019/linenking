@@ -441,9 +441,9 @@ class cls_report_sincentive_summary extends cls_renderer {
                                     foreach ($fetchMultobjescts as $billobjs) {
                                         
                                         if ($this->storeidreport != -1) {
-                                            $orderinfoofmultybillno = $db->fetchObject("SELECT id,quantity,bill_no,store_id,if(tickettype<='0',net_total,'0')  AS billnettotalval FROM it_orders WHERE bill_no = '{$billobjs->bill_no}' AND store_id in ($this->storeidreport)");
+                                            $orderinfoofmultybillno = $db->fetchObject("SELECT id,quantity,bill_no,store_id,if(tickettype<='0',sub_total,'0')  AS billnettotalval FROM it_orders WHERE bill_no = '{$billobjs->bill_no}' AND store_id in ($this->storeidreport)");
                                         } else {
-                                            $orderinfoofmultybillno = $db->fetchObject("SELECT id,quantity,bill_no,store_id,if(tickettype<='0',net_total,'0')  AS billnettotalval FROM it_orders WHERE bill_no = '{$billobjs->bill_no}'");
+                                            $orderinfoofmultybillno = $db->fetchObject("SELECT id,quantity,bill_no,store_id,if(tickettype<='0',sub_total,'0')  AS billnettotalval FROM it_orders WHERE bill_no = '{$billobjs->bill_no}'");
                                             }
 
                                         if (empty($orderinfoofmultybillno) ) {
@@ -485,21 +485,22 @@ class cls_report_sincentive_summary extends cls_renderer {
                                         $billnettotalval = (isset($orderinfoofmultybillno->billnettotalval) && $orderinfoofmultybillno->billnettotalval !== '') ? $orderinfoofmultybillno->billnettotalval : 0;
                                                  
                                         if ($finalQty > 1) {
-                                            $orderinfopayments = $db->fetchObjectArray("SELECT order_id,amount,payment_name FROM it_order_payments WHERE order_id = {$orderinfoofmultybillno->id}");
+                                            $orderinfopayments = $db->fetchObjectArray("SELECT order_id,sum(amount) as amtt,payment_name FROM it_order_payments WHERE order_id = {$orderinfoofmultybillno->id}");
                                             $isloyaltybill=$db->fetchObject("SELECT CASE WHEN EXISTS ( SELECT 1 FROM it_orders o, it_order_payments op WHERE o.id = op.order_id AND o.bill_no = '$orderinfoofmultybillno->bill_no' AND o.store_id IN ($orderinfoofmultybillno->store_id) AND op.payment_name = 'loyalty' ) THEN 1 ELSE 0 END AS loyalty_payment_used");
                                             $found500 = false;
 
                                             foreach ($orderinfopayments as $oipobj) {
                                                 $paymentNameLower = strtolower($oipobj->payment_name);
                                                 if ($isloyaltybill->loyalty_payment_used == "1") {
-                                                   
-                                                    if ($oipobj->amount <= 501 && $oipobj->amount >= 499) {
+                                                   $loydis=$db->fetchObject("select amount from it_order_payments where order_id = {$orderinfoofmultybillno->id} and payment_name = 'loyalty'")->amount;
+//                                                   print_r($billobjs->bill_no." ->   ".$oipobj->amtt."  ->  ".$loydis);echo '<br>';
+                                                    if ($loydis == 500) {
                                                         $found500 = true;
                                                         $isHurdle1 = true;
                                                         $checknetvalue1sthurdle = $db->fetchObject("select net_total from it_orders where id='$oipobj->order_id'");
 
                                                     }
-                                                    if ($oipobj->amount <= 1001 && $oipobj->amount >= 999) {
+                                                    if ($loydis == 1000) {
                                                    
                                                         $isHurdle2 = true;
                                                         $checknetvalue2ndhurdle = $db->fetchObject("select net_total from it_orders where id='$oipobj->order_id'");
@@ -524,12 +525,80 @@ class cls_report_sincentive_summary extends cls_renderer {
                                                             $salesmanHurdle2Amount[$billobjs->salesman_no] += $checknetvalue2ndhurdle->net_total;
                                                         }
                                                     }
+                
+                                                    
+                                                    
+                                                    
+                                                    
+                                                   else if($loydis != 500 && $loydis != 1000){
+                                                   $net_total = $db->fetchObject("select sub_total from it_orders where id='$oipobj->order_id'")->sub_total;
+                                                  
+                                                   if ($net_total > 9999 ) {
+                                                   
+                                                      
+                                                       
+                                                        $isHurdle2 = true;
+                                                        $checknetvalue2ndhurdle = $db->fetchObject("select sum(sub_total) as net_total from it_orders where id='$oipobj->order_id'");
+                                                        if (!isset($salesmanHurdle2Counts[$billobjs->salesman_no])) {
+                                                            $salesmanHurdle2Counts[$billobjs->salesman_no] = 0;
+                                                        }
+                                                        $salesmanHurdle2Counts[$billobjs->salesman_no]++;
+
+                                                        if (!isset($salesmanHurdle2Qty[$billobjs->salesman_no])) {
+                                                            $salesmanHurdle2Qty[$billobjs->salesman_no] = 0;
+                                                        }
+                                                        $salesmanHurdle2Qty[$billobjs->salesman_no] += $finalQty;
+
+                                                        if (!isset($salesmanHurdle2Amount[$billobjs->salesman_no])) {
+                                                            $salesmanHurdle2Amount[$billobjs->salesman_no] = 0;
+                                                        }
+                                                        $checkaccformultyqty = $db->fetchObject("SELECT SUM(sr.net_total) AS total_net, i.ctg_id FROM it_salesmanreport sr JOIN it_items i ON sr.barcode  = i.barcode JOIN it_categories ct ON i.ctg_id = ct.id WHERE sr.bill_no = '$billobjs->bill_no' AND ct.name  IN ( 'BLAZER+TIE+BROOCH', 'TROUSER PIECE', 'TIE', 'BLAZER+PANT PIECE', 'BLAZER+SHIRT+ TROUSER+TIE', '60''Lee', 'SHIRT PIECE', '60'' Li Dobby Linen', '60''s Li Dobby Linen', '60''s Li Dobby', 'INTERLOCK', 'Others', 'Starch Spray', 'Fabric', 'Handkerchiefs', 'Salwar', 'Pajama', 'Cloth Bag', 'Thermal Roll', 'Wallet & Belt Combo', 'KURTA PIECE', 'Cabin Bag', 'Trolly Bag', 'Paper Bags', 'SOCKS', 'Jacket Buttons', 'Watch Pocket', 'Jeans Button & Revet Set', 'Gift Box', 'Paper Carry Bags', '2 Layer Mask', 'Non Surgical Pollution Mask', 'Ear Loop Extender', 'Stool', 'Shoes', 'Belt', 'Job Work', 'Zipper', 'Mannequin', 'Wooden Shirt Hanger', 'Wooden Trouser Hanger', 'Accessories Stand' ) and sr.store_id in ($this->storeidreport) ;");
+
+                                                        if (!empty($checkaccformultyqty)) {
+                                                            $salesmanHurdle2Amount[$billobjs->salesman_no] += $checknetvalue2ndhurdle->net_total - $checkaccformultyqty->total_net;
+                                                        } else {
+                                                            $salesmanHurdle2Amount[$billobjs->salesman_no] += $checknetvalue2ndhurdle->net_total;
+                                                        }
+                                                    }
+                                                    else
+                                                     if ($net_total > 5999 && $net_total < 9999) {
+                                                         
+                                                           if($billobjs->bill_no == "CK-252605337"){print_r($billobjs->bill_no."jksadkj");echo '<br>';}
+                                                         
+                                                        $found500 = true;
+                                                        $isHurdle1 = true;
+                                                        $checknetvalue1sthurdle = $db->fetchObject("select sum(sub_total) as net_total from it_orders where id='$oipobj->order_id'");
+                                                                                                             
+
+                                                    }
+                                                                                                   
+                                                   elseif (
+                                                        stripos($paymentNameLower, 'cash') !== false ||
+                                                        stripos($paymentNameLower, 'corporatesale') !== false ||
+                                                        stripos($paymentNameLower, 'giftcoupon') !== false ||
+                                                        stripos($paymentNameLower, 'level1discount') !== false ||
+                                                        stripos($paymentNameLower, 'level1discountcorp') !== false ||
+                                                        stripos($paymentNameLower, 'magcard') !== false ||
+                                                        stripos($paymentNameLower, 'paperin') !== false ||
+                                                        stripos($paymentNameLower, 'upi') !== false
+                                                ) {
+                                                    $isMultiQty = true;
+                                                } else
+                                                {
+                                                     $isMultiQty = true;
+                                                }
+                                                   }    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
                                                 }elseif($isloyaltybill->loyalty_payment_used == "0" && $billnettotalval>5999){
                                                    
                                                     if ($billnettotalval > 9999 ) {
                                                    
                                                         $isHurdle2 = true;
-                                                        $checknetvalue2ndhurdle = $db->fetchObject("select net_total from it_orders where id='$oipobj->order_id'");
+                                                        $checknetvalue2ndhurdle = $db->fetchObject("select sum(sub_total) as net_total from it_orders where id='$oipobj->order_id'");
                                                         if (!isset($salesmanHurdle2Counts[$billobjs->salesman_no])) {
                                                             $salesmanHurdle2Counts[$billobjs->salesman_no] = 0;
                                                         }
@@ -555,7 +624,7 @@ class cls_report_sincentive_summary extends cls_renderer {
                                                      if ($billnettotalval > 5999 && $billnettotalval < 9999) {
                                                         $found500 = true;
                                                         $isHurdle1 = true;
-                                                        $checknetvalue1sthurdle = $db->fetchObject("select net_total from it_orders where id='$oipobj->order_id'");
+                                                        $checknetvalue1sthurdle = $db->fetchObject("select sum(sub_total) as net_total from it_orders where id='$oipobj->order_id'");
                                                                                                              
 
                                                     }
@@ -594,7 +663,7 @@ class cls_report_sincentive_summary extends cls_renderer {
                                                     $salesmanHurdle1Amount[$billobjs->salesman_no] += $checknetvalue1sthurdle->net_total;
                                                 }
                                             }
-                                            if (count($orderinfopayments) == 1 && $found500) {
+                                            if (count($orderinfopayments) > 0 && $found500) {
 
                                                 if (!isset($salesmanHurdle1Counts[$billobjs->salesman_no])) {
                                                     $salesmanHurdle1Counts[$billobjs->salesman_no] = 0;
@@ -617,8 +686,8 @@ class cls_report_sincentive_summary extends cls_renderer {
                                                 }
                                             }
                                             if (!$isHurdle1 && !$isHurdle2 && $isMultiQty) {
-                                                $checkNetValue = $db->fetchObject("SELECT id,net_total FROM it_orders WHERE id = {$orderinfoofmultybillno->id}");
-
+                                                $checkNetValue = $db->fetchObject("SELECT id,sum(sub_total) as net_total FROM it_orders WHERE id = {$orderinfoofmultybillno->id}");
+                                                
                                                 $sm_no = $billobjs->salesman_no;
 
                                                 if (!isset($multiQtyBills[$sm_no])) {
@@ -670,7 +739,7 @@ class cls_report_sincentive_summary extends cls_renderer {
 
                                     foreach ($singleQtyResults as $bObjs) {
                                         $billNo = trim($bObjs->bill_no);
-                                        $getbillorderid = $db->fetchObject(" SELECT id,amount FROM it_orders WHERE bill_no = '$billNo' " . ($this->storeidreport != -1 ? "AND store_id IN ($this->storeidreport)" : "") . " LIMIT 1 ");
+                                        $getbillorderid = $db->fetchObject(" SELECT id,sum(sub_total) as amount FROM it_orders WHERE bill_no = '$billNo' " . ($this->storeidreport != -1 ? "AND store_id IN ($this->storeidreport)" : "") . " LIMIT 1 ");
 
                                         if (!$getbillorderid)
                                             continue;
@@ -685,7 +754,7 @@ class cls_report_sincentive_summary extends cls_renderer {
                                         $cnQty = 0;
                                         if (!empty($getcnno) && $getcnno->cn != "") {
                                             $cnNo = $getcnno->cn;
-                                            $getcnorderid = $db->fetchObject(" SELECT id FROM it_orders WHERE bill_no = '$cnNo' " . ($this->storeidreport != -1 ? "AND store_id IN ($this->storeidreport)" : "") . " LIMIT 1 ");
+                                            $getcnorderid = $db->fetchObject(" SELECT id,net_total FROM it_orders WHERE bill_no = '$cnNo' " . ($this->storeidreport != -1 ? "AND store_id IN ($this->storeidreport)" : "") . " ");
 
 
                                             if ($getcnorderid) {
