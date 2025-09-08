@@ -60,7 +60,7 @@ function toggleDateInputs() {
     const monthDiv = document.getElementById('monthInputDiv');
     const dateRangeDiv = document.getElementById('dateRangeDiv');
 
-    if (schemeInput === "2") {
+    if (schemeInput === "2" || schemeInput === "3") {
         monthInput.disabled = true;
         monthDiv.style.display = "none";
         dateRangeDiv.style.display = "block";
@@ -72,6 +72,7 @@ function toggleDateInputs() {
 }
 
 function fetchCreditPointExcel() {
+    alert("If scheme periods match for EOSS and Loyalty+EOSS, choose either EOSS or Loyalty+EOSS.");
     const schemeInput = document.getElementById('scheme').value;
     const monthInput = document.getElementById('monthyear').value;
     const fromDate = document.getElementById('fromDate').value;
@@ -82,7 +83,7 @@ function fetchCreditPointExcel() {
         return false;
     }
 
-    if (schemeInput === "2") {
+    if (schemeInput === "2" || schemeInput === "3") {
         if (!fromDate || !toDate) {
             alert("Please select both From and To dates.");
             return false;

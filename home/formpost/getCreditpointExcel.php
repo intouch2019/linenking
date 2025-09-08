@@ -80,7 +80,7 @@ try{
      while($obj=$objs->fetch_object()){
         if($scheme == Discount_scheme::loyalty_membership){
             $sql = "select sum(credit_points) as credit_points, Credit_Point_Heading from cp_calculations where month_key=$month_key and Store_ID= $obj->id group by month_key";
-        } else if ($scheme == Discount_scheme::dealer_discount){
+        } else if ($scheme == Discount_scheme::dealer_discount || $scheme == Discount_scheme::loyalty_dealer_discount){
             $sql = "select sum(credit_points) as credit_points, Credit_Point_Heading from cp_calculations where month_key=$month_key and Store_ID= $obj->id group by month_key"; 
         }
 //         echo $sql; exit();

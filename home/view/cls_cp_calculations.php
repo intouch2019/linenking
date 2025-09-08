@@ -67,7 +67,7 @@ function toggleDateInputs() {
     const monthDiv = document.getElementById('monthInputDiv');
     const dateRangeDiv = document.getElementById('dateRangeDiv');
 
-    if (schemeInput === "2") {
+    if (schemeInput === "2" || schemeInput === "3") {
         monthInput.disabled = true;
         monthDiv.style.display = "none";
         dateRangeDiv.style.display = "block";
@@ -89,7 +89,7 @@ function fetchCreditPointExcel() {
         return false;
     }
 
-    if (schemeInput === "2") {
+    if (schemeInput === "2" || schemeInput === "3") {
         if (!fromDate || !toDate) {
             alert("Please select both From and To dates.");
             return false;
@@ -113,7 +113,7 @@ function handleStoreSchemeChange() {
     const monthInput = document.getElementById('monthyear_store');
     const dateRangeDiv = document.getElementById('storeDateRangeDiv');
 
-    if (scheme === "2") {
+    if (scheme === "2" || scheme === "3") {
         // Hide month input
         monthDiv.style.display = "none";
         monthInput.disabled = true;
@@ -144,7 +144,7 @@ function validateAndSubmitStoreForm() {
         return false;
     }
 
-    if (scheme === "2") {
+    if (scheme === "2" || scheme === "3") {
         if (!fromDate || !toDate) {
             alert("Please select both From and To dates.");
             return false;

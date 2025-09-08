@@ -438,11 +438,13 @@ class OTP_Status{
 class Discount_scheme{
     const loyalty_membership = 1;
     const dealer_discount = 2;
+    const loyalty_dealer_discount = 3;
     
     public static function getALL(){
         return array(
           Discount_scheme::loyalty_membership => "Loyalty Membership",
-          Discount_scheme::dealer_discount => "EOSS"
+          Discount_scheme::dealer_discount => "EOSS",
+          Discount_scheme::loyalty_dealer_discount => "Loyalty + EOSS"
         );
     }
     
