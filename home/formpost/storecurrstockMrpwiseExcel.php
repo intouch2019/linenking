@@ -30,6 +30,7 @@ $objPHPExcel->getActiveSheet()->setCellValue('H1', 'Total Value (MRP >2625)');
 $objPHPExcel->getActiveSheet()->setCellValue('I1', 'Total Qty');
 $objPHPExcel->getActiveSheet()->setCellValue('J1', 'Total Value');
 $objPHPExcel->getActiveSheet()->setCellValue('K1', 'Debit Note Value');
+$objPHPExcel->getActiveSheet()->setCellValue('L1', 'Credit Note Value');
 
 $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(5);
 $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(45);
@@ -42,6 +43,7 @@ $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(22);
 $objPHPExcel->getActiveSheet()->getColumnDimension('I')->setWidth(10);
 $objPHPExcel->getActiveSheet()->getColumnDimension('J')->setWidth(10);
 $objPHPExcel->getActiveSheet()->getColumnDimension('K')->setWidth(15);
+$objPHPExcel->getActiveSheet()->getColumnDimension('L')->setWidth(15);
 
 
 $styleArray = array(
@@ -86,6 +88,7 @@ $objPHPExcel->getActiveSheet()->getStyle('H1')->applyFromArray($styleArray);
 $objPHPExcel->getActiveSheet()->getStyle('I1')->applyFromArray($styleArray);
 $objPHPExcel->getActiveSheet()->getStyle('J1')->applyFromArray($styleArray);
 $objPHPExcel->getActiveSheet()->getStyle('K1')->applyFromArray($styleArray);
+$objPHPExcel->getActiveSheet()->getStyle('L1')->applyFromArray($styleArray);
 
 $objPHPExcel->getActiveSheet()->getStyle('A')->applyFromArray($cellstyleArray);
 $objPHPExcel->getActiveSheet()->getStyle('B')->applyFromArray($cellstyleArray);
@@ -98,6 +101,7 @@ $objPHPExcel->getActiveSheet()->getStyle('H')->applyFromArray($cellstyleArray);
 $objPHPExcel->getActiveSheet()->getStyle('I')->applyFromArray($cellstyleArray);
 $objPHPExcel->getActiveSheet()->getStyle('J')->applyFromArray($cellstyleArray);
 $objPHPExcel->getActiveSheet()->getStyle('K')->applyFromArray($cellstyleArray);
+$objPHPExcel->getActiveSheet()->getStyle('L')->applyFromArray($cellstyleArray);
 
 $rowCount=2;
 $srno = 1;
@@ -111,7 +115,7 @@ if ($sid == -1) {
             . " it_items i, it_categories ctg, it_brands br, it_styles st, it_sizes si, it_fabric_types fb, it_materials mt, it_prod_types pr,"
             . " it_mfg_by mfg where c.id = cs.store_id and c.usertype=".UserType::Dealer." and c.is_closed = 0 and cs.barcode = i.barcode and ctg.id=i.ctg_id and br.id=i.brand_id"
             . " and st.id=i.style_id and si.id=i.size_id and pr.id=i.prod_type_id and mt.id=i.material_id and fb.id=i.fabric_type_id and mfg.id=i.mfg_id"
-            . " and cs.store_id = c.id and cs.quantity !=0 and ctg.id not in (65) group by c.store_name"; 
+            . " and cs.store_id = c.id and cs.quantity !=0 and ctg.id not in (65,16,13,14,18,19,20,24,25,26,27,28,29,33,35,41,42,43,44,45,46,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64) group by c.store_name"; 
 } else {
     $iquery = "select c.store_name,SUM(cs.quantity) AS total_quantity,SUM(i.MRP * cs.quantity) AS total_value,SUM(CASE WHEN i.MRP <= 1050 THEN cs.quantity ELSE 0 END) AS qty_upto_1050,"
             . " SUM(CASE WHEN i.MRP <= 1050 THEN i.MRP * cs.quantity ELSE 0 END) AS val_upto_1050,SUM(CASE WHEN i.MRP BETWEEN 1051 AND 2625 THEN cs.quantity ELSE 0 END) AS qty_1051_2625,"
@@ -120,7 +124,7 @@ if ($sid == -1) {
             . " it_items i, it_categories ctg, it_brands br, it_styles st, it_sizes si, it_fabric_types fb, it_materials mt, it_prod_types pr,"
             . " it_mfg_by mfg where c.id = cs.store_id and cs.store_id=$sid and cs.barcode = i.barcode and ctg.id=i.ctg_id and br.id=i.brand_id"
             . " and st.id=i.style_id and si.id=i.size_id and pr.id=i.prod_type_id and mt.id=i.material_id and fb.id=i.fabric_type_id and mfg.id=i.mfg_id"
-            . " and cs.store_id = c.id and cs.quantity !=0 and ctg.id not in (65) group by c.store_name"; 
+            . " and cs.store_id = c.id and cs.quantity !=0 and ctg.id not in (65,16,13,14,18,19,20,24,25,26,27,28,29,33,35,41,42,43,44,45,46,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64) group by c.store_name"; 
     $filenameas_storename = "";   
 }
 $alldealersobj = $db->fetchObjectArray($iquery);
@@ -139,7 +143,8 @@ if (!empty($alldealersobj) && isset($alldealersobj)) {
         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(7, $rowCount, $obj->val_above_2625);
         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(8, $rowCount, $obj->total_quantity);
         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(9, $rowCount, $obj->total_value);
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(10, $rowCount, round($obj->val_1051_2625 * 0.06));
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(10, $rowCount, round($obj->val_1051_2625 - (($obj->val_1051_2625/1.12)*1.05)));
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(11, $rowCount, round($obj->val_above_2625 - (($obj->val_above_2625/1.12)*1.18)));
         
         $rowCount++;
         $srno++;
