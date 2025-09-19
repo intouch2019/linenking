@@ -220,7 +220,7 @@ class cls_report_store_currstock_mrpwise extends cls_renderer {
                     <div class="grid_12" style="overflow-y: scroll;">
                         <table style="width:100%" >
                             <tr>
-                                <th colspan="11"  align="center" style="font-size:14px;">Store Current Stock</th>
+                                <th colspan="12"  align="center" style="font-size:14px;">Store Current Stock</th>
                             </tr>
 
                             <tr>
@@ -235,6 +235,7 @@ class cls_report_store_currstock_mrpwise extends cls_renderer {
                                 <th>Total Qty</th>
                                 <th>Total Value</th>
                                 <th>Debit Note Value</th>
+                                <th>Credit Note Value</th>
                             </tr>
 
                             <?php
@@ -254,7 +255,7 @@ class cls_report_store_currstock_mrpwise extends cls_renderer {
                                         . " it_items i, it_categories ctg, it_brands br, it_styles st, it_sizes si, it_fabric_types fb, it_materials mt, it_prod_types pr,"
                                         . " it_mfg_by mfg where c.id = cs.store_id and c.usertype=".UserType::Dealer." and c.is_closed=0 and cs.barcode = i.barcode and ctg.id=i.ctg_id and br.id=i.brand_id"
                                         . " and st.id=i.style_id and si.id=i.size_id and pr.id=i.prod_type_id and mt.id=i.material_id and fb.id=i.fabric_type_id and mfg.id=i.mfg_id"
-                                        . " and cs.store_id = c.id and cs.quantity !=0 and ctg.id not in (65) group by c.store_name limit $start_from, $limit";              
+                                        . " and cs.store_id = c.id and cs.quantity !=0 and ctg.id not in (65,16,13,14,18,19,20,24,25,26,27,28,29,33,35,41,42,43,44,45,46,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64) group by c.store_name limit $start_from, $limit";              
                             } else {
                                 $iquery = "select c.store_name,SUM(cs.quantity) AS total_quantity,SUM(i.MRP * cs.quantity) AS total_value,SUM(CASE WHEN i.MRP <= 1050 THEN cs.quantity ELSE 0 END) AS qty_upto_1050,"
                                         . " SUM(CASE WHEN i.MRP <= 1050 THEN i.MRP * cs.quantity ELSE 0 END) AS val_upto_1050,SUM(CASE WHEN i.MRP BETWEEN 1051 AND 2625 THEN cs.quantity ELSE 0 END) AS qty_1051_2625,"
@@ -263,7 +264,7 @@ class cls_report_store_currstock_mrpwise extends cls_renderer {
                                         . " it_items i, it_categories ctg, it_brands br, it_styles st, it_sizes si, it_fabric_types fb, it_materials mt, it_prod_types pr,"
                                         . " it_mfg_by mfg where c.id = cs.store_id and cs.store_id=$this->storeid and cs.barcode = i.barcode and ctg.id=i.ctg_id and br.id=i.brand_id"
                                         . " and st.id=i.style_id and si.id=i.size_id and pr.id=i.prod_type_id and mt.id=i.material_id and fb.id=i.fabric_type_id and mfg.id=i.mfg_id"
-                                        . " and cs.store_id = c.id and cs.quantity !=0 and ctg.id not in (65) group by c.store_name limit $start_from, $limit";
+                                        . " and cs.store_id = c.id and cs.quantity !=0 and ctg.id not in (65,16,13,14,18,19,20,24,25,26,27,28,29,33,35,41,42,43,44,45,46,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64) group by c.store_name limit $start_from, $limit";
                             }
 //                        print_r($iquery);
 //                        exit();
@@ -283,7 +284,8 @@ class cls_report_store_currstock_mrpwise extends cls_renderer {
                                         <td><?php echo $obj->val_above_2625; ?></td>
                                         <td><?php echo $obj->total_quantity; ?></td>
                                         <td><?php echo $obj->total_value; ?></td>
-                                        <td><?php echo round($obj->val_1051_2625 * 0.06);?></td>
+                                        <td><?php echo round($obj->val_1051_2625 - (($obj->val_1051_2625/1.12)*1.05));?></td>
+                                        <td><?php echo round($obj->val_above_2625 - (($obj->val_above_2625/1.12)*1.18));?></td>
                                         
                                     </tr>
 
@@ -305,9 +307,9 @@ class cls_report_store_currstock_mrpwise extends cls_renderer {
                         <ul style="list-style-type: none;">
                 <?php
                 if ($this->storeid == -1) {
-                    $sql = "SELECT COUNT(*) as count from it_codes where usertype=".UserType::Dealer." and inactive =0";
+                    $sql = "SELECT COUNT(*) as count from it_codes where usertype=".UserType::Dealer." and is_closed =0";
                 } else {
-                    $sql = "SELECT COUNT(*) as count from it_codes where usertype=".UserType::Dealer." and inactive =0 and id=$this->storeid"; 
+                    $sql = "SELECT COUNT(*) as count from it_codes where usertype=".UserType::Dealer." and id=$this->storeid"; 
                  }
                 $row = $db->fetchObject($sql);
 //                                $total_records = $row;
