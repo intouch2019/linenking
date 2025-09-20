@@ -228,10 +228,10 @@ class cls_report_store_currstock_mrpwise extends cls_renderer {
                                 <th>Store Name</th>
                                 <th>Total Qty (MRP<=1050)</th>
                                 <th>Total Value (MRP<=1050)</th>
-                                <th>Total Qty (MRP1051-2625)</th>
-                                <th>Total Value (MRP1051-2625)</th>
-                                <th>Total Qty (MRP>2625)</th>
-                                <th>Total Value (MRP>2625)</th>
+                                <th>Total Qty (MRP1051-2800)</th>
+                                <th>Total Value (MRP1051-2800)</th>
+                                <th>Total Qty (MRP>2800)</th>
+                                <th>Total Value (MRP>2800)</th>
                                 <th>Total Qty</th>
                                 <th>Total Value</th>
                                 <th>Debit Note Value</th>
@@ -249,18 +249,18 @@ class cls_report_store_currstock_mrpwise extends cls_renderer {
 
                             if ($this->storeid == -1) {
                                 $iquery = "select c.store_name,SUM(cs.quantity) AS total_quantity,SUM(i.MRP * cs.quantity) AS total_value,SUM(CASE WHEN i.MRP <= 1050 THEN cs.quantity ELSE 0 END) AS qty_upto_1050,"
-                                        . " SUM(CASE WHEN i.MRP <= 1050 THEN i.MRP * cs.quantity ELSE 0 END) AS val_upto_1050,SUM(CASE WHEN i.MRP BETWEEN 1051 AND 2625 THEN cs.quantity ELSE 0 END) AS qty_1051_2625,"
-                                        . " SUM(CASE WHEN i.MRP BETWEEN 1051 AND 2625 THEN i.MRP * cs.quantity ELSE 0 END) AS val_1051_2625,SUM(CASE WHEN i.MRP > 2625 THEN cs.quantity ELSE 0 END) AS qty_above_2625,"
-                                        . " SUM(CASE WHEN i.MRP > 2625 THEN i.MRP * cs.quantity ELSE 0 END) AS val_above_2625 from it_codes c,it_current_stock cs,"
+                                        . " SUM(CASE WHEN i.MRP <= 1050 THEN i.MRP * cs.quantity ELSE 0 END) AS val_upto_1050,SUM(CASE WHEN i.MRP BETWEEN 1051 AND 2800 THEN cs.quantity ELSE 0 END) AS qty_1051_2800,"
+                                        . " SUM(CASE WHEN i.MRP BETWEEN 1051 AND 2800 THEN i.MRP * cs.quantity ELSE 0 END) AS val_1051_2800,SUM(CASE WHEN i.MRP > 2800 THEN cs.quantity ELSE 0 END) AS qty_above_2800,"
+                                        . " SUM(CASE WHEN i.MRP > 2800 THEN i.MRP * cs.quantity ELSE 0 END) AS val_above_2800 from it_codes c,it_current_stock cs,"
                                         . " it_items i, it_categories ctg, it_brands br, it_styles st, it_sizes si, it_fabric_types fb, it_materials mt, it_prod_types pr,"
                                         . " it_mfg_by mfg where c.id = cs.store_id and c.usertype=".UserType::Dealer." and c.is_closed=0 and cs.barcode = i.barcode and ctg.id=i.ctg_id and br.id=i.brand_id"
                                         . " and st.id=i.style_id and si.id=i.size_id and pr.id=i.prod_type_id and mt.id=i.material_id and fb.id=i.fabric_type_id and mfg.id=i.mfg_id"
                                         . " and cs.store_id = c.id and cs.quantity !=0 and ctg.id not in (65,16,13,14,18,19,20,24,25,26,27,28,29,33,35,41,42,43,44,45,46,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64) group by c.store_name limit $start_from, $limit";              
                             } else {
                                 $iquery = "select c.store_name,SUM(cs.quantity) AS total_quantity,SUM(i.MRP * cs.quantity) AS total_value,SUM(CASE WHEN i.MRP <= 1050 THEN cs.quantity ELSE 0 END) AS qty_upto_1050,"
-                                        . " SUM(CASE WHEN i.MRP <= 1050 THEN i.MRP * cs.quantity ELSE 0 END) AS val_upto_1050,SUM(CASE WHEN i.MRP BETWEEN 1051 AND 2625 THEN cs.quantity ELSE 0 END) AS qty_1051_2625,"
-                                        . " SUM(CASE WHEN i.MRP BETWEEN 1051 AND 2625 THEN i.MRP * cs.quantity ELSE 0 END) AS val_1051_2625,SUM(CASE WHEN i.MRP > 2625 THEN cs.quantity ELSE 0 END) AS qty_above_2625,"
-                                        . " SUM(CASE WHEN i.MRP > 2625 THEN i.MRP * cs.quantity ELSE 0 END) AS val_above_2625 from it_codes c,it_current_stock cs,"
+                                        . " SUM(CASE WHEN i.MRP <= 1050 THEN i.MRP * cs.quantity ELSE 0 END) AS val_upto_1050,SUM(CASE WHEN i.MRP BETWEEN 1051 AND 2800 THEN cs.quantity ELSE 0 END) AS qty_1051_2800,"
+                                        . " SUM(CASE WHEN i.MRP BETWEEN 1051 AND 2800 THEN i.MRP * cs.quantity ELSE 0 END) AS val_1051_2800,SUM(CASE WHEN i.MRP > 2800 THEN cs.quantity ELSE 0 END) AS qty_above_2800,"
+                                        . " SUM(CASE WHEN i.MRP > 2800 THEN i.MRP * cs.quantity ELSE 0 END) AS val_above_2800 from it_codes c,it_current_stock cs,"
                                         . " it_items i, it_categories ctg, it_brands br, it_styles st, it_sizes si, it_fabric_types fb, it_materials mt, it_prod_types pr,"
                                         . " it_mfg_by mfg where c.id = cs.store_id and cs.store_id=$this->storeid and cs.barcode = i.barcode and ctg.id=i.ctg_id and br.id=i.brand_id"
                                         . " and st.id=i.style_id and si.id=i.size_id and pr.id=i.prod_type_id and mt.id=i.material_id and fb.id=i.fabric_type_id and mfg.id=i.mfg_id"
@@ -278,14 +278,14 @@ class cls_report_store_currstock_mrpwise extends cls_renderer {
                                         <td><?php echo $obj->store_name; ?></td>
                                         <td><?php echo $obj->qty_upto_1050; ?></td>
                                         <td><?php echo $obj->val_upto_1050; ?></td>
-                                        <td><?php echo $obj->qty_1051_2625; ?></td>
-                                        <td><?php echo $obj->val_1051_2625; ?></td>
-                                        <td><?php echo $obj->qty_above_2625; ?></td>
-                                        <td><?php echo $obj->val_above_2625; ?></td>
+                                        <td><?php echo $obj->qty_1051_2800; ?></td>
+                                        <td><?php echo $obj->val_1051_2800; ?></td>
+                                        <td><?php echo $obj->qty_above_2800; ?></td>
+                                        <td><?php echo $obj->val_above_2800; ?></td>
                                         <td><?php echo $obj->total_quantity; ?></td>
                                         <td><?php echo $obj->total_value; ?></td>
-                                        <td><?php echo round($obj->val_1051_2625 - (($obj->val_1051_2625/1.12)*1.05));?></td>
-                                        <td><?php echo round($obj->val_above_2625 - (($obj->val_above_2625/1.12)*1.18));?></td>
+                                        <td><?php echo round($obj->val_1051_2800 - (($obj->val_1051_2800/1.12)*1.05));?></td>
+                                        <td><?php echo round($obj->val_above_2800 - (($obj->val_above_2800/1.12)*1.18));?></td>
                                         
                                     </tr>
 
