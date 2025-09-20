@@ -77,7 +77,7 @@ try{
         if(isset($mobj) && ! empty($mobj) && $mobj != null){
            $tax_rate= $mobj->tax_rate; 
         }else{
-             if(trim($mrp) <= "1050"){  $tax_rate = 0.05;  }else{ $tax_rate = 0.12; }
+              if(trim($mrp) <= "2624"){  $tax_rate = 0.05;  }else{ $tax_rate = 0.18; }
           }
         }
 
@@ -100,16 +100,16 @@ try{
         else { 
             $tax_val=0;
             $disc_val=1-($dealer_disc/100);
-            if($MRP * $disc_val >1050) {  $tax_val=0.12; }else{$tax_val=0.05;}
+             if($MRP * $disc_val >2624) {  $tax_val=0.18; }else{$tax_val=0.05;}
                  $dis_peritem= $MRP-($MRP/(1+($tax_val *$disc_val))) +($dealer_disc*$MRP/100) +(1*$MRP/100);
           }
         }
         $dis_peritem=round($dis_peritem,2);
         $rate_peritem=  $MRP-$dis_peritem;
-        if($rate_peritem<1000){
+        if($rate_peritem<=2500){
             $tax_rate=0.05;
         } else {
-            $tax_rate=0.12;
+            $tax_rate=0.18;
         }
         $taxable_value=$rate_peritem*$Qty;
         $tax=$taxable_value*$tax_rate;

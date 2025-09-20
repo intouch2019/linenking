@@ -158,10 +158,10 @@ try {
             //discount ---------------------------------------------
             $unit_price = $obj_item->price / $obj_item->qty;
             $inner_bracket = 0;
-            if ($unit_price <= 1050) {
+            if ($unit_price <= 2624) {
                 $inner_bracket = $unit_price - ($unit_price / (1 + 0.05));
             } else {
-                $inner_bracket = $unit_price - ($unit_price / (1 + 0.12));
+                $inner_bracket = $unit_price - ($unit_price / (1 + 0.18));
             }
             $itemwise_discount_amount = ($unit_price * $disc / 100) + $inner_bracket;
             $rate=$unit_price-$itemwise_discount_amount;
@@ -173,7 +173,7 @@ try {
             $tax_rate=0.0;
             if ($state_id == 22) {
                
-                    if ($rate <= 1000) {
+                    if ($rate <= 2500) {
                         //$rate = $unit_price - $itemwise_discount_amount;
                         $total_rate = $rate * $obj_item->qty;
                         $tax = $total_rate * 0.05;
@@ -181,8 +181,8 @@ try {
                     } else {
                         //$rate = $unit_price - $itemwise_discount_amount;
                         $total_rate = $rate * $obj_item->qty;
-                        $tax = $total_rate * 0.12;
-                        $tax_rate=0.12;
+                        $tax = $total_rate * 0.18;
+                        $tax_rate=0.18;
                     }
                     
                 //}
@@ -198,7 +198,7 @@ try {
                 $total_tax_in_bill = $total_tax_in_bill + $tax;
             } else {
                 
-                    if ($rate <= 1000) {
+                    if ($rate <= 2500) {
                         $rate = $unit_price - $itemwise_discount_amount;
                         $total_rate = $rate * $obj_item->qty;
                         $tax = $total_rate * 0.05;
@@ -206,8 +206,8 @@ try {
                     } else {
                         $rate = $unit_price - $itemwise_discount_amount;
                         $total_rate = $rate * $obj_item->qty;
-                        $tax = $total_rate * 0.12;
-                        $tax_rate=0.12;
+                        $tax = $total_rate * 0.18;
+                        $tax_rate=0.18;
                     }
                 //}
                 $igst = $tax;
