@@ -56,16 +56,16 @@ try {
            //do nothing 
         }else{
             //insert
-            if(trim($mrp) <= "1050"){
+            if(trim($mrp) <= "2624"){
                     $tax_name = "GST 5%";
                     $tax_percent = "5";
                     $tax_rate = 0.05;
-                    $validfrom = "2017-07-01 00:00:00";
+                    $validfrom = "2025-09-22 00:00:00";
               }else{
-                    $tax_name = "GST 12%";
-                    $tax_percent = "12";
-                    $tax_rate = 0.12;
-                    $validfrom = "2017-07-01 00:00:00";
+                $tax_name = "GST 18%";
+                $tax_percent = "18";
+                $tax_rate = 0.18;
+                $validfrom = "2025-09-22 00:00:00";
               }
               
               $query = "insert into it_mrp_taxes set mrp = $mrp , tax_name = '$tax_name' , tax_percent = $tax_percent , tax_rate = $tax_rate , validfrom = '$validfrom' , createtime = now() ";                           
