@@ -59,6 +59,7 @@ class cls_report_ssales extends cls_renderer {
     var $salesmancode;
     var $day;
     var $revisedmrp;
+    var $gstdiscount;
 
     function __construct($params = null) {
 //		parent::__construct(array(UserType::Admin, UserType::CKAdmin, UserType::Manager));
@@ -312,6 +313,11 @@ class cls_report_ssales extends cls_renderer {
             $this->coupon = $params['revisedmrp'];
         } else
             $this->fields['revisedmrp'] = "";
+        if (isset($params['gstdiscount'])) {
+            $this->fields['gstdiscount'] = $params['gstdiscount'];
+            $this->coupon = $params['gstdiscount'];
+        } else
+            $this->fields['gstdiscount'] = "";
     }
 
     function extraHeaders() {
@@ -659,6 +665,7 @@ class cls_report_ssales extends cls_renderer {
                                                     <option value="creditvoucherused" selected >Creditvaucher Used</option>
                                                     <option value="salesmancode" selected>Salesman ID</option>
                                                     <option value="revisedmrp" selected>Revised Mrp</option>
+                                                    <option value="gstdiscount" selected>GST Discount</option>
                                                     <!--                                        <option value="itemvalue">Sold Price</option>-->
                                                     <option value="month">Month</option>
                                                     <!--<option value="cust">Customer Info</option>-->
@@ -973,6 +980,32 @@ class cls_report_ssales extends cls_renderer {
                                         $queryfields .= "sum( ifnull(oi.discount_val, 0) + ifnull( case when (o.discount_pct is not null) then ((((100 - o.discount_pct) / 100) * oi.price) * (case when (o.tickettype in (0,1,6)) then (oi.quantity) else 0 end)) else oi.price * (case when (o.tickettype in (0,1,6)) then (oi.quantity) else 0 end) end, 0) ) as revised_mrp,";
                                         $total_td .= "<td ></td>";
                                     }
+                                    
+                                     if ($field == "revisedmrp") { $tableheaders .= "Revised MRP :"; $queryfields .= "sum( ifnull(oi.discount_val, 0) + ifnull( case when (o.discount_pct is not null) then ((((100 - o.discount_pct) / 100) * oi.price) * (case when (o.tickettype in (0,1,6)) then (oi.quantity) else 0 end)) else oi.price * (case when (o.tickettype in (0,1,6)) then (oi.quantity) else 0 end) end, 0) ) as revised_mrp,"; $total_td .= "<td ></td>"; }
+                        if ($field == "gstdiscount") {
+                                        $tableheaders .= "gst discount :";
+                                        $queryfields .= "  
+     ROUND(
+        CASE 
+            WHEN o.tickettype IN (0, 6) 
+                THEN (i.MRP - (
+                    SUM(
+                        IFNULL(oi.discount_val, 0) +
+                        IFNULL(
+                            CASE 
+                                WHEN o.discount_pct IS NOT NULL 
+                                    THEN (((100 - o.discount_pct) / 100) * oi.price)
+                                ELSE oi.price
+                            END, 
+                        0)
+                    )
+                ))
+            ELSE 0 
+        END, 
+    2) AS gstdiscount,";
+                                        $total_td .= "<td ></td>";
+                                    }
+                                    
                                     //   if ($field=="cust") {$tableheaders.="Customer:"; $queryfields .= " CONCAT(cust_name,' : ',cust_phone) as customer , ";$group_by[] = "customer"; $total_td .= "<td></td>";}
                                     /* if ($field=="store") { $tableheaders.="Store Name:"; $queryfields .= "c.store_name,"; $group_by[] = "o.store_id"; $total_td .= "<td></td>"; }
                                       if ($field=="itemctg") {$tableheaders.="Category:"; $queryfields .= "i.ctg_id as itemctg,"; $group_by[] = "i.ctg_id"; $total_td .= "<td></td>"; }
