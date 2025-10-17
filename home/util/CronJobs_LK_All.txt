@@ -1,0 +1,64 @@
+
+##0 6 * * 4 /usr/bin/php /var/www/html/cottonking/daemons/sendFranchiseeMSLEmail.php #Monday morning mail regarding stock limit
+##*/20 * * * * /usr/bin/php /var/www/html/cottonking/daemons/sendEmails.php #CottonKing Emails
+0 6 * * 4 /usr/bin/php /var/www/html/linenking/daemons/sendFranchiseeMSLEmail.php #Monday morning mail regarding stock limit
+##0 23 * * * /usr/bin/php /var/www/html/cottonking/daemons/saveStoreStockSummary.php #Every day end save store stock summarry
+##0 6 * * 4 /usr/bin/php /var/www/html/tyson/daemons/sendFranchiseeMSLEmail.php > /var/www/html/tyson/daemons/fmsemail.log 2>&1 #Monday morning mail regarding stock limit
+##0 1 * * * /usr/bin/php /var/www/html/cottonking/daemons/automatick_AROrders.php > /var/www/html/cottonking/daemons/autoardorder.log 2>&1 #autoorders everyday UTC time given
+0 1 * * * /usr/bin/php /var/www/html/linenking/daemons/automatick_AROrders.php > /var/www/html/linenking/daemons/autoardorder.log 2>&1 #autoorders everyday UTC time given
+##30 05 * * 1 /usr/bin/php /var/www/html/cottonking/daemons/sendFranchiseeySynchEmail.php > /var/www/html/cottonking/daemons/franchiseesyncemail.log 2>&1  #Monday morning mail regarding pos sync
+30 05 * * 1 /usr/bin/php /var/www/html/linenking/daemons/sendFranchiseeySynchEmail.php > /var/www/html/linenking/daemons/franchiseesyncemail.log 2>&1  #Monday morning mail regarding pos sync
+##30 05 * * 1 /usr/bin/php /var/www/html/tyson/daemons/sendFranchiseeySynchEmail.php > /var/www/html/tyson/daemons/franchiseesyncemail.log 2>&1  #Monday morning mail regarding pos sync
+##0 1 * * * /usr/bin/php /var/www/html/tyson/daemons/automaticty_AROrders.php > /var/www/html/tyson/daemons/automaticity_AROrders.log 2>&1 #autoorders everyday UTC time given
+##0 6 */2 * * /usr/bin/php /var/www/html/cottonking/daemons/sendFranchiseeStockSynchEmail.php > /var/www/html/cottonking/daemons/sendFranchiseeStockSynchEmail.log 2>&1 # UTC time given
+0 6 */2 * * /usr/bin/php /var/www/html/linenking/daemons/sendFranchiseeStockSynchEmail.php > /var/www/html/linenking/daemons/sendFranchiseeStockSynchEmail.log 2>&1 # UTC time given
+##0 6 */2 * * /usr/bin/php /var/www/html/tyson/daemons/sendFranchiseeStockSynchEmail.php > /var/www/html/tyson/daemons/sendFranchiseeStockSynchEmail.log 2>&1 # UTC time given
+
+#design grnRelease on selected Time
+##30 13,20 * * * /usr/bin/php /var/www/html/cottonking/home/formpost/grnRelease_at_Time.php > /var/www/html/cottonking/home/formpost/grnRelease_at_Time.log 2>&1
+30 13,20 * * * /usr/bin/php /var/www/html/linenking/home/formpost/grnRelease_at_Time.php > /var/www/html/linenking/home/formpost/grnRelease_at_Time.log 2>&1
+##30 13,20 * * * /usr/bin/php /var/www/html/tyson/home/formpost/grnRelease_at_Time.php > /var/www/html/tyson/home/formpost/grnRelease_at_Time.log 2>&1
+
+#Insert into sales Report Table
+#05 02,05,08,11 * * * /usr/bin/php /var/www/html/cottonking/home/ajax/StoreSales_report.php >> /var/www/html/cottonking/home/ajax/StoreSales_report.log 2>&1
+05 02 * * * /usr/bin/php /var/www/html/linenking/home/ajax/StoreSales_report.php >> /var/www/html/linenking/home/ajax/StoreSales_report.log 2>&1
+
+#10 12 * * * /usr/bin/php /var/www/html/cottonking/home/formpost/grnRelease_at_Time.php > /var/www/html/cottonking/home/formpost/grnRelease_at_Time2.log 2>&1
+#48 17 * * * /usr/bin/php /var/www/html/cottonking/home/formpost/grnRelease_at_Time.php > /var/www/html/cottonking/home/formpost/grnRelease_at_Time3.log 2>&1
+
+
+#* 6-23 * * * /usr/bin/php /var/www/html/cottonking/home/util/createDGpdf_1.php 1>> /var/www/html/cottonking/home/util/createDGpdf_1.log 2>&1
+#* 6-23 * * * /usr/bin/php /var/www/html/linenking/home/util/createDGpdf_1.php 1>> /var/www/html/linenking/home/util/createDGpdf_1.log 2>&1
+
+##05 01 * * * /var/www/html/db-backups/prgms/shell/ssh-tz-backup-v1.sh
+##05 01 * * * /var/www/html/db-backups/prgms/shell/ssh-ck-backup-v1.sh
+05 01 * * * /var/www/html/db-backups/prgms/shell/ssh-lk-backup-v1.sh
+
+#Barcode Batch Upload to RFID URL
+*/10 * * * * /usr/bin/php /var/www/html/linenking/home/cron/sender_batch.php >> /var/www/html/linenking/home/cron/sender_batch1.log 2>&1
+*/02 * * * * /usr/bin/php /var/www/html/linenking/home/cron/receiver_batch.php >> /var/www/html/linenking/home/cron/receiver_batch1.log 2>&1
+#*/05 * * * * /usr/bin/php /var/www/html/linenking/home/cron/payment_receiver.php >> /var/www/html/linenking/home/cron/payment_receiver.log 2>&1
+#*/05 * * * * /usr/bin/php /var/www/html/linenking/home/cron/paymentGatewayN_NACH.php >> /var/www/html/linenking/home/cron/paymentGatewayN_NACH.log 2>&1
+*/05 * * * * /usr/bin/php /var/www/html/linenking/home/cron/payment_receiver_order_lookup_hdfc.php >> /var/www/html/linenking/home/cron/payreceodrlookup_hdfc2.log 2>&1
+*/05 * * * * /usr/bin/php /var/www/html/linenking/home/cron/payment_gateway_non_nach_hdfc.php >> /var/www/html/linenking/home/cron/paygatewaynonnach_hdfc.log 2>&1
+
+#Weekly Execute on Wednesday at 10AM
+0 10 * * 3 /usr/bin/php /var/www/html/linenking/daemons/sendFranchiseeStockintransitEmailLK.php >> /var/www/html/linenking/daemons/sendFranchiseeStockintransitEmailLK.log 2>&1
+
+
+##Clear old data of it_Logs Table:
+0 4 * * * /usr/bin/php /var/www/html/linenking/home/cron/removeLogs.php >> /var/www/html/linenking/home/cron/removeLogs.log 2>&1
+
+01 * * * * /usr/bin/php /var/www/html/linenking/home/cron/ActivateStore_Datasync.php >> /var/www/html/linenking/home/cron/ActStoreDsync.log 2>&1
+
+#Daily Execute at 07AM - Loyalty Membership deactivation
+5 9 * * * /usr/bin/php /var/www/html/linenking/daemons/deactivateexpiremembership.php >> /var/www/html/linenking/daemons/deactivateexpiremembership.log 2>&1
+
+#Execute at 05 on every 5th date - Loyalty discount scheme credit point calculation automation.
+05 5 5 * * /usr/bin/php /var/www/html/linenking/daemons/saveStoreDiscountSchemeData.php >> /var/www/html/linenking/daemons/saveStoreDiscountSchemeData.log 2>&1
+
+#Execute at 06:00AM -  Store Credit Points Logic CK deployment
+15 6 * * * /usr/bin/php /var/www/html/linenking/daemons/addInactiveCreditPoints.php >> /var/www/html/linenking/daemons/addInactiveCreditPoints.log 2>&1
+
+#Execute at 11:15PM
+15 23 * * * /usr/bin/php /var/www/html/linenking/daemons/checkLowStockStores.php >> /var/www/html/linenking/daemons/checkLowStockStores.log 2>&1
