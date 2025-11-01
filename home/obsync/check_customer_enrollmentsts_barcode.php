@@ -93,7 +93,7 @@ if (!empty($mobile_no) && !empty($store_id) && intval($store_id) !== 0) {
             $result = array(
                 "mobile_number" => "$mobile_no",
                 "membership_barcode" => $membership_barcode,                
-                "registration_status" => "0", //not register
+                "registration_status" => "3", //not register
                 "status" => "Success",
                 "errordesc" => ""
             );
