@@ -56,7 +56,7 @@ try {
            //do nothing 
         }else{
             //insert
-            if(trim($mrp) <= "2624"){
+            if(trim($mrp) <= "2800"){
                     $tax_name = "GST 5%";
                     $tax_percent = "5";
                     $tax_rate = 0.05;
