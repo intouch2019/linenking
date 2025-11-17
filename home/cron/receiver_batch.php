@@ -33,7 +33,7 @@ if (isset($receivedatas)) {
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://bu-fashionking-wc1wyu.truevuecloud.com/api/v1/fileUploader/files/61830fe6-e3b5-4553-bda1-cc91944cea19/'.$fileId.'?apikey=AuHEgeJVhSBrmyNoE9cnUni44Pii4A0AXWNbsc8Kl5FMATMd', // New API Key
+            CURLOPT_URL => 'https://bu-fashionking-wc1wyu.truevuecloud.com/api/v1/fileUploader/files/61830fe6-e3b5-4553-bda1-cc91944cea19/'.$fileId, // New API Key
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -41,6 +41,10 @@ if (isset($receivedatas)) {
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+        'accept: */*',
+        'x-api-key: AuHEgeJVhSBrmyNoE9cnUni44Pii4A0AXWNbsc8Kl5FMATMd' //moved API key here
+    ),
         ));
 
         $response = curl_exec($curl);
