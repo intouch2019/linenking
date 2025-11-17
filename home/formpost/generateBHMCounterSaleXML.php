@@ -52,8 +52,7 @@ if (!empty($storeObjs)) {
     $SVCURRENTCOMPANY = $STATICVARIABLES->addChild("SVCURRENTCOMPANY", "BHM Textiles Hub LLP");
     $REQUESTDATA = $IMPORTDATA->addChild("REQUESTDATA");
     foreach ($storeObjs as $bhmStore) {
-        $query =  "select sum(case when (o.tickettype in (0,1,6) ) then oi.quantity else 0 end) as quantity,sum(case when (o.discount_pct is not NULL) then ((((100-o.discount_pct)/100)*oi.price) * (case when (o.tickettype in (0,1,6)) then (oi.quantity) else 0 end )) else oi.price*(case when (o.tickettype in (0,1,6)) then (oi.quantity) else 0 end ) end) as net, o.bill_datetime "
-        . "from it_orders o,it_order_items oi, it_items i, it_codes c where o.store_id =$bhmStore->id and o.bill_datetime >= $dt1 and o.bill_datetime <= $dt2 and oi.order_id=o.id and i.id = oi.item_id and o.store_id = c.id";
+        $query =  "select sum(quantity) as quantity, sum(round(sub_total)) as net, bill_datetime from it_orders o where  o.store_id =$bhmStore->id and o.bill_datetime >= $dt1 and o.bill_datetime <= $dt2";
 //        echo $query; exit();
         $netobj = $db->fetchObjectArray($query);
 
