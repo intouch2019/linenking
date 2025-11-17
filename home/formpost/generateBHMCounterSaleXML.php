@@ -52,7 +52,7 @@ if (!empty($storeObjs)) {
     $SVCURRENTCOMPANY = $STATICVARIABLES->addChild("SVCURRENTCOMPANY", "BHM Textiles Hub LLP");
     $REQUESTDATA = $IMPORTDATA->addChild("REQUESTDATA");
     foreach ($storeObjs as $bhmStore) {
-        $query =  "select sum(quantity) as quantity, sum(round(sub_total)) as net, bill_datetime from it_orders o where  o.store_id =$bhmStore->id and o.bill_datetime >= $dt1 and o.bill_datetime <= $dt2";
+        $query =  "select sum(quantity) as quantity, sum(round(sub_total)) as net, bill_datetime from it_orders o where  o.tickettype != 3 and o.store_id =$bhmStore->id and o.bill_datetime >= $dt1 and o.bill_datetime <= $dt2";
 //        echo $query; exit();
         $netobj = $db->fetchObjectArray($query);
 
