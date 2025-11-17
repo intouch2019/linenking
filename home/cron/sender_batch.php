@@ -76,9 +76,6 @@ function apisender($m_batchname) {
 
         //for test
 //        CURLOPT_POSTFIELDS => array('file' => new CURLFILE('C:/xampp/htdocs/limelight_new/home/cron/b_batch/' . $m_batchname . '')),
-        CURLOPT_HTTPHEADER => array(
-            'accept: */*'
-        ),
     ));
 
     $response = curl_exec($curl);
