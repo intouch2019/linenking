@@ -175,6 +175,9 @@ if (!$store_name || !$address || !$city || !$zip || !$owner || !$phone || !$emai
         $gstin_no = $db->safe($gstin_no);
         $tally_name = $db->safe($tally_name);
         $distance = $db->safe($distance);
+        $retail_saletally_name = $db->safe($retail_saletally_name);
+        $retail_sale_cash_name = $db->safe($retail_sale_cash_name);
+        $retail_sale_card_name = $db->safe($retail_sale_card_name);
         //        $tallyname = $db->safe($tally);
         //$zipcode = isset($zip) ? $db->safe(trim($zip)) : false;
 
@@ -329,7 +332,7 @@ if (!$store_name || !$address || !$city || !$zip || !$owner || !$phone || !$emai
                             }
                         }
                         $resfloor = trim($multifloor, ',');
-                $query = "update it_codes set store_name=$store_name,carpet='$resfloor',monthlyrent=$monthrent,facade=$facad, address=$address,nach_limit= $cust_nach_limit, city=$city, zipcode = $zipcode , owner=$owner, phone=$phone, phone2=$phone2, email=$email, email2=$email2,gstin_no=$gstin_no, tax_type = $taxtype , tally_name=$tally_name,distance= $distance,UMRN=$umrn,cust_tobe_debited=$cust_tobe_debtd,cust_ifsc_or_mcr=$cust_ifsc_mcr,cust_debit_account=$cust_debit_account,is_natch_required=$is_natch1,Area=$area,Location=$location,is_tallyxml=$is_tallyxml,state_id=$nstate,region_id=$region $aClause $sClause $addquery ";  //, tally_name=$tallyname
+                $query = "update it_codes set store_name=$store_name,carpet='$resfloor',monthlyrent=$monthrent,facade=$facad, address=$address,nach_limit= $cust_nach_limit, city=$city, zipcode = $zipcode , owner=$owner, phone=$phone, phone2=$phone2, email=$email, email2=$email2,gstin_no=$gstin_no, tax_type = $taxtype , tally_name=$tally_name,distance= $distance,UMRN=$umrn,cust_tobe_debited=$cust_tobe_debtd,cust_ifsc_or_mcr=$cust_ifsc_mcr,cust_debit_account=$cust_debit_account,is_natch_required=$is_natch1,Area=$area,Location=$location,is_tallyxml=$is_tallyxml,state_id=$nstate, retail_saletally_name=$retail_saletally_name,retail_sale_cash_name=$retail_sale_cash_name,retail_sale_card_name=$retail_sale_card_name ,region_id=$region $aClause $sClause $addquery ";  //, tally_name=$tallyname
 //                   
                 if ($password) {
                     $query .= ",password=" . $db->safe(md5($password));

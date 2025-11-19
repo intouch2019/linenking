@@ -916,6 +916,23 @@ class cls_admin_stores_edit extends cls_renderer {
                                 <input type ="radio" name="is_tallyxml" id="is_tallyxml" style="width:5%" <?php if ($store->is_tallyxml == 0) { ?>checked <?php } ?> value="0">No
                                 <input type ="radio" name="is_tallyxml" id="is_tallyxml" style="width:5%" <?php if ($store->is_tallyxml == 1) { ?>checked <?php } ?> value="1">Yes
                             </p>
+                            
+                            <div id="Tallydata" <?php if ($store->is_tallyxml == 0) { ?>style="display:none" <?php } ?> >
+                                <p class="grid_3">
+                                    <label>Retail Sale Tally Name</label>
+                                    <input type="text" id="retail_saletally_name" name="retail_saletally_name" value="<?php echo $this->getFieldValue('retail_saletally_name', $store->retail_saletally_name); ?>" onkeypress="return blockSpecialChar(event)" placeholder="Special Charactre not allowed">
+                                </p>
+
+                                <p class="grid_3">
+                                    <label>Retail Sale Cash Name</label>
+                                    <input type="text" id="retail_sale_cash_name" name="retail_sale_cash_name" value="<?php echo $this->getFieldValue('retail_sale_cash_name', $store->retail_sale_cash_name); ?>" onkeypress="return blockSpecialChar(event)" placeholder="Special Charactre not allowed">
+                                </p>
+                                <p class="grid_3">
+                                    <label>Retail Sale Card Name</label>
+                                    <input type="text" id="retail_sale_card_name" name="retail_sale_card_name" value="<?php echo $this->getFieldValue('retail_sale_card_name', $store->retail_sale_card_name); ?>" onkeypress="return blockSpecialChar(event)" placeholder="Special Charactre not allowed">
+                                </p>
+                            </div>  
+                            
                             <p class="grid_12">
                                 <label>PANCARD No: </label><br>                     
                                 <input type ="text" name="pancard_no" id="pancard_no" style="width:30%"  value="<?php echo $this->getFieldValue('pancard_no', $store->pancard_no); ?>" >                     
