@@ -36,6 +36,10 @@ if ($tallytype == "2") { // means All BHM Store Cash Receipt Voucher lk
     $redirect = "formpost/generateBHMCashReceiptVoucherXML.php?d1=$from&d2=$to";
     header("Location: " . DEF_SITEURL . "$redirect");
 }
+if ($tallytype == "3") { // means All BHM Store Counter sale lk
+    $redirect = "formpost/generateBHM50CounterSaleXML.php?d1=$from&d2=$to";
+    header("Location: " . DEF_SITEURL . "$redirect");
+}
 
 if (count($errors) > 0) {
     $_SESSION['form_errors'] = $errors;
