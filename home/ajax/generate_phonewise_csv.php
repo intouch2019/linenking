@@ -40,7 +40,7 @@ function getReportQuery($store_id_str, $from_dt, $to_dt) {
     // Use the same SQL you already created earlier in your class
     // To keep this answer readable, we'll include a placeholder here
     // Replace "SELECT ..." below with the full query from your app
-    return "SELECT c.store_name, o.store_id, o.cust_phone, o.bill_no, o.sub_total, sub.loyalty_count FROM it_orders o JOIN it_codes c ON c.id = o.store_id JOIN it_order_payments iop ON iop.order_id = o.id JOIN ( SELECT o2.cust_phone, COUNT(*) AS loyalty_count FROM it_orders o2 JOIN it_order_payments iop2 ON iop2.order_id = o2.id WHERE o2.cust_phone IS NOT NULL AND o2.cust_phone != '' AND iop2.payment_name = 'loyalty' AND o2.store_id in($store_id_str) AND o2.bill_datetime BETWEEN  '$from_dt' AND '$to_dt'  GROUP BY o2.cust_phone HAVING COUNT(*) > 2 ) AS sub ON sub.cust_phone = o.cust_phone WHERE iop.payment_name = 'loyalty' AND o.store_id in($store_id_str) AND o.bill_datetime BETWEEN  '$from_dt' AND '$to_dt'  ORDER BY sub.loyalty_count DESC, o.cust_phone, o.id DESC";
+    return "SELECT c.store_name, o.store_id, o.cust_phone, o.bill_no, o.bill_datetime as date, o.sub_total, sub.loyalty_count FROM it_orders o JOIN it_codes c ON c.id = o.store_id JOIN it_order_payments iop ON iop.order_id = o.id JOIN ( SELECT o2.cust_phone, COUNT(*) AS loyalty_count FROM it_orders o2 JOIN it_order_payments iop2 ON iop2.order_id = o2.id WHERE o2.cust_phone IS NOT NULL AND o2.cust_phone != '' AND iop2.payment_name = 'loyalty' AND o2.store_id in($store_id_str) AND o2.bill_datetime BETWEEN  '$from_dt' AND '$to_dt'  GROUP BY o2.cust_phone HAVING COUNT(*) > 2 ) AS sub ON sub.cust_phone = o.cust_phone WHERE iop.payment_name = 'loyalty' AND o.store_id in($store_id_str) AND o.bill_datetime BETWEEN  '$from_dt' AND '$to_dt'  ORDER BY sub.loyalty_count DESC, o.cust_phone, o.id DESC";
 }
 
 $query = getReportQuery($store_id_str, $start_date, $end_date);
@@ -65,6 +65,7 @@ foreach ($rows as $row) {
         $row->cust_phone,
         $row->loyalty_count,
         $row->bill_no,
+        $row->date,
         $row->sub_total,
         
     );
