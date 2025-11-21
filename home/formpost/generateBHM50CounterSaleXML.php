@@ -35,7 +35,7 @@ $dt2 = date_format($date, "Y-m-d 23:59:59");
 //print "first".$dt1."<>".$dt2;
 $dt1 = $db->safe($dt1);
 $dt2 = $db->safe($dt2);
-$name = "BHMStore_CounterSale_" . $dt1 . "_" . $dt2 . ".xml";
+$name = "LK_BHMStore_CounterSale_" . $dt1 . "_" . $dt2 . ".xml";
 
 $bhmStoreQuery = "select id,is_bhmtallyxml,store_name from it_codes where id in (160) "; //storeid = 160 is 50% bhmstore, 147 is dummy bhmstore
 $storeObjs = $db->fetchObjectArray($bhmStoreQuery);
