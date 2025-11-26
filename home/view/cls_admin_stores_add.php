@@ -519,12 +519,12 @@ if(discval>0){
                       
                             <p class="grid_3">
                                 <label>Dealer Discount: *</label>
-                         <?php if ($this->currStore->usertype == UserType::CKAdmin) { ?>
+                         <?php if ($this->currStore->usertype == UserType::CKAdmin || $this->currStore->id == 107) { ?>
                                     <input  type="text" name="discval" id="discval"  value="<?php echo $this->getFieldValue('discval'); ?>" oninput="isCheckedById();" required>
                                 <?php }
                                 
                                 
-                                elseif($this->currStore->usertype == UserType::Admin ) {
+                                elseif($this->currStore->usertype == UserType::Admin || $this->currStore->id == 107 ) {
                                     
                                      $query ="select * from it_dealer_discount order by discount asc";     
                                         $obj_deler_disc = $db->fetchObjectArray($query);
