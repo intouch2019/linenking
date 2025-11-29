@@ -422,36 +422,38 @@ class cls_report_salesman_incentive extends cls_renderer {
                                     
                                     
                                     
-                                   $query =  "SELECT o.bill_no, GROUP_CONCAT(DISTINCT s.salesman_no ORDER BY s.salesman_no SEPARATOR ',') AS salesman_no, SUM(s.net_total - s.return_total) AS net_total, "
-                                    . "SUM( CASE WHEN s.return_no IS NULL OR s.return_no = '' THEN s.qty ELSE s.qty - ( SELECT ABS(SUM(o2.quantity)) FROM it_orders o2 WHERE o2.store_id IN ($this->storeidreport) "
-                                            . "AND o2.bill_no = TRIM(s.return_no) ) END ) AS ssum FROM it_orders o JOIN it_salesmanreport s ON o.store_id = s.store_id AND o.bill_no = s.bill_no "
-                                            . "WHERE s.store_id IN ($this->storeidreport) and $createtimequery "
-                                    . "AND catg_name NOT IN ('Handkerchiefs', 'Socks', 'Starch Spray') GROUP BY o.bill_no ORDER BY o.bill_no";
+                                   $query =  "SELECT s.bill_no, s.salesman_no, SUM( CASE WHEN s.return_no IS NULL OR s.return_no = '' THEN s.qty ELSE s.qty - ( SELECT COALESCE(ABS(SUM(o2.quantity)),0) FROM it_orders o2 "
+                                           . "WHERE o2.store_id = s.store_id AND o2.bill_no = TRIM(s.return_no) ) END ) AS units,"
+                                           . " SUM(s.net_total - s.return_total) AS net_total, SUM( CASE WHEN s.catg_name NOT IN ('Handkerchiefs', 'Socks', 'Starch Spray') THEN "
+                                           . "CASE WHEN s.return_no IS NULL OR s.return_no = '' THEN s.qty ELSE s.qty - ( SELECT COALESCE(ABS(SUM(o2.quantity)),0) FROM it_orders o2 WHERE o2.store_id = s.store_id AND o2.bill_no = TRIM(s.return_no) ) END END ) AS raw_total_units, "
+                                           . "( SELECT SUM( CASE WHEN s2.return_no IS NULL OR s2.return_no = '' THEN s2.qty ELSE s2.qty - ( SELECT COALESCE(ABS(SUM(o3.quantity)),0) FROM it_orders o3 WHERE o3.store_id = s2.store_id AND o3.bill_no = TRIM(s2.return_no) ) END ) FROM it_salesmanreport "
+                                           . "s2 WHERE s2.bill_no = s.bill_no AND s2.store_id = s.store_id AND s2.catg_name NOT IN ('Handkerchiefs','Socks', 'Starch Spray') ) AS bill_total_units, o.bill_datetime FROM it_orders o JOIN it_salesmanreport s ON o.store_id = s.store_id AND o.bill_no = s.bill_no "
+                                           . "WHERE s.store_id IN ($this->storeidreport) AND $createtimequery AND s.catg_name NOT IN ('Handkerchiefs', 'Socks', 'Starch Spray') "
+                                           . "GROUP BY s.bill_no, s.salesman_no, o.bill_datetime ORDER BY s.bill_no, s.salesman_no;";
 //                                                print_r($query);exit();
                                     $object = $db->fetchObjectArray($query);
                                     
                                     foreach ($object as $billobjs) {
                                         
-                                       
 
 
-                                     $finalQty = $billobjs->ssum;
+                                     
+                                     $finalQty = $billobjs->bill_total_units;
                                      
                                      
                                                 // Start Multiple Qty (No Membership) logic 
                                         if ($finalQty > 1) { // Only process bills with Qty > 1 (Multiple Qty)
 
-                                                $sm_no = substr($billobjs->salesman_no, 0, 1);
-
+                                                $sm_no = ($billobjs->salesman_no);
                                                 if (!isset($multiQtyBills[$sm_no])) {
                                                     $multiQtyBills[$sm_no] = 0;
                                                 }
-                                                $multiQtyBills[$sm_no]++;
-
+                                                    $multiQtyBills[$sm_no]++;
+                                                
                                                 if (!isset($multiQtyQty[$sm_no])) {
                                                     $multiQtyQty[$sm_no] = 0;
                                                 }
-                                                $multiQtyQty[$sm_no] += $finalQty;
+                                                $multiQtyQty[$sm_no] += $billobjs->units;
 
                                                 if (!isset($multiQtyAmount[$sm_no])) {
                                                     $multiQtyAmount[$sm_no] = 0;
