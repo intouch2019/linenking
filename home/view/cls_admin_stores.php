@@ -127,11 +127,13 @@ class cls_admin_stores extends cls_renderer {
             </tr>
             <tr>
                 <th>Dealer Number</th>
+               
                   <th>Store ID</th>
                 <th>Username</th>
                 <th>Level</th>
                 <th>Is Store Closed</th>
                 <th>Dealer Name</th>
+                 <th>RBF Name</th>
                 <th>City</th>
                 <th>Owner</th>
                 <th>Phone</th>
@@ -208,6 +210,21 @@ $dialogHtml = json_encode($dialogHtml);
                 <td><?php if(trim($obj->is_closed)==1){ echo "Yes";}else{ echo "No";}?></td>
                 <td><?php echo $obj->store_name; ?></td>
                 <td><?php echo $obj->city; ?></td>
+                                            <td><?php
+//                $executive=$db->fetchObject("select exe_id from executive_assign where store_id=$obj->id order by id desc limit 1");
+//                echo "select exe_id from executive_assign where store_id=$obj->id order by id desc limit 1";
+//                echo "SELECT s.id AS store_id, s.code AS store_code, s.store_name AS store_name, e.id AS executive_id, e.code AS executive_code, e.store_name AS executive_name FROM executive_assign ea JOIN it_codes s ON ea.store_id = $obj->id JOIN it_codes e ON ea.exe_id = $executive->exe_id WHERE e.usertype = 3 and e.roles=6 and  s.is_closed=0 ORDER BY s.id, e.id;";
+                                $executivename = $db->fetchObjectArray("select i.store_name from executive_assign e, it_codes i where i.id=exe_id and i.usertype=3 and roles=6 and store_id=$obj->id;");
+
+                                $names = [];
+                                if (!empty($executivename)) {
+                                    foreach ($executivename as $ex) {
+                                        $names[] = $ex->store_name;
+                                    }
+                                }
+
+                                echo implode(", ", $names);
+                                ?></td>
                 <td><?php echo $obj->owner; ?></td>
                 <td><?php echo $obj->phone; ?></td>
 		<!-- Disable delete store for now -->
