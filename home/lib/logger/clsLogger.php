@@ -74,7 +74,24 @@ class clsLogger extends dbobject {
 		$this->execInsert($query);
 		$this->closeConnection();
 	}
-
+        
+        public function it_codes_logInfo($msg, $incomingid=false,$pg_name=false,$ipaddr=false) {
+		$msg = $this->safe($msg);
+		$query = "insert into it_codes_logs set msgtype=".LOG_MSGTYPE_INFO.", message=$msg";
+		if ($incomingid) {
+			$query .= ", incomingid=$incomingid";
+		}
+                if($pg_name){
+                    $pg_name_db = $this->safe($pg_name);
+                    $query .= " , pg_name = $pg_name_db";
+                }
+                if($ipaddr){
+                    $ipaddr_db = $this->safe($ipaddr);
+                    $query .= " , ipaddr = $ipaddr_db";
+                }
+		$this->execInsert($query);
+		$this->closeConnection();
+	}
 }
 
 ?>

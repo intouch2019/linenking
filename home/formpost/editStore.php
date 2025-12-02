@@ -353,6 +353,7 @@ if (!$store_name || !$address || !$city || !$zip || !$owner || !$phone || !$emai
                 $ipaddr = $_SERVER['REMOTE_ADDR'];
                 $pg_name = __FILE__;
                 $clsLogger->logInfo($discquery, $store->id, $pg_name, $ipaddr);
+                $clsLogger->it_codes_logInfo($query, $store->id, $pg_name, $ipaddr);
                 //--> log code ends here
                 $db->execUpdate($discquery);
                 $discquery=$db->safe($discquery);

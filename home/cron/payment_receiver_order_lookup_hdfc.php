@@ -142,6 +142,11 @@ if (isset($pay_done)) {
                     $query1 = "update it_codes set inactive=0, inactivated_by = '' , inactivating_reason = '', paymentlink='', inactive_dttm = now() where id =$inv->store_id";
                     $rowaffect = $db->execUpdate($query1);
 
+                    $clsLogger = new clsLogger();
+//                    $store = getCurrUser();
+//                    $ipaddr = $_SERVER['REMOTE_ADDR'];
+                    $pg_name = __FILE__;
+                    $clsLogger->it_codes_logInfo($query1, "1", $pg_name, "1");
                     $invoice_done = $db->fetchObject("select id,store_name from it_codes where id=$inv->store_id and is_natch_required=0 and store_type != 3");
 
                     if (isset($invoice_done) && $invoice_done->id) {

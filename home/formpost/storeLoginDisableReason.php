@@ -6,6 +6,7 @@ require_once "lib/core/Constants.php";
 require_once "lib/serverChanges/clsServerChanges.php";
 require_once 'lib/users/clsUsers.php';
 require_once "lib/core/clsProperties.php";
+require_once "lib/logger/clsLogger.php";
 
 extract($_POST);
 //print_r($_POST);
@@ -43,6 +44,10 @@ try{
         }
        print "<br>".$query;
         $rowaffected = $db->execUpdate($query);
+        $clsLogger = new clsLogger();
+        $ipaddr = $_SERVER['REMOTE_ADDR'];
+        $pg_name = __FILE__;
+        $clsLogger->it_codes_logInfo($query, $store->id, $pg_name, $ipaddr);
 //        if($rowaffected > 0){
 //           $success = "Store Disabled successfully " ;
 //        }else{

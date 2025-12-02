@@ -7,6 +7,7 @@ require_once "lib/core/Constants.php";
 require_once 'lib/users/clsUsers.php';
 require_once "lib/core/strutil.php";
 require_once ("util/Crypto.php");
+require_once "lib/logger/clsLogger.php";
 
 
 extract($_POST);
@@ -182,8 +183,15 @@ if (count($errors) == 0) {
 
                         $query = "update it_codes set inactive=1, inactivated_by = '$user->id' , inactivating_reason = '$description',paymentlink='$short_url',  inactive_dttm = now() where id =$storeid";
                         $rowaffected = $db->execUpdate($query);
-
+                        
                         $success = "Payment request sent to store - .'$obj->store_name";
+                        
+                            $clsLogger = new clsLogger();
+                            $store = getCurrUser();
+                            $ipaddr = $_SERVER['REMOTE_ADDR'];
+                            $pg_name = __FILE__;
+                            $clsLogger->it_codes_logInfo($query, $store->id, $pg_name, $ipaddr);
+                            
                     }
                 }else{
                      $updatequery = "update it_payment_gateway_hdfc set  reference_id='$reference_id', Send_response='$response',Paymenturl='',status='Invoice no send and received is not same',is_sent=4, updatetime = now() where id=$inserted_id ";
