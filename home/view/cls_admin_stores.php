@@ -133,8 +133,8 @@ class cls_admin_stores extends cls_renderer {
                 <th>Level</th>
                 <th>Is Store Closed</th>
                 <th>Dealer Name</th>
-                 <th>RBF Name</th>
                 <th>City</th>
+                <th>RBF Name</th>
                 <th>Owner</th>
                 <th>Phone</th>
                 <th></th>
