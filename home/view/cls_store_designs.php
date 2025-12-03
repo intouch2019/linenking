@@ -295,7 +295,7 @@ Your session has expired. Click <a href="">here</a> to login.
             }
             
             
-	    $query = "select i.MRP, sum(i.curr_qty) as tot_qty, count(distinct i.design_no) as tot_active_design from it_items i,it_ck_designs d where i.ctg_id=$ctg_id $brandquery and i.ctg_id=d.ctg_id and i.design_no=d.design_no and i.is_design_mrp_active=1 and i.curr_qty > 0 group by i.MRP having tot_qty > 0";
+	    $query = "select i.MRP, sum(i.curr_qty) as tot_qty, count(distinct i.design_no) as tot_active_design from it_items i,it_ck_designs d where i.ctg_id=$ctg_id $brandquery and i.ctg_id=d.ctg_id and i.design_no=d.design_no and i.is_design_mrp_active=1 and i.curr_qty > 0 $stockclause group by i.MRP having tot_qty > 0";
             $db = new DBConn();
             $allprices = $db->fetchObjectArray($query);
             $db->closeConnection();
