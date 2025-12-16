@@ -390,7 +390,14 @@ class cls_payment_link_status extends cls_renderer {
     }
     
    function exportPaymentExcelSimple($orders) {
-       
+    
+       if (ob_get_level()) {
+        ob_clean();
+        }
+    
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_write_close();
+        }   
     header("Content-Type: application/vnd.ms-excel");
     header("Content-Disposition: attachment; filename=payment_link_report.xls");
     header("Pragma: no-cache");
