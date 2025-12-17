@@ -5,13 +5,17 @@ require_once "lib/core/Constants.php";
 require_once "lib/core/strutil.php";
 require_once "session_check.php";
 
-//echo "hi";
+// To potentially catch output before headers, you can add ob_start() here
+// or in your main entry point script if the issue persists.
+// ob_start(); 
+
 class cls_payment_link_status extends cls_renderer {
 
     var $currStore;
     var $params;
     var $dtrange;
     var $orders; // Added property to hold report data
+    var $store_id;
 
     function __construct($params = null) {
         $this->currStore = getCurrUser();
@@ -37,13 +41,14 @@ class cls_payment_link_status extends cls_renderer {
             list($dd, $mm, $yy) = explode("-", $dtarr[0]);
             $sdate = "$yy-$mm-$dd";
             $edate = "$yy-$mm-$dd";
-            $dQuery = " and p.createtime like '%$edate%' ";
-
+            // Check if date is today to include hours/minutes or just use LIKE
             if ($edate == date("Y-m-d")) {
-                $dQuery = " and p.createtime like '%$edate%' ";
+                $dQuery = " and date(p.createtime) = '$edate' "; 
+            } else {
+                 $dQuery = " and date(p.createtime) = '$edate' ";
             }
-        } else
-        if (count($dtarr) == 2) {
+
+        } else if (count($dtarr) == 2) {
             list($dd, $mm, $yy) = explode("-", $dtarr[0]);
             $sdate = "$yy-$mm-$dd";
             list($dd, $mm, $yy) = explode("-", $dtarr[1]);
@@ -53,7 +58,7 @@ class cls_payment_link_status extends cls_renderer {
         
         $where = "";
 
-        if ($this->store_id == "" || empty($this->store_id)) {
+        if ($this->store_id == "" || empty($this->store_id) || $this->store_id == 0) {
             $this->orders = array(); // Initialize with empty array if store is not selected
         }
         else if ($this->store_id == -1) {
@@ -63,7 +68,8 @@ class cls_payment_link_status extends cls_renderer {
         }
 
         if (!empty($where) || $this->store_id == -1) {
-             $query = "select p.id,p.store_name,invoice_nos,invoice_amt, remark_text,p.status,p.createtime from it_payment_gateway_hdfc p, it_codes ic where ic.id=p.store_id and p.status = 'Shipped' $where $dQuery  ";
+             // Added ORDER BY to make report consistent
+             $query = "select p.id,p.store_name,invoice_nos,invoice_amt, remark_text,p.status,p.createtime from it_payment_gateway_hdfc p, it_codes ic where ic.id=p.store_id and p.status = 'Shipped' $where $dQuery ORDER BY p.createtime DESC";
 
              $this->orders = $db->fetchObjectArray($query); 
         } else {
@@ -75,19 +81,12 @@ class cls_payment_link_status extends cls_renderer {
 
         // Excel export check must happen AFTER $this->orders is populated
         if (isset($_GET["export"]) && $_GET["export"] == "excel") {
-            // Check for potential error state before attempting to export
-            if (!empty($this->orders)) {
-                $this->exportPaymentExcelSimple($this->orders);
-            } else {
-                // If no orders were fetched (e.g., store not selected, or no data for range),
-                // we can still create an empty file or just exit silently.
-                $this->exportPaymentExcelSimple(array()); 
-            }
+            // No need to check !empty($this->orders) here, as exportPaymentExcelSimple handles empty arrays
+            $this->exportPaymentExcelSimple($this->orders);
         }
     } // End of __construct
 
     function extraHeaders() {
-        // Removed the redundant export check and call from here
         if (!$this->currStore) {
             ?>
             <h2>Session Expired</h2>
@@ -116,29 +115,25 @@ class cls_payment_link_status extends cls_renderer {
             });
 
             function genReport(usertype, storeid) {
+                // Check if storeid is 0, which means "Select store" option is chosen
                 if ((usertype != 4) && (storeid == 0 || storeid == null)) {
                     alert('Select Store');
                     return;
-                    //                    alert(storeid);
                 }
                 var dtrange = $("#dateselect").val();//SET DATE TO PARAMS
 
-                // alert(dtrange);
                 if (storeid != 0 && dtrange != "") {
-                    window.location.href = "payment/link/status/storeid=" + storeid + "/dtrange=" + dtrange;
-                    setfocus();
+                    // Use a clean URL structure for search
+                    window.location.href = "payment/link/status/storeid=" + storeid + "/dtrange=" + encodeURIComponent(dtrange);
                 } else {
-                    //                    alert('Please Fill All Values');
-
+                    // Logic to display labels/alerts if values are missing
                     if (storeid == 0) {
-                        document.getElementById('storelabel').style.display = 'inline';
-                    }
-                    if (category == 0) {
-                        document.getElementById('catlabel').style.display = 'inline';
+                        // Assuming 'storelabel' is an element to show error
+                        // document.getElementById('storelabel').style.display = 'inline';
                     }
                     if (dtrange == "") {
-                        // alert('hii');
-                        document.getElementById('datelabel').style.display = 'inline';
+                        // Assuming 'datelabel' is an element to show error
+                        // document.getElementById('datelabel').style.display = 'inline';
                     }
                 }
             }
@@ -146,30 +141,14 @@ class cls_payment_link_status extends cls_renderer {
 
             function getStoreId() {
                 var storeid = $('#store_name').val();
-                //                alert(storeid);
                 if (storeid !== 0) {
-                    window.location.href = "payment/link/status/storeid=" + storeid;
-                    setfocus();
+                    // When store changes, only reload with new storeid, preserving date range from session/page
+                    var dtrange = $("#dateselect").val();
+                    window.location.href = "payment/link/status/storeid=" + storeid + "/dtrange=" + encodeURIComponent(dtrange);
                 }
-
             }
-            function searchbydate() {
-                var storeid = $('#store_name').val();
-                var startDate = $('#start_date').val();
-                var endDate = $('#end_date').val();
-                var url = "payment/link/status/storeid=" + storeid;
-                if ((startDate == "") || (endDate == "")) {
-                    alert("select both dates");
-                    return;
-                }
-                ;
-                //if(startDate == 
-                if (startDate && endDate) {
-                    url += "&start_date=" + startDate + "&end_date=" + endDate;
-                }
-                window.location.href = url;
-            }
-            ;
+            
+            // Removed redundant searchbydate function as genReport covers it
 
             $(function () {
                 $(".chzn-select").chosen();
@@ -190,10 +169,13 @@ class cls_payment_link_status extends cls_renderer {
                             return;
                         }
                         var dtrange = $("#dateselect").val();
+                        // Save date range to session on change
                         $.ajax({
                             url: "savesession.php?name=account_dtrange&value=" + dtrange,
                             success: function (data) {
-                                var storeid = $('#store').val();
+                                // Once session is saved, you can optionally trigger a report reload
+                                // var storeid = $('#store_name').val();
+                                // if(storeid != 0) genReport(<?php echo $this->currStore->usertype ?>, storeid);
                             }
                         });
                     }
@@ -229,10 +211,20 @@ class cls_payment_link_status extends cls_renderer {
         $store_id = getCurrUserId();
         $formResult = $this->getFormResult();
         $usertype = getCurrUser()->usertype; // Get usertype
+        
+        $selected_store_id = $this->store_id; 
+        
+        // Use the store ID property set in the constructor for non-admin users if not already set.
+        if ($usertype == UserType::Dealer && (empty($selected_store_id) || $selected_store_id == 0)) {
+            $selected_store_id = $store_id;
+        }
+
         ?>
 
         <?php if ($usertype == 4): ?>
             <script>
+                // This script is still slightly buggy as it modifies the history *after* the page load,
+                // but the backend logic is now independent of this.
                 window.onload = function () {
                     var storeId = <?php echo (int) $store_id; ?>;
 
@@ -251,9 +243,11 @@ class cls_payment_link_status extends cls_renderer {
 
                     var currentUrl = window.location.href;
 
-                    if (!currentUrl.includes('dtrange=')) {
-                        var newUrl = currentUrl + '/storeid=' + storeId + '/dtrange=' + dtrange;
-                        window.history.replaceState({}, '', newUrl);
+                    // If a storeid is not explicitly set in the URL (for first load)
+                    if (!currentUrl.includes('storeid=')) {
+                        // This logic is mostly for UI persistence, the PHP constructor handles the data fetch correctly now
+                        // var newUrl = currentUrl + '/storeid=' + storeId + '/dtrange=' + dtrange;
+                        // window.history.replaceState({}, '', newUrl);
                     }
                 };
             </script>
@@ -269,7 +263,7 @@ class cls_payment_link_status extends cls_renderer {
             <?php } ?>
             <div id="daterangeselection">
 
-                <?php if ($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::Accounts || $this->currStore->usertype == UserType::CKAdmin) { ?>
+                <?php if ($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::Accounts || $this->currStore->usertype == UserType::CKAdmin || $this->currStore->usertype == UserType::Manager) { ?>
                     <div id="storeSelection">
                         <label for="store">*Search store: </label>
                         <select name="store_name" id="store_name" 
@@ -289,8 +283,8 @@ class cls_payment_link_status extends cls_renderer {
                             ?>
                             <option value="-1" <?php echo $allSel; ?>>All store</option> 
                             <?php
-                            if ($this->currStore->usertype != UserType::Admin && $this->currStore->usertype != UserType::Accounts && $this->currStore->usertype != UserType::CKAdmin) {
-                                $other_con = "and id = $this->storeid ";
+                            if ($this->currStore->usertype != UserType::Admin && $this->currStore->usertype != UserType::Accounts && $this->currStore->usertype != UserType::CKAdmin && $this->currStore->usertype != UserType::Manager) {
+                                $other_con = "and id = $this->store_id ";
                             } else {
                                 $other_con = "";
                             }
@@ -309,18 +303,19 @@ class cls_payment_link_status extends cls_renderer {
                             <?php } ?>
                         </select><br>
 
-                    <?php } ?>
+                    </div>
+                <?php } ?>
 
                     <div style="margin-bottom: 5px" >
                         <span style="font-weight:bold;">Date Filter : </span><br> <input size="17" type="text" id="dateselect" name="dateselect" value="<?php echo $this->dtrange; ?>" onclick="datelabelhide()" onchange="datelabelhide()"> (Click to see date options)
                         <br><br> 
-                        <?php if ($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::Accounts || $this->currStore->usertype == UserType::CKAdmin) { ?>
-                            <button  onclick="genReport(<?php echo $this->currStore->usertype ?>, <?php echo $this->store_id; ?>)" id="searchButton">Search</button> 
-                        <?php } else { ?>
-                            <button  onclick="genReport(<?php echo $this->currStore->usertype ?>, <?php echo $store_id; ?>)" id="searchButton">Search</button> 
-
-                        <?php }
-                        ?>    
+                        
+                        <?php 
+                        // Determine the store ID to pass to genReport
+                        $report_store_id = ( $this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::Accounts || $this->currStore->usertype == UserType::CKAdmin || $this->currStore->usertype == UserType::Manager) ? $this->store_id : $store_id; 
+                        ?>
+                        
+                        <button  onclick="genReport(<?php echo $this->currStore->usertype ?>, <?php echo $report_store_id; ?>)" id="searchButton">Search</button> 
 
                     </div>      <br> 
 
@@ -329,13 +324,16 @@ class cls_payment_link_status extends cls_renderer {
                     $orders = $this->orders;
 
                     if($this->store_id == "" || empty($this->store_id) || $this->store_id == 0){
-                            // Do not return here to allow the form to still display
+                        // Display a message if no store is selected (for Admin/Accounts)
+                        if ($this->currStore->usertype == UserType::Admin || $this->currStore->usertype == UserType::Accounts || $this->currStore->usertype == UserType::CKAdmin || $this->currStore->usertype == UserType::Manager) {
+                             echo "<p><em>Please select a store to view the report.</em></p>";
+                        }
                     }
                     
                     ?>
-                        <a href="payment/link/status/storeid=<?php echo $this->store_id; ?>/dtrange=<?php echo urlencode($this->dtrange); ?>&export=excel">
-    <button type="button">Download Excel</button>
-</a>
+                    <a href="payment/link/status/storeid=<?php echo $this->store_id; ?>/dtrange=<?php echo urlencode($this->dtrange); ?>&export=excel">
+                        <button type="button">Download Excel</button>
+                    </a>
 
 
                     <div class="box">
@@ -349,15 +347,12 @@ class cls_payment_link_status extends cls_renderer {
                                 <div id="accordion">
                                     <table>
                                         <tr>
-
-                                            <th>Store Name.</th>
-                                            <th>invoice_nos. </th>
-                                            <th>invoice_amt.  </th>
-                                            <th>remark_text.   </th>
-                                            <th>status.  </th>
-                                            <th>createtime  </th>
-
-
+                                            <th>Store Name</th>
+                                            <th>Invoice Nos</th>
+                                            <th>Invoice Amt</th>
+                                            <th>Remark Text</th>
+                                            <th>Status</th>
+                                            <th>Created Time</th>
                                         </tr>
 
                                         <?php
@@ -365,17 +360,22 @@ class cls_payment_link_status extends cls_renderer {
                                             foreach ($orders as $order) {
                                                 ?>
                                                 <tr>
-
                                                     <td><?php echo $order->store_name; ?></td>
                                                     <td><?php echo $order->invoice_nos; ?></td>
                                                     <td><?php echo $order->invoice_amt; ?></td>
                                                     <td><?php echo $order->remark_text; ?></td>
                                                     <td><?php echo $order->status; ?></td>
                                                     <td><?php echo $order->createtime; ?></td>
-
                                                 </tr>
                                                 <?php
                                             }
+                                        } else if ($this->store_id != "" && $this->store_id != 0) {
+                                             // Only show "No Data" if a store was actually searched
+                                             ?>
+                                                <tr>
+                                                    <td colspan="6" style="text-align:center;">No data found for the selected store and date range.</td>
+                                                </tr>
+                                             <?php
                                         }
                                         ?>
                                     </table>
@@ -390,14 +390,19 @@ class cls_payment_link_status extends cls_renderer {
     }
     
    function exportPaymentExcelSimple($orders) {
-    
-       if (ob_get_level()) {
+       
+    // --- CRITICAL FIXES FOR LIVE SERVER ---
+    // 1. Clear any existing output buffer (to prevent "Headers already sent" errors)
+    if (ob_get_level()) {
         ob_clean();
-        }
+    }
     
-        if (session_status() === PHP_SESSION_ACTIVE) {
-            session_write_close();
-        }   
+    // 2. Close the session (to prevent session-locking and allowing download)
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        session_write_close();
+    }
+    // ------------------------------------
+       
     header("Content-Type: application/vnd.ms-excel");
     header("Content-Disposition: attachment; filename=payment_link_report.xls");
     header("Pragma: no-cache");
@@ -429,6 +434,8 @@ class cls_payment_link_status extends cls_renderer {
     }
 
     echo "</table>";
+    
+    // CRITICAL: Exit immediately after outputting the file content and headers
     exit;
 }
 
