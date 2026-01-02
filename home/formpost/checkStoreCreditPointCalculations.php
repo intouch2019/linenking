@@ -135,28 +135,23 @@ function checkfile($newdir,$month_key) {
                 if ($colno == 6) {
 
                     $p12s12 = $value;
-                    if ($p12s12 != "P12 S12") {
+                    if ($p12s12 != "P18 S5") {
                         $return = "Column name $value does not match";
                     }
                 }
                 if ($colno == 10) {
                     $p12s5 = $value;
-                    if ($p12s5 != "P12 S5") {
+                    if ($p12s5 != "P5 S5") {
                         $return = "Column name $value does not match";
                     }
                 }
                 if ($colno == 14) {
                     $p5s5 = $value;
-                    if ($p5s5 != "P5 S5") {
+                    if ($p5s5 != "P18 S18") {
                         $return = "Column name $value does not match";
                     }
                 }
-                if ($colno == 18) {
-                    $p18s18 = $value;
-                    if ($p18s18 != "P18 S18") {
-                        $return = "Column name $value does not match";
-                    }
-                }
+
                 $colno++;
             } elseif ($rowCount == 2) {   //check column name at 2nd row
                 $value = trim(strval($cell->getValue()));
@@ -269,31 +264,7 @@ function checkfile($newdir,$month_key) {
                         $return = "Column name $value does not match";
                     }
                 }
-                if ($colno == 18) {
-                    $mrpSale = $value;
-                    if ($mrpSale != "MRP Sale") {
-                        $return = "Column name $value does not match";
-                    }
-                }
-                if ($colno == 19) {
-                    $saleWoDiscount = $value;
-                    if ($saleWoDiscount != "Sale Without Discount") {
-                        $return = "Column name $value does not match";
-                    }
-                }
-                if ($colno == 20) {
-                    $discount = $value;
-                    if ($discount != "Discount") {
-                        $return = "Column name $value does not match";
-                    }
-                }
-                if ($colno == 21) {
-                    $totalvalue = $value;
-//                    print_r($value);    exit();
-                    if ($totalvalue != "Total Value") {
-                        $return = "Column name $value does not match";
-                    }
-                }
+              
                 $colno++;
             }
         }
@@ -348,70 +319,70 @@ function checkfile($newdir,$month_key) {
                     $mrpSale = $value;
                     if ($mrpSale == "") {
                         $imltpflag = true;
-                        $return = "Empty field in *P12 S12-> MRP Sale* Column";
+                        $return = "Empty field in *P18 S5-> MRP Sale* Column";
                     }
                 }
                 if ($colno == 7) {
                     $saleWoDiscount = $value;
                     if ($saleWoDiscount == "") {
                         $imltpflag = true;
-                        $return = "Empty field in *P12 S12-> Sale Without Discount* Column";
+                        $return = "Empty field in *P18 S5-> Sale Without Discount* Column";
                     }
                 }
                 if ($colno == 8) {
                     $discount = $value;
                     if ($discount == "") {
                         $imltpflag = true;
-                        $return = "Empty field in *P12 S12-> Discount* Column";
+                        $return = "Empty field in *P18 S5-> Discount* Column";
                     }
                 }
                 if ($colno == 9) {
                     $totalvalue = $value;
                     if ($totalvalue == "") {
                         $imltpflag = true;
-                        $return = "Empty field in *P12 S12-> Total Value* Column";
+                        $return = "Empty field in *P18 S5-> Total Value* Column";
                     }
                 }
                 if ($colno == 10) {
                     $mrpSale = $value;
                     if ($mrpSale == "") {
                         $imltpflag = true;
-                        $return = "Empty field in *P12 S5-> MRP Sale* Column";
+                        $return = "Empty field in *P5 S5-> MRP Sale* Column";
                     }
                 }
                 if ($colno == 11) {
                     $saleWoDiscount = $value;
                     if ($saleWoDiscount == "") {
                         $imltpflag = true;
-                        $return = "Empty field in *P12 S5-> Sale Without Discount* Column";
+                        $return = "Empty field in *P5 S5-> Sale Without Discount* Column";
                     }
                 }
                 if ($colno == 12) {
                     $discount = $value;
                     if ($discount == "") {
                         $imltpflag = true;
-                        $return = "Empty field in *P12 S5-> Discount* Column";
+                        $return = "Empty field in *P5 S5-> Discount* Column";
                     }
                 }
                 if ($colno == 13) {
                     $totalvalue = $value;
                     if ($totalvalue == "") {
                         $imltpflag = true;
-                        $return = "Empty field in *P12 S5-> Total Value* Column";
+                        $return = "Empty field in *P5 S5-> Total Value* Column";
                     }
                 }
                 if ($colno == 14) {
                     $mrpSale = $value;
                     if ($mrpSale == "") {
                         $imltpflag = true;
-                        $return = "Empty field in *P5 S5-> MRP Sale* Column";
+                        $return = "Empty field in *P18 S18-> MRP Sale* Column";
                     }
                 }
                 if ($colno == 15) {
                     $saleWoDiscount = $value;
                     if ($saleWoDiscount == "") {
                         $imltpflag = true;
-                        $return = "Empty field in *P5 S5-> Sale Without Discount* Column";
+                        $return = "Empty field in P18 S18-> Sale Without Discount* Column";
                     }
                 }
                 if ($colno == 16) {
@@ -419,7 +390,7 @@ function checkfile($newdir,$month_key) {
 //                    print_r($discount); exit();
                     if ($discount == "") {
                         $imltpflag = true;
-                        $return = "Empty field in *P5 S5-> Discount* Column";
+                        $return = "Empty field in *P18 S18-> Discount* Column";
                     }
                 }
                 if ($colno == 17) {
@@ -427,40 +398,11 @@ function checkfile($newdir,$month_key) {
 //                    print_r($totalvalue); exit();
                     if ($totalvalue == "") {
                         $imltpflag = true;
-                        $return = "Empty field in *P5 S5-> Total Value* Column";
-                    }
-                }
-                
-                if ($colno == 18) {
-                    $mrpSale = $value;
-                    if ($mrpSale == "") {
-                        $imltpflag = true;
-                        $return = "Empty field in *P18 S18-> MRP Sale* Column";
-                    }
-                }
-                if ($colno == 19) {
-                    $saleWoDiscount = $value;
-                    if ($saleWoDiscount == "") {
-                        $imltpflag = true;
-                        $return = "Empty field in *P18 S18-> Sale Without Discount* Column";
-                    }
-                }
-                if ($colno == 20) {
-                    $discount = $value;
-                    if ($discount == "") {
-                        $imltpflag = true;
-                        $return = "Empty field in *P18 S18-> Discount* Column";
-                    }
-                }
-                if ($colno == 21) {
-                    $totalvalue = $value;
-                    if ($totalvalue == "") {
-                        $imltpflag = true;
                         $return = "Empty field in *P18 S18-> Total Value* Column";
                     }
                 }
                 
-                if ($colno == 22) {
+                if ($colno == 18) {
                     $nonschemesalevalue = $value;
                     if ($nonschemesalevalue == "") {
                         $imltpflag = true;
@@ -509,14 +451,10 @@ function insertCpFile($newdir,$month_key) {
         $saleWoDiscount = "";
         $discount = "";
         $totalvalue = "abc";
-        $mrpSale_p12s12 = "";
-        $saleWoDiscount_p12s12 = "";
-        $discount_p12s12 = "";
-        $totalvalue_p12s12 = "";
-        $mrpSale_p12s5 = "";
-        $saleWoDiscount_p12s5 = "";
-        $discount_p12s5 = "";
-        $totalvalue_p12s5 = "";
+        $mrpSale_p18s5 = "";
+        $saleWoDiscount_p18s5 = "";
+        $discount_p18s5 = "";
+        $totalvalue_p18s5 = "";
         $mrpSale_p5s5 = "";
         $saleWoDiscount_p5s5 = "";
         $discount_p5s5 = "";
@@ -553,72 +491,56 @@ function insertCpFile($newdir,$month_key) {
                     }
                     if ($colno == 6) {
                         $mrpSale = $db->safe(trim($value));
-                        $mrpSale_p12s12 = $mrpSale;
+                        $mrpSale_p18s5 = $mrpSale;
                     }
                     if ($colno == 7) {
                         $saleWoDiscount = $db->safe(trim($value));
-                        $saleWoDiscount_p12s12 = $saleWoDiscount;
+                        $saleWoDiscount_p18s5 = $saleWoDiscount;
                     }
                     if ($colno == 8) {
                         $discount = $db->safe(trim($value));
-                        $discount_p12s12 = $discount;
+                        $discount_p18s5 = $discount;
                         // print_r($discount_p12s12); exit();
                     }
                     if ($colno == 9) {
                         $totalvalue = $db->safe(trim($value));
-                        $totalvalue_p12s12 = $totalvalue;
+                        $totalvalue_p18s5 = $totalvalue;
 //                    print_r($totalvalue_p12s12); exit();
                     }
                     if ($colno == 10) {
                         $mrpSale = $db->safe(trim($value));
-                        $mrpSale_p12s5 = $mrpSale;
+                        $mrpSale_p5s5 = $mrpSale;
                     }
                     if ($colno == 11) {
                         $saleWoDiscount = $db->safe(trim($value));
-                        $saleWoDiscount_p12s5 = $saleWoDiscount;
+                        $saleWoDiscount_p5s5 = $saleWoDiscount;
                     }
                     if ($colno == 12) {
                         $discount = $db->safe(trim($value));
-                        $discount_p12s5 = $discount;
+                        $discount_p5s5 = $discount;
                     }
                     if ($colno == 13) {
                         $totalvalue = $db->safe(trim($value));
-                        $totalvalue_p12s5 = $totalvalue;
+                        $totalvalue_p5s5 = $totalvalue;
 //                     print_r($totalvalue_p12s5); exit();
                     }
                     if ($colno == 14) {
                         $mrpSale = $db->safe(trim($value));
-                        $mrpSale_p5s5 = $mrpSale;
+                        $mrpSale_p18s18 = $mrpSale;
                     }
                     if ($colno == 15) {
                         $saleWoDiscount = $db->safe(trim($value));
-                        $saleWoDiscount_p5s5 = $saleWoDiscount;
+                        $saleWoDiscount_p18s18 = $saleWoDiscount;
                     }
                     if ($colno == 16) {
                         $discount = $db->safe(trim($value));
-                        $discount_p5s5 = $discount;
+                        $discount_p18s18 = $discount;
                     }
                     if ($colno == 17) {
                         $totalvalue = $db->safe(trim($value));
-                        $totalvalue_p5s5 = $totalvalue;
-                    }
-                    if ($colno == 18) {
-                        $mrpSale = $db->safe(trim($value));
-                        $mrpSale_p18s18 = $mrpSale;
-                    }
-                    if ($colno == 19) {
-                        $saleWoDiscount = $db->safe(trim($value));
-                        $saleWoDiscount_p18s18 = $saleWoDiscount;
-                    }
-                    if ($colno == 20) {
-                        $discount = $db->safe(trim($value));
-                        $discount_p18s18 = $discount;
-                    }
-                    if ($colno == 21) {
-                        $totalvalue = $db->safe(trim($value));
                         $totalvalue_p18s18 = $totalvalue;
                     }
-                    if ($colno == 22) {
+                    if ($colno == 18) {
                         $nonschemesalevalue = $db->safe(trim($value));
     
                     }
@@ -628,12 +550,10 @@ function insertCpFile($newdir,$month_key) {
         }
         if ($rowCount > 2 && trim($srNo) != "" && trim($rowLabels) != "" && trim($storeId) != "" && trim($cpheading) != "" && trim($dealerMargin) != "" && trim($schemeDiscount) != "" && trim($mrpSale) != "" && trim($saleWoDiscount) != "" && trim($discount) != "" && trim($totalvalue) != "") {
             //validation check
-            $iquery = "Insert into cp_calculations set Sr_No = $srNo , Row_Labels = $rowLabels, Store_ID = $storeId, Credit_Point_Heading = $cpheading, Dealer_Margin = $dealerMargin, 
-                Scheme_Discount = $schemeDiscount, MRP_Sale_p12_s12 = $mrpSale_p12s12, Sale_Without_Discount_p12_s12 = $saleWoDiscount_p12s12, Discount_p12_s12 = $discount_p12s12, 
-                Total_Value_p12_s12 = $totalvalue_p12s12, MRP_Sale_p12_s5 = $mrpSale_p12s5, Sale_Without_Discount_p12_s5 = $saleWoDiscount_p12s5, Discount_p12_s5 = $discount_p12s5, 
-                Total_Value_p12_s5 = $totalvalue_p12s5, MRP_Sale_p5_s5 = $mrpSale_p5s5, Sale_Without_Discount_p5_s5 = $saleWoDiscount_p5s5, Discount_p5_s5 = $discount_p5s5, 
-                Total_Value_p5_s5 = $totalvalue_p5s5, MRP_Sale_p18_s18 = $mrpSale_p18s18, Sale_Without_Discount_p18_s18 = $saleWoDiscount_p18s18, Discount_p18_s18 = $discount_p18s18, 
-                Total_Value_p18_s18 = $totalvalue_p18s18, non_scheme_sale=$nonschemesalevalue";
+            $iquery = "Insert into cp_calculations set Sr_No = $srNo , Row_Labels = $rowLabels, Store_ID = $storeId, Credit_Point_Heading = $cpheading, Dealer_Margin = $dealerMargin,  Scheme_Discount = $schemeDiscount, "
+                    . "MRP_Sale_p18_s5 = $mrpSale_p18s5, Sale_Without_Discount_p18_s5 = $saleWoDiscount_p18s5, Discount_p18_s5 = $discount_p18s5, Total_Value_p18_s5 = $totalvalue_p18s5, "
+                    . "MRP_Sale_p5_s5 = $mrpSale_p5s5, Sale_Without_Discount_p5_s5 = $saleWoDiscount_p5s5, Discount_p5_s5 = $discount_p5s5,  Total_Value_p5_s5 = $totalvalue_p5s5, "
+                    . "MRP_Sale_p18_s18 = $mrpSale_p18s18, Sale_Without_Discount_p18_s18 = $saleWoDiscount_p18s18, Discount_p18_s18 = $discount_p18s18, Total_Value_p18_s18 = $totalvalue_p18s18, non_scheme_sale=$nonschemesalevalue";
             //    print_r($iquery); exit();
             $id = $db->execInsert($iquery);
             generateAndUpdateCreditPoint($id,$month_key); //calculate and update credit points in same table.
@@ -683,15 +603,15 @@ function generateAndUpdateCreditPoint($id,$month_key) {
         $reimbursement_p5s5_int = round((float) $reimbursement_p5s5);
 
 // Generate the second HTML content section P12-S5 Calculations
-        if ($obj->Sale_Without_Discount_p12_s5 == 0) {
+        if ($obj->Sale_Without_Discount_p18_s5 == 0) {
             $saleWoDiscount_p12s5 = "-";
         } else {
-            $saleWoDiscount_p12s5 = $obj->Sale_Without_Discount_p12_s5;
+            $saleWoDiscount_p12s5 = $obj->Sale_Without_Discount_p18_s5;
         }
-        $soldunserdiscschem_p12s5 = trim($obj->MRP_Sale_p12_s5) - $saleWoDiscount_p12s5;
+        $soldunserdiscschem_p12s5 = trim($obj->MRP_Sale_p18_s5) - $saleWoDiscount_p12s5;
         $soldunserdiscschem_p12s5_int = round((float) $soldunserdiscschem_p12s5);
 
-        $actualSale_p12s5 = $soldunserdiscschem_p12s5 - round($obj->Discount_p12_s5);
+        $actualSale_p12s5 = $soldunserdiscschem_p12s5 - round($obj->Discount_p18_s5);
         $actualSale_p12s5_int = round((float) $actualSale_p12s5);
 
         $dealerDiscountAC_p12s5 = $actualSale_p12s5_int * trim($obj->Scheme_Discount);
@@ -701,7 +621,7 @@ function generateAndUpdateCreditPoint($id,$month_key) {
         $priceByCK_p12s5_int = round((float) $priceByCK_p12s5);
 
         $originalMrpUnderDiscSchm_p12s5 = $soldunserdiscschem_p12s5_int;
-        $originalMrp_p12s5 = round($obj->MRP_Sale_p12_s5);
+        $originalMrp_p12s5 = round($obj->MRP_Sale_p18_s5);
 
         $dealerDiscount_p12s5 = $originalMrpUnderDiscSchm_p12s5 * trim($obj->Dealer_Margin);
         $dealerDiscount_p12s5_int = round((float) $dealerDiscount_p12s5);
@@ -709,8 +629,8 @@ function generateAndUpdateCreditPoint($id,$month_key) {
         $actualPricePurchase_p12s5 = $originalMrpUnderDiscSchm_p12s5 - $dealerDiscount_p12s5_int;
         $actualPricePurchase_p12s5_int = round((float) $actualPricePurchase_p12s5);
 
-        $mrp_sale_P12_S5 = trim($obj->MRP_Sale_p12_s5);
-        $mrp_sale_GST_P12_S5 = round((float) ($mrp_sale_P12_S5 / 1.12) * 0.12);
+        $mrp_sale_P12_S5 = trim($obj->MRP_Sale_p18_s5);
+        $mrp_sale_GST_P12_S5 = round((float) ($mrp_sale_P12_S5 / 1.18) * 0.18);
         $mrp_disc_sale_GST_P12_S5 = round((float) ($actualSale_p12s5_int / 1.05) * 0.05);
         $GST_diff_P12_S5 = $mrp_sale_GST_P12_S5 - $mrp_disc_sale_GST_P12_S5;
 
