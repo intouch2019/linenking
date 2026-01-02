@@ -242,6 +242,7 @@ class cls_report_discountschemecalculations extends cls_renderer {
 
                             <tr>
                                 <th colspan="6"></th>
+                                <th colspan="4" style="background-color: lightpink;">P18 S5</th>
                                 <th colspan="4" style="background-color: lightgreen;">P12 S12</th>
                                 <th colspan="4" style="background-color: lightsalmon;">P12 S5</th>
                                 <th colspan="4" style="background-color: lightblue;">P5 S5</th>
@@ -264,6 +265,10 @@ class cls_report_discountschemecalculations extends cls_renderer {
                                 <td><b>Sale Without Discount</b></td>
                                 <td><b>Discount</b></td>
                                 <td><b>Total Value</b></td>
+                                 <td><b>MRP Sale</b></td>
+                                <td><b>Sale Without Discount</b></td>
+                                <td><b>Discount</b></td>
+                                <td><b>Total Value</b></td>
                                 <td><b>MRP Sale</b></td>
                                 <td><b>Sale Without Discount</b></td>
                                 <td><b>Discount</b></td>
@@ -283,18 +288,21 @@ class cls_report_discountschemecalculations extends cls_renderer {
                             $sr_no = ($limit * ($this->page - 1)) + 1;
 
                             if ($this->storeid == -1) {
-                                $iquery = "select id, Row_Labels,Store_ID,Credit_Point_Heading,Dealer_Margin,Scheme_Discount,MRP_Sale_p12_s12,
-                                           Sale_Without_Discount_p12_s12,Discount_p12_s12, Total_Value_p12_s12,MRP_Sale_p12_s5,
-                                           Sale_Without_Discount_p12_s5,Discount_p12_s5,Total_Value_p12_s5,MRP_Sale_p5_s5,
-                                           Sale_Without_Discount_p5_s5,Discount_p5_s5,Total_Value_p5_s5,
-                                           MRP_Sale_p18_s18,Sale_Without_Discount_p18_s18,Discount_p18_s18,Total_Value_p18_s18,non_scheme_sale from cp_calculations 
-                                           order by CreateTime desc limit $start_from, $limit";
+                                $iquery = "select id, Row_Labels,Store_ID,Credit_Point_Heading,Dealer_Margin,Scheme_Discount,
+                                    MRP_Sale_p18_s5,Sale_Without_Discount_p18_s5,Discount_p18_s5, Total_Value_p18_s5,
+                                    MRP_Sale_p12_s5,Sale_Without_Discount_p12_s5,Discount_p12_s5,Total_Value_p12_s5,
+                                    MRP_Sale_p5_s5,Sale_Without_Discount_p5_s5,Discount_p5_s5,Total_Value_p5_s5,
+                                    MRP_Sale_p18_s18,Sale_Without_Discount_p18_s18,Discount_p18_s18,Total_Value_p18_s18,
+                                    MRP_Sale_p12_s12,Sale_Without_Discount_p12_s12,Discount_p12_s12, Total_Value_p12_s12,
+                                    non_scheme_sale from cp_calculations order by CreateTime desc limit $start_from, $limit";
                             } else {
-                                $iquery = "select id, Row_Labels,Store_ID,Credit_Point_Heading,Dealer_Margin,Scheme_Discount,MRP_Sale_p12_s12,
-                                           Sale_Without_Discount_p12_s12,Discount_p12_s12, Total_Value_p12_s12,MRP_Sale_p12_s5,
-                                           Sale_Without_Discount_p12_s5,Discount_p12_s5,Total_Value_p12_s5,MRP_Sale_p5_s5,
-                                           Sale_Without_Discount_p5_s5,Discount_p5_s5,Total_Value_p5_s5,
-                                           MRP_Sale_p18_s18,Sale_Without_Discount_p18_s18,Discount_p18_s18,Total_Value_p18_s18,non_scheme_sale from cp_calculations where Store_ID=$this->storeid order by CreateTime desc limit $start_from, $limit";
+                                $iquery = "select id, Row_Labels,Store_ID,Credit_Point_Heading,Dealer_Margin,Scheme_Discount,
+                                    MRP_Sale_p18_s5,Sale_Without_Discount_p18_s5,Discount_p18_s5, Total_Value_p18_s5,
+                                    MRP_Sale_p12_s5,Sale_Without_Discount_p12_s5,Discount_p12_s5,Total_Value_p12_s5,
+                                    MRP_Sale_p5_s5,Sale_Without_Discount_p5_s5,Discount_p5_s5,Total_Value_p5_s5,
+                                    MRP_Sale_p18_s18,Sale_Without_Discount_p18_s18,Discount_p18_s18,Total_Value_p18_s18,
+                                    MRP_Sale_p12_s12,Sale_Without_Discount_p12_s12,Discount_p12_s12, Total_Value_p12_s12,
+                                    non_scheme_sale from cp_calculations where Store_ID=$this->storeid order by CreateTime desc limit $start_from, $limit";
                             }
 //       
                             $items = $db->fetchObjectArray($iquery);
@@ -309,6 +317,10 @@ class cls_report_discountschemecalculations extends cls_renderer {
                                         <td><?php echo $obj->Credit_Point_Heading; ?></td>
                                         <td><?php echo $obj->Dealer_Margin * 100; ?>%</td>
                                         <td><?php echo $obj->Scheme_Discount * 100; ?>%</td>
+                                        <td><?php echo round($obj->MRP_Sale_p18_s5) ?></td>
+                                        <td><?php echo round($obj->Sale_Without_Discount_p18_s5) ?></td>
+                                        <td><?php echo round($obj->Discount_p18_s5) ?></td>
+                                        <td><?php echo round($obj->Total_Value_p18_s5) ?></td>
                                         <td><?php echo round($obj->MRP_Sale_p12_s12) ?></td>
                                         <td><?php echo round($obj->Sale_Without_Discount_p12_s12) ?></td>
                                         <td><?php echo round($obj->Discount_p12_s12) ?></td>

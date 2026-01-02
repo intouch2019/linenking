@@ -60,7 +60,7 @@ if (isset($scheme) && $scheme == Discount_scheme::loyalty_membership && $month_k
 //    echo $query; exit();    
     $filename = "Loyalty_EOSS";
 //    echo $filename; exit();
-       
+    
 } else {
     $errors['status']= "Invalid or missing inputs. Please check form data.";
     $_SESSION['form_errors'] = $errors;
@@ -117,13 +117,11 @@ try {
     );
 // Set the value in the merged cell(1st row)
     $objPHPExcel->getActiveSheet()->mergeCells('G1:J1');
-    $objPHPExcel->getActiveSheet()->setCellValue('G1', 'P12 S12')->getStyle('G1')->applyFromArray($styleArray)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+    $objPHPExcel->getActiveSheet()->setCellValue('G1', 'P18 S5')->getStyle('G1')->applyFromArray($styleArray)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
     $objPHPExcel->getActiveSheet()->mergeCells('K1:N1');
-    $objPHPExcel->getActiveSheet()->setCellValue('K1', 'P12 S5')->getStyle('K1')->applyFromArray($styleArray)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+    $objPHPExcel->getActiveSheet()->setCellValue('K1', 'P5 S5')->getStyle('K1')->applyFromArray($styleArray)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
     $objPHPExcel->getActiveSheet()->mergeCells('O1:R1');
-    $objPHPExcel->getActiveSheet()->setCellValue('O1', 'P5 S5')->getStyle('O1')->applyFromArray($styleArray)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-    $objPHPExcel->getActiveSheet()->mergeCells('S1:V1');
-    $objPHPExcel->getActiveSheet()->setCellValue('S1', 'P18 S18')->getStyle('S1')->applyFromArray($styleArray)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+    $objPHPExcel->getActiveSheet()->setCellValue('O1', 'P18 S18')->getStyle('O1')->applyFromArray($styleArray)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
 //set the value in 2nd row
     $objPHPExcel->getActiveSheet()->setCellValue('A2', 'Sr No')->getStyle('A2')->applyFromArray($styleArray);
@@ -144,11 +142,7 @@ try {
     $objPHPExcel->getActiveSheet()->setCellValue('P2', 'Sale Without Discount')->getStyle('P2')->applyFromArray($styleArray);
     $objPHPExcel->getActiveSheet()->setCellValue('Q2', 'Discount')->getStyle('Q2')->applyFromArray($styleArray);
     $objPHPExcel->getActiveSheet()->setCellValue('R2', 'Total Value')->getStyle('R2')->applyFromArray($styleArray);
-    $objPHPExcel->getActiveSheet()->setCellValue('S2', 'MRP Sale')->getStyle('S2')->applyFromArray($styleArray);
-    $objPHPExcel->getActiveSheet()->setCellValue('T2', 'Sale Without Discount')->getStyle('T2')->applyFromArray($styleArray);
-    $objPHPExcel->getActiveSheet()->setCellValue('U2', 'Discount')->getStyle('U2')->applyFromArray($styleArray);
-    $objPHPExcel->getActiveSheet()->setCellValue('V2', 'Total Value')->getStyle('V2')->applyFromArray($styleArray);
-    $objPHPExcel->getActiveSheet()->setCellValue('W2', 'Non Scheme Sale')->getStyle('W2')->applyFromArray($styleArray);
+    $objPHPExcel->getActiveSheet()->setCellValue('S2', 'Non Scheme Sale')->getStyle('S2')->applyFromArray($styleArray);
 
     // Set width for each column
     $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(5);
@@ -169,11 +163,7 @@ try {
     $objPHPExcel->getActiveSheet()->getColumnDimension('P')->setWidth(20);
     $objPHPExcel->getActiveSheet()->getColumnDimension('Q')->setWidth(10);
     $objPHPExcel->getActiveSheet()->getColumnDimension('R')->setWidth(10);
-    $objPHPExcel->getActiveSheet()->getColumnDimension('S')->setWidth(10);
-    $objPHPExcel->getActiveSheet()->getColumnDimension('T')->setWidth(20);
-    $objPHPExcel->getActiveSheet()->getColumnDimension('U')->setWidth(10);
-    $objPHPExcel->getActiveSheet()->getColumnDimension('V')->setWidth(10);
-    $objPHPExcel->getActiveSheet()->getColumnDimension('W')->setWidth(15);
+    $objPHPExcel->getActiveSheet()->getColumnDimension('S')->setWidth(15);
     
     $objPHPExcel->getActiveSheet()->getStyle('D:D')->applyFromArray($styleArray1);
     $objPHPExcel->getActiveSheet()->getStyle('F:F')->applyFromArray($styleArray2);
@@ -220,10 +210,9 @@ try {
 
             // Define column mapping per tax combo
             $columnMap = [
-                '12-12' => 6,
-                '12-5' => 10,
-                '5-5' => 14,
-                '18-18' => 18
+                '18-5' => 6,
+                '5-5' => 10,
+                '18-18' => 14,
             ];
             
             $non_scheme_sale = 0;
@@ -238,7 +227,7 @@ try {
                 }
             }
 
-            $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(22, $rowCount, $non_scheme_sale);
+            $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(18, $rowCount, $non_scheme_sale);
 
             $rowCount++;
             $sr_no++;
