@@ -161,7 +161,7 @@ class cls_companydetails extends cls_renderer {
                                         </tr>
                                         <tr>
                                             <th>Company Office Address</th>
-                                            <td>5th Floor, Ganeshree, Behind OM Bakery, Lane No. 14, Prabhat Road, Pune, 411004</td>
+                                            <td>6th Floor, Gokhale Avenue, Near Kelkar Nursing Home, Prabhat Rd, Deccan Gymkhana, Pune, Maharashtra 411004</td>
                                         </tr>
                                         <tr>
                                             <th>Company Registered Office Address</th>
