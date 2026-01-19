@@ -35,9 +35,9 @@ $dt2 = date_format($date, "Y-m-d 23:59:59");
 //print "first".$dt1."<>".$dt2;
 $dt1 = $db->safe($dt1);
 $dt2 = $db->safe($dt2);
-$name = "LK_50%Store_CounterSale_" . $dt1 . "_" . $dt2 . ".xml";
+$name = "LK_FashionkingStore_CounterSale_" . $dt1 . "_" . $dt2 . ".xml";
 
-$bhmStoreQuery = "select id,is_bhmtallyxml,store_name from it_codes where id = 284 and is_closed=0"; //storeid = 160 is 50% bhmstore, 147 is dummy bhmstore
+$bhmStoreQuery = "select id,is_bhmtallyxml,store_name from it_codes where  store_name like '%fashionking%' and usertype = 4 and id not in (284) and is_closed = 0 "; //storeid = 160 is 50% bhmstore, 147 is dummy bhmstore
 $storeObjs = $db->fetchObjectArray($bhmStoreQuery);
 //echo '<pre>'; print_r($storeObjs); echo '</pre>'; exit();
 
@@ -49,7 +49,7 @@ if (!empty($storeObjs)) {
     $REQUESTDESC = $IMPORTDATA->addChild("REQUESTDESC");
     $REPORTNAME = $REQUESTDESC->addChild("REPORTNAME", "Vouchers");
     $STATICVARIABLES = $REQUESTDESC->addChild("STATICVARIABLES");
-    $SVCURRENTCOMPANY = $STATICVARIABLES->addChild("SVCURRENTCOMPANY", "Fashionking Brands Pvt. Ltd.");
+    $SVCURRENTCOMPANY = $STATICVARIABLES->addChild("SVCURRENTCOMPANY", "Fashionking Brands Pvt Ltd");
     $REQUESTDATA = $IMPORTDATA->addChild("REQUESTDATA");
     foreach ($storeObjs as $bhmStore) {
         $query =  "select sum(quantity) as quantity, sum(round(sub_total)) as net, bill_datetime from it_orders o where  o.tickettype != 3 and o.store_id =$bhmStore->id and o.bill_datetime >= $dt1 and o.bill_datetime <= $dt2";
@@ -136,7 +136,7 @@ if (!empty($storeObjs)) {
     header('Content-Type: application/xml; charset=utf-8');
     echo $envelope->saveXML();
 } else {
-    print 'No Fashionking Brands Pvt. Ltd. Found';
+    print 'No BHM Store Found';
 }
 
 
