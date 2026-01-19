@@ -40,6 +40,10 @@ if ($tallytype == "3") { // means All BHM Store Counter sale lk
     $redirect = "formpost/generateBHM50CounterSaleXML.php?d1=$from&d2=$to";
     header("Location: " . DEF_SITEURL . "$redirect");
 }
+if ($tallytype == "4") { // means All Fashionking Store Counter sale lk
+    $redirect = "formpost/generateFashionkingCounterSaleXML.php?d1=$from&d2=$to";
+    header("Location: " . DEF_SITEURL . "$redirect");
+}
 
 if (count($errors) > 0) {
     $_SESSION['form_errors'] = $errors;
