@@ -28,7 +28,7 @@ if (isset($startdate) && trim($startdate) != "" && isset($enddate) && trim($endd
 
 $sClause = " and c.is_natch_required=1 and c.is_closed=0 ";
 
-$query = "select s.invoice_no,s.invoice_amt,s.invoice_dt,c.store_name,c.UMRN,c.cust_tobe_debited,c.cust_ifsc_or_mcr,c.cust_debit_account, c.cust_bank_name from it_invoices s, it_codes c where c.id not in (677,729) and s.store_id = c.id $dtClause $sClause  and c.cust_bank_name like '%Axis%'";
+$query = "select s.invoice_no,s.invoice_amt,s.invoice_dt,c.store_name,c.UMRN,c.cust_tobe_debited,c.cust_ifsc_or_mcr,c.cust_debit_account, c.cust_bank_name from it_invoices s, it_codes c where c.id not in (677,729) and s.invoice_type!=7  and s.store_id = c.id $dtClause $sClause  and c.cust_bank_name like '%Axis%'";
 $objs = $db->fetchObjectArray($query);
 $db->closeConnection();
 

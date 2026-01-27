@@ -109,7 +109,7 @@ $objPHPExcel->getActiveSheet()->getStyle('J')->applyFromArray($cellstyleArray);
 $rowCount=2;
 
 //$query = "select  s.*,c.store_name,c.UMRN,c.cust_tobe_debited,c.cust_ifsc_or_mcr,c.cust_debit_account,(select State from states where id=c.state_id) as State,(select region from region where id=c.region_id)as region_name ,c.Area,c.Location from it_invoices s, it_codes c where s.store_id = c.id  $dtClause $sClause";
-$query = "select s.invoice_no,s.invoice_amt,s.invoice_dt,c.store_name,c.UMRN,c.cust_tobe_debited,c.cust_ifsc_or_mcr,c.cust_debit_account,c.cust_bank_name from it_invoices s, it_codes c where c.id not in (677,729) and s.store_id = c.id $dtClause $sClause and c.cust_bank_name like '%AXIS%' ";
+$query = "select s.invoice_no,s.invoice_amt,s.invoice_dt,c.store_name,c.UMRN,c.cust_tobe_debited,c.cust_ifsc_or_mcr,c.cust_debit_account,c.cust_bank_name from it_invoices s, it_codes c where c.id not in (677,729) and s.invoice_type!=7  and s.store_id = c.id $dtClause $sClause and c.cust_bank_name like '%AXIS%' ";
 //print_r($query);exit();
 //return;
 $objs = $db->fetchObjectArray($query);
