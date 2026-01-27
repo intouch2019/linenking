@@ -95,7 +95,7 @@ $objPHPExcel->getActiveSheet()->getStyle('G')->applyFromArray($cellstyleArray);
 
 $rowCount=2;
 
-$query = "select s.invoice_no,s.invoice_amt,s.invoice_dt,c.store_name,c.UMRN,c.cust_tobe_debited,c.cust_ifsc_or_mcr,c.cust_debit_account,c.cust_bank_name from it_invoices s, it_codes c where s.store_id = c.id  $dtClause $sClause and c.cust_bank_name like '%HDFC%'";
+$query = "select s.invoice_no,s.invoice_amt,s.invoice_dt,c.store_name,c.UMRN,c.cust_tobe_debited,c.cust_ifsc_or_mcr,c.cust_debit_account,c.cust_bank_name from it_invoices s, it_codes c where s.store_id = c.id  $dtClause $sClause and s.invoice_type!=7  and c.cust_bank_name like '%HDFC%'";
 //$query="select s.*,c.store_name,c.UMRN,c.cust_tobe_debited,c.cust_ifsc_or_mcr,c.cust_debit_account,(select State from states where id=c.state_id) as State,c.Area,c.Location from it_invoices s, it_codes c where s.store_id = c.id and s.invoice_dt >= '2017-02-01 00:00:00' and s.invoice_dt <= '2018-02-28 23:59:59' and c.is_natch_required=1";
 //print "$query";
 //return
