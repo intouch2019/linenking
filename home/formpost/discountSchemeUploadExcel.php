@@ -38,6 +38,11 @@ if (isset($monthyear)) {
 //echo $month_key; exit();
 
 
+if($scheme == Discount_scheme::dealer_discount){
+    $from = new DateTime($from_dt);
+$to   = new DateTime($to_dt);
+$month_key = $from->format('Ymd') . $to->format('Ymd');
+}
 
 if (isset($scheme) && $scheme == Discount_scheme::loyalty_membership && $month_key != 0) {
 
@@ -49,7 +54,7 @@ if (isset($scheme) && $scheme == Discount_scheme::loyalty_membership && $month_k
 } else if (isset($scheme) && $scheme == Discount_scheme::dealer_discount && $from_dt && $to_dt) {
 //    echo "Right now we can not generate excel for dealer discount!";
 //    exit();
-    $query = "SELECT c.id AS store_id, c.store_name, c.discountset, CONCAT( CASE WHEN ict.tax_rate IS NOT NULL THEN ict.tax_rate * 100 WHEN i.MRP > 1050 THEN 12 ELSE 5 END, '-', CASE WHEN ict.tax_rate IS NOT NULL THEN ict.tax_rate * 100 WHEN ( CASE WHEN o.discount_pct IS NOT NULL THEN (((100 - o.discount_pct) / 100) * oi.price) * CASE WHEN o.tickettype = 1 THEN ABS(oi.quantity) ELSE oi.quantity END ELSE oi.price * CASE WHEN o.tickettype = 1 THEN ABS(oi.quantity) ELSE oi.quantity END END ) > 1050 THEN 12 ELSE 5 END ) AS tax_combo, SUM( CASE WHEN discounted_orders.order_id IS NOT NULL THEN i.MRP * oi.quantity ELSE 0 END ) AS total_mrp, SUM(IFNULL(oi.discount_val, 0.0)) AS total_discount, SUM( CASE WHEN discounted_orders.order_id IS NOT NULL THEN CASE WHEN o.discount_pct IS NOT NULL THEN (((100 - o.discount_pct) / 100) * oi.price) ELSE oi.price END * CASE WHEN o.tickettype = 1 THEN ABS(oi.quantity) ELSE oi.quantity END ELSE 0 END ) AS totalvalue, SUM( CASE WHEN discounted_orders.order_id IS  NULL THEN i.MRP * oi.quantity ELSE 0 END ) AS total_sale_wo_discount FROM it_orders o JOIN it_order_items oi ON oi.order_id = o.id JOIN it_items i ON i.id = oi.item_id JOIN it_codes c ON o.store_id = c.id JOIN states s ON s.id = c.state_id JOIN region r ON c.region_id = r.id LEFT JOIN it_category_taxes ict ON ict.category_id = i.ctg_id LEFT JOIN ( SELECT DISTINCT order_id FROM it_order_items WHERE IFNULL(discount_val, 0.0) > 0 ) AS discounted_orders ON o.id = discounted_orders.order_id JOIN ( SELECT o.id AS order_id, o.tickettype, MAX(CASE WHEN oi.quantity < 0 THEN 1 ELSE 0 END) AS has_negative_qty, MAX(CASE WHEN IFNULL(oi.discount_val, 0.0) > 0 THEN 1 ELSE 0 END) AS has_discount FROM it_orders o JOIN it_order_items oi ON oi.order_id = o.id JOIN it_order_payments p ON p.order_id = o.id WHERE TRIM(p.payment_name) != 'loyalty' AND o.tickettype IN (0, 1, 6) AND o.store_id IN ($store_id_str) AND o.bill_datetime BETWEEN '$from_dt' AND '$to_dt' GROUP BY o.id, o.tickettype ) AS bt ON bt.order_id = o.id WHERE o.store_id IN ($store_id_str) AND o.bill_datetime BETWEEN '$from_dt' AND '$to_dt' AND NOT EXISTS ( SELECT 1 FROM it_order_payments lp WHERE lp.order_id = o.id AND TRIM(lp.payment_name) = 'loyalty' ) GROUP BY c.id, tax_combo ORDER BY c.id, tax_combo;";
+    $query = "SELECT id,store_id,store_name,discountset,tax_combo,total_mrp,total_sale_wo_discount,total_discount,totalvalue,scheme_type,month_key,inactive from it_store_discountscheme_summary where month_key=$month_key and scheme_type=" . Discount_scheme::dealer_discount . " and inactive=0";
 //    echo $query; exit();
     
     $filename = "EOSS";

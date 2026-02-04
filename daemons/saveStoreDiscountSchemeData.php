@@ -65,6 +65,21 @@ try {
     //<------------       Discount_scheme::loyalty_membership data insertion ends        ------------>
 
     
+      //<------------       Discount_scheme::EOSS data insertion starts        ------------>
+
+      $eossquery = "SELECT c.id AS store_id,c.store_name,c.discountset, CONCAT( CASE WHEN ict.tax_rate IS NOT NULL THEN ict.tax_rate * 100 WHEN i.MRP > 2625 THEN 18 ELSE 5 END, '-', CASE WHEN ict.tax_rate IS NOT NULL THEN ict.tax_rate * 100 WHEN ( CASE WHEN o.discount_pct IS NOT NULL THEN (((100 - o.discount_pct) / 100) * oi.price) * CASE WHEN o.tickettype = 1 THEN ABS(oi.quantity) ELSE oi.quantity END ELSE oi.price * CASE WHEN o.tickettype = 1 THEN ABS(oi.quantity) ELSE oi.quantity END END ) > 2625 THEN 18 ELSE 5 END ) AS tax_combo, SUM(i.MRP) AS total_mrp, SUM(IFNULL(oi.discount_val, 0.0)) AS total_discount, SUM( CASE WHEN o.discount_pct IS NOT NULL THEN (((100 - o.discount_pct) / 100) * oi.price) * CASE WHEN o.tickettype = 1 THEN ABS(oi.quantity) ELSE oi.quantity END ELSE oi.price * CASE WHEN o.tickettype = 1 THEN ABS(oi.quantity) ELSE oi.quantity END END ) AS totalvalue FROM it_orders o JOIN it_order_items oi ON oi.order_id = o.id JOIN it_items i ON i.id = oi.item_id JOIN it_codes c ON o.store_id = c.id JOIN states s ON s.id = c.state_id JOIN region r ON c.region_id = r.id LEFT JOIN it_category_taxes ict ON ict.category_id = i.ctg_id JOIN ( SELECT o.id AS order_id, o.tickettype, MAX(CASE WHEN oi.quantity < 0 THEN 1 ELSE 0 END) AS has_negative_qty, MAX(CASE WHEN IFNULL(oi.discount_val, 0.0) > 0 THEN 1 ELSE 0 END) AS has_discount FROM it_orders o JOIN it_order_items oi ON oi.order_id = o.id JOIN it_order_payments p ON p.order_id = o.id AND TRIM(p.payment_name) != 'Loyalty'  WHERE o.tickettype = 0 AND o.store_id IN ($store_id_str) AND o.bill_datetime BETWEEN '$from_dt' AND '$to_dt' GROUP BY o.id, o.tickettype ) AS bt ON bt.order_id = o.id WHERE o.store_id IN ($store_id_str) AND o.bill_datetime BETWEEN '$from_dt' AND '$to_dt' GROUP BY c.id, tax_combo ORDER BY c.id, tax_combo;";
+//    print_r($eossquery);exit();
+    $saleObjs = $db->fetchObjectArray($eossquery);
+    $month_key = "2026010920260126";
+    if (isset($saleObjs) && !empty($saleObjs)) {
+        foreach ($saleObjs as $sobj) {
+            $iquery = "insert into it_store_discountscheme_summary set store_id = $sobj->store_id, store_name = '$sobj->store_name', discountset=$sobj->discountset,tax_combo= '$sobj->tax_combo', total_mrp=$sobj->total_mrp, total_discount=" . round($sobj->total_discount) . ",totalvalue=" . round($sobj->totalvalue) . ",scheme_type=" . Discount_scheme::dealer_discount . ",month_key=$month_key,createtime = now() ";
+            $db->execInsert($iquery);
+            $cnt++;
+        }
+    }
+    //<------------       Discount_scheme::EOSS data insertion ends        ------------>
+    
 $end_date = date('Y-m-d H:i:s');
 echo "Execution end.<br> datetime: ".$end_date;
 echo '<br>';
