@@ -18,35 +18,49 @@ class SMSHelper {
 //            $en_durl2 = urlencode($durl2);
             //params
             $fields2 = array(                
-                'username' => 'cottonking',
-                'password' => 'cot?321',
-                'senderid' => 'LINKNG',
-                'route' => '1',                
+                'apikey' => 'XmgI1w1sGA0Jghsx',
+                'senderid' => 'CTNKNG',
                 'number' => $phoneno,
-                'message' => urlencode($message)
+                'message' => $message,
             );
-            $fields_string="";
-            //url-ify the data for the POST
-            $params = array();
-            foreach($fields2 as $key=>$value) { $params[] = $key.'='.$value; }
-            $fields_string = implode('&', $params);
-
+            
+            
+        $fields_string = http_build_query($fields2);
 //            $url = "http://insta.nspiresoft.com/http-api.php?username=cottonking&password=cot?321&senderid=COTKNG&route=1&number=$phoneno&message=$message";
-            $url = "http://insta.nspiresoft.com/http-api.php?";
+            $url = "http://alert.nspiresoft.com/V2/http-api.php";
 //            $url_db=$db->safe(trim($url.$fields_string));    
             //update the url created in db
 //            $db->execUpdate("update it_sms set url=$url_db where id = $stsms_id");
                         
             //open connection
             $ch = curl_init();
-            $options = array (CURLOPT_RETURNTRANSFER => true);
+//            $options = array (CURLOPT_RETURNTRANSFER => true);
             //set the url, number of POST vars, POST data
-            curl_setopt($ch,CURLOPT_URL, $url);
-            curl_setopt_array ( $ch, $options );
-            curl_setopt($ch,CURLOPT_POST, count($fields2));
-            curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
-
+//            curl_setopt($ch,CURLOPT_URL, $url);
+//            curl_setopt_array ( $ch, $options );
+//            curl_setopt($ch,CURLOPT_POST, count($fields2));
+//            curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
+//            print_r($fields2);
             //execute post
+//            echo "Final URL: " . $url . $fields_string . "\n";
+
+            
+            curl_setopt_array($ch, [
+                CURLOPT_URL => $url,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_POST => true,
+                CURLOPT_POSTFIELDS => $fields_string,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_CONNECTTIMEOUT => 10,
+                CURLOPT_TIMEOUT => 30,
+                CURLOPT_HTTPHEADER => [
+                    "Content-Type: application/x-www-form-urlencoded",
+                    "Accept: application/json",
+                    "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0 Safari/537.36"
+                ]
+            ]);
+
+            
             $resp = curl_exec($ch);
 //            print_r($resp);
             //close connection
