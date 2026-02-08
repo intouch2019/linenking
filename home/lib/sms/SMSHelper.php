@@ -19,7 +19,7 @@ class SMSHelper {
             //params
             $fields2 = array(                
                 'apikey' => 'XmgI1w1sGA0Jghsx',
-                'senderid' => 'CTNKNG',
+                'senderid' => 'LINKNG',
                 'number' => $phoneno,
                 'message' => $message,
             );
