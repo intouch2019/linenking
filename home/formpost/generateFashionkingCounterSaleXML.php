@@ -49,7 +49,7 @@ if (!empty($storeObjs)) {
     $REQUESTDESC = $IMPORTDATA->addChild("REQUESTDESC");
     $REPORTNAME = $REQUESTDESC->addChild("REPORTNAME", "Vouchers");
     $STATICVARIABLES = $REQUESTDESC->addChild("STATICVARIABLES");
-    $SVCURRENTCOMPANY = $STATICVARIABLES->addChild("SVCURRENTCOMPANY", "Fashionking Brands Pvt Ltd");
+    $SVCURRENTCOMPANY = $STATICVARIABLES->addChild("SVCURRENTCOMPANY", "Fashionking Brands Pvt. Ltd. 2025-26");
     $REQUESTDATA = $IMPORTDATA->addChild("REQUESTDATA");
     foreach ($storeObjs as $bhmStore) {
         $query =  "select sum(quantity) as quantity, sum(round(sub_total)) as net, bill_datetime from it_orders o where  o.tickettype != 3 and o.store_id =$bhmStore->id and o.bill_datetime >= $dt1 and o.bill_datetime <= $dt2";
@@ -71,7 +71,7 @@ if (!empty($storeObjs)) {
                     $VOUCHER->addAttribute("OBJVIEW", "Accounting Voucher View");
                     $VOUCHER->addChild("DATE", date_format(date_create($data->bill_datetime), "Ymd"));
                     $VOUCHER->addChild("STATENAME", $store_obj->state);
-                    $VOUCHER->addChild("VOUCHERTYPENAME", "Sales");
+                    $VOUCHER->addChild("VOUCHERTYPENAME", "Sales-Counter");
                     $VOUCHER->addChild("PARTYLEDGERNAME", "$store_obj->retail_saletally_name");
                     $VOUCHER->addChild("BASICBASEPARTYNAME", "$store_obj->retail_saletally_name");
                     $VOUCHER->addChild("PERSISTEDVIEW", "Accounting Voucher View");
