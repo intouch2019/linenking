@@ -355,6 +355,13 @@ foreach ($arr as $orderinfo) {
         $orderinfo = json_encode($tobj);
         $orderinfo_db = $db->safe($orderinfo);
 	$query = "insert into it_orders set store_id=$gCodeId, orderinfo=$orderinfo_db $sClause ";
+        
+        $checkProxy = $db->fetchObject("select * from bill_proxy where store_id =$gCodeId and bill_no ='$tobj->ticketId'");
+        if($checkProxy == null && isset($tobj->proxy) ){
+        $proxy_query = "insert into bill_proxy set store_id =$gCodeId , bill_no ='$tobj->ticketId', proxy_no ='$tobj->proxy'";
+        $db->execInsert($proxy_query);
+        }
+        
 	if ($user_id) { $query .= ", user_id=$user_id"; }
         
         $billtype = $tobj->ticketType;

@@ -13,13 +13,13 @@ extract($_GET);
 ////send sms starts here///////
 
     $db = new DBconn();
-    $sent_status = 1;
-    
+    $sent_status = 1;    
+
     $stores = $db->fetchObjectArray("select id,phone,email,email2,store_name from it_codes where id in ( $storeid )");    
     foreach ($stores as $store) {
         $inv_nos = "";
         $inv_ids = "";
-      
+
         $invoice = $db->fetchObjectArray("select id,invoice_no,now() as datetime from it_sp_invoices where id in ($invoiceid) and store_id=$store->id ");
         foreach ($invoice as $inv) {
             $inv_nos .= $inv->invoice_no.",";
@@ -37,7 +37,7 @@ extract($_GET);
         $errormsg = $smsHelper->sendSMS($phoneno,$message);
         //print_r($errormsg);
 
-        if(strpos($errormsg, 'Message Submitted Successfully') !== false){
+        if(strpos($errormsg, 'message Submitted successfully') !== false){
 
             $db->execQuery("update it_invoice_transport_details set is_sms_sent=1, sent_sms_response='$errormsg', updatetime=now() where id = $transport_insert_id");
         }else{
@@ -75,12 +75,12 @@ extract($_GET);
 
                 $body .= "<p>Fashionking Brands Pvt. Ltd. </p><br>";
 
-                $body .= "<p>Note:  This is a system generated mail. Do not reply to this email. </p>";
+//                $body .= "<p>Note:  This is a system generated mail. Do not reply to this email. </p>";
 
     //            $body .= "PFA , <br/>";
                 $errormsg = $emailHelper->send($toArray, $subject, $body ,array(), $ccArray);
                 print "<br>EMAIL SENT RESP:".$errormsg;
-                if ($errormsg != "0") {
+                if ($errormsg != "00") {
                     $errors['mail'] = " <br/> Error in sending mail, please try again later.";
                     $sent_status = 2;
                 }else{
