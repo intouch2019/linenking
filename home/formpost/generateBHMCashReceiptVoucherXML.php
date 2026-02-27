@@ -37,7 +37,7 @@ $dt1 = $db->safe($dt1);
 $dt2 = $db->safe($dt2);
 $name = "BHMStore_CashReceipt_" . $dt1 . "_" . $dt2 . ".xml";
 
-$bhmStoreQuery = "select id,is_bhmtallyxml,store_name from it_codes where is_bhmtallyxml !=0 and id not in (160,147) and is_closed=0"; //storeid = 160 is 50% bhmstore, 147 is dummy bhmstore
+$bhmStoreQuery = "select id,is_bhmtallyxml,store_name from it_codes where usertype = 4 and is_bhmtallyxml !=0 and id not in (160,147) and is_closed=0"; //storeid = 160 is 50% bhmstore, 147 is dummy bhmstore
 $storeObjs = $db->fetchObjectArray($bhmStoreQuery);
 //echo '<pre>'; print_r($storeObjs); echo '</pre>'; exit();
 
