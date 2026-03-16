@@ -297,7 +297,7 @@ class cls_admin_stores_edit extends cls_renderer {
                 //document.getElementById("discval").value=discval;
 
                 //if(discval==12 ||discval==24 ||discval==26)
-                if (discval == 0 || discval == 5 || discval == 10 || discval == 12 || discval == 14 || discval == 16 || discval == 18 || discval == 21 || discval == 24 || discval == 26)
+                if (discval == 0 || discval == 5 || discval == 10 || discval == 12 || discval == 14 || discval == 16 || discval == 18 || discval == 21 || discval == 24 || discval == 26 || discval == 13 || discval == 9.5 || discval == 23)
                 {
 
                     document.getElementById("discval").value = discval;
