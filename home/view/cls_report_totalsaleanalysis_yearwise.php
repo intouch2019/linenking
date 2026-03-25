@@ -12,18 +12,27 @@ function getSaleAnalysisData($store_ids, $from_this, $to_this, $from_last, $to_l
 
     // fetch selected stores
     $allStores = $db->fetchObjectArray("
-        SELECT id, store_name, old_id 
-        FROM it_codes 
-        WHERE id IN ($store_ids) 
-          AND usertype = 4
-        ORDER BY store_name
+SELECT c1.id, c1.store_name, c1.old_id
+FROM it_codes c1
+WHERE c1.id IN ($store_ids)
+  AND c1.usertype = 4
+ORDER BY c1.store_name
     ");
 
-    // build a map of old_id → new_id
+    // build a map of old_id → new_id for all old IDs (supports comma-separated old_id values)
     $map_old_to_new = [];
     foreach ($allStores as $s) {
-        if ($s->old_id > 0) {
-            $map_old_to_new[$s->old_id] = $s->id;
+        $old_id_str = trim($s->old_id);
+        if ($old_id_str === '' || $old_id_str === '0') {
+            continue;
+        }
+
+        $old_ids = explode(',', $old_id_str);
+        foreach ($old_ids as $old_id) {
+            $old_id = intval(trim($old_id));
+            if ($old_id > 0) {
+                $map_old_to_new[$old_id] = $s->id;
+            }
         }
     }
 
@@ -31,17 +40,27 @@ function getSaleAnalysisData($store_ids, $from_this, $to_this, $from_last, $to_l
     $rows = [];
 
     foreach ($allStores as $store) {
-        // skip if this store itself is an old_id of another
-        if (array_key_exists($store->id, $map_old_to_new)) {
+        // skip if this store is an old store of another new store
+        if (isset($map_old_to_new[$store->id])) {
             continue;
         }
 
         $store_ids_to_use = [$store->id];
-        if ($store->old_id > 0) {
-            $store_ids_to_use[] = $store->old_id;
-        }
-        $id_list = implode(",", $store_ids_to_use);
 
+        // if this store has old IDs, include them in aggregation
+        $old_id_str = trim($store->old_id);
+        if ($old_id_str !== '' && $old_id_str !== '0') {
+            $old_ids = explode(',', $old_id_str);
+            foreach ($old_ids as $old_id) {
+                $old_id = intval(trim($old_id));
+                if ($old_id > 0) {
+                    $store_ids_to_use[] = $old_id;
+                }
+            }
+        }
+
+        $store_ids_to_use = array_unique($store_ids_to_use);
+        $id_list = implode(',', $store_ids_to_use);
         // ---- This Year
         $row1 = $db->fetchObject("
             SELECT SUM(oi.quantity) as qty,
@@ -70,28 +89,7 @@ function getSaleAnalysisData($store_ids, $from_this, $to_this, $from_last, $to_l
         if($qty_this==0 && $val_this==0 && $qty_last==0 && $val_last==0){
             continue;
         }
-        
-        
-       $ids = explode(',', $store->id);
-$ids = array_map('trim', $ids);
 
-// Optional: ensure only numbers (IMPORTANT for safety)
-$ids = array_filter($ids, 'is_numeric');
-
-if (empty($ids)) {
-    continue;
-}
-
-$idList = implode(',', $ids);
-
-$query = "SELECT * FROM it_codes WHERE old_id IN ($idList)";
-
-$stmt = $db->fetchObjectArray($query);
-
-if ($stmt) {
-    continue;
-}  
-        
         $growth_qty = ($qty_last != 0) ? (($qty_this - $qty_last) / $qty_last) * 100 : 0;
         $growth_val = ($val_last != 0) ? (($val_this - $val_last) / $val_last) * 100 : 0;
 

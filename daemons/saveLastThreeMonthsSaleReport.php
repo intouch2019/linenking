@@ -1,5 +1,5 @@
 <?php
-include '../it_config.php';
+include '/var/www/html/linenking/it_config.php';
 require_once 'lib/db/DBConn.php';
 require_once 'lib/core/Constants.php';
 require_once "Classes/PHPExcel.php";
