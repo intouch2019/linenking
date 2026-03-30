@@ -36,7 +36,7 @@ class cls_admin_master_stock_qty extends cls_renderer {
             return;
         }
         ?>
-        <script type="text/javascript" src="js/expand.js'"></script>
+        <script type="text/javascript" src="js/expand.js"></script>
         <link rel="stylesheet" href="js/chosen/chosen.css" />
         <script src="js/chosen/chosen.jquery.js" type="text/javascript"></script>
         <link rel="stylesheet" href="css/prettyPhoto.css" type="text/css" media="screen" title="prettyPhoto main stylesheet" charset="utf-8" />
