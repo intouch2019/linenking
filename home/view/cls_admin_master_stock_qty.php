@@ -398,7 +398,7 @@ class cls_admin_master_stock_qty extends cls_renderer {
                                             
                                         <?php } ?>
                                         <?php 
-                                            if(($num_of_rows_generated==2 || $num_of_rows_generated==1) && $i==0){
+                                            if(($num_of_rows_generated==2 || $num_of_rows_generated==1 || $num_of_rows_generated==3) && $i==0){
                                                 $i++;
                                                 ?>
                                                     <td rowspan="<?php echo $num_of_rows_generated; ?>">
