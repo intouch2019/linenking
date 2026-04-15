@@ -290,9 +290,11 @@ Your session has expired. Click <a href="">here</a> to login.
             }
             
             //$storetype=$this->currStore->store_type;
-            if($this->currStore->store_type == StoreType::NormalStore){
-                $stockclause= " and i.stock_type =  ".StockType::NormalStock;
-            }
+             if($this->currStore->store_type == StoreType::NormalStore || $this->currStore->store_type == StoreType::CompanyStore){
+                 $stockclause= " and i.stock_type =  ".StockType::NormalStock;
+            }else{
+                 $stockclause="";
+             }
             
             
 	    $query = "select i.MRP, sum(i.curr_qty) as tot_qty, count(distinct i.design_no) as tot_active_design from it_items i,it_ck_designs d where i.ctg_id=$ctg_id $brandquery and i.ctg_id=d.ctg_id and i.design_no=d.design_no and i.is_design_mrp_active=1 and i.curr_qty > 0 $stockclause group by i.MRP having tot_qty > 0";
