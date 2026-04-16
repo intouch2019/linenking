@@ -131,6 +131,7 @@ function createexcel($dealersList,$filenameas_storename){
     $objPHPExcel->getActiveSheet()->setCellValue('H1', 'Store Maximum Stock Level');
     $objPHPExcel->getActiveSheet()->setCellValue('I1', 'Min_Difference');
     $objPHPExcel->getActiveSheet()->setCellValue('J1', 'Max_Difference');
+    $objPHPExcel->getActiveSheet()->setCellValue('K1', 'Percentage');
 
     $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
     $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(20);
@@ -142,6 +143,7 @@ function createexcel($dealersList,$filenameas_storename){
     $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(20);
     $objPHPExcel->getActiveSheet()->getColumnDimension('I')->setWidth(20);
     $objPHPExcel->getActiveSheet()->getColumnDimension('J')->setWidth(20);
+    $objPHPExcel->getActiveSheet()->getColumnDimension('K')->setWidth(20);
     
     
     $styleArray = array(
@@ -186,6 +188,7 @@ function createexcel($dealersList,$filenameas_storename){
     $objPHPExcel->getActiveSheet()->getStyle('H1')->applyFromArray($styleArray);
     $objPHPExcel->getActiveSheet()->getStyle('I1')->applyFromArray($styleArray);
     $objPHPExcel->getActiveSheet()->getStyle('J1')->applyFromArray($styleArray);
+    $objPHPExcel->getActiveSheet()->getStyle('K1')->applyFromArray($styleArray);
 
     $objPHPExcel->getActiveSheet()->getStyle('A')->applyFromArray($cellstyleArray);
     $objPHPExcel->getActiveSheet()->getStyle('B')->applyFromArray($cellstyleArray);
@@ -197,6 +200,7 @@ function createexcel($dealersList,$filenameas_storename){
     $objPHPExcel->getActiveSheet()->getStyle('H')->applyFromArray($cellstyleArray);
     $objPHPExcel->getActiveSheet()->getStyle('I')->applyFromArray($cellstyleArray);
     $objPHPExcel->getActiveSheet()->getStyle('J')->applyFromArray($cellstyleArray);
+    $objPHPExcel->getActiveSheet()->getStyle('K')->applyFromArray($cellstyleArray);
 
     $colCount=0;
     $rowCount=3;
@@ -215,6 +219,10 @@ function createexcel($dealersList,$filenameas_storename){
         $min_diff = $tot_stk - $minsl;
         $max_diff = $tot_stk - $maxsl + $activeamt;
         
+        if($minsl == 0){
+            $minsl=1;
+        }
+        $percent = round((100 +((($tot_stk - $minsl)/$minsl)*100)),2);
         
     $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, $rowCount, $key);
         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(1, $rowCount, $store_name);
@@ -226,6 +234,7 @@ function createexcel($dealersList,$filenameas_storename){
         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(7, $rowCount, $maxsl);
         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(8, $rowCount, $min_diff);
         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(9, $rowCount, $max_diff);
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(10, $rowCount, $percent);
         $rowCount++;
     }    
     
