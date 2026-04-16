@@ -50,7 +50,7 @@ $(function(){
     oTable = $('#tb_msl').dataTable( {
 	"bProcessing": true,
 	"bServerSide": true,
-        "aoColumns": [ null, null, {bSortable:false}, {bSortable:false}, {bSortable:false}, {bSortable:false}, {bSortable:false}, {bSortable:false}, {bSortable:false}, {bSortable:false}], //, {bSortable:false},{bSortable:false},{bSortable:false} ,{bSortable:false} 
+        "aoColumns": [ null, null, {bSortable:false}, {bSortable:false}, {bSortable:false}, {bSortable:false}, {bSortable:false}, {bSortable:false}, {bSortable:false}, {bSortable:false},{bSortable:false}], //, {bSortable:false},{bSortable:false},{bSortable:false} ,{bSortable:false} 
 	"sAjaxSource": url,
         "iDisplayLength":10
     } );
@@ -103,6 +103,7 @@ function genRep(){
                 <th>Store Maximum Stock Level</th>  
                 <th>Min_Difference</th>
                 <th>Max_Difference</th>
+                <th>Percentage</th>
 	    </tr>
 	</thead>
 	<tbody>

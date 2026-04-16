@@ -10,7 +10,7 @@ $currStore = getCurrUser();
 //$aColumns = array( 'id', 'store_name', 'curr_stock','stock_intransit', 'tot_stock','min_stock_level','difference');
 //$aColumns = array('id', 'store_name', 'appreal_curr_stock', 'mask_curr_stock', 'total_curr_stock', 'appreal_stock_intransit', 'mask_stock_intransit', 'total_stock_intransit', 'appreal_tot_stock', 'mask_tot_stock', 'tot_stock', 'min_stock_level', 'difference');
 //$aColumns = array('id', 'store_name', 'appreal_curr_stock', 'total_curr_stock', 'appreal_stock_intransit', 'total_stock_intransit', 'appreal_tot_stock', 'tot_stock', 'min_stock_level', 'max_stock_level', 'difference');
-$aColumns = array('id', 'store_name', 'appreal_curr_stock', 'active_orders', 'appreal_stock_intransit', 'appreal_tot_stock', 'min_stock_level', 'max_stock_level', 'min_difference', 'max_difference');
+$aColumns = array('id', 'store_name', 'appreal_curr_stock', 'active_orders', 'appreal_stock_intransit', 'appreal_tot_stock', 'min_stock_level', 'max_stock_level', 'min_difference', 'max_difference','percent');
 
 //$sColumns = array('c.id', 'c.store_name', 'c.min_stock_level');
 $sColumns = array('c.id', 'c.store_name');
@@ -278,7 +278,17 @@ foreach ($objs as $obj) {
         else if ($aColumns[$i] == 'max_difference') {
             $row[] = $appreal_tot_stock_incl_intransit - $obj->max_stock_level;
             //$row[] = $tot_stk - $obj->max_stock_level;
-        } else {
+        } 
+                 else if ($aColumns[$i] == 'percent') {
+            $percent = round(100+((($appreal_tot_stock_incl_intransit - $obj->min_stock_level) / $obj->min_stock_level) * 100), 2);
+            if($percent < 100){   
+            $row[] = '<span  style="color: red;">' . $percent . '%</span>';
+            }else{
+            $row[] = '<span>' . $percent . '%</span>';    
+            }
+            }
+        
+        else {
             $row[] = "-";
         }
     }
