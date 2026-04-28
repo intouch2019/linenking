@@ -40,7 +40,7 @@ try{
         if(isset($tobj) && trim($tobj->intransit_stock_value)!=""){ $intransit_stock_val = $tobj->intransit_stock_value ;}
         else{ $intransit_stock_val = 0; }
         
-        $qry = "insert into it_store_stock_summary set store_id = $sobj->id , stock_datetime = now() , stock_value = $stockvalue , stock_qty = $stockqty , stock_intransit = $intransit_stock_val , createtime = now() ";
+        $qry = "insert into it_store_stock_summary set store_id = $sobj->id,  min_stock_limit = $sobj->min_stock_level, max_stock_limit = $sobj->max_stock_level,  stock_datetime = now() , stock_value = $stockvalue , stock_qty = $stockqty , stock_intransit = $intransit_stock_val , createtime = now() ";
         $db->execInsert($qry);
 //        print "\n$qry";
         
