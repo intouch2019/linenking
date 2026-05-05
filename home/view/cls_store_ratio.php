@@ -453,7 +453,7 @@ function masteratioreset(store_id,cat_id,cat_name,user_id)
                                         <option selected value="0">Select Level</option>
                                             <?php
                                             $allstorelevel = StoreLevel::getLevel();
-                                            if ($usertype != UserType::Admin && $usertype != UserType::CKAdmin) {
+                                            if ($usertype != UserType::Admin && $usertype != UserType::CKAdmin && $usertype != UserType::Manager) {
                                                 ?> <option <?php echo "selected" ?>  value="<?php echo $this->currUser->level; ?>"><?php echo $this->currUser->level; ?></option>
                                         <?php } else {
                                             foreach ($allstorelevel as $key => $value) {
