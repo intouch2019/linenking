@@ -72,56 +72,56 @@ if($page){
                                        // $payment_amt = round($obj->invoice_amt,2,PHP_ROUND_HALF_DOWN);
 //                                        error_log("\n Payment Amt 1st: $payment_amt",3,"tmp.txt");
                                         //check for corresponding excise invoice
-                                       $equery = "select * from it_ck_pickgroup where invoice_no like '$obj->invoice_no%'";
-//                                       error_log("\n$equery",3,"tmp.txt");
-                                       $eobj = $db->fetchObject($equery);
-                                       if(isset($eobj)){
-                                           if (strpos($eobj->invoice_no,",") !== false) {
-                                               $arr = explode(",", $eobj->invoice_no);
-                                                foreach($arr as $key => $invoice_no){
-                                                    //to calc tot_amt
-//                                                   error_log("\n PICK INV :  $invoice_no :: INV $obj->invoice_no",3,"tmp.txt");
-//                                                   if(strcmp($obj->invoice_no,$invoice_no)== 0){
-//                                                       continue;
-//                                                   }else{
-                                                      //fetch inv details 
-                                                       $invqry = "select * from it_invoices where invoice_no = '$invoice_no'";
-                                                       $invobj = $db->fetchObject($invqry);
-                                                       if(isset($invobj)){
-//                                                           error_log("\n INV AMT : $invobj->invoice_amt",3,"tmp.txt");
-                                                            $payment_amt = $payment_amt + $invobj->invoice_amt;
-//                                                              error_log("\n TOT  AMT IN LOOP : $payment_amt",3,"tmp.txt");
-                                                       }
-//                                                   }
-                                               }
-                                              $allledgerentrieslist->addChild("AMOUNT",round($payment_amt,2,PHP_ROUND_HALF_DOWN));
-                                               
-                                              foreach($arr as $key => $invoice_no){
-//                                                   error_log("\n PICK INV :  $invoice_no :: INV $obj->invoice_no",3,"tmp.txt");
-//                                                   if(strcmp($obj->invoice_no,$invoice_no)== 0){
-//                                                       continue;
-//                                                   }else{
-                                                      //fetch inv details 
-                                                       $invqry = "select * from it_invoices where invoice_no = '$invoice_no'";
-                                                       $invobj = $db->fetchObject($invqry);
-                                                       if(isset($invobj)){
-                                                            $allbillallocationslist2 = $allledgerentrieslist->addChild("BILLALLOCATIONS.LIST");
-                                                            $allbillallocationslist2->addChild("NAME", $invobj->invoice_no);                                                                               
-                                                            $allbillallocationslist2->addChild("AMOUNT", round($invobj->invoice_amt,2,PHP_ROUND_HALF_DOWN));
-                                                            //$payment_amt = $payment_amt + $invobj->invoice_amt;
-                                                       }
-//                                                   }
-                                               }
-                                           }
-                                       }else{
+//                                       $equery = "select * from it_ck_pickgroup where invoice_no like '$obj->invoice_no%'";
+////                                       error_log("\n$equery",3,"tmp.txt");
+//                                       $eobj = $db->fetchObject($equery);
+//                                       if(isset($eobj)){
+//                                           if (strpos($eobj->invoice_no,",") !== false) {
+//                                               $arr = explode(",", $eobj->invoice_no);
+//                                                foreach($arr as $key => $invoice_no){
+//                                                    //to calc tot_amt
+////                                                   error_log("\n PICK INV :  $invoice_no :: INV $obj->invoice_no",3,"tmp.txt");
+////                                                   if(strcmp($obj->invoice_no,$invoice_no)== 0){
+////                                                       continue;
+////                                                   }else{
+//                                                      //fetch inv details 
+//                                                       $invqry = "select * from it_invoices where invoice_no = '$invoice_no'";
+//                                                       $invobj = $db->fetchObject($invqry);
+//                                                       if(isset($invobj)){
+////                                                           error_log("\n INV AMT : $invobj->invoice_amt",3,"tmp.txt");
+//                                                            $payment_amt = $payment_amt + $invobj->invoice_amt;
+////                                                              error_log("\n TOT  AMT IN LOOP : $payment_amt",3,"tmp.txt");
+//                                                       }
+////                                                   }
+//                                               }
+//                                              $allledgerentrieslist->addChild("AMOUNT",round($payment_amt,2,PHP_ROUND_HALF_DOWN));
+//                                               
+//                                              foreach($arr as $key => $invoice_no){
+////                                                   error_log("\n PICK INV :  $invoice_no :: INV $obj->invoice_no",3,"tmp.txt");
+////                                                   if(strcmp($obj->invoice_no,$invoice_no)== 0){
+////                                                       continue;
+////                                                   }else{
+//                                                      //fetch inv details 
+//                                                       $invqry = "select * from it_invoices where invoice_no = '$invoice_no'";
+//                                                       $invobj = $db->fetchObject($invqry);
+//                                                       if(isset($invobj)){
+//                                                            $allbillallocationslist2 = $allledgerentrieslist->addChild("BILLALLOCATIONS.LIST");
+//                                                            $allbillallocationslist2->addChild("NAME", $invobj->invoice_no);                                                                               
+//                                                            $allbillallocationslist2->addChild("AMOUNT", round($invobj->invoice_amt,2,PHP_ROUND_HALF_DOWN));
+//                                                            $payment_amt = $payment_amt + $invobj->invoice_amt;
+//                                                       }
+////                                                   }
+//                                               }
+//                                           }
+//                                       }else{
                                            //one invoice case
                                            $allledgerentrieslist->addChild("AMOUNT",round($obj->invoice_amt,2,PHP_ROUND_HALF_DOWN));
                                            $allbillallocationslist = $allledgerentrieslist->addChild("BILLALLOCATIONS.LIST");
                                             $allbillallocationslist->addChild("NAME", $obj->invoice_no);                                                                               
                                             $allbillallocationslist->addChild("AMOUNT", round($obj->invoice_amt,2,PHP_ROUND_HALF_DOWN));                     
                                             $payment_amt = $obj->invoice_amt;
-                                       }
-//                                       
+//                                       }
+//                                       print_r($payment_amt);exit();
                                        $allledgerentrieslist = $voucher->addChild("ALLLEDGERENTRIES.LIST"); 
                                          $allledgerentrieslist->addChild("LEDGERNAME", "Axis Bank Ltd. CMS A/c.");
                                          $allledgerentrieslist->addChild("GSTCLASS");
