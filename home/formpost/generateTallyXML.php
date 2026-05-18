@@ -53,6 +53,17 @@ if($page){
  }else if($tallytype == "10"){ // means gst sales voucher xml for Axis   
      $redirect = "formpost/generateGSTNatchXLAxis.php?d1=$from&d2=$to";
  header("Location: ".DEF_SITEURL."$redirect");}
+ else
+  if($tallytype == "11"){ // means sales voucher xml
+     $redirect = "formpost/generateGSTSalesVoucherXMLTcs.php?d1=$from&d2=$to";
+     header("Location: ".DEF_SITEURL."$redirect");
+ }
+  else
+  if($tallytype == "12"){ // means sales voucher xml
+     $redirect = "formpost/generateGSTReceiptVoucherXML.php?d1=$from&d2=$to";
+     header("Location: ".DEF_SITEURL."$redirect");
+ }
+ 
  else{  
    // means receipt voucher xml
     $envelope = new SimpleXMLElement('<ENVELOPE/>');    

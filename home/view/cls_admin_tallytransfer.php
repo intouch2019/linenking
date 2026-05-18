@@ -134,7 +134,10 @@ function SendMailAxis(){
                 <input type ="radio" name="tallytype" id="tallytype" value="6"  required>GST SaleBack Purchase Voucher<br/>
                 <input type ="radio" name="tallytype" id="tallytype" value="7"  required>GST Credit Voucher 2019<br/>
                <input type ="radio" name="tallytype" id="tallytype" value="8"  required>GST DG Credit Voucher<br/>
-                <input type ="radio" name="tallytype" id="tallytype" value="9"  required>Debit Note Voucher Saleback
+                <input type ="radio" name="tallytype" id="tallytype" value="9"  required>Debit Note Voucher Saleback<br/>
+                <input type ="radio" name="tallytype" id="tallytype" value="11"  required>GST TCS Sales Voucher
+                 <input type ="radio" name="tallytype" id="tallytype" value="12"  required>GST Receipt Voucher
+
                 <br/><br/>
                 <div class="grid_5" id="storeDiv" name="storeDiv">
                     Select date range from below :*<br/>                                         
