@@ -20,13 +20,13 @@ if (isset($startdate) && trim($startdate) != "" && isset($enddate) && trim($endd
 }
 
 $sClause = " and c.is_natch_required=1 and c.is_closed=0 ";
-
-$checkomscofo = $_GET["checkomscofo"];
-if (isset($checkomscofo) && $checkomscofo == 1) {
-    $whquery = " and c.is_omscofo=1 ";
-} else {
-    $whquery = "";
-}
+//
+//$checkomscofo = $_GET["checkomscofo"];
+//if (isset($checkomscofo) && $checkomscofo == 1) {
+//    $whquery = " and c.is_omscofo=1 ";
+//} else {
+//    $whquery = "";
+//}
 
 $sheetIndex = 0;
 
