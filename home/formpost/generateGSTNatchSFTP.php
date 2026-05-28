@@ -102,7 +102,7 @@ $query = "select
           from it_invoices s, it_codes c 
           where s.invoice_type != 7 
           and s.store_id = c.id 
-          $whquery 
+           
           $dtClause 
           $sClause  
           and c.cust_bank_name like '%HDFC%'";
