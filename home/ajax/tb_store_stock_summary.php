@@ -4,8 +4,16 @@ require_once "session_check.php";
 require_once "lib/db/DBConn.php";
 require_once "lib/core/Constants.php";
 
-$aColumns = array( 'store_name', 'stock_datetime', 'min_stock_limit', 'max_stock_limit', 'stock_value', 'percentage');
-$sColumns = array( 'c.store_name', 's.stock_datetime', 's.min_stock_limit', 's.max_stock_limit', 's.stock_value', 'percentage');
+$calc = isset($_GET['calc']) ? strtolower(trim($_GET['calc'])) : "percentage";
+if ($calc !== "average") { $calc = "percentage"; }
+
+if ($calc === "average") {
+    $aColumns = array('store_name', 'dtrange', 'avg_min_stock_limit', 'avg_max_stock_limit', 'avg_stock_value', 'avg_percentage', 'avg_difference', 'avg_status');
+    $sColumns = array('c.store_name');
+} else {
+    $aColumns = array('store_name', 'stock_datetime', 'min_stock_limit', 'max_stock_limit', 'stock_value', 'percentage', 'difference', 'status');
+    $sColumns = array('c.store_name', 's.stock_datetime', 's.min_stock_limit', 's.max_stock_limit', 's.stock_value', 'percentage', 'difference', 'status');
+}
 
 $db = new DBConn();
 
@@ -29,7 +37,9 @@ if (isset($_GET['iSortCol_0'])) {
     $sOrder = " ORDER BY ";
     for ($i = 0; $i < intval($_GET['iSortingCols']); $i++) {
         if ($_GET['bSortable_' . intval($_GET['iSortCol_' . $i])] == "true") {
-            $sOrder .= $aColumns[intval($_GET['iSortCol_' . $i])] . "
+            $sortCol = $aColumns[intval($_GET['iSortCol_' . $i])];
+            if ($calc === "average" && $sortCol === "dtrange") { $sortCol = "store_name"; }
+            $sOrder .= $sortCol . "
 			 	" . $db->getConnection()->real_escape_string($_GET['sSortDir_' . $i]) . ", ";
         }
     }
@@ -98,15 +108,32 @@ if (isset($storeid) && trim($storeid) != "" && trim($storeid) != "-1") {
 
 $sWhere .= " s.store_id = c.id and c.is_closed= 0 and c.id in (select store_id from executive_assign where exe_id=" . getCurrUser()->id . " ) $dtClause $sClause";
 
-$sQuery = "
-	select SQL_CALC_FOUND_ROWS  s.store_id, s.stock_datetime, s.min_stock_limit, s.max_stock_limit, s.stock_value,
-               c.store_name,
-             round((s.stock_value/nullif(s.min_stock_limit,0))*100,2) as percentage
-	from it_store_stock_summary s, it_codes c
-	$sWhere
-	$sOrder
-	$sLimit
-";
+if ($calc === "average") {
+    $sQuery = "
+        select SQL_CALC_FOUND_ROWS
+            c.store_name as store_name,
+            round(avg(s.min_stock_limit),2) as avg_min_stock_limit, 
+            round(avg(s.max_stock_limit),2) as avg_max_stock_limit,
+            round(avg(s.stock_value),2) as avg_stock_value,
+            round(avg((s.stock_value/nullif(s.min_stock_limit,0))*100),2) as avg_percentage,
+            (round(avg(s.stock_value),2) - round(avg(s.min_stock_limit),2)) as avg_difference
+        from it_store_stock_summary s, it_codes c
+        $sWhere
+        group by c.id
+        $sOrder
+        $sLimit
+    ";
+} else {
+    $sQuery = "
+        select SQL_CALC_FOUND_ROWS  s.store_id, s.stock_datetime, s.min_stock_limit, s.max_stock_limit, s.stock_value,
+                   c.store_name,(s.stock_value-s.min_stock_limit) as difference,
+                 round((s.stock_value/nullif(s.min_stock_limit,0))*100,2) as percentage
+        from it_store_stock_summary s, it_codes c
+        $sWhere
+        $sOrder
+        $sLimit
+    ";
+}
 
 $objs = $db->fetchObjectArray($sQuery);
 
@@ -125,6 +152,26 @@ foreach ($objs as $obj) {
 //        } else 
             if ($col == 'store_name') {
             $row[] = $obj->store_name;
+        } else if ($calc === "average" && $col == 'dtrange') {
+            $row[] = ($dtrange && trim($dtrange) !== "") ? $dtrange : "-";
+        } else if ($calc === "average" && $col == 'avg_min_stock_limit') {
+            $row[] = ($obj->avg_min_stock_limit === null || $obj->avg_min_stock_limit === "") ? "-" : $obj->avg_min_stock_limit;
+        } else if ($calc === "average" && $col == 'avg_max_stock_limit') {
+            $row[] = ($obj->avg_max_stock_limit === null || $obj->avg_max_stock_limit === "") ? "-" : $obj->avg_max_stock_limit;
+        } else if ($calc === "average" && $col == 'avg_stock_value') {
+            $row[] = ($obj->avg_stock_value === null || $obj->avg_stock_value === "") ? "-" : $obj->avg_stock_value;
+        } else if ($calc === "average" && $col == 'avg_percentage') {
+            if ($obj->avg_percentage === null || $obj->avg_percentage === "") {
+                $row[] = "-";
+            } else {
+                $pct = floatval($obj->avg_percentage);
+                $pctText = $obj->avg_percentage . "%";
+                if ($pct < 100) {
+                    $row[] = "<span style=\"color:red; font-weight:bold;\">" . $pctText . "</span>";
+                } else {
+                    $row[] = $pctText;
+                }
+            }
         } else if ($col == 'stock_datetime') {
             $row[] = $obj->stock_datetime;
         } else if ($col == 'min_stock_limit') {
@@ -145,7 +192,40 @@ foreach ($objs as $obj) {
                     $row[] = $pctText;
                 }
             }
-        } 
+        }
+        else if ($col == 'difference') {
+            
+            if($obj->difference < 0){
+                $row[] = "<span style=\"color:red; font-weight:bold;\">" . $obj->difference . "</span>";
+            }else{
+               $row[] = $obj->difference; 
+            }
+            
+        }
+         else if ($col == 'avg_difference') {
+          
+            if($obj->avg_difference <0){
+                $row[] = "<span style=\"color:red; font-weight:bold;\">" . $obj->avg_difference . "</span>";
+            }else{
+               $row[] = $obj->avg_difference; 
+            }
+        }
+        else if ($col == 'status') {
+            $pct = floatval($obj->percentage);
+            if ($pct < 100) {
+            $row[] = "Stock Not Maintained";
+            }else {
+            $row[] = "Stock Maintained";    
+            }
+        }
+         else if ($col == 'avg_status') {
+            $pct = floatval($obj->avg_percentage);
+            if ($pct < 100) {
+            $row[] = "Stock Not Maintained";
+            }else {
+            $row[] = "Stock Maintained";    
+            }
+        }
 //        else if ($col == 'stock_qty') {
 //            $row[] = $obj->stock_qty;
 //        } else if ($col == 'stock_intransit') {

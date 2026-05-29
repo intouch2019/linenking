@@ -33,7 +33,7 @@ class cls_report_invoice_leadtime extends cls_renderer {
             @import "css/ui.daterangepicker.css";
             @import "css/redmond/jquery-ui-1.7.1.custom.css";
         </style>
-      
+
         <script type="text/javascript" src="jqueryui/js/jquery-ui-1.7.1.custom.min.js"></script>
         <script type="text/javascript" src="js/daterangepicker.jQuery.js"></script>
         <script src="js/datatables/media/js/jquery.dataTables.min.js"></script>                
@@ -58,8 +58,8 @@ class cls_report_invoice_leadtime extends cls_renderer {
                 oTable = $('#tb_invoice_leadtime').dataTable({
                     "bProcessing": true,
                     "bServerSide": true,
-                    "aaSorting": [[1, "desc"]],
-                    "aoColumns": [ null, null, null, null, null, null ],
+                    "aaSorting": [[1, "asc"]],
+                    "aoColumns": [ null, null, null, null, null, null, null, null, null, null, null ],
                     "sAjaxSource": url,
                     "fnServerData": function (sSource, aoData, fnCallback) {
                         $.ajax({
@@ -69,8 +69,11 @@ class cls_report_invoice_leadtime extends cls_renderer {
                             "data": aoData,
                             "success": function (json) {
                                 fnCallback(json);
-                                var avg = (json && json.avg_leadtime_days !== undefined && json.avg_leadtime_days !== null) ? json.avg_leadtime_days : "";
-                                $("#avgLeadTime").text(avg === "" ? "" : formatAvgLeadTime(avg));
+                                var avgTransit = (json && json.avg_leadtime_days !== undefined && json.avg_leadtime_days !== null) ? json.avg_leadtime_days : "";
+                                $("#avgLeadTimeTransit").text(avgTransit === "" ? "" : formatAvgLeadTime(avgTransit));
+
+                                var avgOrder = (json && json.avg_order_leadtime_days !== undefined && json.avg_order_leadtime_days !== null) ? json.avg_order_leadtime_days : "";
+                                $("#avgLeadTimeOrder").text(avgOrder === "" ? "" : formatAvgLeadTime(avgOrder));
                             }
                         });
                     }
@@ -189,22 +192,31 @@ class cls_report_invoice_leadtime extends cls_renderer {
                     <thead>
                         <tr>
                             <th>Store</th>
+                            <th>1st Order Date</th>
+                            <th>1st Order Time</th>
                             <th>Invoice No</th>
                             <th>Invoice Date</th>
-                            <th>Invoice Pull Date</th>
+                            <th>Invoice Time</th>
+                            <th>Pull Date</th>
+                            <th>Pull Time</th>
                             <th>Status</th>
-                            <th>Lead Time (days)</th>
+                            <th>Transit Lead Time (days)</th>
+                            <th>Order Lead Time (days)</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td colspan="6" class="dataTables_empty">Loading data from server</td>
+                            <td colspan="11" class="dataTables_empty">Loading data from server</td>
                         </tr>
                     </tbody>
                     <tfoot>
                         <tr>
-                            <th colspan="5" style="text-align:right;">Avg Lead Time (days):</th>
-                            <th id="avgLeadTime"></th>
+                            <th colspan="10" style="text-align:right;">Avg Transit Lead Time (days):</th>
+                            <th id="avgLeadTimeTransit"></th>
+                        </tr>
+                        <tr>
+                            <th colspan="10" style="text-align:right;">Avg Order Lead Time (days):</th>
+                            <th id="avgLeadTimeOrder"></th>
                         </tr>
                     </tfoot>
                 </table>
