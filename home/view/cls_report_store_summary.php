@@ -12,6 +12,7 @@ class cls_report_store_summary extends cls_renderer{
         var $dtrange;
         var $params;
         var $storeid = "-1";
+        var $calc = "percentage";
         
        
         function __construct($params=null) {
@@ -23,6 +24,14 @@ class cls_report_store_summary extends cls_renderer{
                 $this->dtrange = $params['dtrange'];
             } else {
                 $this->dtrange = date("d-m-Y");
+            }
+            if($params && isset($params['calc'])){
+                $calc = strtolower(trim($params['calc']));
+                $this->calc = ($calc === "average") ? "average" : "percentage";
+            }
+            if($this->calc == "percentage" && isset($_REQUEST['calc'])){
+                $calc = strtolower(trim($_REQUEST['calc']));
+                $this->calc = ($calc === "average") ? "average" : "percentage";
             }
         }
 
@@ -65,13 +74,14 @@ class cls_report_store_summary extends cls_renderer{
 <script type="text/javaScript">        
 $(function(){         
 $(".chzn-select").chosen(); $(".chzn-select-deselect").chosen({allow_single_deselect:true});   
-    var url = "ajax/tb_store_stock_summary.php?storeid=<?php echo $this->storeid; ?>&dtrange=<?php echo $this->dtrange; ?>";
+    var url = "ajax/tb_store_stock_summary.php?storeid=<?php echo $this->storeid; ?>&dtrange=<?php echo $this->dtrange; ?>&calc=<?php echo $this->calc; ?>";
 //alert(url);
+    var aoCols = <?php echo ($this->calc === "average") ? "[ null, {\"bSortable\": false}, null, null, null, null, null, null ]" : "[ null, null, null, null, null, null, null, null ]"; ?>;
     oTable = $('#tb_stocksummary').dataTable( {
 	"bProcessing": true,
 	"bServerSide": true,
         //"bFilter": false,
-        "aoColumns": [ null, null, null, null, null, null ],
+        "aoColumns": aoCols,
 	"sAjaxSource": url
     } );
 // search on pressing Enter key only
@@ -101,26 +111,28 @@ $(".chzn-select").chosen(); $(".chzn-select-deselect").chosen({allow_single_dese
 
 
 function genRep(){    
-    var store_ids = $("#store").val();
-    var dtrange = $("#dateselect").val();
-    if(store_ids == null){
-        alert("Please select store(s) first");
-    }
-    else{
-        window.location.href="report/store/summary/storeid="+store_ids+"/dtrange="+dtrange;
-    }       
+     var store_ids = $("#store").val();
+     var dtrange = $("#dateselect").val();
+     var calc_mode = $("input[name='calc_mode']:checked").val() || "percentage";
+     if(store_ids == null){
+         alert("Please select store(s) first");
+     }
+     else{
+         window.location.href="report/store/summary/storeid="+store_ids+"/dtrange="+dtrange+"/calc="+encodeURIComponent(calc_mode);
+     }       
 }
 
-function genExcelRep(){
-    var store_ids = $("#store").val();
-    var dtrange = $("#dateselect").val();
-    if(store_ids == null){
-        alert("Please select store(s) first");
-    }
-    else{
-        window.location.href="formpost/genStoreSummaryExcel.php?storeid="+store_ids+"&dtrange="+dtrange;
-    }
-}
+ function genExcelRep(){
+     var store_ids = $("#store").val();
+     var dtrange = $("#dateselect").val();
+     var calc_mode = $("input[name='calc_mode']:checked").val() || "percentage";
+     if(store_ids == null){
+         alert("Please select store(s) first");
+     }
+     else{
+         window.location.href="formpost/genStoreSummaryExcel.php?storeid="+store_ids+"&dtrange="+dtrange+"&calc="+encodeURIComponent(calc_mode);
+     }
+ }
 
 </script>
  <link rel="stylesheet" href="js/chosen/chosen.css" />
@@ -131,7 +143,7 @@ function genExcelRep(){
 
         public function pageContent() {
             $currUser = getCurrUser();
-            $menuitem = "ssummary";
+            $menuitem = "stocksummary";
             include "sidemenu.".$currUser->usertype.".php";    
 //            if($currUser->usertype == UserType::Admin || $currUser->usertype == UserType::CKAdmin){
             $db = new DBConn();
@@ -177,38 +189,57 @@ foreach ($objs as $obj) {
         <div class="grid_8">
                 <span style="font-weight:bold;">Date Filter : </span></br> <input size="17" type="text" id="dateselect" name="dateselect" value="<?php echo $this->dtrange; ?>" /> (Click to see date options)
         </div>
-        <div class="grid_12">
-            <div class="grid_8">
-            <input type="button" name="genrep" value="Generate Report" onclick="javascript:genRep();">            
-            </div>            
-            <div class="grid_4">
-            <input type="button" name="genexcel" value="Download Excel" onclick="javascript:genExcelRep();">
-            </div>
-            <br> 
-            <h7>Select the options and click on "Generate Report" button</h7>            
-        </div>
-    </div>
+        <div class="grid_12" style="margin-top:8px;">
+                
+                 <label style="font-size:15px; font-weight:bold;"><input type="radio" name="calc_mode" value="percentage" <?php echo ($this->calc === "percentage") ? "checked" : ""; ?>> Percentage wise</label>&nbsp;&nbsp;
+                 <label style="font-size:15px; font-weight:bold;"><input type="radio" name="calc_mode" value="average" <?php echo ($this->calc === "average") ? "checked" : ""; ?>> Average wise</label>
+             </div>
+        &nbsp; <div class="grid_12">
+             <div class="grid_6">
+             <input type="button" name="genrep" value="Generate Report" onclick="javascript:genRep();">            
+<!--             </div>            
+             <div class="grid_6">-->
+             <input type="button" name="genexcel" value="Download Excel" onclick="javascript:genExcelRep();">
+             </div>
+             
+             <br> 
+             <h7>Select the options and click on "Generate Report" button</h7>            
+         </div>
+     </div>
     <div class="clear"></div>
     <br>
     <div class="grid_12" id="tablebox" class="ui-widget-content ui-corner-bottom">
     <h5>Store Stock Summary Report</h5>
         <table cellpadding="0" cellspacing="0" border="0" class="display" id="tb_stocksummary">
-	<thead>
-            <tr> 
-                <!--<th>ID</th>-->
-                <th>Store Name</th>
-                <th>Date</th>
-                <th>Min Stock Limit</th>
-                <th>Max Stock Limit</th>
-                <th>Stock Value</th>
-                <th>Percentage</th>
-	    </tr>
-	</thead>
-	<tbody>
-		<tr>
-			<td colspan="6" class="dataTables_empty">Loading data from server</td>
-		</tr>
-	</tbody>
+ 	<thead>
+             <tr> 
+                 <!--<th>ID</th>-->
+                 <?php if($this->calc === "average"){ ?>
+                 <th>Store Name</th>
+                 <th>Date Range</th>
+                 <th>Avg Min Stock Limit</th>
+                 <th>Avg Max Stock Limit</th>
+                 <th>Avg Stock Value</th>
+                 <th>Avg Percentage</th>
+                 <th>Avg Difference</th>
+                 <th>Avg Status</th>
+                 <?php } else { ?>
+                 <th>Store Name</th>
+                 <th>Date</th>
+                 <th>Min Stock Limit</th>
+                 <th>Max Stock Limit</th>
+                 <th>Stock Value</th>
+                 <th>Percentage</th>
+                 <th>Difference</th>
+                 <th>Status</th>
+                 <?php } ?>
+ 	    </tr>
+ 	</thead>
+ 	<tbody>
+ 		<tr>
+ 			<td colspan="6" class="dataTables_empty">Loading data from server</td>
+ 		</tr>
+ 	</tbody>
     </table>
     </div>
 </div>

@@ -13,13 +13,18 @@ try {
 
     $dtrange = isset($_GET['dtrange']) ? $_GET['dtrange'] : "";
     $storeid = isset($_GET['storeid']) ? $_GET['storeid'] : "-1";
+    $calc = isset($_GET['calc']) ? strtolower(trim($_GET['calc'])) : "percentage";
+    if ($calc !== "average") { $calc = "percentage"; }
 
     $dtClause = "";
+    $sdate = null;
+    $edate = null;
     if (isset($dtrange) && trim($dtrange) != "") {
         $dtarr = explode(" - ", $dtrange);
         if (count($dtarr) == 1) {
             list($dd, $mm, $yy) = explode("-", $dtarr[0]);
             $sdate = "$yy-$mm-$dd";
+            $edate = $sdate;
             $dtClause = " and s.stock_datetime >= '$sdate 00:00:00' and s.stock_datetime <= '$sdate 23:59:59' ";
         } else if (count($dtarr) == 2) {
             list($dd, $mm, $yy) = explode("-", $dtarr[0]);
@@ -42,22 +47,43 @@ try {
 
     $exeId = getCurrUser()->id;
 
-    $query = "
-        select
-            c.store_name,
-            s.stock_datetime,
-            s.min_stock_limit,
-            s.max_stock_limit,
-            s.stock_value,
-            round((s.stock_value/nullif(s.min_stock_limit,0))*100,2) as percentage
-        from it_store_stock_summary s, it_codes c
-        where s.store_id = c.id
-          and c.is_closed=0
-          and c.id in (select store_id from executive_assign where exe_id=$exeId)
-          $dtClause
-          $sClause
-        order by s.id desc
-    ";
+    if ($calc === "average") {
+        $query = "
+            select
+                c.store_name,
+            round(avg(s.min_stock_limit),2) as avg_min_stock_limit, 
+            round(avg(s.max_stock_limit),2) as avg_max_stock_limit,
+            round(avg(s.stock_value),2) as avg_stock_value,
+                round(avg((s.stock_value/nullif(s.min_stock_limit,0))*100),2) as avg_percentage,
+                (round(avg(s.stock_value),2) - round(avg(s.min_stock_limit),2)) as avg_difference
+            from it_store_stock_summary s, it_codes c
+            where s.store_id = c.id
+              and c.is_closed=0
+              and c.id in (select store_id from executive_assign where exe_id=$exeId)
+              $dtClause
+              $sClause
+            group by c.id
+            order by c.store_name
+        ";
+    } else {
+        $query = "
+            select
+                c.store_name,
+                s.stock_datetime,
+                s.min_stock_limit,
+                s.max_stock_limit,
+                s.stock_value,
+                (s.stock_value-s.min_stock_limit) as difference,
+                round((s.stock_value/nullif(s.min_stock_limit,0))*100,2) as percentage
+            from it_store_stock_summary s, it_codes c
+            where s.store_id = c.id
+              and c.is_closed=0
+              and c.id in (select store_id from executive_assign where exe_id=$exeId)
+              $dtClause
+              $sClause
+            order by s.id desc
+        ";
+    }
 
     $sheetIndex = 0;
     $cacheMethod = PHPExcel_CachedObjectStorageFactory::cache_in_memory_serialized;
@@ -68,14 +94,28 @@ try {
     $objPHPExcel->setActiveSheetIndex($sheetIndex);
     $objPHPExcel->getActiveSheet()->setTitle('Store Summary');
 
-    $headers = array(
-        'Store Name',
-        'Stock DateTime',
-        'Min Stock Limit',
-        'Max Stock Limit',
-        'Stock Value',
-        'Percentage'
-    );
+    if ($calc === "average") {
+        $headers = array(
+            'Store Name',
+            'Date Range',
+            'Average Minimum Limit',
+            'Average Stock',
+            'Average Percentage',
+            'Average Difference',
+            'Average Status'
+        );
+    } else {
+        $headers = array(
+            'Store Name',
+            'Stock DateTime',
+            'Min Stock Limit',
+            'Max Stock Limit',
+            'Stock Value',
+            'Percentage',
+            'Difference',
+            'Status'
+        );
+    }
 
     $col = 0;
     foreach ($headers as $h) {
@@ -84,27 +124,70 @@ try {
     }
 
     $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(35);
-    $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(22);
-    $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(18);
-    $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(18);
-    $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(18);
-    $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(14);
+    if ($calc === "average") {
+        $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(28);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(18);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(18);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(30);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(18);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(18);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(18);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('I')->setWidth(30);
+    } else {
+        $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(22);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(18);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(18);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(18);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(14);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(22);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(18);
+    }
 
     $rowCount = 2;
     $result = $db->getConnection()->query($query);
     while ($obj = $result->fetch_object()) {
-        $pctText = ($obj->percentage === null || $obj->percentage === "") ? "" : ($obj->percentage . "%");
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, $rowCount, $obj->store_name);
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(1, $rowCount, $obj->stock_datetime);
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(2, $rowCount, $obj->min_stock_limit);
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(3, $rowCount, $obj->max_stock_limit);
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(4, $rowCount, $obj->stock_value);
-        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(5, $rowCount, $pctText);
+        if ($calc === "average") {
+            $avg_diff=$obj->avg_difference;
+            if($obj->avg_difference < 0){
+                $avg_status="Stock Not Maintained";
+            }else{
+                $avg_status="Stock Maintained";
+            }
+            
+            
+            $rangeText = (isset($dtrange) && trim($dtrange) !== "") ? $dtrange : "";
+            $pctText = ($obj->avg_percentage === null || $obj->avg_percentage === "") ? "" : ($obj->avg_percentage . "%");
+            $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, $rowCount, $obj->store_name);
+            $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(1, $rowCount, $rangeText);
+            $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(2, $rowCount, $obj->avg_min_stock_limit);
+            $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(3, $rowCount, $obj->avg_stock_value);
+            $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(4, $rowCount, $pctText);
+            $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(5, $rowCount, $avg_diff);
+            $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(6, $rowCount, $avg_status);
+            } else {
+                
+                if($obj->difference < 0){
+                $status="Stock Not Maintained";
+            }else{
+                $status="Stock Maintained";
+            }
+                
+            $pctText = ($obj->percentage === null || $obj->percentage === "") ? "" : ($obj->percentage . "%");
+            $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, $rowCount, $obj->store_name);
+            $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(1, $rowCount, $obj->stock_datetime);
+            $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(2, $rowCount, $obj->min_stock_limit);
+            $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(3, $rowCount, $obj->max_stock_limit);
+            $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(4, $rowCount, $obj->stock_value);
+            $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(5, $rowCount, $pctText);
+            $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(6, $rowCount, $obj->difference);
+            $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(7, $rowCount, $status);
+        }
         $rowCount++;
     }
 
     header('Content-Type: application/vnd.ms-excel');
-    header('Content-Disposition: attachment;filename="StoreSummary.xls"');
+    $fname = ($calc === "average") ? "StoreSummary_Average.xls" : "StoreSummary.xls";
+    header('Content-Disposition: attachment;filename="'.$fname.'"');
     header('Cache-Control: max-age=0');
 
     $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
