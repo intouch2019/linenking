@@ -3,9 +3,15 @@ require_once "../../it_config.php";
 require_once "lib/db/DBConn.php";
 require_once "lib/orders/clsOrders.php";
 require_once ("session_check.php");
+require_once "formpost/MatersStockQtyCalc.php";
 
 extract($_GET);
 $db=new DBConn();
+$store_id = getCurrUserId();
+$errors="";
+$clsOrders = new clsOrders();
+$cart = $clsOrders->getCartt($store_id);
+$eligibleStores = getMasterStackEligibleStores(); //Initially, only a limited number of stores are eligible to place orders within the stack capacity.
 $items = array();
 foreach ($_GET as $name => $value) {
     if ($value && startsWith($name, "item_")) {
@@ -15,6 +21,45 @@ foreach ($_GET as $name => $value) {
             "avl_qty" => $arr[2],
             "req_qty" => $value
         );
+//        print_r($eligibleStores);exit();
+        //        	 <-------  Master stock limit code start------------>
+        if(in_array($store_id, $eligibleStores)){ // Applying only for one store remove when making it live for all stores
+            $added_to_cart_qry="select ctg_id, style_id, size_id from it_items where id=$arr[1]"; // This is ordered product details/ product added in cart
+            $added_to_cart=$db->fetchObject($added_to_cart_qry);
+            if(!empty($added_to_cart)){
+                // Get master and store stock for item currently added in cart
+                $curr_store_master_stock_ctg_style_size_wise=getMaterStoreStock($store_id, $added_to_cart->ctg_id, $added_to_cart->style_id, $added_to_cart->size_id);
+                
+                $curr_store_stock_ctg_style_size_wise= getCurrentStoreStock($store_id, $added_to_cart->ctg_id, $added_to_cart->style_id, $added_to_cart->size_id);
+                
+                $eligible_categories = checkEligibleCategories($added_to_cart->ctg_id);
+                
+                $buffer = getLastThreeMonthSale($store_id, $added_to_cart->ctg_id, $added_to_cart->style_id, $added_to_cart->size_id);
+
+//                print_r($cart->id);exit();
+                // Get quantity for items that are already in cart
+                $items_in_cart=$clsOrders->getCartItems($cart->id);
+                
+                // For each item in cart check if currently added cart item exceeds the master stock quantity
+                foreach ($items_in_cart as $item_in_cart) {
+                    $cart_item_details=$db->fetchObject("select ctg_id, style_id, size_id from it_items where id=$item_in_cart->item_id");
+                    if ($cart_item_details->ctg_id == $added_to_cart->ctg_id &&
+                        $cart_item_details->style_id == $added_to_cart->style_id &&
+                        $cart_item_details->size_id == $added_to_cart->size_id) {
+                        
+                        $curr_store_stock_ctg_style_size_wise += $item_in_cart->order_qty; // $item_in_cart->order_qty = It is the qty of item already in cart
+                    }                                                                               
+                }
+                    $curr_store_stock_ctg_style_size_wise += $value; // $value = current cart qty
+                // Return error if curr_stock is greater or equal to buffer + master stacking capacity including cart items
+                if($eligible_categories && $curr_store_stock_ctg_style_size_wise> ($curr_store_master_stock_ctg_style_size_wise + $buffer)){
+                    
+                    $errors .="Your stock including cart items is greater or equal to master stacking capacity please check!";
+                    return error($errors);
+                }
+            }
+        }
+        //        	 <-------  Master stock limit code ends------------>
     }
     else if ((!$value || $value==0) && startsWith($name, "item_")) {
         $arr = explode("_",$name);
@@ -26,6 +71,7 @@ foreach ($_GET as $name => $value) {
     }
     else {$remove="";}
 }
+
 
 $design_no = $db->safe($design_no);
 $store_id = getCurrUserId();
