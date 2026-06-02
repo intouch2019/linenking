@@ -1,9 +1,11 @@
 <?php
+set_time_limit(300);
 require_once "view/cls_renderer.php";
 require_once "lib/db/DBConn.php";
 require_once "session_check.php";
 require_once "lib/orders/clsOrders.php";
 require_once "lib/items/clsItems.php";
+require_once "formpost/MatersStockQtyCalc.php";
 
 class cls_store_designs extends cls_renderer {
 
@@ -228,6 +230,68 @@ Your session has expired. Click <a href="">here</a> to login.
                     }
 
 </script>
+     <style>
+            table {
+                border: 1px solid black;
+                border-collapse: collapse;
+            }
+            td, th {
+                border: 1px solid black;
+                padding: 5px;
+                text-align: center;
+                vertical-align: middle;
+            }
+            /* Chrome, Safari, Edge, Opera */
+            input::-webkit-outer-spin-button,
+            input::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+
+            #total_qty {
+                font-size: 18px;
+                font-weight: bold;
+            }
+
+            /* Firefox */
+            input[type=number] {
+                -moz-appearance: textfield;
+            }
+        </style>
+        <style>
+            /* Freeze the top section */
+            .fixed-top {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                background: white;
+                z-index: 1000;
+                padding: 10px;
+                border-bottom: 1px solid #ccc;
+                display: none; /* Hidden by default */
+            }
+
+            /* Scrollable content below the fixed section */
+            .scrollable-section {
+                margin-top: 150px; /* adjust based on .fixed-top height */
+                height: calc(100vh - 150px); /* fill remaining viewport */
+                overflow-y: auto;
+                padding: 10px;
+            }
+
+            table {
+                border-collapse: collapse;
+                width: 100%;
+            }
+
+            th, td {
+                border: 1px solid #ccc;
+                padding: 6px;
+                text-align: center;
+            }
+        </style>
+    
     <?php
     }
 
@@ -244,6 +308,7 @@ Your session has expired. Click <a href="">here</a> to login.
             $db = new DBConn();
             $clsItems = new clsItems();
             $storeid = getCurrUserId();
+            $eligibleStores = getMasterStackEligibleStores();
             $clsOrders = new clsOrders();
             $query21 = "SELECT * from it_ck_orderitems where  order_id=$cart->id";
           //    print $query21;
@@ -319,6 +384,269 @@ Your session has expired. Click <a href="">here</a> to login.
                         <div id="timemessage" style="color: green; margin-top: 10px; text-align: right;">Last Sync Time <?php echo date("d-m-Y H:i:s", strtotime($qrytimefetch->updatetime)) ?></div>
                         <div id="message" style="color: red; margin-top: 10px;"></div>
                     </div>
+    
+    <!-- <-------  Master stock limit code start - Limiting store to order more quantity than master stock for each size and style of category ------------------>   
+                    <br><br>
+                    <?php if(in_array($storeid, $eligibleStores)){ // Making live for only one store ?>
+                    <div class="fixed-top" id="floatingTable">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="text-align: center; font-size: 15px;" colspan="100">
+                                      <b>Store Stacking Capacity</b>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th></th>
+                                    <th>Style ⬇ &nbsp;&nbsp;|&nbsp;&nbsp; Size ➡</th>
+                                    <?php
+                                    $size_by_ctg_qry = "select s.name as size,s.id as id from it_ck_sizes cs inner join it_sizes s on cs.size_id=s.id where ctg_id = $this->ctg";
+                                    $size_by_ctg = $db->fetchObjectArray($size_by_ctg_qry);
+                                    foreach ($size_by_ctg as $size) {
+                                        ?>
+                                        <th><?php echo $size->size ?></th>
+                                    <?php } ?>
+                                    <th id="total_qty">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                $style_by_ctg_qry = "select s.name as style_name,s.id as id from it_ck_styles cs inner join it_styles s on cs.style_id = s.id and cs.ctg_id = $this->ctg";
+                                $style_by_ctg = $db->fetchObjectArray($style_by_ctg_qry);
+                                $i = 0;
+                                $j = 0;
+                                $num_of_rows_generated = 0;
+                                $total_store_master_stock = 0;
+// <---------------------------------1 This foreach loops will get total master stock for current store and number of rows generated i.e. no of styles current catagory have ------------------------------>
+                                foreach ($style_by_ctg as $style) {
+                                    $num_of_rows_generated++;
+                                    foreach ($size_by_ctg as $size) {
+                                        $store_master_stock = getMaterStoreStock($storeid, $this->ctg, $style->id, $size->id);
+                                        $total_store_master_stock += $store_master_stock;
+                                    }
+                                }
+                                ?>
+                                <!--  <-----------------------------------1 For loop ends ------------------------------------------------------------------------->
+
+                                <!--Row below will contain Stacking Capacity Set(Master Stock)-->
+                                <tr>
+                                    <td rowspan="<?php echo $num_of_rows_generated; ?>" style="text-align: left;">Stacking Capacity Set</td>
+                                    <?php
+                                    foreach ($style_by_ctg as $style) {
+                                        ?>
+                                        <td><?php echo $style->style_name; ?></td>
+                                        <?php
+                                        foreach ($size_by_ctg as $size) {
+                                            $store_master_stock = getMaterStoreStock($storeid, $this->ctg, $style->id, $size->id);
+                                            $j++;
+                                            ?>
+                                            <td>
+                                                <?php echo $store_master_stock; ?>
+                                            </td>
+                                        <?php } ?>
+                                        <?php
+                                        if (($num_of_rows_generated == 3 || $num_of_rows_generated == 2 || $num_of_rows_generated == 1) && $i == 0) {
+                                            $i++;
+                                            ?>
+                                            <td rowspan="<?php echo $num_of_rows_generated; ?>">
+                                              <?php echo $total_store_master_stock; ?>
+                                            </td>
+                                            <?php
+                                        }
+                                        ?>
+                                    </tr>
+                                <?php } ?>
+
+                                    <!--Row below will contain Current stack-->
+                                <tr>
+                                    <td rowspan="<?php echo $num_of_rows_generated; ?>" style="text-align: left;">Current Stock</td>
+                                    <?php
+                                    foreach ($style_by_ctg as $style) {
+                                        $total_store_curr_stock = 0;
+                                        ?>
+                                        <td><?php echo $style->style_name; ?></td>
+                                        <?php
+                                        foreach ($size_by_ctg as $size) {
+                                            $store_curr_stock = getCurrentStoreStock($storeid, $this->ctg, $style->id, $size->id);
+                                            $total_store_curr_stock += $store_curr_stock;
+                                            ?>
+                                            <td><?php echo $store_curr_stock; ?></td>
+                                        <?php } ?>
+                                        <td><b><?php echo $total_store_curr_stock; ?></b></td>
+                                    </tr>
+                                <?php } ?>
+
+                                    <!--Row below will contain Permissible Range-->
+                                <tr>
+                                    <td rowspan="<?php echo $num_of_rows_generated; ?>" style="text-align: left;">Permissible Order Range</td>
+                                    <?php
+                                    foreach ($style_by_ctg as $style) {
+                                        ?>
+                                        <td><?php echo $style->style_name; ?></td>
+                                        <?php
+                                        foreach ($size_by_ctg as $size) {
+                                            $store_curr_stock = getCurrentStoreStock($storeid, $this->ctg, $style->id, $size->id);
+                                            $store_master_stock = getMaterStoreStock($storeid, $this->ctg, $style->id, $size->id);
+                                            $buffer = getLastThreeMonthSale($storeid, $this->ctg, $style->id, $size->id);
+                                            $j++;
+                                            $permissible_qty_from = $store_master_stock - $store_curr_stock;
+                                            $permissible_qty_to = round($store_master_stock + $buffer) - $store_curr_stock;//This line calculates the maximum permissible quantity(20% buffer over the master stock).
+
+                                            if ($permissible_qty_to <= 0) {
+                                                $range = "(0)";
+                                            } else {
+                                                $from = max(0, $permissible_qty_from);
+                                                $range = "($from - $permissible_qty_to)";
+                                            }
+                                            ?>
+                                            <td><?= $range ?></td>
+                                        <?php } ?>
+                                            <td></td>
+                                    </tr>
+                                    <?php } ?>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>Store Stacking Capacity Table will appear when holding the <b>Shift</b> key.</p>
+                    <div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="text-align: center; font-size: 15px;" colspan="100">
+                                      <b>Store Stacking Capacity</b>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th></th>
+                                    <th>Style ⬇ &nbsp;&nbsp;|&nbsp;&nbsp; Size ➡</th>
+                                    <?php
+                                    $size_by_ctg_qry = "select s.name as size,s.id as id from it_ck_sizes cs inner join it_sizes s on cs.size_id=s.id where ctg_id = $this->ctg";
+                                    $size_by_ctg = $db->fetchObjectArray($size_by_ctg_qry);
+                                    foreach ($size_by_ctg as $size) {
+                                        ?>
+                                        <th><?php echo $size->size ?></th>
+                                    <?php } ?>
+                                    <th id="total_qty">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                $style_by_ctg_qry = "select s.name as style_name,s.id as id from it_ck_styles cs inner join it_styles s on cs.style_id = s.id and cs.ctg_id = $this->ctg";
+                                $style_by_ctg = $db->fetchObjectArray($style_by_ctg_qry);
+                                $i = 0;
+                                $j = 0;
+                                $num_of_rows_generated = 0;
+                                $total_store_master_stock = 0;
+// <---------------------------------1 This foreach loops will get total master stock for current store and number of rows generated i.e. no of styles current catagory have ------------------------------>
+                                foreach ($style_by_ctg as $style) {
+                                    $num_of_rows_generated++;
+                                    foreach ($size_by_ctg as $size) {
+                                        $store_master_stock = getMaterStoreStock($storeid, $this->ctg, $style->id, $size->id);
+                                        $total_store_master_stock += $store_master_stock;
+                                    }
+                                }
+                                ?>
+                                <!--  <-----------------------------------1 For loop ends ------------------------------------------------------------------------->
+
+                                <!--Row below will contain Stacking Capacity Set(Master Stock)-->
+                                <tr>
+                                    <td rowspan="<?php echo $num_of_rows_generated; ?>" style="text-align: left;">Stacking Capacity Set</td>
+                                    <?php
+                                    foreach ($style_by_ctg as $style) {
+                                        ?>
+                                        <td><?php echo $style->style_name; ?></td>
+                                        <?php
+                                        foreach ($size_by_ctg as $size) {
+                                            $store_master_stock = getMaterStoreStock($storeid, $this->ctg, $style->id, $size->id);
+                                            $j++;
+                                            ?>
+                                            <td>
+                                                <?php echo $store_master_stock; ?>
+                                            </td>
+                                        <?php } ?>
+                                        <?php
+                                        if (($num_of_rows_generated == 3 || $num_of_rows_generated == 2 || $num_of_rows_generated == 1) && $i == 0) {
+                                            $i++;
+                                            ?>
+                                            <td rowspan="<?php echo $num_of_rows_generated; ?>">
+                                               <?php echo $total_store_master_stock; ?>
+                                            </td>
+                                            <?php
+                                        }
+                                        ?>
+                                    </tr>
+                                <?php } ?>
+
+
+                                    <!--Row below will contain Current stack-->
+                                <tr>
+                                    <td rowspan="<?php echo $num_of_rows_generated; ?>" style="text-align: left;">Current Stock</td>
+                                    <?php
+                                    foreach ($style_by_ctg as $style) {
+                                        $total_store_curr_stock = 0;
+                                        ?>
+                                        <td><?php echo $style->style_name; ?></td>
+                                        <?php
+                                        foreach ($size_by_ctg as $size) {
+                                            $store_curr_stock = getCurrentStoreStock($storeid, $this->ctg, $style->id, $size->id);
+                                            $total_store_curr_stock += $store_curr_stock;
+                                            ?>
+                                            <td><?php echo $store_curr_stock; ?></td>
+                                        <?php } ?>
+                                        <td><b><?php echo $total_store_curr_stock; ?></b></td>
+                                    </tr>
+                                <?php } ?>
+
+                                    <!--Row below will contain Permissible Range-->
+                                <tr>
+                                    <td rowspan="<?php echo $num_of_rows_generated; ?>" style="text-align: left;">Permissible Order Range</td>
+                                    <?php
+                                    foreach ($style_by_ctg as $style) {
+                                        ?>
+                                        <td><?php echo $style->style_name; ?></td>
+                                        <?php
+                                        foreach ($size_by_ctg as $size) {
+                                            $store_curr_stock = getCurrentStoreStock($storeid, $this->ctg, $style->id, $size->id);
+                                            $store_master_stock = getMaterStoreStock($storeid, $this->ctg, $style->id, $size->id);
+                                            $buffer = getLastThreeMonthSale($storeid, $this->ctg, $style->id, $size->id);
+                                            $j++;
+                                            $permissible_qty_from = $store_master_stock - $store_curr_stock;
+                                            $permissible_qty_to = round($store_master_stock + $buffer) - $store_curr_stock; //This line calculates the maximum permissible quantity(20% buffer over the master stock).
+
+                                            if ($permissible_qty_to <= 0) {
+                                                $range = "(0)";
+                                            } else {
+                                                $from = max(0, $permissible_qty_from);
+                                                $range = "($from - $permissible_qty_to)";
+                                            }
+                                            ?>
+                                            <td><?= $range ?></td>
+                                        <?php } ?>
+                                            <td></td>
+                                    </tr>
+                                    <?php } ?>
+                            </tbody>
+                        </table>
+                    </div>
+                    <br><br><br>
+                    <script>
+                        const tableDiv = document.getElementById('floatingTable');
+
+                        document.addEventListener('keydown', function(event) {
+                            if (event.key === "Shift") {
+                                tableDiv.style.display = 'block';
+                            }
+                        });
+
+                        document.addEventListener('keyup', function(event) {
+                            if (event.key === "Shift") {
+                                tableDiv.style.display = 'none';
+                            }
+                        });
+                    </script>
+                    <?php } ?>      
+                      <!-- <----------------------------------------------  Master stock limit code end ----------------------------------------------------------------------------> 
+    
     <div class="grid_3">&nbsp;</div>
     <div class="grid_5">
         <fieldset class="login">
@@ -534,6 +862,16 @@ Your session has expired. Click <a href="">here</a> to login.
                                                  
                                                         //to get the quantity and stock id of specific item
                                                         $sizeid = $sizeobj[$i]->size_id;
+                                                         //<-------  Mastor stock limit code start - Limiting store to order more quantity than mastore stock for each size and style of category ------------------>                                                    
+                                                    if(in_array($storeid, $eligibleStores)){ // Currently we are testing on one store only when asked to deploy for all store just remove this condition
+                                                        $this_store_curr_stock= getCurrentStoreStock($storeid, $this->ctg, $stylcod, $sizeid);
+//                                                        echo "<br>Current store stock = ".$this_store_curr_stock;
+                                                        $this_store_master_stock = getMaterStoreStock($storeid, $this->ctg, $stylcod, $sizeid);
+                                                        $buffer = getLastThreeMonthSale($storeid, $this->ctg, $stylcod, $sizeid);
+//                                                        echo " -- Current store master stock = ".$this_store_master_stock;
+                                                    }
+
+ //<----------------------------------------------  Mastor stock limit code end ---------------------------------------------------------------------------->                                                  
 							$query = "select id,sum(curr_qty) as qty,is_avail_manual_order,barcode from it_items where design_no = $design_no and MRP=$design->MRP and ctg_id=$ctg_id and style_id = '$stylcod' and size_id = '$sizeid' and curr_qty > 0 order by curr_qty desc";
                                                        $db = new DBConn();
                                                         $getitm = $db->fetchObject($query);
@@ -606,8 +944,12 @@ Your session has expired. Click <a href="">here</a> to login.
                                                         
                                                                 <?php } else { ?> 
                                                                 
-                                                                 <td><input type='number' max="9" min="0" style='width: 40px; <?php if ($getitm->qty == 0) { echo ''; } elseif ($totqtyavil == 0 && $getitm->qty > 0 && ($this->showcurstck == 1)) { echo 'border: 2px solid green;'; } elseif ($totqtyavil > 0 && $getitm->qty > 0 && ($this->showcurstck == 1)) { echo 'border: 2px solid red;'; } ?>' pattern= "[0-9]+" title="ONLY NUMBER" name="item_<?php echo $id."_".$qty; ?>" <?php
-
+                                                                 <td><input type='number' max="9" min="0" style='width: 40px; 
+                                                                <?php if ($getitm->qty == 0) { echo ''; } 
+                                                                elseif ($totqtyavil == 0 && $getitm->qty > 0 && ($this->showcurstck == 1)) 
+                                                                { echo 'border: 2px solid green;'; } 
+                                                                elseif ($totqtyavil > 0 && $getitm->qty > 0 && ($this->showcurstck == 1 )) 
+                                                                { echo 'border: 2px solid red;'; } ?>' <?php  if(in_array($storeid, $eligibleStores) && $this_store_curr_stock >= $this_store_master_stock + $buffer){?> title="Your store stock is greater or equal to master stock" disabled <?php  } else {?> title="ONLY NUMBER"<?php }?> name="item_<?php echo $id."_".$qty; ?>" <?php
                                                                 if ($exist) {
                                                                     print "value='";
                                                                     echo $exist->order_qty;
