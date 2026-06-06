@@ -10,6 +10,7 @@ require_once "lib/logger/clsLogger.php";
 require_once "lib/grnPDFClass/GeneratePDF.php";
 require_once "lib/orders/clsOrders.php";
 require_once "lib/grnPDFClass/EmailHelper.php";
+require_once "formpost/MatersStockQtyCalc.php";
 
 extract($_POST);
 //print_r($_POST);
@@ -20,6 +21,7 @@ $clsOrders = new clsOrders();
 $place_ord = isset($_POST['stand_ord']) ? $_POST['stand_ord'] : false;
 $Release_time = isset($_POST['Release']) ? $_POST['Release'] : false;
 $id = isset($_POST['id']) ? $_POST['id'] : false;
+$eligibleStores = getMasterStackEligibleStores(); //Initially, only a limited number of stores are eligible to place orders within the stack capacity.
 
 $errors = array();
 $store_orders = array(); //store orders information
@@ -391,12 +393,76 @@ if (count($errors) == 0) {
 
                                                 if (array_key_exists($sobj->id, $store_orders)) {
                                                     $order_id = $store_orders[$sobj->id];
-//                                                  print "<br><br>ORDER_ID: ".$order_id;
-                                                    $release_bal_qty = insertItems($sobj, $qty, $iobj, $order_id, $release_bal_qty, $item_grn_qty, $multiple_items_released);
-//                                                    print "release_bal_qty<br/>";
+                                                    //                          print "<br><br>ORDER_ID: ".$order_id;
+                                                     //<------------------------------- Master stock restrictions code start ---------------------------------------------------------------------->
+                                                        if(in_array($sobj->id, $eligibleStores)){// Making master stock live for only one store, remove this condition when making live for all
+                                                            $curr_store_master_stock_ctg_style_size_wise = getMaterStoreStock($sobj->id, $iobj->ctg_id, $iobj->style_id, $iobj->size_id);
+                                                            $curr_store_stock_ctg_style_size_wise = getCurrentStoreStock($sobj->id, $iobj->ctg_id, $iobj->style_id, $iobj->size_id);
+                                                            $buffer = getLastThreeMonthSale($sobj->id, $iobj->ctg_id, $iobj->style_id, $iobj->size_id);
+                                                            
+                                                            // When ST order is created its status is in standing order not active hence we need to check
+                                                            // all the items from standing order status to be included while calculating store stock
+                                                            $getNotActiveSTOrderItems = getNotActiveSTOrderItems($order_id, $sobj->id, $iobj->ctg_id, $iobj->style_id, $iobj->size_id);
+                                                            
+//                                                            print "<br>curr_store_master_stock_ctg_style_size_wise=".$curr_store_master_stock_ctg_style_size_wise;
+//                                                            print "<br>curr_store_stock_ctg_style_size_wise=".$curr_store_stock_ctg_style_size_wise;
+//                                                            print "<br>NotActiveSTOrderItems=".$getNotActiveSTOrderItems;
+                                                            
+                                                            
+                                                                                                                        $temp = $qty;
+                                                        // Some old store might have more stock than master stock as we implement this for old store also
+                                                        if (round($curr_store_master_stock_ctg_style_size_wise + $buffer) > $curr_store_stock_ctg_style_size_wise) {
+                                                            // If curr_stock is 50 and master stock is 51+20% but $qty=2 then order for one qty should be placed atleast
+                                                            if ((round($curr_store_master_stock_ctg_style_size_wise + $buffer) - $curr_store_stock_ctg_style_size_wise) < $qty) {
+                                                                $qty = round($curr_store_master_stock_ctg_style_size_wise + $buffer) - $curr_store_stock_ctg_style_size_wise;
+                                                            }
+                                                        }
+                                                        $temp=$temp-$qty;
+//                                                             print "temp=".$temp;
+                                                            
+                                                            if (($curr_store_stock_ctg_style_size_wise+$getNotActiveSTOrderItems) < round($curr_store_master_stock_ctg_style_size_wise + $buffer)) {
+                                                                $release_bal_qty = insertItems($sobj, $qty, $iobj, $order_id, $release_bal_qty, $item_grn_qty, $multiple_items_released);
+                                                                $release_bal_qty = $release_bal_qty+$temp;
+                                                            }
+                                                        }else{
+                                                            $release_bal_qty = insertItems($sobj, $qty, $iobj, $order_id, $release_bal_qty, $item_grn_qty, $multiple_items_released);
+                                                        }
+                                                    //<------------------------------- Master stock restrictions code end ---------------------------------------------------------------------->   
+                                                    //print "release_bal_qty<br/>";
                                                 } else {
-//                                                    print "place order<br/>";
-                                                    $release_bal_qty = orderCreate($sobj, $qty, $store_orders, $iobj, $release_bal_qty, $item_grn_qty, $multiple_items_released);
+                                                                                                      //print "place order<br/>";
+                                                    //<------------------------------- Master stock restrictions code start ---------------------------------------------------------------------->
+                                                    if(in_array($sobj->id, $eligibleStores)){// Making master stock live for only one store, remove this condition when making live for all
+                                                        $curr_store_master_stock_ctg_style_size_wise = getMaterStoreStock($sobj->id, $iobj->ctg_id, $iobj->style_id, $iobj->size_id);
+                                                        $curr_store_stock_ctg_style_size_wise = getCurrentStoreStock($sobj->id, $iobj->ctg_id, $iobj->style_id, $iobj->size_id);
+                                                        $buffer = getLastThreeMonthSale($sobj->id, $iobj->ctg_id, $iobj->style_id, $iobj->size_id);
+                                                        
+                                                        
+                                                        // When ST order is created its status is in standing order not active hence we need to check
+                                                        // all the items from standing order status to be included while calculating store stock
+//                                                            print "<br>2.master_stock=".$curr_store_master_stock_ctg_style_size_wise;
+//                                                            print "<br>2.store_stock=".$curr_store_stock_ctg_style_size_wise;
+//                                                            print "<br>2.qty=".$qty;
+                                                            $temp = $qty;
+                                                        // Some old store might have more stock than master stock as we implement this for old store also
+                                                        if (round($curr_store_master_stock_ctg_style_size_wise + $buffer) > $curr_store_stock_ctg_style_size_wise) {
+                                                            // If curr_stock is 50 and master stock is 51 but $qty=2 then order for one qty should be placed atleast
+                                                            if ((round($curr_store_master_stock_ctg_style_size_wise + $buffer) - $curr_store_stock_ctg_style_size_wise) < $qty) {
+                                                                $qty = round($curr_store_master_stock_ctg_style_size_wise + $buffer) - $curr_store_stock_ctg_style_size_wise;
+                                                            }
+                                                        }
+                                                        $temp=$temp-$qty;
+//                                                        print "<br>temp=".$temp;
+//                                                        print "<br>release_bal_qty before=".$release_bal_qty;
+                                                        if ($curr_store_stock_ctg_style_size_wise < round($curr_store_master_stock_ctg_style_size_wise + $buffer)) {
+                                                            $release_bal_qty = orderCreate($sobj, $qty, $store_orders, $iobj, $release_bal_qty, $item_grn_qty, $multiple_items_released);
+                                                            $release_bal_qty = $release_bal_qty+$temp;
+//                                                            print "<br>release_bal_qty after=".$release_bal_qty;
+                                                        }
+                                                    } else {
+                                                        $release_bal_qty = orderCreate($sobj, $qty, $store_orders, $iobj, $release_bal_qty, $item_grn_qty, $multiple_items_released);
+                                                    }
+                                                    //<------------------------------- Master stock restrictions code end ---------------------------------------------------------------------->
                                                 }
                                             }
 
