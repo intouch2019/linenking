@@ -237,7 +237,7 @@ if($page){
                                     $desiredOmsName = trim($name_oms_store[0]);
                                             $voucher->addChild("VOUCHERTYPENAME","Sales-GST $desiredOmsName");
                                     } else {
-                                            $voucher->addChild("VOUCHERTYPENAME","Sales-GST");
+                                            $voucher->addChild("VOUCHERTYPENAME","Sales-GST LK");
                                     }        
                                 }
                                 $voucher->addChild("REFERENCE",$obj->invoice_no);
