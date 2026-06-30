@@ -147,11 +147,59 @@ class cls_admin_stores extends cls_renderer {
                 <th>License Reset</th>
                 <?php } ?>
             </tr>
+                    <?php
+            /* ---------------------------------------------------------------
+             * PERFORMANCE FIX: batch-load all related data up-front to avoid
+             * the previous N+1 pattern (3 queries per store row). We now run a
+             * fixed, small number of queries regardless of store count.
+             * ------------------------------------------------------------- */
+            $storeIds = array();
+            $inactivatedByIds = array();
+            foreach ($objs as $o) {
+                $storeIds[] = (int)$o->id;
+                if ($o->inactive && trim($o->inactivated_by) != "") {
+                    $inactivatedByIds[] = (int)$o->inactivated_by;
+                }
+            }
+            $idList = !empty($storeIds) ? implode(",", $storeIds) : "0";
+
+            // (1) Global max server-change id for store-agnostic rows (store_id IS NULL).
+            $gobj = $db->fetchObject("select max(id) as max_id from it_server_changes where store_id is null");
+            $globalNullMax = ($gobj && $gobj->max_id !== null) ? (int)$gobj->max_id : null;
+
+            // (2) Per-store max server-change id in ONE grouped query.
+            $storeMaxMap = array();
+            $smRows = $db->fetchObjectArray("select store_id, max(id) as max_id from it_server_changes where store_id in ($idList) group by store_id");
+            if (!empty($smRows)) {
+                foreach ($smRows as $r) { $storeMaxMap[(int)$r->store_id] = (int)$r->max_id; }
+            }
+
+            // (3) Executive names per store in ONE join, grouped in PHP.
+            $execMap = array();
+            $exRows = $db->fetchObjectArray("select e.store_id, i.store_name from executive_assign e join it_codes i on i.id = e.exe_id where i.usertype=3 and i.roles=6 and e.store_id in ($idList)");
+            if (!empty($exRows)) {
+                foreach ($exRows as $er) { $execMap[(int)$er->store_id][] = $er->store_name; }
+            }
+
+            // (4) "Inactivated by" store names in ONE IN() lookup.
+            $inactByMap = array();
+            if (!empty($inactivatedByIds)) {
+                $inList = implode(",", array_unique($inactivatedByIds));
+                $ibRows = $db->fetchObjectArray("select id, store_name from it_codes where id in ($inList)");
+                if (!empty($ibRows)) {
+                    foreach ($ibRows as $ir) { $inactByMap[(int)$ir->id] = $ir->store_name; }
+                }
+            }
+            ?>
                     <?php foreach ($objs as $obj) {
                        // print_r($obj);
 if(trim($obj->tax_type) != ""){$taxtype= taxType::getName($obj->tax_type);}else{$taxtype="-";};
-$serobj = $db->fetchObject("select max(id) as max_id from it_server_changes where   store_id = $obj->id or store_id is null");
-if ($serobj) $max_server_id = $serobj->max_id; else $max_server_id = "";
+// PERFORMANCE FIX: use pre-batched maps instead of a per-row query.
+$perStoreMax = isset($storeMaxMap[(int)$obj->id]) ? $storeMaxMap[(int)$obj->id] : null;
+$candidates = array();
+if ($perStoreMax !== null)  $candidates[] = $perStoreMax;
+if ($globalNullMax !== null) $candidates[] = $globalNullMax;
+$max_server_id = !empty($candidates) ? max($candidates) : "";
 $dialogHtml = '<table border="0">';
 $dialogHtml .= "<tr>";
 $dialogHtml .= "<th colspan=2>$obj->store_name</th>";
@@ -214,15 +262,8 @@ $dialogHtml = json_encode($dialogHtml);
 //                $executive=$db->fetchObject("select exe_id from executive_assign where store_id=$obj->id order by id desc limit 1");
 //                echo "select exe_id from executive_assign where store_id=$obj->id order by id desc limit 1";
 //                echo "SELECT s.id AS store_id, s.code AS store_code, s.store_name AS store_name, e.id AS executive_id, e.code AS executive_code, e.store_name AS executive_name FROM executive_assign ea JOIN it_codes s ON ea.store_id = $obj->id JOIN it_codes e ON ea.exe_id = $executive->exe_id WHERE e.usertype = 3 and e.roles=6 and  s.is_closed=0 ORDER BY s.id, e.id;";
-                                $executivename = $db->fetchObjectArray("select i.store_name from executive_assign e, it_codes i where i.id=exe_id and i.usertype=3 and roles=6 and store_id=$obj->id;");
-
-                                $names = [];
-                                if (!empty($executivename)) {
-                                    foreach ($executivename as $ex) {
-                                        $names[] = $ex->store_name;
-                                    }
-                                }
-
+                                // PERFORMANCE FIX: read from pre-batched executive map.
+                                $names = isset($execMap[(int)$obj->id]) ? $execMap[(int)$obj->id] : array();
                                 echo implode(", ", $names);
                                 ?></td>
                 <td><?php echo $obj->owner; ?></td>
@@ -234,15 +275,9 @@ $dialogHtml = json_encode($dialogHtml);
             <?php if ($obj->inactive) {// print_r($obj);?>
                     
 		<!--<a href="admin/stores/enable/id=<?php echo $obj->id; ?>"><button>Enable</button></a>-->
-                <?php $storeqry="select store_name from it_codes where id=$obj->inactivated_by";
-//error_log("\nobj  qry:\n".$obj,3,"ajax/tmp.txt");                   
-//print_r($obj->inactivated_by);
-                $inactivatedby=$db->fetchObject($storeqry);
-                          if(isset($inactivatedby->store_name)){
-                              $whom=$inactivatedby->store_name;
-                          }else{
-                              $whom="";
-                          }
+                <?php
+                // PERFORMANCE FIX: read from pre-batched "inactivated by" map.
+                $whom = isset($inactByMap[(int)$obj->inactivated_by]) ? $inactByMap[(int)$obj->inactivated_by] : "";
                     ?>
                     <?php $reason =str_replace("\r\n","",trim($obj->inactivating_reason));?>
 		<!--<a href="admin/stores/enable/id=<?php// echo $obj->id; ?>"><button>Enable</button></a>--><!--javascript:enableLogin("<?php //echo $obj->id;?>","<?php //echo $obj->disablelogins_reason;?>","<?php //echo $obj->loginsdisable_by;?>");-->
