@@ -310,18 +310,18 @@ foreach ($objs as $obj) { ?>
                 </div>
 		</div> <!-- grid_12 -->
                  <div class="grid_12">
-                    <div class="grid_4">
+<!--                    <div class="grid_4">
                         Hsncode.*<br>
                 <select name="hsncode" data-placeholder="Choose HSN Code..." class="chzn-select"  style="width:100%;">
                 <option value=""></option> 
       <?php
       $objs = $db->fetchObjectArray("select * from it_hsns order by hsncode");
-      foreach ($objs as $obj) { ?>
-                <option value="<?php echo $obj->id; ?>"><?php echo $obj->hsncode; ?></option> 
-      <?php } ?>
+//      foreach ($objs as $obj) { ?>
+                <option value="<?php // echo $obj->id; ?>"><?php // echo $obj->hsncode; ?></option> 
+      <?php // } ?>
 		</select>
-                        <!--<input type="text" name="hsncode" id="hsncode" value="">-->
-                    </div>
+                        <input type="text" name="hsncode" id="hsncode" value="">
+                    </div>-->
                     <div class="grid_8">
                         <label>Select Stock Type*:<br></label>
                         <div class="grid_2">
