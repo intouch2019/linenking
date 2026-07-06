@@ -2,6 +2,7 @@
 include "checkAccess.php";
 require_once "../../it_config.php";
 require_once "lib/db/DBConn.php";
+require_once '../formpost/ebillhtml.php';
 
 extract($_POST);
 //$record='[{"ticketId":"CN86-192000187","ticketType":1,"discountPct":0.0,"discountValue":0.0,"creditNoteValue":0.0,"total_taxable_value":-3026.79,"total_tax_value":-363.22,"total_cgst_value":-181.61,"total_sgst_value":-181.61,"total_igst_value":0.0,"subTotal":-3390.0,"netTotal":-3390.0,"user":"POS Manager","ticketdate":"1562497409000","itemcount":-2.0,"noPeople":"","serverName":"","custFirstName":"","custLastName":"","custPhone":"","custEmail":"","salesman":"","ticketlines":[{"prodcode":"8900000985135","hsncode":"6205","prodreference":"98513","price":1595.0,"qty":-1.0,"proddiscountval":" ","proddiscountlabel":" ","discountval":0.0,"discountpct":0.0,"cgst_amount":0.0,"sgst_amount":0.0,"igst_amount":0.0,"lineTotal":-1595.0,"salesman_person":"0 ","prod_cat_name":"SLIM SHIRT"},{"prodcode":"8900000881871","hsncode":"6205","prodreference":"88187","price":1795.0,"qty":-1.0,"proddiscountval":" ","proddiscountlabel":" ","discountval":0.0,"discountpct":0.0,"cgst_amount":0.0,"sgst_amount":0.0,"igst_amount":0.0,"lineTotal":-1795.0,"salesman_person":"0 ","prod_cat_name":"SLIM SHIRT"}],"paymentinfo":[{"m_dTicket":-3390.0,"m_sName":"creditnoteout","m_returnMessage":"CN86-192000187"}]}]';
@@ -749,6 +750,7 @@ foreach ($arr as $orderinfo) {
                  //update disc_pct if gift voucher is used
                  updateDiscPct($order_id);
             }
+            sendEbill($gCodeId,$bill_no);
         }else if ($billtype == '1' ) { // credit bill type
                $billobj = $db->fetchObject("select id from it_orders where bill_no='$bill_no' and tickettype = $billtype and store_id=$gCodeId");  
               if($billobj!=null){ //same bill came again                    
@@ -917,6 +919,24 @@ foreach ($arr as $orderinfo) {
 print "0::Success";
 } catch (Exception $ex) {
 	print "1::Error-".$ex->getMessage();
+}
+
+function sendEbill($store_id, $bill_no){
+    
+    $db= new DBConn();
+    $query = "select cust_phone from it_orders where store_id = '$store_id' and bill_no = '$bill_no'";
+    $phone = $db->fetchObject($query)->cust_phone;
+    
+    $query2 = "select * from it_ebills where store_id = '$store_id' and bill_no = '$bill_no'";
+    $obj = $db->fetchObject($query2);
+    if(!isset($obj)){
+        
+        generateEbillHTML($bill_no, $store_id);
+        
+        $insertqry = "insert into it_ebills set store_id=$store_id, bill_no='$bill_no', phone = '$phone'";
+        $db->execInsert($insertqry);
+        
+    }
 }
 
 function stockUpdateRevert($order_id,$bill_type,$store_id){
