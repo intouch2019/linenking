@@ -750,9 +750,9 @@ foreach ($arr as $orderinfo) {
                  //update disc_pct if gift voucher is used
                  updateDiscPct($order_id);
             }
-            if($gCodeId==297){
+//            if($gCodeId==297){
             sendEbill($gCodeId,$bill_no);
-            }
+//            }
         }else if ($billtype == '1' ) { // credit bill type
                $billobj = $db->fetchObject("select id from it_orders where bill_no='$bill_no' and tickettype = $billtype and store_id=$gCodeId");  
               if($billobj!=null){ //same bill came again                    
