@@ -109,6 +109,9 @@ function generateEbillHTML($billno, $store_id) {
         .summary-value { font-size: 18px; color: #1a202c; font-weight: bold; margin: 0; }
         .invoice-meta { font-size: 13px; font-weight: bold; color: #2d3748; padding: 8px 0; border-bottom: 1px solid #edf2f7; }
         .invoice-meta span { font-weight: normal; color: #4a5568; }
+        .invoice-header { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        .invoice-meta, .invoice-meta1 { font-size: 13px; font-weight: bold; color: #2d3748; padding: 8px 0; border-bottom: 1px solid #edf2f7; }
+        .invoice-meta span, .invoice-meta1 span { font-weight: normal; color: #4a5568; }
         .customer-card { background: #f7fafc; border-left: 4px solid #4a5568; padding: 10px; border-radius: 0 6px 6px 0; font-size: 13px; line-height: 1.4; }
         .customer-card-title { font-weight: bold; margin-bottom: 4px; color: #2d3748; }
         .bill-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
@@ -164,9 +167,16 @@ function generateEbillHTML($billno, $store_id) {
                 </tr>
             </table>
         </div>
+        <div class='invoice-header'>
+    <div class='invoice-meta'>
+        Invoice No: <span>$orderobj->bill_no</span>
+    </div>
+    <div class='invoice-meta1'>
+        Invoice Date: <span>$orderobj->bill_datetime</span>
+    </div>
+</div>
+<br>";
         
-        <div class='invoice-meta'>Invoice No: <span>$orderobj->bill_no</span></div><br>";
-
         if ((!empty($gstin) || isset($gstin)) && $tickettype == '6') {
             $output .= "<div class='block customer-card'>
                 <div class='customer-card-title'>Customer Details</div>
