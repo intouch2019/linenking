@@ -426,7 +426,7 @@ function generateEbillHTML($billno, $store_id) {
                         
         $output .= "<p class='footer-message'>Thank you for shopping at Linenking.</p>
         <div style='padding:25px;' class='ad-container'>
-            <a href='https://linenking.com/'><img src='../images/LK_AD.jpg' alt='ad' /></a>
+            <a href='https://linenking.in/'><img src='../images/LK_AD.jpg' alt='ad' /></a>
         </div>
         
         <div id='termsForPdf'>
