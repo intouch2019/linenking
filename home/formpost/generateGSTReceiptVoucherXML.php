@@ -30,7 +30,11 @@ if($page){
     $name = "ReceiptVoucher_".$dt1."_".$dt2.".xml";
     $spObj = $db->fetchObject("select * from it_codes where id = ".DEF_SP_LIFESTYLE_ID); // S.P. Life Style ID
    // $query = " select i.*,c.tally_name,c.store_name FROM it_invoices i, it_codes c WHERE c.id = i.store_id  and i.invoice_type = 0 and date(i.invoice_dt) >= $startdate  and date(i.invoice_dt) <= $enddate order by id ";    
-     $query = " select i.*  FROM it_invoices i  WHERE  i.invoice_type = 0  and i.invoice_dt >= '2017-07-01 00:00:00'  and date(i.invoice_dt) >= $startdate  and date(i.invoice_dt) <= $enddate order by id ";
+     #$query = " select i.*  FROM it_invoices i  WHERE  i.invoice_type = 0  and i.invoice_dt >= '2017-07-01 00:00:00'  and date(i.invoice_dt) >= $startdate  and date(i.invoice_dt) <= $enddate order by id ";
+    $query = "SELECT i.*, c.*, c.cust_bank_name FROM it_invoices i LEFT JOIN it_codes c ON i.store_id = c.id WHERE i.invoice_type = 0 AND i.invoice_dt >= '2017-07-01 00:00:00' AND DATE(i.invoice_dt) >= $startdate AND DATE(i.invoice_dt) <= $enddate ORDER BY i.id";
+    # print_r($query);
+     #exit();
+     
     //error_log("\n$query",3,"tmp.txt");
      $objs = $db->fetchObjectArray($query);
     if($objs){
@@ -123,7 +127,15 @@ if($page){
 //                                       }
 //                                       print_r($payment_amt);exit();
                                        $allledgerentrieslist = $voucher->addChild("ALLLEDGERENTRIES.LIST"); 
-                                         $allledgerentrieslist->addChild("LEDGERNAME", "Axis Bank Ltd. CMS A/c.");
+                                         
+                                            if (stripos($obj->cust_bank_name, "AXIS") !== false) {
+                                            $bankname = "Axis Bank Ltd. CMS A/c.";
+                                        } elseif (stripos($obj->cust_bank_name, "HDFC") !== false) {
+                                            $bankname = "HDFC Bank Ltd. A/c 0436";
+                                        } else {
+                                            $bankname = "Axis Bank Ltd. CMS A/c."; //default for Non Nach Store
+                                        }
+                                        $allledgerentrieslist->addChild("LEDGERNAME", $bankname);
                                          $allledgerentrieslist->addChild("GSTCLASS");
                                          $allledgerentrieslist->addChild("ISDEEMEDPOSITIVE","YES");
                                          //$allledgerentrieslist->addChild("AMOUNT","-".round($obj->invoice_amt,2,PHP_ROUND_HALF_DOWN));
