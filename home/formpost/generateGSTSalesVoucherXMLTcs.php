@@ -157,7 +157,7 @@ if($page){
                           $itemobj = $db->fetchObject("select * from it_invoice_items where invoice_id = $obj->invid ");
                          $db->closeConnection();
                           $name =$obj->tally_name;
-                          $filternmme = preg_replace('/[^a-zA-Z0-9\s]/i',' ',$name);
+                          $filternmme = preg_replace('/[^a-zA-Z0-9\s()]/i',' ',$name);
                           $sname= $filternmme;
                           //$sname = "sample Co-J.M Road";
                           
