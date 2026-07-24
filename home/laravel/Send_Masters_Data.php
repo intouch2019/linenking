@@ -55,7 +55,8 @@ $allowed_tables = array(
     "it_taxes",
     "region",
     "states",
-    "it_barcode_batches"
+    "it_barcode_batches",
+    "it_prod_types"
 );
 
 if (!in_array($table_name, $allowed_tables)) {
