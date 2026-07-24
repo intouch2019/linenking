@@ -57,7 +57,7 @@ if (!in_array($orderby, ['ASC', 'DESC'])) {
 
 $limit = 5000;
 
-$query = "SELECT d.*, c.name AS category_name, p.name AS prod_type_name FROM it_ck_designs d LEFT JOIN it_categories c ON d.ctg_id = c.id LEFT JOIN it_prod_types p ON d.prod_type_id = p.id LIMIT $rowstartat, $limit";
+$query = "SELECT d.*, c.name AS category_name FROM it_ck_designs d LEFT JOIN it_categories c ON d.ctg_id = c.id LIMIT $rowstartat, $limit";
 
 $rows = $db->fetchObjectArray($query);
 
