@@ -72,7 +72,7 @@ $query ="SELECT sm.store_id, c.name AS category, sm.design_id , st.name AS style
     // invoice_text (POS blob, 1-20KB+/row) intentionally excluded — ERP sync doesn't need it
     $query = "SELECT id, invoice_no, invoice_dt, invoice_type, invoice_amt, invoice_qty, total_mrp, tax, store_id, is_procsdForRetail, procsd_date, rate_subtotal, discount_val, total_taxable_value, cgst_total, sgst_total, igst_total, round_off, is_sb_transit_complete, utr, remark, createtime, updatetime FROM it_saleback_invoices";
 }else if($table_name=="it_ck_pickgroup"){
-    $query = "SELECT pg.id, pg.storeid, ic.code AS store_code, pg.order_ids, pg.order_nos, pg.order_qty, pg.order_amount, pg.num_designs, pg.dispatcher_id, pg.invoice_no, pg.shipped_qty, pg.shipped_mrp, pg.cheque_amt, pg.cheque_amt_OMSCOFO, pg.cheque_dtl, pg.cheque_print, pg.transport_dtl, pg.picker_id, pg.active_time, pg.picking_time, pg.pickingComplete_time, pg.printing_time, pg.shipped_time, pg.remark, pg.createtime FROM it_ck_pickgroup pg LEFT JOIN it_codes ic ON ic.id = pg.storeid";
+    $query = "SELECT pg.id, pg.storeid, ic.code AS store_code, pg.order_ids, pg.order_nos, pg.order_qty, pg.order_amount, pg.num_designs, pg.dispatcher_id, pg.invoice_no, pg.shipped_qty, pg.shipped_mrp, pg.cheque_amt, pg.cheque_dtl, pg.cheque_print, pg.transport_dtl, pg.picker_id, pg.active_time, pg.picking_time, pg.pickingComplete_time, pg.printing_time, pg.shipped_time, pg.remark, pg.createtime FROM it_ck_pickgroup pg LEFT JOIN it_codes ic ON ic.id = pg.storeid";
 
 }else if($table_name=="it_invoice_items"){
     $query = "SELECT ii.*, COALESCE(io.barcode, io2.barcode, ii.item_code) AS item_barcode FROM it_invoice_items ii LEFT JOIN it_items io ON ii.item_code = io.id LEFT JOIN it_items io2 ON ii.item_code = io2.barcode";
