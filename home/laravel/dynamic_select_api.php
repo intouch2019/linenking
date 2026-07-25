@@ -77,7 +77,7 @@ $query ="SELECT sm.store_id, c.name AS category, sm.design_id , st.name AS style
 }else if($table_name=="it_invoice_items"){
     $query = "SELECT ii.*, COALESCE(io.barcode, io2.barcode, ii.item_code) AS item_barcode FROM it_invoice_items ii LEFT JOIN it_items io ON ii.item_code = io.id LEFT JOIN it_items io2 ON ii.item_code = io2.barcode";
 }else if($table_name=="it_invoices"){
-   $query = "SELECT i.*, ir.vehical_no FROM it_invoices i LEFT JOIN it_invoices_reports ir ON i.invoice_no = ir.invoice_no";
+   $query = "SELECT i.* FROM it_invoices i ";
 }else{
 // Build query safely
 $query = "SELECT * FROM `" .$table_name . "`";
