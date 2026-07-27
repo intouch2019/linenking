@@ -13,7 +13,7 @@ $rowstartat = isset($data['rowstartat']) ? intval($data['rowstartat']) : 0;
 $orderby = isset($data['orderby']) ? strtoupper(trim($data['orderby'])) : 'ASC';
 $api_key = isset($data['api_key']) ? trim($data['api_key']) : '';
 $limit = 3000; // hard limit
-if ($table_name == 'it_invoices') {
+if ($table_name == 'it_invoices' || $table_name == 'it_orders') {
     $limit = 500; // these carry longtext columns — smaller batches avoid memory blowout
 }
 
