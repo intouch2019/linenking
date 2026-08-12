@@ -40,6 +40,7 @@ if ($api_key !== $valid_api_key) {
 }
 
 // Check if table exists in the database
+if ($table_name != 'it_items_attrs') {
 $table_check_query = "SHOW TABLES LIKE '"  . $table_name . "'";
 $tableObj = $db->fetchObject($table_check_query);
 if (!$tableObj) {
@@ -48,6 +49,7 @@ if (!$tableObj) {
         "message" => "Table does not exist"
     ));
     exit;
+}
 }
 
 // Validate ORDER BY
