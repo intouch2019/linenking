@@ -57,6 +57,8 @@ if ($orderby != 'ASC' && $orderby != 'DESC') {
 
 if($table_name=="it_items"){
     $query="SELECT i.*, c.name AS category_name, s.name AS style_name, sz.name AS size_name, pt.name AS product_type_name, d.design_no FROM it_items i LEFT JOIN it_categories c ON i.ctg_id = c.id LEFT JOIN it_styles s ON i.style_id = s.id LEFT JOIN it_sizes sz ON i.size_id = sz.id LEFT JOIN it_prod_types pt ON i.prod_type_id = pt.id LEFT JOIN it_ck_designs d ON i.design_id = d.id ";
+}else if($table_name=="it_items_attrs"){
+    $query = "SELECT i.barcode, m.name AS mfg_name, f.name AS fabric_type_name, mt.name AS material_name FROM it_items i LEFT JOIN it_mfg_by m ON i.mfg_id = m.id LEFT JOIN it_fabric_types f ON i.fabric_type_id = f.id LEFT JOIN it_materials mt ON i.material_id = mt.id ";
 }else if($table_name=="it_codes"){
 $query = "SELECT ic.id as maintenance_store_id ,ic.code, ic.store_name, ic.sequence, ic.tally_name, ic.accountinfo, ic.owner, ic.address, ic.city, ic.zipcode, ic.phone, ic.phone2, ic.email, ic.email2, ic.gstin_no, ic.store_number, ic.pancard_no, ic.min_stock_level, ic.max_stock_level, CASE ic.tax_type WHEN 1 THEN 'Inside Maharashtra' WHEN 2 THEN 'Outside Maharashtra' ELSE 'NA' END AS tax_type, CASE ic.is_autorefill WHEN 1 THEN 'YES' WHEN 0 THEN 'NO' ELSE 'NA' END AS is_autorefill, CASE ic.is_tallyxml WHEN 1 THEN 'YES' WHEN 0 THEN 'NO' ELSE 'NA' END AS is_tallyxml, ic.retail_saletally_name, ic.retail_sale_card_name, ic.retail_sale_cash_name, ic.retail_sale_upi_name, ic.retail_sale_bank_name, ic.cash_receipt_name, CASE ic.is_bhmtallyxml WHEN 1 THEN 'YES' WHEN 0 THEN 'NO' ELSE 'NA' END AS is_bhmtallyxml, ic.autorefil_dttm, CASE ic.is_closed WHEN 1 THEN 'YES' WHEN 0 THEN 'NO' ELSE 'NA' END AS is_closed, ic.inactivated_by, ic.inactivating_reason, ic.isastore, ic.disablelogins_reason, ic.inactive_dttm, ic.loginsdisable_by, ic.disablelogins_dttm, ic.distance, s.state AS state_id, ic.cust_tobe_debited, ic.UMRN, ic.cust_debit_account, ic.cust_ifsc_or_mcr, ic.Area, CASE ic.is_natch_required WHEN 1 THEN 'YES' WHEN 0 THEN 'NO' ELSE 'NA' END AS is_natch_required, ic.discountset, ic.Location, ic.ds_taxable_amt, ic.remark, CASE ic.composite_billing_opted WHEN 1 THEN 'YES' WHEN 0 THEN 'NO' ELSE 'NA' END AS composite_billing_opted, ic.ds_remark, CASE ic.status WHEN 1 THEN 'L to L' WHEN 2 THEN 'New L to L' WHEN 3 THEN 'New' WHEN 4 THEN 'Closed' ELSE 'NA' END AS status, r.region AS region_id, CASE ic.mask_margin WHEN 1 THEN 'YES' WHEN 0 THEN 'NO' ELSE 'NA' END AS mask_margin, ic.emandate_msgid, ic.upi_name, ic.upi_id, ic.paymentlink,  ic.level, CASE ic.sbstock_active WHEN 1 THEN 'YES' WHEN 0 THEN 'NO' ELSE 'NA' END AS sbstock_active, ic.carpet, ic.monthlyrent, ic.facade, ic.inactive_bydatasync, ic.nach_limit, ic.saleback_starttime, ic.cust_bank_name,  ic.saleback_endtime, old_store.code AS old_id, ic.inactive,  CASE ic.store_type WHEN 1 THEN 'NormalStore' WHEN 2 THEN 'Store50percent' WHEN 3 THEN 'CompanyStore' ELSE 'NA' END AS store_type FROM it_codes ic LEFT JOIN states s ON s.id = ic.state_id LEFT JOIN region r ON r.id = ic.region_id LEFT JOIN it_codes old_store ON old_store.id = ic.old_id
 WHERE ic.usertype = 4";
@@ -119,7 +121,7 @@ if($table_name=="it_ck_orders"){
     $query .= " ORDER BY pg.id $orderby LIMIT $rowstartat, $limit";
 }else if($table_name=="it_invoice_items"){
     $query .= " ORDER BY ii.id $orderby LIMIT $rowstartat, $limit";
-}else if($table_name=="it_invoices"){
+}else if($table_name=="it_invoices"  || $table_name=="it_items_attrs"){
     $query .= " ORDER BY i.id $orderby LIMIT $rowstartat, $limit";
 }else if($table_name!="it_codes" && $table_name!="it_current_stock" && $table_name!="it_store_ratios" && $table_name!="stock_master_qty_wise"){
     $query .= " ORDER BY id $orderby LIMIT $rowstartat, $limit";
@@ -131,7 +133,7 @@ if($table_name == "it_store_ratios" || $table_name == "it_current_stock" ||  $ta
 try {
     $rows = $db->fetchObjectArray($query);
 
-if($table_name=="it_ck_orders" || $table_name=="it_ck_pickgroup" || $table_name=="it_invoice_items"){
+if($table_name=="it_ck_orders" || $table_name=="it_ck_pickgroup" || $table_name=="it_invoice_items" || $table_name=="it_items_attrs"){
     $rowcnt = 0;
 }else{
     $cntquery = "SELECT COUNT(*) as rowcnt FROM `" . $table_name . "`";
