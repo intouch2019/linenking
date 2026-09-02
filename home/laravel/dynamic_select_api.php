@@ -1,4 +1,5 @@
 <?php
+exit();
 require_once "../../it_config.php";
 require_once "lib/db/DBConn.php";
 
